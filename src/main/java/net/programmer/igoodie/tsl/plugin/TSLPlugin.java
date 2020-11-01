@@ -1,9 +1,6 @@
 package net.programmer.igoodie.tsl.plugin;
 
-import net.programmer.igoodie.tsl.registry.ActionRegistry;
-import net.programmer.igoodie.tsl.registry.EventFieldRegistry;
-import net.programmer.igoodie.tsl.registry.EventRegistry;
-import net.programmer.igoodie.tsl.registry.FunctionRegistry;
+import net.programmer.igoodie.tsl.registry.*;
 
 public abstract class TSLPlugin {
 
@@ -22,6 +19,8 @@ public abstract class TSLPlugin {
     public void registerEventFields(EventFieldRegistry registry) {}
 
     public void registerActions(ActionRegistry registry) {}
+
+    public void registerComparator(ComparatorRegistry registry) {}
 
     public void registerFunctions(FunctionRegistry registry) {}
 

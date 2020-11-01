@@ -3,10 +3,7 @@ package net.programmer.igoodie.tsl;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
-import net.programmer.igoodie.tsl.registry.ActionRegistry;
-import net.programmer.igoodie.tsl.registry.EventFieldRegistry;
-import net.programmer.igoodie.tsl.registry.EventRegistry;
-import net.programmer.igoodie.tsl.registry.FunctionRegistry;
+import net.programmer.igoodie.tsl.registry.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +15,7 @@ public class TheSpawnLanguage {
     public final EventRegistry EVENT_REGISTRY;
     public final EventFieldRegistry EVENT_FIELD_REGISTRY;
     public final ActionRegistry ACTION_REGISTRY;
+    public final ComparatorRegistry COMPARATOR_REGISTRY;
     public final FunctionRegistry FUNCTION_REGISTRY;
 
     protected final JSEngine jsEngine;
@@ -28,6 +26,7 @@ public class TheSpawnLanguage {
         EVENT_REGISTRY = new EventRegistry();
         EVENT_FIELD_REGISTRY = new EventFieldRegistry();
         ACTION_REGISTRY = new ActionRegistry();
+        COMPARATOR_REGISTRY = new ComparatorRegistry();
         FUNCTION_REGISTRY = new FunctionRegistry();
 
         jsEngine = new JSEngine(FUNCTION_REGISTRY);
@@ -48,6 +47,7 @@ public class TheSpawnLanguage {
         plugin.registerEvents(EVENT_REGISTRY);
         plugin.registerEventFields(EVENT_FIELD_REGISTRY);
         plugin.registerActions(ACTION_REGISTRY);
+        plugin.registerComparator(COMPARATOR_REGISTRY);
         plugin.registerFunctions(FUNCTION_REGISTRY);
         LOADED_PLUGINS.add(pluginId);
     }
