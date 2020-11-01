@@ -1,0 +1,75 @@
+package net.programmer.igoodie.tsl.function;
+
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import net.programmer.igoodie.tsl.definition.TSLFunction;
+import net.programmer.igoodie.tsl.registry.FunctionRegistry;
+import net.programmer.igoodie.tsl.registry.ITSLRegistry;
+
+import javax.script.Bindings;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.util.Map;
+
+public class JSEngine {
+
+    protected ScriptEngine engine;
+
+    protected Bindings globalBindings;
+    protected FunctionRegistry functionRegistry;
+
+    public JSEngine(FunctionRegistry functionRegistry) {
+        this.engine = new ScriptEngineManager().getEngineByName("nashorn");
+        this.globalBindings = this.engine.createBindings();
+        this.functionRegistry = functionRegistry;
+    }
+
+    public void putGlobalBinding(String name, Object object) {
+        this.globalBindings.put(name, object);
+    }
+
+    public String evaluate(String script) {
+        try {
+            Object eval = engine.eval(script, createBindings(this.functionRegistry));
+
+            if (eval instanceof String)
+                return (String) eval;
+            else if (eval instanceof Number)
+                return String.valueOf(((Number) eval).doubleValue());
+            else if (eval instanceof Boolean)
+                return String.valueOf((Boolean) eval);
+            else if (eval instanceof ScriptObjectMirror)
+                return stringify((ScriptObjectMirror) eval);
+
+            return null;
+
+        } catch (ScriptException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private String stringify(ScriptObjectMirror jsonMirror) {
+        String delimiter = "";
+        StringBuilder builder = new StringBuilder("{ ");
+
+        for (Map.Entry<String, Object> field : jsonMirror.entrySet()) {
+            builder.append(delimiter)
+                    .append(field.getKey())
+                    .append(": ")
+                    .append(field.getValue());
+
+            delimiter = ", ";
+        }
+
+        return builder.toString() + " }";
+    }
+
+    private Bindings createBindings(FunctionRegistry functionRegistry) {
+        Bindings bindings = engine.createBindings();
+        globalBindings.forEach(bindings::put);
+        functionRegistry.forEach((key, value) -> bindings.put(key, value.getBindingObject()));
+        return bindings;
+    }
+
+}
