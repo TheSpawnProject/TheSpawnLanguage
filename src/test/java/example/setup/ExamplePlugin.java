@@ -5,6 +5,7 @@ import example.setup.event.AlertEvent;
 import example.setup.fields.TimeField;
 import example.setup.functions.CurrentUnixFunction;
 import example.setup.functions.MaximumOfFunction;
+import net.programmer.igoodie.tsl.logging.TSLLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
 import net.programmer.igoodie.tsl.registry.ComparatorRegistry;
@@ -12,7 +13,14 @@ import net.programmer.igoodie.tsl.registry.EventFieldRegistry;
 import net.programmer.igoodie.tsl.registry.EventRegistry;
 import net.programmer.igoodie.tsl.registry.FunctionRegistry;
 
+import java.io.File;
+import java.util.logging.Logger;
+
 public class ExamplePlugin extends TSLPlugin {
+
+    public static ExamplePlugin PLUGIN_INSTANCE = new ExamplePlugin();
+
+    public static Logger LOGGER = TSLLogger.createLogger(new File("logs"), PLUGIN_INSTANCE, true);
 
     public ExamplePlugin() {
         super(new TSLPluginManifest("ExamplePlugin", "0.0.1"));
@@ -22,6 +30,7 @@ public class ExamplePlugin extends TSLPlugin {
     @Override
     public void registerEvents(EventRegistry registry) {
         registry.register(AlertEvent.INSTANCE);
+        LOGGER.info("Registered all the events!");
     }
 
     @Override
