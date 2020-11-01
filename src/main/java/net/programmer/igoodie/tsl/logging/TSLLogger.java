@@ -39,6 +39,8 @@ public class TSLLogger {
 
             removeOldLogs(logFile.getParentFile());
 
+            logger.setUseParentHandlers(false);
+
             FileHandler fileHandler = new FileHandler(logFile.getAbsolutePath());
             fileHandler.setFormatter(formatter);
             logger.addHandler(fileHandler);

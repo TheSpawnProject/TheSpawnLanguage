@@ -11,7 +11,7 @@ public class ExampleTest {
 
         tsl.loadPlugin(new ExamplePlugin());
 
-        System.out.println(tsl.getJsEngine().evaluate("currentUnix() + ' ' + maximumOf(5,10)"));
+        ExamplePlugin.LOGGER.info(tsl.getJsEngine().evaluate("currentUnix() + ' ' + maximumOf(5,10)"));
     }
 
 }

@@ -14,7 +14,7 @@ public class TSLLogFormatter extends Formatter {
 
     @Override
     public String format(LogRecord record) {
-        return String.format("[%s] [%d] [%s] %s",
+        return String.format("[%s] [%d] [%s] %s\n",
                 record.getLevel(),
                 Instant.now().getEpochSecond(),
                 this.name,
