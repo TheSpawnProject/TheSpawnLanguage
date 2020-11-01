@@ -18,8 +18,8 @@ public class TSLGroup extends TSLToken {
 
     @Override
     public String evaluate(TSLContext context) {
-        // TODO: Evaluate and replace expressions
-        return group;
+        return TSLExpression.replaceExpressions(group, (expression) ->
+                context.getEngine().evaluate(expression));
     }
 
 }
