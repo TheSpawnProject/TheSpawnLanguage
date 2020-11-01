@@ -6,12 +6,12 @@ import net.programmer.igoodie.tsl.definition.TSLEventField;
 
 import java.util.Set;
 
-public class NotifiedEvent extends TSLEvent {
+public class AlertEvent extends TSLEvent {
 
-    public static final NotifiedEvent INSTANCE = new NotifiedEvent();
+    public static final AlertEvent INSTANCE = new AlertEvent();
 
-    private NotifiedEvent() {
-        super("Notified Event");
+    private AlertEvent() {
+        super("Alert Event");
     }
 
     @Override

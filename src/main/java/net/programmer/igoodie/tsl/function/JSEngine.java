@@ -35,9 +35,9 @@ public class JSEngine {
             if (eval instanceof String)
                 return (String) eval;
             else if (eval instanceof Number)
-                return String.valueOf(((Number) eval).doubleValue());
+                return String.valueOf(eval);
             else if (eval instanceof Boolean)
-                return String.valueOf((Boolean) eval);
+                return String.valueOf(eval);
             else if (eval instanceof ScriptObjectMirror)
                 return stringify((ScriptObjectMirror) eval);
 
