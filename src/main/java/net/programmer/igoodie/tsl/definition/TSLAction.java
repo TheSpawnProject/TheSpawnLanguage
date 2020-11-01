@@ -8,7 +8,7 @@ import java.util.List;
 public abstract class TSLAction extends TSLDefinition {
 
     public TSLAction(String name) {
-        super(StringUtils.allUpper(name.replaceAll(" ", "_")));
+        super(StringUtils.upperSnake(name));
     }
 
     public abstract void perform(List<TSLToken> tokens);

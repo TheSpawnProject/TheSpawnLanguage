@@ -29,4 +29,8 @@ public class StringUtils {
         return phrase.toLowerCase(Locale.ENGLISH);
     }
 
+    public static String upperSnake(String phrase) {
+        return allUpper(phrase.replaceAll(" ", "_"));
+    }
+
 }
