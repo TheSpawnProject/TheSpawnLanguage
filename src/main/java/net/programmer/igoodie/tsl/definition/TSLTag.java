@@ -1,23 +1,36 @@
 package net.programmer.igoodie.tsl.definition;
 
+import com.google.gson.JsonObject;
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.token.TSLString;
+
+import java.util.List;
+
 public abstract class TSLTag extends TSLDefinition {
 
     public TSLTag(String name) {
         super(name);
     }
 
-    public abstract boolean validateSyntax(String[] args);
+    public abstract JsonObject compose(TSLString tagName, List<TSLString> args);
 
-    protected boolean isBoolean(String arg) {
-        String argLowercase = arg.toLowerCase();
-        return argLowercase.equals("true") || argLowercase.equals("false");
+    protected boolean parseBoolean(TSLString arg) {
+        String argLowercase = arg.getWord().toLowerCase();
+
+        if (argLowercase.equals("true"))
+            return true;
+        else if (argLowercase.equals("false"))
+            return false;
+        else throw new TSLSyntaxError("Expected either 'true' or 'false'.", arg);
     }
 
-    protected boolean isNumber(String arg) {
+    protected double parseDouble(TSLString arg) {
         try {
-            Double.parseDouble(arg);
-            return true;
-        } catch (NumberFormatException e) { return false; }
+            return Double.parseDouble(arg.getWord());
+
+        } catch (NumberFormatException e) {
+            throw new TSLSyntaxError("Expected number.", arg);
+        }
     }
 
 }

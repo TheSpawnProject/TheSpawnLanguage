@@ -13,6 +13,7 @@ public class TheSpawnLanguage {
     public final Set<String> LOADED_PLUGINS;
 
     public final TagRegistry TAG_REGISTRY;
+    public final DecoratorRegistry DECORATOR_REGISTRY;
     public final EventRegistry EVENT_REGISTRY;
     public final EventFieldRegistry EVENT_FIELD_REGISTRY;
     public final ActionRegistry ACTION_REGISTRY;
@@ -25,6 +26,7 @@ public class TheSpawnLanguage {
         LOADED_PLUGINS = new HashSet<>();
 
         TAG_REGISTRY = new TagRegistry();
+        DECORATOR_REGISTRY = new DecoratorRegistry();
         EVENT_REGISTRY = new EventRegistry();
         EVENT_FIELD_REGISTRY = new EventFieldRegistry();
         ACTION_REGISTRY = new ActionRegistry();
@@ -47,6 +49,7 @@ public class TheSpawnLanguage {
             return; // TODO: What to do here? Consider
 
         plugin.registerTags(TAG_REGISTRY);
+        plugin.registerDecorators(DECORATOR_REGISTRY);
         plugin.registerEvents(EVENT_REGISTRY);
         plugin.registerEventFields(EVENT_FIELD_REGISTRY);
         plugin.registerActions(ACTION_REGISTRY);

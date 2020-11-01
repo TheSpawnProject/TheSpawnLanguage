@@ -16,6 +16,8 @@ public abstract class TSLPlugin {
 
     public void registerTags(TagRegistry registry) {}
 
+    public void registerDecorators(DecoratorRegistry registry) {}
+
     public void registerEvents(EventRegistry registry) {}
 
     public void registerEventFields(EventFieldRegistry registry) {}

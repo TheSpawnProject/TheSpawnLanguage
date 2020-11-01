@@ -1,6 +1,7 @@
 package example.setup;
 
 import example.setup.comparator.EqualsComparator;
+import example.setup.decorator.SuppressNotificationsDecorator;
 import example.setup.event.AlertEvent;
 import example.setup.fields.TimeField;
 import example.setup.functions.CurrentUnixFunction;
@@ -28,6 +29,11 @@ public class ExamplePlugin extends TSLPlugin {
     @Override
     public void registerTags(TagRegistry registry) {
         registry.register(CooldownTag.INSTANCE);
+    }
+
+    @Override
+    public void registerDecorators(DecoratorRegistry registry) {
+        registry.register(SuppressNotificationsDecorator.INSTANCE);
     }
 
     @Override
