@@ -14,6 +14,8 @@ public abstract class TSLPlugin {
         return manifest;
     }
 
+    public void registerTags(TagRegistry registry) {}
+
     public void registerEvents(EventRegistry registry) {}
 
     public void registerEventFields(EventFieldRegistry registry) {}

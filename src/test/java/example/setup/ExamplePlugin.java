@@ -5,13 +5,11 @@ import example.setup.event.AlertEvent;
 import example.setup.fields.TimeField;
 import example.setup.functions.CurrentUnixFunction;
 import example.setup.functions.MaximumOfFunction;
+import example.setup.tag.CooldownTag;
 import net.programmer.igoodie.tsl.logging.TSLLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
-import net.programmer.igoodie.tsl.registry.ComparatorRegistry;
-import net.programmer.igoodie.tsl.registry.EventFieldRegistry;
-import net.programmer.igoodie.tsl.registry.EventRegistry;
-import net.programmer.igoodie.tsl.registry.FunctionRegistry;
+import net.programmer.igoodie.tsl.registry.*;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -25,6 +23,11 @@ public class ExamplePlugin extends TSLPlugin {
     public ExamplePlugin() {
         super(new TSLPluginManifest("ExamplePlugin", "0.0.1"));
         getManifest().setAuthor("iGoodie");
+    }
+
+    @Override
+    public void registerTags(TagRegistry registry) {
+        registry.register(CooldownTag.INSTANCE);
     }
 
     @Override

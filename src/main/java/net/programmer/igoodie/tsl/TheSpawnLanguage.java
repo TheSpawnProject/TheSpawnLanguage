@@ -12,6 +12,7 @@ public class TheSpawnLanguage {
 
     public final Set<String> LOADED_PLUGINS;
 
+    public final TagRegistry TAG_REGISTRY;
     public final EventRegistry EVENT_REGISTRY;
     public final EventFieldRegistry EVENT_FIELD_REGISTRY;
     public final ActionRegistry ACTION_REGISTRY;
@@ -23,6 +24,7 @@ public class TheSpawnLanguage {
     public TheSpawnLanguage() {
         LOADED_PLUGINS = new HashSet<>();
 
+        TAG_REGISTRY = new TagRegistry();
         EVENT_REGISTRY = new EventRegistry();
         EVENT_FIELD_REGISTRY = new EventFieldRegistry();
         ACTION_REGISTRY = new ActionRegistry();
@@ -44,6 +46,7 @@ public class TheSpawnLanguage {
         if (LOADED_PLUGINS.contains(pluginId))
             return; // TODO: What to do here? Consider
 
+        plugin.registerTags(TAG_REGISTRY);
         plugin.registerEvents(EVENT_REGISTRY);
         plugin.registerEventFields(EVENT_FIELD_REGISTRY);
         plugin.registerActions(ACTION_REGISTRY);
