@@ -11,15 +11,14 @@ public class EqualsComparator extends TSLComparator {
     }
 
     @Override
-    public boolean compare(Object lefthand, Object righthand) {
-        if (lefthand instanceof String && righthand instanceof String) {
+    public boolean compare(Object lefthand, String righthand) {
+        if (lefthand instanceof String) {
             String leftString = (String) lefthand;
-            String rightString = (String) righthand;
-            return leftString.equalsIgnoreCase(rightString);
+            return leftString.equalsIgnoreCase(righthand);
 
-        } else if (lefthand instanceof Number && righthand instanceof Number) {
+        } else if (lefthand instanceof Number) {
             Number leftNumber = (Number) lefthand;
-            Number rightNumber = (Number) righthand;
+            Number rightNumber = parseDouble(righthand, -1.0);
             return leftNumber.doubleValue() == rightNumber.doubleValue();
         }
 

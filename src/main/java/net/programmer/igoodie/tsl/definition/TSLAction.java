@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.definition;
 
+import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.util.StringUtils;
 
@@ -11,6 +12,6 @@ public abstract class TSLAction extends TSLDefinition {
         super(StringUtils.upperSnake(name));
     }
 
-    public abstract void perform(List<TSLToken> tokens);
+    public abstract void perform(List<TSLToken> tokens, TSLContext context);
 
 }
