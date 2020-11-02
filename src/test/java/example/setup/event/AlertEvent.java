@@ -1,5 +1,6 @@
 package example.setup.event;
 
+import example.setup.ExamplePlugin;
 import example.setup.fields.TimeField;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLEventField;
@@ -11,7 +12,7 @@ public class AlertEvent extends TSLEvent {
     public static final AlertEvent INSTANCE = new AlertEvent();
 
     private AlertEvent() {
-        super("Alert Event");
+        super(ExamplePlugin.PLUGIN_INSTANCE, "Alert Event");
     }
 
     @Override

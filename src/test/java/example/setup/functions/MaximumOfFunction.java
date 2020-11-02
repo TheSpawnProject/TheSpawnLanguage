@@ -1,5 +1,6 @@
 package example.setup.functions;
 
+import example.setup.ExamplePlugin;
 import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.function.Lambda2;
 
@@ -8,7 +9,7 @@ public class MaximumOfFunction extends TSLFunction {
     public static final MaximumOfFunction INSTANCE = new MaximumOfFunction();
 
     private MaximumOfFunction() {
-        super("_maximumOf", false);
+        super(ExamplePlugin.PLUGIN_INSTANCE, "_maximumOf", false);
     }
 
     @Override

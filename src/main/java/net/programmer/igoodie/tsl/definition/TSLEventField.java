@@ -1,11 +1,12 @@
 package net.programmer.igoodie.tsl.definition;
 
 import com.google.gson.JsonObject;
+import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 
 public abstract class TSLEventField<T> extends TSLDefinition {
 
-    public TSLEventField(String name) {
-        super(name);
+    public TSLEventField(TSLPlugin plugin, String name) {
+        super(plugin, name);
     }
 
     /* ---------------------------------- */

@@ -1,5 +1,6 @@
 package example.setup.comparator;
 
+import example.setup.ExamplePlugin;
 import net.programmer.igoodie.tsl.definition.TSLComparator;
 
 public class EqualsComparator extends TSLComparator {
@@ -7,7 +8,7 @@ public class EqualsComparator extends TSLComparator {
     public static final EqualsComparator INSTANCE = new EqualsComparator();
 
     private EqualsComparator() {
-        super("=");
+        super(ExamplePlugin.PLUGIN_INSTANCE, "=");
     }
 
     @Override

@@ -1,9 +1,11 @@
 package net.programmer.igoodie.tsl.definition;
 
+import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+
 public abstract class TSLComparator extends TSLDefinition {
 
-    public TSLComparator(String name) {
-        super(name);
+    public TSLComparator(TSLPlugin plugin, String name) {
+        super(plugin, name);
     }
 
     public abstract boolean compare(Object lefthand, String righthand);

@@ -1,6 +1,7 @@
 package example.setup.decorator;
 
 import com.google.gson.JsonObject;
+import example.setup.ExamplePlugin;
 import net.programmer.igoodie.tsl.definition.TSLDecorator;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 
@@ -11,12 +12,16 @@ public class SuppressNotificationsDecorator extends TSLDecorator {
     public static final SuppressNotificationsDecorator INSTANCE = new SuppressNotificationsDecorator();
 
     private SuppressNotificationsDecorator() {
-        super("suppressNotifications");
+        super(ExamplePlugin.PLUGIN_INSTANCE, "suppressNotifications");
     }
 
     @Override
-    public JsonObject compose(TSLString tagName, List<TSLString> args) {
-        return new JsonObject();
+    public JsonObject evaluateAttributes(TSLString decoratorName, List<TSLString> args) {
+        JsonObject attributes = new JsonObject();
+
+        attributes.addProperty("notificationsMuted", true);
+
+        return attributes;
     }
 
 }

@@ -14,6 +14,10 @@ public abstract class TSLPlugin {
         return manifest;
     }
 
+    public String prependNamespace(String value) {
+        return manifest.getPluginId() + ":" + value;
+    }
+
     public void registerTags(TagRegistry registry) {}
 
     public void registerDecorators(DecoratorRegistry registry) {}

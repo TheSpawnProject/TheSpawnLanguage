@@ -3,16 +3,17 @@ package net.programmer.igoodie.tsl.definition;
 import com.google.gson.JsonObject;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 
 import java.util.List;
 
 public abstract class TSLTag extends TSLDefinition {
 
-    public TSLTag(String name) {
-        super(name);
+    public TSLTag(TSLPlugin plugin, String name) {
+        super(plugin, name);
     }
 
-    public abstract JsonObject compose(TSLString tagName, List<TSLString> args);
+    public abstract JsonObject evaluateAttributes(TSLString tagName, List<TSLString> args);
 
     protected boolean parseBoolean(TSLString arg) {
         String argLowercase = arg.getWord().toLowerCase();

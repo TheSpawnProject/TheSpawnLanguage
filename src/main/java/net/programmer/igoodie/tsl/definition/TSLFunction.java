@@ -1,11 +1,13 @@
 package net.programmer.igoodie.tsl.definition;
 
+import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+
 public abstract class TSLFunction extends TSLDefinition {
 
     protected boolean global;
 
-    public TSLFunction(String name, boolean global) {
-        super(name);
+    public TSLFunction(TSLPlugin plugin, String name, boolean global) {
+        super(plugin, name);
         this.global = global;
     }
 

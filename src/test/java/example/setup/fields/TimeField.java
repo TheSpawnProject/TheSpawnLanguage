@@ -1,6 +1,7 @@
 package example.setup.fields;
 
 import com.google.gson.JsonObject;
+import example.setup.ExamplePlugin;
 import net.programmer.igoodie.tsl.definition.TSLEventField;
 
 public class TimeField extends TSLEventField<Long> {
@@ -8,7 +9,7 @@ public class TimeField extends TSLEventField<Long> {
     public static final TimeField INSTANCE = new TimeField();
 
     private TimeField() {
-        super("time");
+        super(ExamplePlugin.PLUGIN_INSTANCE, "time");
     }
 
     @Override

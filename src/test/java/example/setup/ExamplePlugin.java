@@ -23,7 +23,7 @@ public class ExamplePlugin extends TSLPlugin {
     public static Logger LOGGER = TSLLogger.createLogger(new File("logs"), PLUGIN_INSTANCE, true);
 
     public ExamplePlugin() {
-        super(new TSLPluginManifest("ExamplePlugin", "0.0.1"));
+        super(new TSLPluginManifest("exampleplugin", "ExamplePlugin", "0.0.1"));
         getManifest().setAuthor("iGoodie");
     }
 

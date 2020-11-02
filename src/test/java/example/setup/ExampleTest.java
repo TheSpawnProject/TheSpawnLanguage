@@ -7,13 +7,17 @@ import net.programmer.igoodie.tsl.parser.token.TSLExpression;
 import net.programmer.igoodie.tsl.parser.token.TSLGroup;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.node.ActionNode;
 import net.programmer.igoodie.tsl.runtime.node.EventNode;
 import net.programmer.igoodie.tsl.runtime.node.PredicateNode;
+import net.programmer.igoodie.tsl.util.GsonUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -57,19 +61,32 @@ public class ExampleTest {
         eventNode.setNextNode(predicateNode);
         predicateNode.setNextNode(actionNode);
 
-        JsonObject eventArguments = new JsonObject();
-        eventArguments.addProperty("time", "1234");
-
         List<TSLToken> actionTokens = new LinkedList<>();
         actionTokens.add(new TSLExpression(0, 0, "1 + 3"));
         actionTokens.add(new TSLString(1, 1, "Hello World"));
         actionTokens.add(new TSLGroup(2, 1, "Hey hey hey ${_currentUnix()}."));
         actionTokens.add(new TSLGroup(3, 1, "Time Arg: ${_maximumOf(time, 5)}"));
 
+        TSLRuleset ruleset = new TSLRuleset("iGoodie", new File("Some/path/to/igoodie.tsl"));
+
+        TSLRule rule = new TSLRule(eventNode, actionTokens);
+        rule.addDecorator(TSL.DECORATOR_REGISTRY.get("suppressNotifications"),
+                new TSLString(0, 0, "suppressNotifications"), new LinkedList<>());
+
+        ruleset.addRule(rule);
+
+        JsonObject eventArguments = new JsonObject();
+        eventArguments.addProperty("event", "Alert Event");
+        eventArguments.addProperty("time", 1234);
+
         TSLContext context = new TSLContext();
         context.setEngine(TSL.getJsEngine());
         context.setEventArguments(eventArguments);
         context.setActionTokens(actionTokens);
+        context.setRule(rule);
+        context.setAttributes(GsonUtils.mergeOverriding(
+                ruleset.getSquashedAttributes(),
+                rule.getSquashedAttributes()));
 
         boolean proceeded = eventNode.proceed(context);
         System.out.println("Proceeded: " + proceeded);
