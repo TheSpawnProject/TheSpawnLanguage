@@ -8,7 +8,7 @@ public class MaximumOfFunction extends TSLFunction {
     public static final MaximumOfFunction INSTANCE = new MaximumOfFunction();
 
     private MaximumOfFunction() {
-        super("maximumOf", false);
+        super("_maximumOf", false);
     }
 
     @Override

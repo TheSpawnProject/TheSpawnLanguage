@@ -1,6 +1,9 @@
 package net.programmer.igoodie.tsl.function;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.registry.FunctionRegistry;
 import net.programmer.igoodie.tsl.registry.ITSLRegistry;
@@ -28,9 +31,9 @@ public class JSEngine {
         this.globalBindings.put(name, object);
     }
 
-    public String evaluate(String script) {
+    public String evaluate(String script, TSLContext context) {
         try {
-            Object eval = engine.eval(script, createBindings(this.functionRegistry));
+            Object eval = engine.eval(script, createBindings(context));
 
             if (eval instanceof String)
                 return (String) eval;
@@ -65,11 +68,26 @@ public class JSEngine {
         return builder.toString() + " }";
     }
 
-    private Bindings createBindings(FunctionRegistry functionRegistry) {
+    private Bindings createBindings(TSLContext context) {
         Bindings bindings = engine.createBindings();
+
         globalBindings.forEach(bindings::put);
         functionRegistry.forEach((key, value) -> bindings.put(key, value.getBindingObject()));
+
+        if (context != null) {
+            JsonObject eventArguments = context.getEventArguments();
+            for (String fieldName : eventArguments.keySet()) {
+                bindings.put(fieldName, extractField(eventArguments, fieldName));
+            }
+        }
+
         return bindings;
+    }
+
+    private Object extractField(JsonObject eventArguments, String fieldName) {
+        JsonElement argument = eventArguments.get(fieldName);
+        try { return argument.getAsNumber(); } catch (Throwable ignored) { }
+        return argument.getAsString();
     }
 
 }

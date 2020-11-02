@@ -10,7 +10,7 @@ public class CurrentUnixFunction extends TSLFunction {
     public static final CurrentUnixFunction INSTANCE = new CurrentUnixFunction();
 
     private CurrentUnixFunction() {
-        super("currentUnix", false);
+        super("_currentUnix", false);
     }
 
     @Override

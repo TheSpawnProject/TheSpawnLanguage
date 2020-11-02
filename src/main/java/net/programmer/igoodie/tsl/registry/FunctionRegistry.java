@@ -8,7 +8,7 @@ import java.util.function.BiConsumer;
 
 public class FunctionRegistry implements ITSLRegistry<TSLFunction> {
 
-    // "functionName" -> TSLFunction
+    // "_functionName" -> TSLFunction
     protected Map<String, TSLFunction> registry;
 
     public FunctionRegistry() {

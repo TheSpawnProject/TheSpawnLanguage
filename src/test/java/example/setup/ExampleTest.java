@@ -35,7 +35,8 @@ public class ExampleTest {
     @Test
     @Order(2)
     public void shouldEvaluateExpressions() {
-        ExamplePlugin.LOGGER.info(TSL.getJsEngine().evaluate("currentUnix() + ' ' + maximumOf(5,10)"));
+        ExamplePlugin.LOGGER.info(TSL.getJsEngine()
+                .evaluate("_currentUnix() + ' ' + _maximumOf(5,10)", null));
     }
 
     @Test
@@ -57,12 +58,13 @@ public class ExampleTest {
         predicateNode.setNextNode(actionNode);
 
         JsonObject eventArguments = new JsonObject();
-        eventArguments.addProperty("time", 1234);
+        eventArguments.addProperty("time", "1234");
 
         List<TSLToken> actionTokens = new LinkedList<>();
         actionTokens.add(new TSLExpression(0, 0, "1 + 3"));
         actionTokens.add(new TSLString(1, 1, "Hello World"));
-        actionTokens.add(new TSLGroup(2, 1, "Hey hey hey ${currentUnix()}"));
+        actionTokens.add(new TSLGroup(2, 1, "Hey hey hey ${_currentUnix()}."));
+        actionTokens.add(new TSLGroup(3, 1, "Time Arg: ${_maximumOf(time, 5)}"));
 
         TSLContext context = new TSLContext();
         context.setEngine(TSL.getJsEngine());

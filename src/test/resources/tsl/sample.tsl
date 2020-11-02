@@ -1,9 +1,9 @@
 #! COOLDOWN 1000
 
-PRINT %Hey dude! This message is evaluated @ ${currentUnix()}%
+PRINT %Hey dude! This message is evaluated @ ${_currentUnix()}%
  ON Alert Event
  WITH time = 12345
 
 @suppressNotifications
-PRINT ${maximumOf(10,20) + Math.random()}
+PRINT ${_maximumOf(10,20) + Math.random()}
  ON Alert Event
