@@ -1,6 +1,8 @@
 package net.programmer.igoodie.tsl;
 
 import net.programmer.igoodie.tsl.function.JSEngine;
+import net.programmer.igoodie.tsl.function.TSLDebugLibrary;
+import net.programmer.igoodie.tsl.function.TSLUtilitiesLibrary;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
 import net.programmer.igoodie.tsl.registry.*;
@@ -35,6 +37,8 @@ public class TheSpawnLanguage {
 
         jsEngine = new JSEngine(FUNCTION_REGISTRY);
         jsEngine.putGlobalBinding("TSL_VERSION", "0.0.0");
+        jsEngine.putGlobalBinding("_", new TSLUtilitiesLibrary());
+        jsEngine.putGlobalBinding("_D", new TSLDebugLibrary(jsEngine));
     }
 
     public JSEngine getJsEngine() {

@@ -44,7 +44,7 @@ public class JSEngine {
             else if (eval instanceof ScriptObjectMirror)
                 return stringify((ScriptObjectMirror) eval);
 
-            return null;
+            return eval.toString();
 
         } catch (ScriptException e) {
             e.printStackTrace();
@@ -87,6 +87,7 @@ public class JSEngine {
     private Object extractField(JsonObject eventArguments, String fieldName) {
         JsonElement argument = eventArguments.get(fieldName);
         try { return argument.getAsNumber(); } catch (Throwable ignored) { }
+        try { return argument.getAsBoolean(); } catch (Throwable ignored) { }
         return argument.getAsString();
     }
 

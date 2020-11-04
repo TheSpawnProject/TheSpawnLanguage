@@ -41,6 +41,18 @@ public class ExampleTest {
     public void shouldEvaluateExpressions() {
         ExamplePlugin.LOGGER.info(TSL.getJsEngine()
                 .evaluate("_currentUnix() + ' ' + _maximumOf(5,10)", null));
+
+        ExamplePlugin.LOGGER.info(TSL.getJsEngine()
+                .evaluate("_.iff('truthy', 1, 0)", null));
+
+        ExamplePlugin.LOGGER.info(TSL.getJsEngine()
+                .evaluate("_.union(['A', 1, 'B'], _D.methods(_.now()))", null));
+
+        for (int i = 0; i < 5; i++) {
+            ExamplePlugin.LOGGER.info(TSL.getJsEngine()
+                    .evaluate("_.randomOne('apple','banana','orange', 'tangerine')", null));
+        }
+
     }
 
     @Test
