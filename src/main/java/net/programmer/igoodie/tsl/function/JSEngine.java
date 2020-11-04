@@ -8,27 +8,22 @@ import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.registry.FunctionRegistry;
 import net.programmer.igoodie.tsl.registry.ITSLRegistry;
 
-import javax.script.Bindings;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+import javax.script.*;
 import java.util.Map;
 
 public class JSEngine {
 
     protected ScriptEngine engine;
 
-    protected Bindings globalBindings;
     protected FunctionRegistry functionRegistry;
 
     public JSEngine(FunctionRegistry functionRegistry) {
         this.engine = new ScriptEngineManager().getEngineByName("nashorn");
-        this.globalBindings = this.engine.createBindings();
         this.functionRegistry = functionRegistry;
     }
 
     public void putGlobalBinding(String name, Object object) {
-        this.globalBindings.put(name, object);
+        this.engine.getContext().setAttribute(name, object, ScriptContext.GLOBAL_SCOPE);
     }
 
     public String evaluate(String script, TSLContext context) {
@@ -71,7 +66,6 @@ public class JSEngine {
     private Bindings createBindings(TSLContext context) {
         Bindings bindings = engine.createBindings();
 
-        globalBindings.forEach(bindings::put);
         functionRegistry.forEach((key, value) -> bindings.put(key, value.getBindingObject()));
 
         if (context != null) {
