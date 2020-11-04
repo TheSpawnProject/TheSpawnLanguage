@@ -2,7 +2,6 @@ package example.setup.functions;
 
 import example.setup.ExamplePlugin;
 import net.programmer.igoodie.tsl.definition.TSLFunction;
-import net.programmer.igoodie.tsl.function.Lambda2;
 
 public class MaximumOfFunction extends TSLFunction {
 
@@ -13,12 +12,9 @@ public class MaximumOfFunction extends TSLFunction {
     }
 
     @Override
-    public Object getBindingObject() {
-        return (Lambda2<Number, Number>) (a, b) -> {
-            if (a.doubleValue() > b.doubleValue())
-                return a;
-            return b;
-        };
+    public TSLFunction.with2Params<Number, Number> getBindingObject() {
+        return (number1, number2) ->
+                Double.max(number1.doubleValue(), number2.doubleValue());
     }
 
 }

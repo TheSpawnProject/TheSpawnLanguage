@@ -2,7 +2,6 @@ package example.setup.functions;
 
 import example.setup.ExamplePlugin;
 import net.programmer.igoodie.tsl.definition.TSLFunction;
-import net.programmer.igoodie.tsl.function.Lambda0;
 
 import java.time.Instant;
 
@@ -15,8 +14,8 @@ public class CurrentUnixFunction extends TSLFunction {
     }
 
     @Override
-    public Object getBindingObject() {
-        return (Lambda0) () -> Instant.now().getEpochSecond();
+    public TSLFunction.withNoParams getBindingObject() {
+        return () -> Instant.now().getEpochSecond();
     }
 
 }
