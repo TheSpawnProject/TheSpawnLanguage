@@ -1,11 +1,13 @@
 package example.setup;
 
 import example.setup.action.PrintAction;
+import example.setup.action.VariableAction;
 import example.setup.comparator.EqualsComparator;
 import example.setup.decorator.SuppressNotificationsDecorator;
 import example.setup.event.AlertEvent;
 import example.setup.fields.TimeField;
 import example.setup.functions.CurrentUnixFunction;
+import example.setup.functions.GetVariableFunction;
 import example.setup.functions.MaximumOfFunction;
 import example.setup.tag.CooldownTag;
 import net.programmer.igoodie.tsl.logging.TSLLogger;
@@ -14,6 +16,8 @@ import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
 import net.programmer.igoodie.tsl.registry.*;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class ExamplePlugin extends TSLPlugin {
@@ -21,6 +25,8 @@ public class ExamplePlugin extends TSLPlugin {
     public static ExamplePlugin PLUGIN_INSTANCE = new ExamplePlugin();
 
     public static Logger LOGGER = TSLLogger.createLogger(new File("logs"), PLUGIN_INSTANCE, true);
+
+    public static final Map<String, Object> VARIABLE_CACHE = new HashMap<>();
 
     public ExamplePlugin() {
         super(new TSLPluginManifest("exampleplugin", "ExamplePlugin", "0.0.1"));
@@ -56,12 +62,14 @@ public class ExamplePlugin extends TSLPlugin {
     @Override
     public void registerActions(ActionRegistry registry) {
         registry.register(PrintAction.INSTANCE);
+        registry.register(VariableAction.INSTANCE);
     }
 
     @Override
     public void registerFunctions(FunctionRegistry registry) {
         registry.register(CurrentUnixFunction.INSTANCE);
         registry.register(MaximumOfFunction.INSTANCE);
+        registry.register(GetVariableFunction.INSTANCE);
     }
 
 }

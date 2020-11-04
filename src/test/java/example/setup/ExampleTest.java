@@ -104,4 +104,48 @@ public class ExampleTest {
         System.out.println("Proceeded: " + proceeded);
     }
 
+    @Test
+    @Order(3)
+    public void shouldSetVariable() {
+        EventNode eventNode = new EventNode(
+                TSL.EVENT_REGISTRY.get("Alert Event")
+        );
+        ActionNode actionNode = new ActionNode(
+                TSL.ACTION_REGISTRY.get("VARIABLE")
+        );
+
+        eventNode.setNextNode(actionNode);
+
+        List<TSLToken> actionTokens = new LinkedList<>();
+        actionTokens.add(new TSLString(0, 0, "my_variable"));
+        actionTokens.add(new TSLString(1, 1, "12345"));
+
+        TSLRuleset ruleset = new TSLRuleset("iGoodie", new File("Some/path/to/igoodie.tsl"));
+
+        TSLRule rule = new TSLRule(eventNode, actionTokens);
+        rule.addDecorator(TSL.DECORATOR_REGISTRY.get("suppressNotifications"),
+                new TSLString(0, 0, "suppressNotifications"), new LinkedList<>());
+
+        ruleset.addRule(rule);
+
+        JsonObject eventArguments = new JsonObject();
+        eventArguments.addProperty("event", "Alert Event");
+        eventArguments.addProperty("time", 1234);
+
+        TSLContext context = new TSLContext();
+        context.setEngine(TSL.getJsEngine());
+        context.setEventArguments(eventArguments);
+        context.setActionTokens(actionTokens);
+        context.setRule(rule);
+        context.setAttributes(GsonUtils.mergeOverriding(
+                ruleset.getSquashedAttributes(),
+                rule.getSquashedAttributes()));
+
+        boolean proceeded = eventNode.proceed(context);
+        System.out.println("Proceeded: " + proceeded);
+
+        ExamplePlugin.LOGGER.info(TSL.getJsEngine()
+                .evaluate("'MyVariable: ' + (_getVariable('my_variable') + 1)", null));
+    }
+
 }
