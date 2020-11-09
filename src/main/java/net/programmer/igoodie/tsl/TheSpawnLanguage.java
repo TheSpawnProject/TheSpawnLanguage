@@ -3,10 +3,15 @@ package net.programmer.igoodie.tsl;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.function.TSLDebugLibrary;
 import net.programmer.igoodie.tsl.function.TSLUtilitiesLibrary;
+import net.programmer.igoodie.tsl.logging.TSLLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
+import net.programmer.igoodie.tsl.plugin.TSLPluginLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
 import net.programmer.igoodie.tsl.registry.*;
 
+import java.io.File;
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -52,6 +57,8 @@ public class TheSpawnLanguage {
         if (LOADED_PLUGINS.contains(pluginId))
             return; // TODO: What to do here? Consider
 
+        assignAnnotatedFields(plugin);
+
         plugin.registerTags(TAG_REGISTRY);
         plugin.registerDecorators(DECORATOR_REGISTRY);
         plugin.registerEvents(EVENT_REGISTRY);
@@ -60,6 +67,27 @@ public class TheSpawnLanguage {
         plugin.registerComparator(COMPARATOR_REGISTRY);
         plugin.registerFunctions(FUNCTION_REGISTRY);
         LOADED_PLUGINS.add(pluginId);
+    }
+
+    private void assignAnnotatedFields(TSLPlugin plugin) {
+        for (Field field : plugin.getClass().getFields()) {
+            if (field.isAnnotationPresent(TSLPluginInstance.class)) {
+                try {
+                    field.set(null, plugin);
+                } catch (IllegalAccessException e) {
+                    System.out.println("Plugin's instance field must be public.");
+                    e.printStackTrace();
+                }
+
+            } else if (field.isAnnotationPresent(TSLPluginLogger.class)) {
+                try {
+                    field.set(null, TSLLogger.createLogger(new File("logs"), plugin, true));
+                } catch (IllegalAccessException e) {
+                    System.out.println("Plugin's logger field must be public.");
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }

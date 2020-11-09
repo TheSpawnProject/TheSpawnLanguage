@@ -87,6 +87,7 @@ public class ExampleTest {
         actionTokens.add(new TSLGroup(3, 1, "Time Arg: ${_maximumOf(time, 5)}"));
 
         TSLRuleset ruleset = new TSLRuleset("iGoodie", new File("Some/path/to/igoodie.tsl"));
+        ruleset.getHookList().bind(new ExampleHooks());
 
         TSLRule rule = new TSLRule(eventNode, actionTokens);
         rule.addDecorator(TSL.DECORATOR_REGISTRY.get("suppressNotifications"),
@@ -128,6 +129,7 @@ public class ExampleTest {
         actionTokens.add(new TSLString(1, 1, "12345"));
 
         TSLRuleset ruleset = new TSLRuleset("iGoodie", new File("Some/path/to/igoodie.tsl"));
+        ruleset.getHookList().bind(new ExampleHooks());
 
         TSLRule rule = new TSLRule(eventNode, actionTokens);
         rule.addDecorator(TSL.DECORATOR_REGISTRY.get("suppressNotifications"),
@@ -153,46 +155,6 @@ public class ExampleTest {
 
         ExamplePlugin.LOGGER.info(TSL.getJsEngine()
                 .evaluate("'MyVariable: ' + (_getVariable('my_variable') + 1)", null));
-    }
-
-    @Test
-    public void loadingViaManifestTest() {
-        try {
-            Class<?> pluginClass = Class.forName("example.setup.ExamplePlugin");
-
-            Object plugin = pluginClass.newInstance();
-
-            if (plugin instanceof TSLPlugin) {
-                TSLPlugin tslPlugin = (TSLPlugin) plugin;
-
-                for (Field field : pluginClass.getFields()) {
-                    if (field.isAnnotationPresent(TSLPluginInstance.class)) {
-                        field.set(null, tslPlugin);
-
-                    } else if (field.isAnnotationPresent(TSLPluginLogger.class)) {
-                        field.set(null, TSLLogger.createLogger(new File("logs"), tslPlugin, true));
-                    }
-                }
-
-                TSL.loadPlugin(tslPlugin);
-
-            } else {
-                throw new IllegalArgumentException("example.setup.ExamplePlugin is not a TSL plugin.");
-            }
-
-            System.out.println(TSL.LOADED_PLUGINS);
-
-        } catch (ClassNotFoundException e) {
-            System.out.println("Unknown class name");
-            e.printStackTrace();
-
-        } catch (IllegalAccessException e) {
-            System.out.println("Plugin's constructor must be public.");
-            e.printStackTrace();
-
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        }
     }
 
 }

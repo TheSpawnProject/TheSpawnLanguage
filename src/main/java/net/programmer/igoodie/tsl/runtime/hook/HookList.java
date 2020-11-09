@@ -9,7 +9,7 @@ import net.programmer.igoodie.tsl.runtime.node.PredicateNode;
 import java.util.LinkedList;
 import java.util.List;
 
-public class HookList extends TSLRulesetHook {
+public final class HookList extends TSLRulesetHook {
 
     protected List<TSLRulesetHook> hookList;
 
