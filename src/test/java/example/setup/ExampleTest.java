@@ -3,10 +3,14 @@ package example.setup;
 import com.google.gson.JsonObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.logging.TSLLogger;
 import net.programmer.igoodie.tsl.parser.token.TSLExpression;
 import net.programmer.igoodie.tsl.parser.token.TSLGroup;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
+import net.programmer.igoodie.tsl.plugin.TSLPluginLogger;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.node.ActionNode;
@@ -18,6 +22,9 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -146,6 +153,46 @@ public class ExampleTest {
 
         ExamplePlugin.LOGGER.info(TSL.getJsEngine()
                 .evaluate("'MyVariable: ' + (_getVariable('my_variable') + 1)", null));
+    }
+
+    @Test
+    public void loadingViaManifestTest() {
+        try {
+            Class<?> pluginClass = Class.forName("example.setup.ExamplePlugin");
+
+            Object plugin = pluginClass.newInstance();
+
+            if (plugin instanceof TSLPlugin) {
+                TSLPlugin tslPlugin = (TSLPlugin) plugin;
+
+                for (Field field : pluginClass.getFields()) {
+                    if (field.isAnnotationPresent(TSLPluginInstance.class)) {
+                        field.set(null, tslPlugin);
+
+                    } else if (field.isAnnotationPresent(TSLPluginLogger.class)) {
+                        field.set(null, TSLLogger.createLogger(new File("logs"), tslPlugin, true));
+                    }
+                }
+
+                TSL.loadPlugin(tslPlugin);
+
+            } else {
+                throw new IllegalArgumentException("example.setup.ExamplePlugin is not a TSL plugin.");
+            }
+
+            System.out.println(TSL.LOADED_PLUGINS);
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("Unknown class name");
+            e.printStackTrace();
+
+        } catch (IllegalAccessException e) {
+            System.out.println("Plugin's constructor must be public.");
+            e.printStackTrace();
+
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -2,6 +2,8 @@ package net.programmer.igoodie.tsl.runtime.node;
 
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
+import net.programmer.igoodie.tsl.runtime.hook.HookList;
 
 public class EventNode implements RuleNode {
 
@@ -28,6 +30,11 @@ public class EventNode implements RuleNode {
 
     @Override
     public boolean proceed(TSLContext context) {
+        TSLRule rule = context.getRule();
+        HookList hooks = rule.getRuleset().getHookList();
+
+        hooks.onRuleMatched(rule, context);
+
         return nextNode.proceed(context);
     }
 

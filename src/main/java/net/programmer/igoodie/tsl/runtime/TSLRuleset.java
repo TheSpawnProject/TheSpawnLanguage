@@ -5,6 +5,7 @@ import net.programmer.igoodie.tsl.definition.TSLTag;
 import net.programmer.igoodie.tsl.parser.TSLCapture;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import net.programmer.igoodie.tsl.runtime.hook.HookList;
 
 import java.io.File;
 import java.util.HashMap;
@@ -23,6 +24,8 @@ public class TSLRuleset {
     protected List<TSLRule> rules;
     protected Map<String, TSLCapture> captures;
 
+    protected HookList hookList;
+
     public TSLRuleset(String name, File file) {
         this.name = name;
         this.file = file;
@@ -30,6 +33,7 @@ public class TSLRuleset {
         this.captures = new HashMap<>();
         this.tags = new LinkedList<>();
         this.attributeMap = new HashMap<>();
+        this.hookList = new HookList();
     }
 
     public String getName() {
@@ -38,6 +42,10 @@ public class TSLRuleset {
 
     public File getFile() {
         return file;
+    }
+
+    public HookList getHookList() {
+        return hookList;
     }
 
     public List<TSLTag> getTags() {
@@ -79,5 +87,7 @@ public class TSLRuleset {
         rule.setRuleset(this);
         this.rules.add(rule);
     }
+
+    /* ----------------------------------------- */
 
 }

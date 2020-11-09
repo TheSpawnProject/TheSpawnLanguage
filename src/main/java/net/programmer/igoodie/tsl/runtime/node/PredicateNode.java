@@ -5,6 +5,9 @@ import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLComparator;
 import net.programmer.igoodie.tsl.definition.TSLEventField;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
+import net.programmer.igoodie.tsl.runtime.hook.HookList;
 
 public class PredicateNode implements RuleNode {
 
@@ -39,13 +42,22 @@ public class PredicateNode implements RuleNode {
 
     @Override
     public boolean proceed(TSLContext context) {
+        TSLRule rule = context.getRule();
+        HookList hooks = rule.getRuleset().getHookList();
+
+        hooks.onPredicateReached(rule, this, context);
+
         JsonObject eventArguments = context.getEventArguments();
 
         Object lefthand = field.extractValue(eventArguments);
         String righthand = this.righthand.evaluate(context);
 
-        if (!comparator.compare(lefthand, righthand))
+        if (!comparator.compare(lefthand, righthand)) {
+            hooks.onPredicateFailed(rule, this, context);
             return false;
+        } else {
+            hooks.onPredicatePassed(rule, this, context);
+        }
 
         return nextNode.proceed(context);
     }

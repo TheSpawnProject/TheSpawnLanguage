@@ -10,21 +10,23 @@ import example.setup.functions.CurrentUnixFunction;
 import example.setup.functions.GetVariableFunction;
 import example.setup.functions.MaximumOfFunction;
 import example.setup.tag.CooldownTag;
-import net.programmer.igoodie.tsl.logging.TSLLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
+import net.programmer.igoodie.tsl.plugin.TSLPluginLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
 import net.programmer.igoodie.tsl.registry.*;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
 public class ExamplePlugin extends TSLPlugin {
 
-    public static ExamplePlugin PLUGIN_INSTANCE = new ExamplePlugin();
+    @TSLPluginInstance
+    public static ExamplePlugin PLUGIN_INSTANCE;
 
-    public static Logger LOGGER = TSLLogger.createLogger(new File("logs"), PLUGIN_INSTANCE, true);
+    @TSLPluginLogger
+    public static Logger LOGGER;
 
     public static final Map<String, Object> VARIABLE_CACHE = new HashMap<>();
 
