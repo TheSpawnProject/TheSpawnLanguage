@@ -5,8 +5,10 @@ import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class TSLContext {
 
@@ -66,6 +68,31 @@ public class TSLContext {
 
     public void setAttributes(JsonObject attributes) {
         this.attributes = attributes;
+    }
+
+    /* ----------------------------------- */
+
+    protected Map<String, Object> customDataMap;
+
+    public Map<String, Object> getCustomDataMap() {
+        return customDataMap == null ? new HashMap<>() : customDataMap;
+    }
+
+    public Object getCustomData(String dataName) {
+        return getCustomDataMap().get(dataName);
+    }
+
+    public <T> T getCustomData(String dataName, Class<T> type) {
+        Map<String, Object> customDataMap = getCustomDataMap();
+        Object rawData = customDataMap.get(dataName);
+
+        if (rawData == null) return null;
+
+        if (type.isInstance(rawData)) {
+            return type.cast(rawData);
+        }
+
+        return null;
     }
 
 }
