@@ -2,23 +2,28 @@ package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.parser.TSLCapture;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 
 public class TSLCaptureCall extends TSLToken {
 
-    protected TSLCapture referredCapture;
+    protected String captureName;
 
-    public TSLCaptureCall(int line, int character, TSLCapture referredCapture) {
+    public TSLCaptureCall(int line, int character, String captureName) {
         super(line, character);
-        this.referredCapture = referredCapture;
+        this.captureName = captureName;
     }
 
-    public TSLCapture getReferredCapture() {
-        return referredCapture;
+    public String getCaptureName() {
+        return captureName;
+    }
+
+    public TSLCapture getReferredCapture(TSLRuleset ruleset) {
+        return ruleset.getCaptures().get(captureName);
     }
 
     @Override
     public String getRaw() {
-        return "$" + referredCapture.getName();
+        return "$" + captureName;
     }
 
     @Override

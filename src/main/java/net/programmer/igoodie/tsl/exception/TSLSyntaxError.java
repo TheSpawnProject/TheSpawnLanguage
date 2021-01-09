@@ -11,6 +11,10 @@ public class TSLSyntaxError extends RuntimeException {
         this(reason, null, token.getLine(), token.getCharacter());
     }
 
+    public TSLSyntaxError(String reason, int line, int character) {
+        this(reason, null, line, character);
+    }
+
     public TSLSyntaxError(String reason, String filePath, int line, int character) {
         super(reason);
         this.line = line;
@@ -20,8 +24,8 @@ public class TSLSyntaxError extends RuntimeException {
 
     @Override
     public String toString() {
-        return String.format("Syntax Error: %s @ (l:%d, c:%d) %s",
-                getCause(), line, character, filePath);
+        return String.format("Syntax Error: %s at (line:%d, char:%d) %s",
+                getMessage(), line + 1, character + 1, filePath == null ? "" : filePath);
     }
 
 }

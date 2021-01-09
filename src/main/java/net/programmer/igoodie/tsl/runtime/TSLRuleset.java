@@ -26,6 +26,10 @@ public class TSLRuleset {
 
     protected HookList hookList;
 
+    public TSLRuleset() {
+        this(null, null);
+    }
+
     public TSLRuleset(String name, File file) {
         this.name = name;
         this.file = file;

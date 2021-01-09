@@ -23,4 +23,8 @@ public abstract class TSLToken {
 
     public abstract String evaluate(TSLContext context);
 
+    @Override
+    public String toString() {
+        return String.format("%s(%s)", getClass().getSimpleName(), getRaw());
+    }
 }

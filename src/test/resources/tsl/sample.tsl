@@ -1,5 +1,7 @@
 #! COOLDOWN 1000
 
+$name = diamond
+
 PRINT %Hey dude! This message is evaluated @ ${_currentUnix()}%
  ON Alert Event
  WITH time = 12345
@@ -8,8 +10,16 @@ PRINT %Hey dude! This message is evaluated @ ${_currentUnix()}%
 PRINT ${_maximumOf(10,20) + Math.random()}
  ON Alert Event
 
+# Eyyy, a comment here!
+
+#*
+ Eyyyy, yet another comment here!
+*#
+
+@notificationVolume(2f)
+@notificationPitch(2f)
 EITHER
- DROP diamond
+ DROP $name
  OR
  (EITHER DROP apple OR DROP string)
  OR
