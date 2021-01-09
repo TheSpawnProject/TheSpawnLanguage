@@ -19,6 +19,8 @@ public class TagRegistry implements ITSLRegistry<TSLTag> {
     public void register(TSLTag tag) {
         if (has(tag))
             throw new IllegalArgumentException("Cannot register tag, it is already registered -> " + tag);
+
+        registry.put(tag.getName(), tag);
     }
 
     @Override

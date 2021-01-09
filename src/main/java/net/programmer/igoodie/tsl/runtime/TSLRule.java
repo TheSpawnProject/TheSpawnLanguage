@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.runtime;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.programmer.igoodie.tsl.definition.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.TSLTag;
@@ -7,6 +8,7 @@ import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.runtime.node.EventNode;
+import net.programmer.igoodie.tsl.util.GsonUtils;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -62,6 +64,27 @@ public class TSLRule {
         }
 
         return squashed;
+    }
+
+    public JsonObject getCalculatedAttributes() {
+        return GsonUtils.mergeOverriding(ruleset.getSquashedAttributes(), this.getSquashedAttributes());
+    }
+
+    public JsonElement getAttribute(TSLPlugin ofPlugin, String attrName) {
+        return getAttribute(ofPlugin.getManifest().getPluginId(), attrName);
+    }
+
+    public JsonElement getAttribute(String ofPlugin, String attrName) {
+        for (Map.Entry<TSLDecorator, JsonObject> entry : attributeMap.entrySet()) {
+            TSLPlugin plugin = entry.getKey().getPlugin();
+            JsonObject attrs = entry.getValue();
+            if (plugin.getManifest().getPluginId().equals(ofPlugin)) {
+                if (attrs.has(attrName)) {
+                    return attrs.get(attrName);
+                }
+            }
+        }
+        return null;
     }
 
     public void addDecorator(TSLDecorator decorator, TSLString decoratorName, List<TSLString> args) {

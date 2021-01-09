@@ -7,6 +7,7 @@ import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 
 import java.util.List;
 
+// #! A_TAG WITH_PARAM1 WITH_PARAM2
 public abstract class TSLTag extends TSLDefinition {
 
     public TSLTag(TSLPlugin plugin, String name) {

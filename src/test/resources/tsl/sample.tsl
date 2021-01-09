@@ -7,3 +7,11 @@ PRINT %Hey dude! This message is evaluated @ ${_currentUnix()}%
 @suppressNotifications
 PRINT ${_maximumOf(10,20) + Math.random()}
  ON Alert Event
+
+EITHER
+ DROP diamond
+ OR
+ (EITHER DROP apple OR DROP string)
+ OR
+ DROP stick
+ ON Alert Event
