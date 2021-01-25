@@ -1,40 +1,29 @@
 package automated;
 
+import com.google.common.io.Resources;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLSnippet;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class LexerTests {
 
     @Test
-    public void foo() {
-        TSLLexer lexer = new TSLLexer("#! COOLDOWN 1000\n" +
-                "\n" +
-                "$name = diamond\n" +
-                "\n" +
-                "PRINT %Hey dude! This message is evaluated @ ${_currentUnix()}%\n" +
-                " ON Alert Event\n" +
-                " WITH time = 12345\n" +
-                "\n" +
-                "@suppressNotifications\n" +
-                "PRINT ${_maximumOf(10,20) + Math.random()}\n" +
-                " ON Alert Event\n" +
-                "\n" +
-                "# Eyyy, a comment here!\n" +
-                "\n" +
-                "#*\n" +
-                " Eyyyy, yet another comment here!\n" +
-                "*#\n" +
-                "\n" +
-                "@notificationVolume(2f,3f)\n" +
-                "EITHER\n" +
-                " DROP $name\n" +
-                " OR\n" +
-                " (EITHER DROP apple OR DROP string)\n" +
-                " OR\n" +
-                " DROP stick\n" +
-                " ON Alert Event");
+    public void foo() throws IOException {
+        List<String> lines = Resources.readLines(Resources.getResource("tsl/sample.tsl"), StandardCharsets.UTF_8);
+        String script = String.join("\n", lines);
 
+        System.out.println(script);
+        System.out.println("/--------------------------------/");
+
+        TSLLexer lexer = new TSLLexer(script);
         lexer.lex();
 
         for (TSLSnippet snippet : lexer.getSnippets()) {

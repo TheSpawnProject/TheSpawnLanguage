@@ -4,6 +4,7 @@ import net.programmer.igoodie.tsl.parser.token.TSLToken;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TSLSnippet {
 

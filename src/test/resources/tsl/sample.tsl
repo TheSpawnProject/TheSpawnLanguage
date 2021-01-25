@@ -2,6 +2,11 @@
 
 $name = diamond
 
+$someAction = PRINT %Hello World!%
+
+$someAction
+ ON Alert Event
+
 PRINT %Hey dude! This message is evaluated @ ${_currentUnix()}%
  ON Alert Event
  WITH time = 12345
@@ -23,5 +28,5 @@ EITHER
  OR
  (EITHER DROP apple OR DROP string)
  OR
- DROP stick
+ (EITHER DROP apple OR (EITHER DROP string OR diamond))
  ON Alert Event

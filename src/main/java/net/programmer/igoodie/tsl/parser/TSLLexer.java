@@ -20,6 +20,9 @@ public class TSLLexer {
     private StringBuilder characterBuffer;
     private TSLSnippet snippetCursor;
 
+    private int lineOffset;
+    private int charOffset;
+
     public TSLLexer(String tsl) {
         this(Arrays.asList(tsl.split("\\r?\\n")));
     }
@@ -35,16 +38,30 @@ public class TSLLexer {
         this.tokenBeginChar = -1;
     }
 
+    public TSLLexer withOffset(int lineOffset, int charOffset) {
+        this.lineOffset = lineOffset;
+        this.charOffset = charOffset;
+        return this;
+    }
+
     public List<TSLSnippet> getSnippets() {
         return snippets;
+    }
+
+    protected boolean disallowsNesting(char character) {
+        return !Character.isWhitespace(character)
+                && !Character.isSpaceChar(character)
+                && character != 0
+                && character != '('
+                && character != ')';
     }
 
     public void lex() {
         boolean inGroup = false;
         boolean inExpression = false;
         boolean inComment = false;
-        boolean inNest = false; // TODO: <-- Implement Nesting! (?)
         boolean escaping = false;
+        int nestLevel = 0;
 
         lineLoop:
         for (int lineNo = 0; lineNo < lines.size(); lineNo++) {
@@ -91,6 +108,34 @@ public class TSLLexer {
                 }
 
                 if (inComment) continue;
+
+                if (character == '(') {
+                    if (!inGroup && !inExpression && !escaping && !disallowsNesting(previousCharacter)) {
+                        pushCharacter('(', lineNo, charNo);
+                        nestLevel++;
+                        continue;
+                    }
+                }
+
+                if (character == ')') {
+                    if (!inGroup && !inExpression && !escaping && !disallowsNesting(nextCharacter)) {
+                        if (nestLevel != 0) {
+                            pushCharacter(')', lineNo, charNo);
+                            nestLevel--;
+                            if (nestLevel == 0) {
+                                pushToken();
+                            } else if (nestLevel < 0) {
+                                throw new TSLSyntaxError("Unexpected character.", lineNo, charNo);
+                            }
+                            continue;
+                        }
+                    }
+                }
+
+                if (nestLevel != 0 /* inNest */) {
+                    pushCharacter(character, lineNo, charNo);
+                    continue;
+                }
 
                 if (character == '\\') {
                     if (escaping) {
@@ -164,6 +209,8 @@ public class TSLLexer {
                 pushCharacter(character, lineNo, charNo);
             }
         }
+
+        pushSnippet();
     }
 
     private void pushCharacter(char character, int line, int characterNo) {
@@ -183,7 +230,10 @@ public class TSLLexer {
     private void pushToken() {
         if (this.characterBuffer.length() != 0) {
             String text = this.characterBuffer.toString();
-            TSLToken token = tokenizer.tokenize(text, tokenBeginLine, tokenBeginChar);
+
+            TSLToken token = tokenizer.tokenize(text,
+                    1 + tokenBeginLine + lineOffset,
+                    1 + tokenBeginChar + charOffset);
 
             if (snippetCursor.getTokens().size() == 0) { // Inserting the very first token
                 if (token instanceof TSLSymbol && ((TSLSymbol) token).getType() == TSLSymbol.Type.RULESET_TAG_BEGIN) {

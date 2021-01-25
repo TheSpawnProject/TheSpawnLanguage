@@ -21,7 +21,7 @@ public class TSLTokenizer {
         }
 
         if (text.matches("\\$\\w+")) {
-            return new TSLCaptureCall(line, character, text);
+            return new TSLCaptureCall(line, character, text.substring(1));
         }
 
         Matcher decoratorMatcher = RULE_DECORATOR_PATTERN.matcher(text);
@@ -39,6 +39,12 @@ public class TSLTokenizer {
             if (symbolType.getSymbol().equals(text)) {
                 return new TSLSymbol(line, character, symbolType);
             }
+        }
+
+        if (text.startsWith("(") && text.endsWith(")")) {
+            TSLLexer subLexer = new TSLLexer(text.substring(1, text.length() - 1)).withOffset(line - 1, character);
+            subLexer.lex();
+            return new TSLNest(line, character, subLexer.getSnippets().get(0).getTokens());
         }
 
         throw new TSLSyntaxError("Unknown token format (" + text + ")", line, character);
