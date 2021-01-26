@@ -25,7 +25,7 @@ public class CooldownTag extends TSLTag {
 
         TSLString cooldownDuration = args.get(0);
 
-        json.addProperty("duration", parseDouble(cooldownDuration));
+        json.addProperty("cooldown_duration", parseDouble(cooldownDuration));
 
         return json;
     }

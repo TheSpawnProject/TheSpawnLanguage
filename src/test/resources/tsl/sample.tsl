@@ -1,10 +1,12 @@
 #! COOLDOWN 1000
+#! COOLDOWN 3000
+#! COOLDOWN 2000 # <-- Dis will override the ones above
 
-$name = diamond
+$name = diamond # Inline comment!
 
-$someAction = PRINT %Hello World!%
+$someAction = PRINT %Hello World!% # Inline comment!
 
-$someAction
+$someAction # Inline comment!
  ON Alert Event
 
 PRINT %Hey dude! This message is evaluated @ ${_currentUnix()}%
@@ -30,3 +32,7 @@ EITHER
  OR
  (EITHER DROP apple OR (EITHER DROP string OR diamond))
  ON Alert Event
+
+PRINT
+%Time to ditch indentations, ${"aye"}!%
+ON Alert Event

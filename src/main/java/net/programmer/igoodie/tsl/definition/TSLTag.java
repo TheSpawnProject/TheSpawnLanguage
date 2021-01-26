@@ -23,7 +23,7 @@ public abstract class TSLTag extends TSLDefinition {
             return true;
         else if (argLowercase.equals("false"))
             return false;
-        else throw new TSLSyntaxError("Expected either 'true' or 'false'.", arg);
+        else throw new TSLSyntaxError("Expected either 'true' or 'false'", arg);
     }
 
     protected double parseDouble(TSLString arg) {
@@ -31,7 +31,7 @@ public abstract class TSLTag extends TSLDefinition {
             return Double.parseDouble(arg.getWord());
 
         } catch (NumberFormatException e) {
-            throw new TSLSyntaxError("Expected number.", arg);
+            throw new TSLSyntaxError("Expected number", arg);
         }
     }
 

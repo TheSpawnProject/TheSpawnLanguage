@@ -25,6 +25,11 @@ public class TSLSymbol extends TSLToken {
         return type;
     }
 
+    public static boolean equals(TSLToken token, TSLSymbol.Type symbol) {
+        return token instanceof TSLSymbol
+                && ((TSLSymbol) token).getType() == symbol;
+    }
+
     public enum Type {
         RULESET_TAG_BEGIN("#!"),
         CAPTURE_DECLARATION("="),

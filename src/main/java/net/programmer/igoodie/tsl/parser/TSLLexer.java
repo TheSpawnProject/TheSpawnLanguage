@@ -68,6 +68,14 @@ public class TSLLexer {
             String line = lines.get(lineNo);
             char[] chars = line.toCharArray();
 
+            List<TSLToken> tokens = snippetCursor.getTokens();
+
+            if (tokens.size() != 0) {
+                if (TSLSymbol.equals(tokens.get(0), TSLSymbol.Type.RULESET_TAG_BEGIN)) {
+                    pushSnippet();
+                }
+            }
+
             if (line.trim().isEmpty()) {
                 pushSnippet();
                 continue;
@@ -236,7 +244,7 @@ public class TSLLexer {
                     1 + tokenBeginChar + charOffset);
 
             if (snippetCursor.getTokens().size() == 0) { // Inserting the very first token
-                if (token instanceof TSLSymbol && ((TSLSymbol) token).getType() == TSLSymbol.Type.RULESET_TAG_BEGIN) {
+                if (TSLSymbol.equals(token, TSLSymbol.Type.RULESET_TAG_BEGIN)) {
                     snippetCursor.setType(TSLSnippet.Type.TAG);
                 }
             }
@@ -244,7 +252,7 @@ public class TSLLexer {
             if (snippetCursor.getTokens().size() == 1) { // Inserting the second token
                 TSLToken firstToken = snippetCursor.getTokens().get(0);
                 if (firstToken instanceof TSLCaptureCall) {
-                    if (token instanceof TSLSymbol && ((TSLSymbol) token).getType() == TSLSymbol.Type.CAPTURE_DECLARATION) {
+                    if (TSLSymbol.equals(token, TSLSymbol.Type.CAPTURE_DECLARATION)) {
                         snippetCursor.setType(TSLSnippet.Type.CAPTURE);
                     }
                 }
@@ -263,10 +271,15 @@ public class TSLLexer {
         if (characterBuffer.length() != 0) {
             pushToken();
         }
+
         if (snippetCursor.getType() == null) {
             snippetCursor.setType(TSLSnippet.Type.RULE);
         }
-        snippets.add(snippetCursor);
+
+        if (snippetCursor.getTokens().size() != 0) {
+            snippets.add(snippetCursor);
+        }
+
         snippetCursor = new TSLSnippet();
     }
 
