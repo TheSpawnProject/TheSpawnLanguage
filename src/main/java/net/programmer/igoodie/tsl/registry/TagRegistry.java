@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.registry;
 
-import net.programmer.igoodie.tsl.definition.TSLTag;
+import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.util.StringUtils;
 
 import java.util.HashMap;

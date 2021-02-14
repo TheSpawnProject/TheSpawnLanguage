@@ -42,7 +42,7 @@ public class ParserTests {
         System.out.println("/--------------------------------/");
 
         System.out.println(ruleset.getTags());
-        System.out.println(ruleset.getSquashedAttributes());
+        System.out.println(ruleset.getAttributes());
     }
 
 }

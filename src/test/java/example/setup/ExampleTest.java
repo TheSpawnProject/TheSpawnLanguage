@@ -105,8 +105,8 @@ public class ExampleTest {
         context.setActionTokens(actionTokens);
         context.setRule(rule);
         context.setAttributes(GsonUtils.mergeOverriding(
-                ruleset.getSquashedAttributes(),
-                rule.getSquashedAttributes()));
+                ruleset.getAttributes(),
+                rule.getAttributes()));
 
         boolean proceeded = eventNode.proceed(context);
         System.out.println("Proceeded: " + proceeded);
@@ -147,8 +147,8 @@ public class ExampleTest {
         context.setActionTokens(actionTokens);
         context.setRule(rule);
         context.setAttributes(GsonUtils.mergeOverriding(
-                ruleset.getSquashedAttributes(),
-                rule.getSquashedAttributes()));
+                ruleset.getAttributes(),
+                rule.getAttributes()));
 
         boolean proceeded = eventNode.proceed(context);
         System.out.println("Proceeded: " + proceeded);

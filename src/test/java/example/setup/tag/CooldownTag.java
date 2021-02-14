@@ -2,7 +2,7 @@ package example.setup.tag;
 
 import com.google.gson.JsonObject;
 import example.setup.ExamplePlugin;
-import net.programmer.igoodie.tsl.definition.TSLTag;
+import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 
@@ -17,11 +17,11 @@ public class CooldownTag extends TSLTag {
     }
 
     @Override
-    public JsonObject evaluateAttributes(TSLString tagName, List<TSLString> args) {
+    public JsonObject evaluateAttributes(TSLString tagToken, List<TSLString> args) {
         JsonObject json = new JsonObject();
 
         if (args.size() < 1)
-            throw new TSLSyntaxError("Expected cooldown duration.", tagName);
+            throw new TSLSyntaxError("Expected cooldown duration.", tagToken);
 
         TSLString cooldownDuration = args.get(0);
 
