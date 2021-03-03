@@ -4,17 +4,32 @@ import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.parser.TSLCapture;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class TSLCaptureCall extends TSLToken {
 
     protected String captureName;
+    protected List<String> args;
 
     public TSLCaptureCall(int line, int character, String captureName) {
         super(line, character);
         this.captureName = captureName;
+        this.args = new LinkedList<>();
+    }
+
+    public TSLCaptureCall(int line, int character, String captureName, List<String> args) {
+        super(line, character);
+        this.captureName = captureName;
+        this.args = args;
     }
 
     public String getCaptureName() {
         return captureName;
+    }
+
+    public List<String> getArgs() {
+        return args;
     }
 
     public TSLCapture getReferredCapture(TSLRuleset ruleset) {
@@ -23,7 +38,11 @@ public class TSLCaptureCall extends TSLToken {
 
     @Override
     public String getRaw() {
-        return "$" + captureName;
+        if (args.size() == 0) {
+            return "$" + captureName;
+        } else {
+            return "$" + captureName + "{" + String.join(",", args) + "}";
+        }
     }
 
     @Override

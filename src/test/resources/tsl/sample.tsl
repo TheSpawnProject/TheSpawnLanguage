@@ -1,10 +1,22 @@
+#! IMPORT myLibrary path/to/my/file.js
 #! COOLDOWN 1000
 #! COOLDOWN 3000
 #! COOLDOWN 2000 # <-- Dis will override the ones above
 
-$name = diamond # Inline comment!
+$name
+= diamond # Inline comment!
 
-$someAction = PRINT %Hello World!% # Inline comment!
+$someAction
+= PRINT %Hello World!% # Inline comment!
+
+$parameterizedCapture1{x,y,z}
+= PRINT ${param("x") + param("y") + param("z") + hex("#FFFFFF")}
+
+$parameterizedCapture2{x}
+= PRINT {x}
+
+$embeddedAction
+= PRINT $parameterizedAction{$name,"is","it"} # Inline comment!
 
 $someAction # Inline comment!
  ON Alert Event
@@ -34,5 +46,5 @@ EITHER
  ON Alert Event
 
 PRINT
-%Time to ditch indentations, ${"aye"}!%
+%${_mult(10,20)} Time to ditch indentations, ${"aye"}!%
 ON Alert Event

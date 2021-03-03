@@ -48,12 +48,12 @@ public class TSLLexer {
         return snippets;
     }
 
-    protected boolean disallowsNesting(char character) {
-        return !Character.isWhitespace(character)
-                && !Character.isSpaceChar(character)
-                && character != 0
-                && character != '('
-                && character != ')';
+    protected boolean allowsNesting(char character) {
+        return Character.isWhitespace(character)
+                || Character.isSpaceChar(character)
+                || character == 0
+                || character == '('
+                || character == ')';
     }
 
     public void lex() {
@@ -118,7 +118,7 @@ public class TSLLexer {
                 if (inComment) continue;
 
                 if (character == '(') {
-                    if (!inGroup && !inExpression && !escaping && !disallowsNesting(previousCharacter)) {
+                    if (!inGroup && !inExpression && !escaping && allowsNesting(previousCharacter)) {
                         pushCharacter('(', lineNo, charNo);
                         nestLevel++;
                         continue;
@@ -126,7 +126,7 @@ public class TSLLexer {
                 }
 
                 if (character == ')') {
-                    if (!inGroup && !inExpression && !escaping && !disallowsNesting(nextCharacter)) {
+                    if (!inGroup && !inExpression && !escaping && allowsNesting(nextCharacter)) {
                         if (nestLevel != 0) {
                             pushCharacter(')', lineNo, charNo);
                             nestLevel--;

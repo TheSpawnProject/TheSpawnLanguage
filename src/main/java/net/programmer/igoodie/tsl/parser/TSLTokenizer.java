@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.*;
+import net.programmer.igoodie.tsl.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -10,6 +11,7 @@ import java.util.regex.Pattern;
 public class TSLTokenizer {
 
     public static final Pattern RULE_DECORATOR_PATTERN = Pattern.compile("@(?<name>\\w+)(?<args>\\(\\w+(,\\w+)*\\))?");
+    public static final Pattern CAPTURE_CALL_PATTERN = Pattern.compile("(?<name>\\$\\w+)(?<args>\\{([^\\[,]+,?)*})?");
 
     public TSLToken tokenize(String text, int line, int character) {
         if (text.startsWith("%") && text.endsWith("%")) {
@@ -20,8 +22,12 @@ public class TSLTokenizer {
             return new TSLExpression(line, character, text.substring(2, text.length() - 1));
         }
 
-        if (text.matches("\\$\\w+")) {
-            return new TSLCaptureCall(line, character, text.substring(1));
+        Matcher captureMatcher = CAPTURE_CALL_PATTERN.matcher(text);
+        if (captureMatcher.matches()) {
+            String name = captureMatcher.group("name");
+            String[] args = captureMatcher.group("args") == null
+                    ? new String[0] : StringUtils.shrink(captureMatcher.group("args"), 1, 1).split(",");
+            return new TSLCaptureCall(line, character, name.substring(1), Arrays.asList(args));
         }
 
         Matcher decoratorMatcher = RULE_DECORATOR_PATTERN.matcher(text);
@@ -29,6 +35,10 @@ public class TSLTokenizer {
             String name = decoratorMatcher.group("name");
             String[] args = decoratorMatcher.group("args") == null ? new String[0] : decoratorMatcher.group("args").split(",");
             return new TSLDecoratorCall(line, character, name, Arrays.asList(args));
+        }
+
+        if (text.startsWith("{") && text.endsWith("}")) {
+            return new TSLCaptureParameter(line, character, text.substring(1, text.length() - 1));
         }
 
         if (text.matches("\\w+")) {

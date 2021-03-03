@@ -4,6 +4,10 @@ import java.util.Locale;
 
 public class StringUtils {
 
+    public static String shrink(String text, int left, int right) {
+        return text.substring(left, text.length() - right);
+    }
+
     public static String[] splitWords(String sentence) {
         return sentence.split("\\s+");
     }
