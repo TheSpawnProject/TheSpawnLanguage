@@ -33,7 +33,7 @@ public class TSLActionSnippet extends TSLSnippet {
                 System.out.println("Args: " + captureCall.getArgs());
                 System.out.println("Tokenized: " + tokenizedArguments);
 
-                TSLCaptureSnippet referredCapture = captureCall.getReferredCapture(ruleset);
+                TSLCaptureSnippet referredCapture = ruleset.getCaptureSnippet(captureCall);
                 List<TSLToken> replaced = referredCapture.replaceParameters(tokenizedArguments);
                 System.out.println("Replaced: " + replaced);
 

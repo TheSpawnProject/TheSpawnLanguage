@@ -62,6 +62,10 @@ public class TSLTokenizer {
         throw new TSLSyntaxError("Unknown token format (" + text + ")", line, character);
     }
 
+    public TSLToken tokenize(String text) {
+        return tokenize(text, 0, 0);
+    }
+
     public static List<TSLToken> tokenizeAll(TSLCaptureCall captureCall) {
         return tokenizeAll(captureCall.getArgs(), captureCall.getLine(), captureCall.getCharacter());
     }

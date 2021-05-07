@@ -1,8 +1,6 @@
 package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.context.TSLContext;
-import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,10 +28,6 @@ public class TSLCaptureCall extends TSLToken {
 
     public List<String> getArgs() {
         return args;
-    }
-
-    public TSLCaptureSnippet getReferredCapture(TSLRuleset ruleset) {
-        return ruleset.getCaptures().get(captureName);
     }
 
     @Override

@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.runtime;
 import com.google.gson.JsonObject;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
+import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.runtime.attribute.Attributable;
 import net.programmer.igoodie.tsl.runtime.attribute.TSLAttributeList;
@@ -63,6 +64,10 @@ public class TSLRuleset implements Attributable {
 
     public Map<String, TSLCaptureSnippet> getCaptures() {
         return captures;
+    }
+
+    public TSLCaptureSnippet getCaptureSnippet(TSLCaptureCall captureCall) {
+        return captures.get(captureCall.getCaptureName());
     }
 
     public List<TSLRule> getRules() {
