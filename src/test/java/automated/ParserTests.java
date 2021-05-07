@@ -3,20 +3,18 @@ package automated;
 import com.google.common.io.Resources;
 import example.setup.ExamplePlugin;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.parser.TSLSnippet;
+import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
+import net.programmer.igoodie.tsl.parser.token.TSLExpression;
+import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
+import net.programmer.igoodie.tsl.util.CollectionUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ParserTests {
 
@@ -41,8 +39,10 @@ public class ParserTests {
 
         System.out.println("/--------------------------------/");
 
-        System.out.println(ruleset.getTags());
-        System.out.println(ruleset.getAttributes());
+        System.out.println("Tags: " + ruleset.getTags());
+        System.out.println("Attrs: " + ruleset.getAttributes());
+
+        System.out.println(ruleset.getRules());
     }
 
 }

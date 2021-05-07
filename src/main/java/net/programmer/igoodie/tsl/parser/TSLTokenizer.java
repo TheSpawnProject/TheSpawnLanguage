@@ -5,8 +5,10 @@ import net.programmer.igoodie.tsl.parser.token.*;
 import net.programmer.igoodie.tsl.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class TSLTokenizer {
 
@@ -58,6 +60,17 @@ public class TSLTokenizer {
         }
 
         throw new TSLSyntaxError("Unknown token format (" + text + ")", line, character);
+    }
+
+    public static List<TSLToken> tokenizeAll(TSLCaptureCall captureCall) {
+        return tokenizeAll(captureCall.getArgs(), captureCall.getLine(), captureCall.getCharacter());
+    }
+
+    public static List<TSLToken> tokenizeAll(List<String> texts, int line, int character) {
+        TSLTokenizer tokenizer = new TSLTokenizer();
+        return texts.stream()
+                .map(text -> tokenizer.tokenize(text, line, character))
+                .collect(Collectors.toList());
     }
 
 }

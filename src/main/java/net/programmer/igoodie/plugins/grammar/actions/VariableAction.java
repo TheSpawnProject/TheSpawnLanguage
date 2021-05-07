@@ -1,6 +1,6 @@
-package example.setup.action;
+package net.programmer.igoodie.plugins.grammar.actions;
 
-import example.setup.ExamplePlugin;
+import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
@@ -14,7 +14,7 @@ public class VariableAction extends TSLAction {
     public static final VariableAction INSTANCE = new VariableAction();
 
     private VariableAction() {
-        super(ExamplePlugin.PLUGIN_INSTANCE, "VARIABLE");
+        super(TSLGrammarCore.PLUGIN_INSTANCE, "VARIABLE");
     }
 
     @Override
@@ -35,13 +35,20 @@ public class VariableAction extends TSLAction {
         String valueRaw = tokens.get(1).evaluate(context);
 
         try {
-            double value = Double.parseDouble(valueRaw);
-            ExamplePlugin.VARIABLE_CACHE.put(variableName, value);
+            double variableValue = Double.parseDouble(valueRaw);
+            saveVariable(variableName, variableValue);
             return;
-        } catch (NumberFormatException ignored) { }
+        } catch (NumberFormatException ignored) {}
 
+        saveVariable(variableName, valueRaw);
+    }
 
-        ExamplePlugin.VARIABLE_CACHE.put(variableName, valueRaw);
+    public Object fetchVariable(String key) {
+        return TSLGrammarCore.VARIABLE_CACHE.get(key);
+    }
+
+    public void saveVariable(String key, Object value) {
+        TSLGrammarCore.VARIABLE_CACHE.put(key, value);
     }
 
 }

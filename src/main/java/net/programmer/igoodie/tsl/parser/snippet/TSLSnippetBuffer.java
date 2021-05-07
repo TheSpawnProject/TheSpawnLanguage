@@ -1,17 +1,16 @@
-package net.programmer.igoodie.tsl.parser;
+package net.programmer.igoodie.tsl.parser.snippet;
 
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class TSLSnippet {
+public class TSLSnippetBuffer {
 
     private Type type;
     private List<TSLToken> tokens;
 
-    public TSLSnippet() {
+    public TSLSnippetBuffer() {
         this.tokens = new LinkedList<>();
     }
 

@@ -49,6 +49,10 @@ public class TSLRule implements Attributable {
         return attributeList;
     }
 
+    public List<TSLToken> getActionTokens() {
+        return actionTokens;
+    }
+
     @Override
     public JsonObject getAttributes() {
         return attributeList.getSquashedAttributes();

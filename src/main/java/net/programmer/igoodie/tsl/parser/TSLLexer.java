@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.tsl.parser.token.TSLSymbol;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
@@ -12,13 +13,13 @@ import java.util.List;
 public class TSLLexer {
 
     private List<String> lines;
-    private List<TSLSnippet> snippets;
+    private List<TSLSnippetBuffer> snippets;
 
     private boolean canReadTags;
     private TSLTokenizer tokenizer;
     private int tokenBeginLine, tokenBeginChar;
     private StringBuilder characterBuffer;
-    private TSLSnippet snippetCursor;
+    private TSLSnippetBuffer snippetCursor;
 
     private int lineOffset;
     private int charOffset;
@@ -33,7 +34,7 @@ public class TSLLexer {
         this.snippets = new LinkedList<>();
         this.tokenizer = new TSLTokenizer();
         this.characterBuffer = new StringBuilder();
-        this.snippetCursor = new TSLSnippet();
+        this.snippetCursor = new TSLSnippetBuffer();
         this.tokenBeginLine = -1;
         this.tokenBeginChar = -1;
     }
@@ -44,7 +45,7 @@ public class TSLLexer {
         return this;
     }
 
-    public List<TSLSnippet> getSnippets() {
+    public List<TSLSnippetBuffer> getSnippets() {
         return snippets;
     }
 
@@ -245,7 +246,7 @@ public class TSLLexer {
 
             if (snippetCursor.getTokens().size() == 0) { // Inserting the very first token
                 if (TSLSymbol.equals(token, TSLSymbol.Type.RULESET_TAG_BEGIN)) {
-                    snippetCursor.setType(TSLSnippet.Type.TAG);
+                    snippetCursor.setType(TSLSnippetBuffer.Type.TAG);
                 }
             }
 
@@ -253,7 +254,7 @@ public class TSLLexer {
                 TSLToken firstToken = snippetCursor.getTokens().get(0);
                 if (firstToken instanceof TSLCaptureCall) {
                     if (TSLSymbol.equals(token, TSLSymbol.Type.CAPTURE_DECLARATION)) {
-                        snippetCursor.setType(TSLSnippet.Type.CAPTURE);
+                        snippetCursor.setType(TSLSnippetBuffer.Type.CAPTURE);
                     }
                 }
             }
@@ -273,14 +274,14 @@ public class TSLLexer {
         }
 
         if (snippetCursor.getType() == null) {
-            snippetCursor.setType(TSLSnippet.Type.RULE);
+            snippetCursor.setType(TSLSnippetBuffer.Type.RULE);
         }
 
         if (snippetCursor.getTokens().size() != 0) {
             snippets.add(snippetCursor);
         }
 
-        snippetCursor = new TSLSnippet();
+        snippetCursor = new TSLSnippetBuffer();
     }
 
 }

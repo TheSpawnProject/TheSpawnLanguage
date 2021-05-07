@@ -1,7 +1,9 @@
-#! IMPORT myLibrary path/to/my/file.js
+# IMPORT myLibrary %path/to/my/file.js% # Future Idea
 #! COOLDOWN 1000
 #! COOLDOWN 3000
 #! COOLDOWN 2000 # <-- Dis will override the ones above
+
+#### Captures ####
 
 $name
 = diamond # Inline comment!
@@ -15,11 +17,16 @@ $parameterizedCapture1{x,y,z}
 $parameterizedCapture2{x}
 = PRINT {x}
 
+$parameterizedCapture3{x,y,z}
+= PRINT {x} {y} {z}
+
 $embeddedAction
 = PRINT $parameterizedAction{$name,"is","it"} # Inline comment!
 
 $someAction # Inline comment!
  ON Alert Event
+
+#### Rules ####
 
 PRINT %Hey dude! This message is evaluated @ ${_currentUnix()}%
  ON Alert Event

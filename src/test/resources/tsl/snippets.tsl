@@ -1,0 +1,11 @@
+#! TAG ARG_1 ARG_2
+#! TAG_2
+#!
+
+ACTION ARG_1
+ WITH field = %value%
+ ON Event Name
+
+$capture = Some capture tokens
+
+$capture but it is a call
