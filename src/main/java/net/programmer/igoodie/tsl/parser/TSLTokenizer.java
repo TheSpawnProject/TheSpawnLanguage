@@ -1,6 +1,5 @@
 package net.programmer.igoodie.tsl.parser;
 
-import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.*;
 import net.programmer.igoodie.tsl.util.StringUtils;
 
@@ -57,7 +56,7 @@ public class TSLTokenizer {
             String nestFragment = StringUtils.shrink(text, 1, 1);
             TSLLexer subLexer = new TSLLexer(nestFragment).withOffset(line - 1, character);
             subLexer.lex();
-            return new TSLNest(line, character, subLexer.getSnippets().get(0).getTokens());
+            return new TSLNest(line, character, subLexer.getSnippetsBuffers().get(0).getTokens());
         }
 
         return new TSLString(line, character, text);

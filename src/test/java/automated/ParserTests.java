@@ -3,6 +3,7 @@ package automated;
 import example.setup.ExamplePlugin;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,10 +30,16 @@ public class ParserTests {
 
         System.out.println("/--------------------------------/");
 
+        System.out.println("Snippets:");
+        for (TSLSnippet snippet : ruleset.getSnippets()) {
+            System.out.println(snippet);
+        }
+
+        System.out.println("/--------------------------------/");
+
         System.out.println("Tags: " + ruleset.getTags());
         System.out.println("Attrs: " + ruleset.getAttributes());
-
-        System.out.println(ruleset.getRules());
+        System.out.println("Rules: " + ruleset.getRules());
     }
 
 }

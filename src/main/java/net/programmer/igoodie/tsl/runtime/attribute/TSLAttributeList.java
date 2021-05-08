@@ -6,6 +6,7 @@ import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,10 +22,10 @@ public class TSLAttributeList {
     }
 
     public List<TSLTag> getTags() {
-        return generators.stream()
+        return Collections.unmodifiableList(generators.stream()
                 .filter(generator -> generator instanceof TSLTag)
                 .map(generator -> ((TSLTag) generator))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     /* ---------------------------------- */

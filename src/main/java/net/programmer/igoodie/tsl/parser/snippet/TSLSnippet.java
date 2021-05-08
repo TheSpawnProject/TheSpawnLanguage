@@ -27,4 +27,10 @@ public abstract class TSLSnippet {
         return allTokens;
     }
 
+    @Override
+    public String toString() {
+        return String.format("{type=%s, tokens=%s}",
+                getClass().getSimpleName(),
+                getAllTokens());
+    }
 }

@@ -18,13 +18,13 @@ public class LexerTests {
         TSLLexer lexer = new TSLLexer(script);
         lexer.lex();
 
-        List<TSLSnippetBuffer> snippets = lexer.getSnippets();
-        Assertions.assertEquals(snippets.get(0).getType(), TSLSnippetBuffer.Type.TAG);
-        Assertions.assertEquals(snippets.get(1).getType(), TSLSnippetBuffer.Type.TAG);
-        Assertions.assertEquals(snippets.get(2).getType(), TSLSnippetBuffer.Type.TAG);
-        Assertions.assertEquals(snippets.get(3).getType(), TSLSnippetBuffer.Type.RULE);
-        Assertions.assertEquals(snippets.get(4).getType(), TSLSnippetBuffer.Type.CAPTURE);
-        Assertions.assertEquals(snippets.get(5).getType(), TSLSnippetBuffer.Type.RULE);
+        List<TSLSnippetBuffer> buffers = lexer.getSnippetsBuffers();
+        Assertions.assertEquals(buffers.get(0).getType(), TSLSnippetBuffer.Type.TAG);
+        Assertions.assertEquals(buffers.get(1).getType(), TSLSnippetBuffer.Type.TAG);
+        Assertions.assertEquals(buffers.get(2).getType(), TSLSnippetBuffer.Type.TAG);
+        Assertions.assertEquals(buffers.get(3).getType(), TSLSnippetBuffer.Type.RULE);
+        Assertions.assertEquals(buffers.get(4).getType(), TSLSnippetBuffer.Type.CAPTURE);
+        Assertions.assertEquals(buffers.get(5).getType(), TSLSnippetBuffer.Type.RULE);
     }
 
     @Test

@@ -3,10 +3,7 @@ package net.programmer.igoodie.tsl.parser;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.parser.snippet.TSLActionSnippet;
-import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
-import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
-import net.programmer.igoodie.tsl.parser.snippet.TSLTagSnippet;
+import net.programmer.igoodie.tsl.parser.snippet.*;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLSymbol;
@@ -30,17 +27,15 @@ public class TSLParser {
         TSLLexer lexer = new TSLLexer(script);
         lexer.lex();
 
-        for (TSLSnippetBuffer snippet : lexer.getSnippets()) {
-            if (snippet.getType() == TSLSnippetBuffer.Type.TAG) {
-                TSLTagSnippet tslTagSnippet = parseTag(ruleset, snippet);
-                ruleset.addTag(tslTagSnippet.getTag(), tslTagSnippet.getTagName(), tslTagSnippet.getTagArguments());
+        for (TSLSnippetBuffer buffer : lexer.getSnippetsBuffers()) {
+            if (buffer.getType() == TSLSnippetBuffer.Type.TAG) {
+                ruleset.addTag(parseTag(ruleset, buffer));
 
-            } else if (snippet.getType() == TSLSnippetBuffer.Type.CAPTURE) {
-                TSLCaptureSnippet tslCaptureSnippet = parseCapture(ruleset, snippet);
-                ruleset.getCaptures().put(tslCaptureSnippet.getName(), tslCaptureSnippet);
+            } else if (buffer.getType() == TSLSnippetBuffer.Type.CAPTURE) {
+                ruleset.addCapture(parseCapture(ruleset, buffer));
 
-            } else if (snippet.getType() == TSLSnippetBuffer.Type.RULE) {
-                TSLActionSnippet tslActionSnippet = parseAction(ruleset, snippet);
+            } else if (buffer.getType() == TSLSnippetBuffer.Type.RULE) {
+                TSLActionSnippet tslActionSnippet = parseAction(ruleset, buffer);
                 // TODO: implement stuff xd
 //                System.out.println(tslActionSnippet.flatten());
             }

@@ -7,6 +7,12 @@ import java.util.List;
 
 public class TSLSnippetBuffer {
 
+    public enum Type {
+        TAG,
+        CAPTURE,
+        RULE
+    }
+
     private Type type;
     private List<TSLToken> tokens;
 
@@ -36,12 +42,6 @@ public class TSLSnippetBuffer {
                 "type=" + type +
                 ", tokens=" + tokens +
                 '}';
-    }
-
-    public enum Type {
-        TAG,
-        CAPTURE,
-        RULE
     }
 
 }

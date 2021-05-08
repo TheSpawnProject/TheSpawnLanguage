@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.tsl.parser.token.TSLSymbol;
@@ -45,7 +46,7 @@ public class TSLLexer {
         return this;
     }
 
-    public List<TSLSnippetBuffer> getSnippets() {
+    public List<TSLSnippetBuffer> getSnippetsBuffers() {
         return snippets;
     }
 
