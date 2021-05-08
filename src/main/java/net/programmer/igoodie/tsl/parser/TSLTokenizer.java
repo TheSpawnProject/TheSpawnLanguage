@@ -54,7 +54,8 @@ public class TSLTokenizer {
         }
 
         if (text.startsWith("(") && text.endsWith(")")) {
-            TSLLexer subLexer = new TSLLexer(text.substring(1, text.length() - 1)).withOffset(line - 1, character);
+            String nestFragment = StringUtils.shrink(text, 1, 1);
+            TSLLexer subLexer = new TSLLexer(nestFragment).withOffset(line - 1, character);
             subLexer.lex();
             return new TSLNest(line, character, subLexer.getSnippets().get(0).getTokens());
         }

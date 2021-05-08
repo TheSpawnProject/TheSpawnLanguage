@@ -82,7 +82,8 @@ public class TSLLexer {
                 continue;
             }
 
-            pushToken();
+            if (nestLevel == 0)
+                pushToken();
 
             for (int charNo = 0; charNo < chars.length; charNo++) {
                 char previousCharacter = charNo == 0 ? 0 : chars[charNo - 1];

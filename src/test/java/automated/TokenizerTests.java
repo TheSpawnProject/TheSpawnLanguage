@@ -4,6 +4,9 @@ import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.parser.token.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import util.TestFiles;
+
+import java.io.IOException;
 
 public class TokenizerTests {
 
@@ -17,6 +20,14 @@ public class TokenizerTests {
         Assertions.assertEquals(tokenizer.tokenize("$call").getClass(), TSLCaptureCall.class);
         Assertions.assertEquals(tokenizer.tokenize("${_max(1,2)}").getClass(), TSLExpression.class);
         Assertions.assertEquals(tokenizer.tokenize("%A group!%").getClass(), TSLGroup.class);
+    }
+
+    @Test
+    public void shouldTokenizeNestDepths() throws IOException {
+        String nestRaw = TestFiles.loadFragment("nest_1");
+        TSLNest nest = (TSLNest) new TSLTokenizer().tokenize(nestRaw);
+
+        Assertions.assertEquals(nest.depth(), 4);
     }
 
 }

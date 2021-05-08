@@ -14,6 +14,14 @@ public class TSLNest extends TSLToken {
         this.tokens = tokens;
     }
 
+    public List<TSLToken> getTokens() {
+        return tokens;
+    }
+
+    public int depth() {
+        return depth(this);
+    }
+
     @Override
     public String getRaw() {
         return "(" + tokens.stream().map(TSLToken::getRaw)
@@ -22,7 +30,17 @@ public class TSLNest extends TSLToken {
 
     @Override
     public String evaluate(TSLContext context) {
-        return null;
+        return null; // TODO: Consider usages
+    }
+
+    public static int depth(TSLNest nest) {
+        int depth = 1;
+        for (TSLToken token : nest.getTokens()) {
+            if (token instanceof TSLNest) {
+                depth += depth(((TSLNest) token));
+            }
+        }
+        return depth;
     }
 
 }

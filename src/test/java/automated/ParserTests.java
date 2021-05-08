@@ -11,6 +11,7 @@ import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import util.TestFiles;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,8 +29,7 @@ public class ParserTests {
 
     @Test
     public void foo() throws IOException {
-        List<String> lines = Resources.readLines(Resources.getResource("tsl/sample.tsl"), StandardCharsets.UTF_8);
-        String script = String.join("\n", lines);
+        String script = TestFiles.loadTSLScript("sample.tsl");
 
         System.out.println(script);
         System.out.println("/--------------------------------/");

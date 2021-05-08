@@ -1,0 +1,19 @@
+(EITHER1
+    DROP apple
+    OR
+    SAY %Hey people! (friends)%
+    OR
+    DROP ${_randomOne("diamond", "apple")}
+    OR
+    (EITHER2
+     DROP apple OR DROP diamond)
+     OR
+     (EITHER3
+         DROP apple
+         OR
+         DROP diamond
+         OR
+         (EITHER4
+          DROP apple OR DROP diamond)
+     )
+)
