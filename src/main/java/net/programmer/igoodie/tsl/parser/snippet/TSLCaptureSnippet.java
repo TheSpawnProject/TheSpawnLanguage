@@ -3,19 +3,22 @@ package net.programmer.igoodie.tsl.parser.snippet;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureParameter;
+import net.programmer.igoodie.tsl.parser.token.TSLSymbol;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 
 import java.util.*;
 
+// [$captureName] [=] [DROP apple]
+// [$captureName{x,y}] [=] [DROP {x} {y}]
 public class TSLCaptureSnippet extends TSLSnippet {
 
     protected TSLCaptureCall header;
     protected List<TSLToken> capturedTokens;
 
-    public TSLCaptureSnippet(TSLRuleset ruleset, TSLCaptureCall header, List<TSLToken> tokens) {
-        super(ruleset, CollectionUtils.asSpreadList(TSLToken.class, header, tokens));
+    public TSLCaptureSnippet(TSLRuleset ruleset, TSLCaptureCall header, TSLSymbol equalsSign, List<TSLToken> tokens) {
+        super(ruleset, CollectionUtils.asSpreadList(TSLToken.class, header, equalsSign, tokens));
         this.header = header;
         this.capturedTokens = tokens;
     }

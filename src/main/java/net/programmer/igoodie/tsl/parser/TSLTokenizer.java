@@ -60,7 +60,7 @@ public class TSLTokenizer {
             return new TSLNest(line, character, subLexer.getSnippets().get(0).getTokens());
         }
 
-        throw new TSLSyntaxError("Unknown token format (" + text + ")", line, character);
+        return new TSLString(line, character, text);
     }
 
     public TSLToken tokenize(String text) {

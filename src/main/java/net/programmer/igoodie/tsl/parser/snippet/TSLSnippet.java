@@ -11,6 +11,10 @@ public abstract class TSLSnippet {
     protected List<TSLToken> allTokens;
 
     public TSLSnippet(TSLRuleset ruleset, List<TSLToken> allTokens) {
+        if (allTokens.size() <= 0) {
+            throw new InternalError("A Snippet MUST have at least one token.");
+        }
+
         this.ruleset = ruleset;
         this.allTokens = allTokens;
     }

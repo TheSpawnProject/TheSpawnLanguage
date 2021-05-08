@@ -27,4 +27,12 @@ public class LexerTests {
         Assertions.assertEquals(snippets.get(5).getType(), TSLSnippetBuffer.Type.RULE);
     }
 
+    @Test
+    public void shouldLexeCaptureParams() throws IOException {
+        String script = TestFiles.loadFragment("capture_1");
+
+        TSLLexer lexer = new TSLLexer(script);
+        lexer.lex();
+    }
+
 }

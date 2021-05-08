@@ -54,6 +54,8 @@ public class TheSpawnLanguage {
         TSLPluginManifest manifest = plugin.getManifest();
         String pluginId = manifest.getName() + ":" + manifest.getVersion();
 
+        // TODO: Disallow loading of same plugin but different versions
+
         if (LOADED_PLUGINS.contains(pluginId))
             return; // TODO: What to do here? Consider
 
@@ -75,6 +77,7 @@ public class TheSpawnLanguage {
                 try {
                     field.set(null, plugin);
                 } catch (IllegalAccessException e) {
+                    // TODO: Log properly
                     System.out.println("Plugin's instance field must be public.");
                     e.printStackTrace();
                 }
@@ -83,6 +86,7 @@ public class TheSpawnLanguage {
                 try {
                     field.set(null, TSLLogger.createLogger(new File("logs"), plugin, true));
                 } catch (IllegalAccessException e) {
+                    // TODO: Log properly
                     System.out.println("Plugin's logger field must be public.");
                     e.printStackTrace();
                 }

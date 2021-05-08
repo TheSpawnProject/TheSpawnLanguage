@@ -8,6 +8,7 @@ import net.programmer.igoodie.tsl.parser.token.TSLString;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TSLAttributeList {
 
@@ -18,6 +19,15 @@ public class TSLAttributeList {
         this.generators = new LinkedList<>();
         this.attributeContainers = new LinkedList<>();
     }
+
+    public List<TSLTag> getTags() {
+        return generators.stream()
+                .filter(generator -> generator instanceof TSLTag)
+                .map(generator -> ((TSLTag) generator))
+                .collect(Collectors.toList());
+    }
+
+    /* ---------------------------------- */
 
     public void addTag(TSLTag tagDefinition, TSLString tagToken, List<TSLString> args) {
         JsonObject attributes = tagDefinition.evaluateAttributesWithNamespace(tagToken, args);
@@ -30,6 +40,8 @@ public class TSLAttributeList {
         this.generators.add(decoratorDefinition);
         this.attributeContainers.add(attributes);
     }
+
+    /* ---------------------------------- */
 
     private boolean removeGenerator(TSLAttributeGenerator generator) {
         int index = generators.indexOf(generator);
@@ -50,6 +62,8 @@ public class TSLAttributeList {
     private boolean removeDecorator(TSLDecorator decoratorDefinition) {
         return removeGenerator(decoratorDefinition);
     }
+
+    /* ---------------------------------- */
 
     public JsonObject getSquashedAttributes() {
         JsonObject squashed = new JsonObject();

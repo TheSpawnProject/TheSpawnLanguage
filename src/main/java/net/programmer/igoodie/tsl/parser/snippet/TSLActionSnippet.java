@@ -8,6 +8,7 @@ import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import java.util.LinkedList;
 import java.util.List;
 
+// [DROP apple 2]
 public class TSLActionSnippet extends TSLSnippet {
 
     public TSLActionSnippet(TSLRuleset ruleset, List<TSLToken> tokens) {

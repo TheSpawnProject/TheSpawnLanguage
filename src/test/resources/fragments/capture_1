@@ -1,0 +1,2 @@
+$dropAxeWithFireAspect{level}
+= DROP diamond_axe{Enchantments:[{id:fire_aspect,lvl:{level}]}

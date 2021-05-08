@@ -20,7 +20,6 @@ public class TSLRuleset implements Attributable {
     protected String name;
     protected File file;
 
-    protected List<TSLTag> tags;
     protected TSLAttributeList attributeList;
 
     protected List<TSLRule> rules;
@@ -37,7 +36,6 @@ public class TSLRuleset implements Attributable {
         this.file = file;
         this.rules = new LinkedList<>();
         this.captures = new HashMap<>();
-        this.tags = new LinkedList<>();
         this.attributeList = new TSLAttributeList();
         this.hookList = new HookList();
     }
@@ -55,7 +53,7 @@ public class TSLRuleset implements Attributable {
     }
 
     public List<TSLTag> getTags() {
-        return tags;
+        return attributeList.getTags();
     }
 
     public TSLAttributeList getAttributeList() {
@@ -81,9 +79,8 @@ public class TSLRuleset implements Attributable {
 
     /* ----------------------------------------- */
 
-    public void addTag(TSLTag tagDefinition, TSLString tagToken, List<TSLString> args) {
-        this.tags.add(tagDefinition);
-        this.attributeList.addTag(tagDefinition, tagToken, args);
+    public void addTag(TSLTag tagDefinition, TSLString tagName, List<TSLString> tagArgs) {
+        this.attributeList.addTag(tagDefinition, tagName, tagArgs);
     }
 
     public void addRule(TSLRule rule) {
