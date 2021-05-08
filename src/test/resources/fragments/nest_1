@@ -8,12 +8,26 @@
     (EITHER2
      DROP apple OR DROP diamond)
      OR
-     (EITHER3
-         DROP apple
-         OR
-         DROP diamond
-         OR
-         (EITHER4
+     (EITHER2
+         (EITHER3
           DROP apple OR DROP diamond)
-     )
+         OR
+         (EITHER3
+          DROP apple OR (EITHER4
+                            DROP apple
+                            OR
+                            SAY %Hey people! (friends)%
+                            OR
+                            DROP ${_randomOne("diamond", "apple")}
+                            OR
+                            (EITHER5
+                             DROP apple OR DROP diamond)
+                             OR
+                             (EITHER5
+                                 (EITHER6
+                                  DROP apple OR DROP diamond)
+                                 OR
+                                 (EITHER6
+                                  DROP apple OR DROP diamond))
+                        )))
 )

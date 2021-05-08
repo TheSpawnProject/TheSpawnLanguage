@@ -27,7 +27,7 @@ public class TokenizerTests {
         String nestRaw = TestFiles.loadFragment("nest_1");
         TSLNest nest = (TSLNest) new TSLTokenizer().tokenize(nestRaw);
 
-        Assertions.assertEquals(nest.depth(), 4);
+        Assertions.assertEquals(6, nest.depth());
     }
 
 }

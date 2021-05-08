@@ -19,7 +19,14 @@ public class TSLNest extends TSLToken {
     }
 
     public int depth() {
-        return depth(this);
+        int depth = 0;
+        for (TSLToken token : this.getTokens()) {
+            if (token instanceof TSLNest) {
+                int childDepth = ((TSLNest) token).depth();
+                depth = Math.max(childDepth, depth);
+            }
+        }
+        return depth + 1;
     }
 
     @Override
@@ -31,16 +38,6 @@ public class TSLNest extends TSLToken {
     @Override
     public String evaluate(TSLContext context) {
         return null; // TODO: Consider usages
-    }
-
-    public static int depth(TSLNest nest) {
-        int depth = 1;
-        for (TSLToken token : nest.getTokens()) {
-            if (token instanceof TSLNest) {
-                depth += depth(((TSLNest) token));
-            }
-        }
-        return depth;
     }
 
 }
