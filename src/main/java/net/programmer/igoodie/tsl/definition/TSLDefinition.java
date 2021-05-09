@@ -22,7 +22,7 @@ public abstract class TSLDefinition {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + ":" + getName();
+        return String.format("%s(%s)", getClass().getSimpleName(), getName());
     }
 
 }

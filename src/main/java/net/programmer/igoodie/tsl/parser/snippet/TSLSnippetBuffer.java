@@ -5,7 +5,7 @@ import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TSLSnippetBuffer {
+public final class TSLSnippetBuffer {
 
     public enum Type {
         TAG,

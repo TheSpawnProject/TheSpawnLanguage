@@ -30,6 +30,11 @@ public class TSLNest extends TSLToken {
     }
 
     @Override
+    public String getTypeName() {
+        return "Nest";
+    }
+
+    @Override
     public String getRaw() {
         return "(" + tokens.stream().map(TSLToken::getRaw)
                 .collect(Collectors.joining(" ")) + ")";

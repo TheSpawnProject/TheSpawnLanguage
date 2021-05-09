@@ -16,6 +16,11 @@ public class TSLString extends TSLToken {
     }
 
     @Override
+    public String getTypeName() {
+        return "String Word";
+    }
+
+    @Override
     public String getRaw() {
         return getWord();
     }

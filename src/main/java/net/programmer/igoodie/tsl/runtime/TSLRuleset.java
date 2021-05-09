@@ -96,10 +96,11 @@ public class TSLRuleset implements Attributable {
         captures.put(captureSnippet.getName(), captureSnippet);
     }
 
-    public void addRule(TSLRule rule) {
-        rule.setRuleset(this);
-        this.rules.add(rule);
-    }
+    // TODO: Implement with TSLRuleSnippet
+//    public void addRule(TSLRule rule) {
+//        rule.setRuleset(this);
+//        this.rules.add(rule);
+//    }
 
     /* ----------------------------------------- */
 

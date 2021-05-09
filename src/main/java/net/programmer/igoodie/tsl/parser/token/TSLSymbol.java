@@ -12,6 +12,11 @@ public class TSLSymbol extends TSLToken {
     }
 
     @Override
+    public String getTypeName() {
+        return "Symbol";
+    }
+
+    @Override
     public String getRaw() {
         return type.getSymbol();
     }

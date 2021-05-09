@@ -9,12 +9,12 @@ public class TSLSyntaxError extends RuntimeException {
     protected String filePath;
     protected int line, character;
 
-    public TSLSyntaxError(String reason, TSLSnippetBuffer snippet) {
-        this(reason, snippet.getTokens().get(0));
+    public TSLSyntaxError(String reason, TSLSnippetBuffer snippetBuffer) {
+        this(reason, snippetBuffer.getTokens().get(0));
     }
 
     public TSLSyntaxError(String reason, TSLRule rule) {
-        this(reason, rule.getActionTokens().get(0));
+        this(reason, rule.getSnippet().getAllTokens().get(0));
     }
 
     public TSLSyntaxError(String reason, TSLToken token) {

@@ -16,6 +16,11 @@ public class TSLCaptureParameter extends TSLToken {
     }
 
     @Override
+    public String getTypeName() {
+        return "Capture Parameter";
+    }
+
+    @Override
     public String getRaw() {
         return "{" + parameterName + "}";
     }

@@ -24,6 +24,11 @@ public class TSLDecoratorCall extends TSLToken {
     }
 
     @Override
+    public String getTypeName() {
+        return "Decorator";
+    }
+
+    @Override
     public String getRaw() {
         StringBuilder builder = new StringBuilder("@");
         builder.append(name);

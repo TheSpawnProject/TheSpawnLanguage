@@ -16,6 +16,11 @@ public class TSLExpression extends TSLToken {
     }
 
     @Override
+    public String getTypeName() {
+        return "Expression";
+    }
+
+    @Override
     public String getRaw() {
         return "${" + expression + "}";
     }

@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.util;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public final class CollectionUtils {
 
@@ -22,6 +23,22 @@ public final class CollectionUtils {
         }
 
         return spreadList;
+    }
+
+    public static <T> T findBy(List<T> list, Predicate<T> predicate) {
+        int index = indexOfBy(list, predicate);
+        if (index == -1) return null;
+        return list.get(index);
+    }
+
+    public static <T> int indexOfBy(List<T> list, Predicate<T> predicate) {
+        for (int i = 0; i < list.size(); i++) {
+            T element = list.get(i);
+            if (predicate.test(element)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
 }

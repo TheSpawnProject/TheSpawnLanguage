@@ -23,10 +23,20 @@ $parameterizedCapture3{x,y,z}
 $embeddedAction
 = PRINT $parameterizedAction{$name,"is","it"} # Inline comment!
 
-$someAction # Inline comment!
+#### Rules ####
+
+@suppressNotifications
+@suppressNotifications
+PRINT foo
  ON Alert Event
 
-#### Rules ####
+@suppressNotifications
+@suppressNotifications
+PRINT foo
+ ON Alert Event
+
+$someAction # Inline comment!
+ ON Alert Event
 
 PRINT %Hey dude! This message is evaluated @ ${_currentUnix()}%
  ON Alert Event

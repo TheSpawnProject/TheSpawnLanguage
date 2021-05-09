@@ -12,6 +12,11 @@ public class TSLGroup extends TSLToken {
     }
 
     @Override
+    public String getTypeName() {
+        return "Group";
+    }
+
+    @Override
     public String getRaw() {
         return "%" + group + "%";
     }

@@ -19,6 +19,8 @@ public abstract class TSLToken {
         return character;
     }
 
+    public abstract String getTypeName();
+
     public abstract String getRaw();
 
     public abstract String evaluate(TSLContext context);

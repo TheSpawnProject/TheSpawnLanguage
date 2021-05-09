@@ -3,8 +3,8 @@ package net.programmer.igoodie.tsl.runtime.hook;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
-import net.programmer.igoodie.tsl.runtime.node.ActionNode;
-import net.programmer.igoodie.tsl.runtime.node.PredicateNode;
+import net.programmer.igoodie.tsl.runtime.node_old.ActionNode;
+import net.programmer.igoodie.tsl.runtime.node_old.PredicateNode;
 
 public abstract class TSLRulesetHook {
 

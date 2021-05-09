@@ -31,6 +31,11 @@ public class TSLCaptureCall extends TSLToken {
     }
 
     @Override
+    public String getTypeName() {
+        return "Capture Call";
+    }
+
+    @Override
     public String getRaw() {
         if (args.size() == 0) {
             return "$" + captureName;
