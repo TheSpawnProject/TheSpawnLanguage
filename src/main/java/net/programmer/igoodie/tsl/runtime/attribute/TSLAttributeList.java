@@ -4,7 +4,10 @@ import com.google.gson.JsonObject;
 import net.programmer.igoodie.tsl.definition.attribute.TSLAttributeGenerator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
+import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -28,16 +31,25 @@ public class TSLAttributeList {
                 .collect(Collectors.toList()));
     }
 
+    public List<TSLDecorator> getDecorators() {
+        return Collections.unmodifiableList(generators.stream()
+                .filter(generator -> generator instanceof TSLDecorator)
+                .map(generator -> ((TSLDecorator) generator))
+                .collect(Collectors.toList()));
+    }
+
     /* ---------------------------------- */
 
-    public void addTag(TSLTag tagDefinition, TSLString tagToken, List<TSLString> args) {
-        JsonObject attributes = tagDefinition.evaluateAttributesWithNamespace(tagToken, args);
+    public void addTag(TSLTag tagDefinition, TSLString tagName, List<TSLString> tagArguments) {
+        List<TSLToken> tokens = CollectionUtils.asSpreadList(TSLToken.class, tagName, tagArguments);
+        JsonObject attributes = tagDefinition.evaluateAttributesWithNamespace(tokens);
         this.generators.add(tagDefinition);
         this.attributeContainers.add(attributes);
     }
 
-    public void addDecorator(TSLDecorator decoratorDefinition, TSLString tagToken, List<TSLString> args) {
-        JsonObject attributes = decoratorDefinition.evaluateAttributesWithNamespace(tagToken, args);
+    public void addDecorator(TSLDecorator decoratorDefinition, TSLDecoratorCall decoratorCall) {
+        List<TSLToken> tokens = Collections.singletonList(decoratorCall);
+        JsonObject attributes = decoratorDefinition.evaluateAttributesWithNamespace(tokens);
         this.generators.add(decoratorDefinition);
         this.attributeContainers.add(attributes);
     }
@@ -53,6 +65,7 @@ public class TSLAttributeList {
         }
 
         attributeContainers.remove(index);
+        generators.remove(index);
         return true;
     }
 

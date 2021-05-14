@@ -23,8 +23,10 @@ public class TSLParser {
         this.tsl = tsl;
     }
 
-    public TSLRuleset parse(String script) {
+    public TSLRuleset parse(String script) throws TSLSyntaxError {
         TSLRuleset ruleset = new TSLRuleset();
+
+        // Foo
 
         TSLLexer lexer = new TSLLexer(script);
         lexer.lex();
@@ -37,10 +39,13 @@ public class TSLParser {
                 ruleset.addCapture(parseCapture(ruleset, buffer));
 
             } else if (buffer.getType() == TSLSnippetBuffer.Type.RULE) {
-                TSLRuleSnippet ruleSnippet = parseRule(ruleset, buffer).getSnippet();
+                TSLRule rule = parseRule(ruleset, buffer);
+                TSLRuleSnippet ruleSnippet = rule.getSnippet();
+                System.out.println("Decorators: " + rule.getAttributeList().getDecorators());
                 System.out.println("Action: " + ruleSnippet.getActionSnippet());
                 System.out.println("Event: " + ruleSnippet.getEventSnippet());
                 System.out.println("Predicates: " + ruleSnippet.getPredicateSnippets());
+                System.out.println("--------------------");
                 // TODO: Add to ruleset
             }
         }
@@ -50,7 +55,7 @@ public class TSLParser {
 
     /* --------------------------- */
 
-    public TSLTagSnippet parseTag(TSLRuleset ruleset, TSLSnippetBuffer buffer) {
+    public TSLTagSnippet parseTag(TSLRuleset ruleset, TSLSnippetBuffer buffer) throws TSLSyntaxError {
         List<TSLToken> tokens = buffer.getTokens();
 
         if (tokens.size() < 2) {
@@ -85,7 +90,7 @@ public class TSLParser {
                         .collect(Collectors.toList()));
     }
 
-    public TSLCaptureSnippet parseCapture(TSLRuleset ruleset, TSLSnippetBuffer buffer) {
+    public TSLCaptureSnippet parseCapture(TSLRuleset ruleset, TSLSnippetBuffer buffer) throws TSLSyntaxError {
         List<TSLToken> tokens = buffer.getTokens();
 
         if (tokens.size() < 3) {
@@ -111,8 +116,15 @@ public class TSLParser {
                 capturedTokens);
     }
 
-    public TSLRule parseRule(TSLRuleset ruleset, TSLSnippetBuffer buffer) {
+    public TSLRule parseRule(TSLRuleset ruleset, TSLSnippetBuffer buffer) throws TSLSyntaxError {
+        TSLRule rule = new TSLRule();
         List<TSLToken> tokens = buffer.getTokens();
+
+        // Fetch index of last Decorator call
+        int indexLastDecorator = indexLastDecorator(tokens);
+
+        // Parse and bind Decorators to the rule
+        List<TSLDecoratorCall> decoratorCalls = parseDecorators(rule, tokens);
 
         // Fetch index of ON keyword
         int indexOn = indexOfKeyword(tokens, "ON");
@@ -137,27 +149,42 @@ public class TSLParser {
 
         // TODO: Parse predicates
         // TODO: Parse action
-        // TODO: Parse decorators
-        int lastDecoratorIndex = lastDecoratorIndex(tokens);
-        List<TSLDecoratorCall> decoratorTokens = tokens.subList(0,
-                lastDecoratorIndex == -1 ? 0 : lastDecoratorIndex + 1)
-                .stream().map(token -> ((TSLDecoratorCall) token))
-                .collect(Collectors.toList());
 
         // TODO: Compose Rule (as snippet)
         TSLRuleSnippet ruleSnippet = new TSLRuleSnippet(ruleset,
-                decoratorTokens,
-                new TSLActionSnippet(ruleset, CollectionUtils.asSpreadList(TSLToken.class, new TSLString(0, 0, "Foo"))),
+                decoratorCalls,
+                new TSLActionSnippet(ruleset, CollectionUtils.asSpreadList(TSLToken.class, new TSLString(0, 0, "TODO"))),
                 eventSnippet,
                 new LinkedList<>());
 
-        return new TSLRule(ruleset, ruleSnippet,
-                eventDefinition);
+        rule.setSnippet(ruleSnippet);
+
+        return rule;
     }
 
-    public TSLActionSnippet parseAction(TSLRuleset ruleset, TSLSnippetBuffer buffer) {
-        // TODO: refactor. Here for testing purposes
-        return new TSLActionSnippet(ruleset, buffer.getTokens());
+    public List<TSLDecoratorCall> parseDecorators(TSLRule rule, List<TSLToken> tokens) {
+        int indexLastDecorator = indexLastDecorator(tokens);
+        List<TSLDecoratorCall> decoratorTokens = tokens.subList(0,
+                indexLastDecorator == -1 ? 0 : indexLastDecorator + 1)
+                .stream().map(token -> ((TSLDecoratorCall) token))
+                .collect(Collectors.toList());
+
+        for (TSLDecoratorCall decoratorToken : decoratorTokens) {
+            TSLDecorator decorator = parseDecorator(decoratorToken);
+            rule.addDecorator(decorator, decoratorToken);
+        }
+
+        return decoratorTokens;
+    }
+
+    public TSLDecorator parseDecorator(TSLDecoratorCall decoratorCall) {
+        TSLDecorator decorator = tsl.DECORATOR_REGISTRY.get(decoratorCall.getName());
+
+        if (decorator == null) {
+            throw new TSLSyntaxError("Unknown decorator name -> " + decoratorCall.getName(), decoratorCall);
+        }
+
+        return decorator;
     }
 
     /* --------------------------- */
@@ -167,7 +194,7 @@ public class TSLParser {
                 token -> token.getRaw().equalsIgnoreCase(keyword));
     }
 
-    private int lastDecoratorIndex(List<TSLToken> tokens) {
+    private int indexLastDecorator(List<TSLToken> tokens) {
         int lastIndex = -1;
         boolean decoratorAllowed = true;
 

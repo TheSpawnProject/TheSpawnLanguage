@@ -1,6 +1,9 @@
 package net.programmer.igoodie.tsl.util;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.util.function.Function;
 
 public class GsonUtils {
 
@@ -12,6 +15,16 @@ public class GsonUtils {
         }
 
         return merged;
+    }
+
+    public static JsonObject mapKeys(JsonObject object, Function<String, String> mapper) {
+        JsonObject copiedObject = object.deepCopy();
+        for (String key : object.keySet()) {
+            String mappedKey = mapper.apply(key);
+            JsonElement removedValue = copiedObject.remove(key);
+            copiedObject.add(mappedKey, removedValue);
+        }
+        return copiedObject;
     }
 
 }

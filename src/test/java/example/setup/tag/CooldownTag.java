@@ -3,8 +3,10 @@ package example.setup.tag;
 import com.google.gson.JsonObject;
 import example.setup.ExamplePlugin;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
+import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -16,18 +18,19 @@ public class CooldownTag extends TSLTag {
         super(ExamplePlugin.PLUGIN_INSTANCE, "COOLDOWN");
     }
 
+    @NotNull
     @Override
-    public JsonObject evaluateAttributes(TSLString tagToken, List<TSLString> args) {
-        JsonObject json = new JsonObject();
+    public JsonObject evaluateTagAttributes(TSLString tagName, List<TSLString> arguments) throws TSLRuntimeError {
+        JsonObject attributes = new JsonObject();
 
-        if (args.size() < 1)
-            throw new TSLSyntaxError("Expected cooldown duration.", tagToken);
+        if (arguments.size() < 1)
+            throw new TSLSyntaxError("Expected cooldown duration.", tagName);
 
-        TSLString cooldownDuration = args.get(0);
+        TSLString cooldownDuration = arguments.get(0);
 
-        json.addProperty("cooldown_duration", parseDouble(cooldownDuration));
+        attributes.addProperty("cooldown_duration", parseDouble(cooldownDuration));
 
-        return json;
+        return attributes;
     }
 
 }

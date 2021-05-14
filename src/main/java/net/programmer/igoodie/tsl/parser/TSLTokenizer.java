@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 public class TSLTokenizer {
 
-    public static final Pattern RULE_DECORATOR_PATTERN = Pattern.compile("@(?<name>\\w+)(?<args>\\(\\w+(,\\w+)*\\))?");
-    public static final Pattern CAPTURE_CALL_PATTERN = Pattern.compile("(?<name>\\$\\w+)(?<args>\\{([^\\[,]+,?)*})?");
+    public static final Pattern RULE_DECORATOR_PATTERN = Pattern.compile("@(?<name>[\\w_-]+)(?<args>\\(\\w+(,\\w+)*\\))?");
+    public static final Pattern CAPTURE_CALL_PATTERN = Pattern.compile("(?<name>\\$[\\w_-]+)(?<args>\\{([^\\[,]+,?)*})?");
 
     public TSLToken tokenize(String text, int line, int character) {
         if (text.startsWith("%") && text.endsWith("%")) {

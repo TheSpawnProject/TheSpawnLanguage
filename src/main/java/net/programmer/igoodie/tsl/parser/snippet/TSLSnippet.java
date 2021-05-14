@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.parser.snippet;
 
+import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 
@@ -12,7 +13,7 @@ public abstract class TSLSnippet {
 
     public TSLSnippet(TSLRuleset ruleset, List<TSLToken> allTokens) {
         if (allTokens.size() <= 0) {
-            throw new InternalError("A Snippet MUST have at least one token.");
+            throw new TSLInternalError("A Snippet MUST have at least one token.");
         }
 
         this.ruleset = ruleset;
@@ -33,4 +34,5 @@ public abstract class TSLSnippet {
                 getClass().getSimpleName(),
                 getAllTokens());
     }
+
 }

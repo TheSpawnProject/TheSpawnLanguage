@@ -1,12 +1,50 @@
 package net.programmer.igoodie.tsl.definition.attribute;
 
+import com.google.gson.JsonObject;
+import net.programmer.igoodie.tsl.exception.TSLInternalError;
+import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
+import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import org.jetbrains.annotations.NotNull;
 
-// #! A_TAG WITH_PARAM1 WITH_PARAM2
+import java.util.LinkedList;
+import java.util.List;
+
+// #! TAG_NAME ARG1 ARG2
 public abstract class TSLTag extends TSLAttributeGenerator {
 
     public TSLTag(TSLPlugin plugin, String name) {
         super(plugin, name);
     }
+
+    @NotNull
+    @Override
+    public final JsonObject evaluateAttributes(List<TSLToken> tokens) throws TSLRuntimeError {
+        if (tokens.isEmpty()) {
+            throw new TSLInternalError("Need at least one token");
+        }
+
+        TSLToken tagName = tokens.get(0);
+
+        if (!(tagName instanceof TSLString)) {
+            throw new TSLInternalError("Expected tag name to be a TSL String", tagName);
+        }
+
+        List<TSLToken> arguments = tokens.subList(1, tokens.size());
+        List<TSLString> stringArguments = new LinkedList<>();
+
+        for (TSLToken argument : arguments) {
+            if (!(argument instanceof TSLString)) {
+                throw new TSLInternalError("Expected argument to be a TSL String", argument);
+            }
+            stringArguments.add(((TSLString) argument));
+        }
+
+        return evaluateTagAttributes(((TSLString) tagName), stringArguments);
+    }
+
+    @NotNull
+    public abstract JsonObject evaluateTagAttributes(TSLString tagName, List<TSLString> arguments) throws TSLRuntimeError;
 
 }
