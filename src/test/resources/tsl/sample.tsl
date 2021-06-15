@@ -23,6 +23,11 @@ $parameterizedCapture3{x,y,z}
 $embeddedAction
 = PRINT $parameterizedAction{$name,is,it} # Inline comment!
 
+$numberOne = 1
+
+$swordWithName{name}
+= %diamond_sword{Name:{{name}}}% $numberOne
+
 #### Rules ####
 
 $parameterizedCapture3{1,2,%Hey there%}
@@ -30,7 +35,7 @@ $parameterizedCapture3{1,2,%Hey there%}
 
 @suppressNotifications
 @suppressNotifications
-PRINT foo
+PRINT $swordWithName{%My Mighty Sword!%}
  ON Alert Event
 
 @suppressNotifications

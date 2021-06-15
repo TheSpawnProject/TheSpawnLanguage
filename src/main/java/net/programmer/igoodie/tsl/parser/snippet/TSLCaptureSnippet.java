@@ -40,19 +40,22 @@ public class TSLCaptureSnippet extends TSLSnippet {
 
     /* -------------------------------------------- */
 
-    public Map<String, TSLToken> argumentsToMap(List<TSLToken> replaceValues) {
+    public Map<String, TSLToken> argumentsToMap(List<TSLToken> arguments) {
         List<String> parameterNames = getParameterNames();
-        if (parameterNames.size() > replaceValues.size()) {
+
+        if (parameterNames.size() > arguments.size()) {
             throw new IllegalArgumentException("Insufficient number of arguments...");
         }
 
         HashMap<String, TSLToken> argumentMap = new HashMap<>();
         for (int i = 0; i < parameterNames.size(); i++) {
-            argumentMap.put(parameterNames.get(i), replaceValues.get(i));
+            argumentMap.put(parameterNames.get(i), arguments.get(i));
         }
 
         return argumentMap;
     }
+
+    /* -------------------------------------------- */
 
     public List<TSLToken> flattenInline(String... arguments) {
         TSLTokenizer tokenizer = new TSLTokenizer();
@@ -68,8 +71,8 @@ public class TSLCaptureSnippet extends TSLSnippet {
         return flatten(Arrays.asList(arguments));
     }
 
-    public List<TSLToken> flatten(List<TSLToken> replaceValues) {
-        return flatten(argumentsToMap(replaceValues));
+    public List<TSLToken> flatten(List<TSLToken> arguments) {
+        return flatten(argumentsToMap(arguments));
     }
 
     public List<TSLToken> flatten(Map<String, TSLToken> argumentMap) {
@@ -77,14 +80,14 @@ public class TSLCaptureSnippet extends TSLSnippet {
 
         for (TSLToken capturedToken : this.capturedTokens) {
             if (capturedToken instanceof TSLCaptureCall) {
+                // TODO: Disallow circular capture calls (might need a stack trace...)
                 TSLCaptureCall captureCall = (TSLCaptureCall) capturedToken;
                 if (captureCall.getCaptureName().equals(this.getName())) {
                     throw new TSLRuntimeError("Captures MUST not call themselves recursively.", captureCall);
                 }
                 TSLCaptureSnippet captureSnippet = ruleset.getCaptureSnippet(captureCall);
-
-                // TODO:
-                // captureSnippet.flatten(captureCall.getArgs());
+                List<TSLToken> flattenedCapture = captureSnippet.flattenInline(captureCall.getArgs());
+                replaced.addAll(flattenedCapture);
 
             } else {
                 TSLToken parameterizedToken = fillWithParameters(capturedToken, argumentMap);

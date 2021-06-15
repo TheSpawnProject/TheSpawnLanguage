@@ -167,17 +167,15 @@ public class TSLParser {
     }
 
     public TSLActionSnippet parseAction(TSLRuleset ruleset, List<TSLToken> tokens, int indexLastDecorator, int indexOn) {
-        List<TSLToken> actionTokens = tokens.subList(indexLastDecorator == -1 ? 0 : indexLastDecorator + 1, indexOn);
+        List<TSLToken> actionTokens = TSLActionSnippet.flatten(ruleset,
+                tokens.subList(indexLastDecorator == -1 ? 0 : indexLastDecorator + 1, indexOn)
+        );
 
         if (actionTokens.size() == 0) {
             throw new TSLSyntaxError("Rule missing action tokens.", tokens.get(0));
         }
 
         TSLToken actionName = actionTokens.get(0);
-
-        if (actionName instanceof TSLCaptureCall) {
-            actionName = TSLActionSnippet.flatten(ruleset, tokens).get(0);
-        }
 
         if (!(actionName instanceof TSLString)) {
             throw new TSLSyntaxError("Action name MUST be a String Word.", actionName);

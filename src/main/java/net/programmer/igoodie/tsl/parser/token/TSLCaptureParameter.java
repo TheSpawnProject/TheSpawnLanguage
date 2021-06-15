@@ -4,7 +4,7 @@ import net.programmer.igoodie.tsl.context.TSLContext;
 
 public class TSLCaptureParameter extends TSLToken {
 
-    private String parameterName;
+    protected String parameterName;
 
     public TSLCaptureParameter(int line, int character, String parameterName) {
         super(line, character);

@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.parser.snippet;
 
 import net.programmer.igoodie.tsl.definition.TSLAction;
+import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
@@ -10,6 +11,7 @@ import net.programmer.igoodie.tsl.util.CollectionUtils;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 // [DROP] [apple 2]
 public class TSLActionSnippet extends TSLSnippet {
@@ -45,10 +47,10 @@ public class TSLActionSnippet extends TSLSnippet {
         for (TSLToken token : tokens) {
             if (token instanceof TSLCaptureCall) {
                 TSLCaptureCall captureCall = (TSLCaptureCall) token;
-                System.out.println("Capture: " + captureCall.getCaptureName());
-                System.out.println("Args: " + captureCall.getArgs());
+                TSLCaptureSnippet captureSnippet = ruleset.getCaptureSnippet(captureCall);
+                List<TSLToken> flattenedCapture = captureSnippet.flattenInline(captureCall.getArgs());
+                flattened.addAll(flattenedCapture);
 
-                flattened.add(token);
             } else {
                 flattened.add(token);
             }
