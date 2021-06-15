@@ -1,45 +1,54 @@
 package net.programmer.igoodie.tsl.parser.snippet;
 
+import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
+import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
+import net.programmer.igoodie.tsl.util.CollectionUtils;
 
 import java.util.LinkedList;
 import java.util.List;
 
-// [DROP apple 2]
+// [DROP] [apple 2]
 public class TSLActionSnippet extends TSLSnippet {
 
-    public TSLActionSnippet(TSLRuleset ruleset, List<TSLToken> tokens) {
-        super(ruleset, tokens);
+    protected TSLString actionName;
+    protected List<TSLToken> actionArgs;
+    protected TSLAction actionDefinition;
+
+    public TSLActionSnippet(TSLRuleset ruleset, TSLAction actionDefinition, TSLString actionName, List<TSLToken> actionArgs) {
+        super(ruleset, CollectionUtils.asSpreadList(TSLToken.class, actionName, actionArgs));
+        this.actionName = actionName;
+        this.actionArgs = actionArgs;
+        this.actionDefinition = actionDefinition;
     }
 
-    public List<TSLToken> getTokens() {
-        return getAllTokens();
+    public TSLAction getActionDefinition() {
+        return actionDefinition;
+    }
+
+    public TSLString getActionNameWord() {
+        return actionName;
+    }
+
+    public List<TSLToken> getActionArgs() {
+        return actionArgs;
     }
 
     /* -------------------------- */
 
-    public List<TSLToken> flatten() {
-        LinkedList<TSLToken> flattened = new LinkedList<>();
-        TSLTokenizer tokenizer = new TSLTokenizer();
+    public static List<TSLToken> flatten(TSLRuleset ruleset, List<TSLToken> tokens) {
+        List<TSLToken> flattened = new LinkedList<>();
 
-        for (TSLToken token : allTokens) {
-            System.out.println("- " + token);
-
+        for (TSLToken token : tokens) {
             if (token instanceof TSLCaptureCall) {
                 TSLCaptureCall captureCall = (TSLCaptureCall) token;
-                List<TSLToken> tokenizedArguments = TSLTokenizer.tokenizeAll(captureCall);
+                System.out.println("Capture: " + captureCall.getCaptureName());
                 System.out.println("Args: " + captureCall.getArgs());
-                System.out.println("Tokenized: " + tokenizedArguments);
 
-                TSLCaptureSnippet referredCapture = ruleset.getCaptureSnippet(captureCall);
-                List<TSLToken> replaced = referredCapture.replaceParameters(tokenizedArguments);
-                System.out.println("Replaced: " + replaced);
-
-                flattened.addAll(replaced);
-
+                flattened.add(token);
             } else {
                 flattened.add(token);
             }

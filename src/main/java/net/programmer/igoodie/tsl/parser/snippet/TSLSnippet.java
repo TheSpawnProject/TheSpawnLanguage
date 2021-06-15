@@ -20,7 +20,7 @@ public abstract class TSLSnippet {
         this.allTokens = allTokens;
     }
 
-    public TSLRuleset getRuleset() {
+    public TSLRuleset getAssociatedRuleset() {
         return ruleset;
     }
 

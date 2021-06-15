@@ -25,6 +25,9 @@ $embeddedAction
 
 #### Rules ####
 
+$parameterizedCapture3{1,2,%Hey there%}
+ ON Alert Event
+
 @suppressNotifications
 @suppressNotifications
 PRINT foo

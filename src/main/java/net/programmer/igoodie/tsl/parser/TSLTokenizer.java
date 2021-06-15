@@ -66,15 +66,12 @@ public class TSLTokenizer {
         return tokenize(text, 0, 0);
     }
 
-    public static List<TSLToken> tokenizeAll(TSLCaptureCall captureCall) {
-        return tokenizeAll(captureCall.getArgs(), captureCall.getLine(), captureCall.getCharacter());
+    public List<TSLToken> tokenizeAll(String... texts) {
+        return tokenizeAll(Arrays.asList(texts));
     }
 
-    public static List<TSLToken> tokenizeAll(List<String> texts, int line, int character) {
-        TSLTokenizer tokenizer = new TSLTokenizer();
-        return texts.stream()
-                .map(text -> tokenizer.tokenize(text, line, character))
-                .collect(Collectors.toList());
+    public List<TSLToken> tokenizeAll(List<String> texts) {
+        return texts.stream().map(this::tokenize).collect(Collectors.toList());
     }
 
 }

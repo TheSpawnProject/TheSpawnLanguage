@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.runtime;
 
 import com.google.gson.JsonObject;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
+import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLTagSnippet;
@@ -70,7 +71,15 @@ public class TSLRuleset implements Attributable {
     }
 
     public TSLCaptureSnippet getCaptureSnippet(TSLCaptureCall captureCall) {
-        return captures.get(captureCall.getCaptureName());
+        TSLCaptureSnippet referredCapture = getCaptureSnippet(captureCall.getCaptureName());
+        if (referredCapture == null) {
+            throw new TSLRuntimeError("No capture was defined with name -> " + captureCall.getCaptureName(), captureCall);
+        }
+        return referredCapture;
+    }
+
+    public TSLCaptureSnippet getCaptureSnippet(String captureName) {
+        return captures.get(captureName);
     }
 
     public List<TSLRule> getRules() {

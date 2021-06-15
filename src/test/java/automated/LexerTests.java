@@ -1,7 +1,11 @@
 package automated;
 
+import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
+import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import util.TestFiles;
@@ -25,14 +29,6 @@ public class LexerTests {
         Assertions.assertEquals(buffers.get(3).getType(), TSLSnippetBuffer.Type.RULE);
         Assertions.assertEquals(buffers.get(4).getType(), TSLSnippetBuffer.Type.CAPTURE);
         Assertions.assertEquals(buffers.get(5).getType(), TSLSnippetBuffer.Type.RULE);
-    }
-
-    @Test
-    public void shouldLexeCaptureParams() throws IOException {
-        String script = TestFiles.loadFragment("capture_1");
-
-        TSLLexer lexer = new TSLLexer(script);
-        lexer.lex();
     }
 
 }

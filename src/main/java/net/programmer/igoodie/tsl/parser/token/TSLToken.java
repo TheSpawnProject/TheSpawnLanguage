@@ -29,4 +29,5 @@ public abstract class TSLToken {
     public String toString() {
         return String.format("%s(%s)", getClass().getSimpleName(), getRaw());
     }
+
 }
