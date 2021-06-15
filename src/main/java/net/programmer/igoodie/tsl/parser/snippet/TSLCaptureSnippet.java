@@ -5,9 +5,9 @@ import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.parser.token.*;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
+import net.programmer.igoodie.tsl.util.ExpressionUtils;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 // [$captureName] [=] [DROP apple]
 // [$captureName{x,y}] [=] [DROP {x} {y}]
@@ -76,45 +76,52 @@ public class TSLCaptureSnippet extends TSLSnippet {
         List<TSLToken> replaced = new LinkedList<>();
 
         for (TSLToken capturedToken : this.capturedTokens) {
-            if (capturedToken instanceof TSLCaptureParameter) {
-                TSLCaptureParameter parameterToken = (TSLCaptureParameter) capturedToken;
-                TSLToken argumentToken = argumentMap.get(parameterToken.getParameterName());
-                replaced.add(argumentToken);
-
-            } else if (capturedToken instanceof TSLString) {
-                TSLString stringToken = (TSLString) capturedToken;
-                String replacedString = replaceParameters(stringToken.getWord(), argumentMap);
-                replaced.add(new TSLString(stringToken.getLine(), stringToken.getCharacter(), replacedString));
-
-            } else if (capturedToken instanceof TSLCaptureCall) {
+            if (capturedToken instanceof TSLCaptureCall) {
                 TSLCaptureCall captureCall = (TSLCaptureCall) capturedToken;
-
                 if (captureCall.getCaptureName().equals(this.getName())) {
                     throw new TSLRuntimeError("Captures MUST not call themselves recursively.", captureCall);
                 }
-
                 TSLCaptureSnippet captureSnippet = ruleset.getCaptureSnippet(captureCall);
-
 
                 // TODO:
                 // captureSnippet.flatten(captureCall.getArgs());
 
             } else {
-                replaced.add(capturedToken);
+                TSLToken parameterizedToken = fillWithParameters(capturedToken, argumentMap);
+                replaced.add(parameterizedToken);
             }
         }
 
         return replaced;
     }
 
-    public static String replaceParameters(String string, Map<String, TSLToken> argumentMap) {
-        String replaced = string;
-        for (Map.Entry<String, TSLToken> entry : argumentMap.entrySet()) {
-            String argumentName = entry.getKey();
-            TSLToken argumentValue = entry.getValue();
-            replaced = replaced.replaceAll("\\{" + argumentName + "}", argumentValue.getRaw());
+    public static TSLToken fillWithParameters(TSLToken target, Map<String, TSLToken> argumentMap) {
+        if (target instanceof TSLCaptureParameter) {
+            TSLCaptureParameter parameterToken = (TSLCaptureParameter) target;
+            return argumentMap.get(parameterToken.getParameterName());
+
+        } else if (target instanceof TSLString) {
+            String filled = fillWithParameters(((TSLString) target).getWord(), argumentMap);
+            return new TSLString(target.getLine(), target.getCharacter(), filled);
+
+        } else if (target instanceof TSLGroup) {
+            String filled = fillWithParameters(((TSLGroup) target).getGroup(), argumentMap);
+            return new TSLGroup(target.getLine(), target.getCharacter(), filled);
+
+        } else if (target instanceof TSLExpression) {
+            String filled = fillWithParameters(((TSLExpression) target).getExpression(), argumentMap);
+            return new TSLExpression(target.getLine(), target.getCharacter(), filled);
         }
-        return replaced;
+
+        return target;
+    }
+
+    public static String fillWithParameters(String target, Map<String, TSLToken> argumentMap) {
+        return ExpressionUtils.replaceCaptureParams(target, parameterName -> {
+            TSLToken argument = argumentMap.get(parameterName);
+            if (argument == null) return "{{" + parameterName + "}}";
+            return argument.getRaw();
+        });
     }
 
 }

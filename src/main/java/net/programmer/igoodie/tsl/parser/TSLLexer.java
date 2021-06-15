@@ -51,6 +51,7 @@ public class TSLLexer {
     }
 
     protected boolean allowsNesting(char character) {
+        // Allows [\s\(\)\u0000]
         return Character.isWhitespace(character)
                 || Character.isSpaceChar(character)
                 || character == 0
@@ -58,10 +59,17 @@ public class TSLLexer {
                 || character == ')';
     }
 
+    protected boolean allowedParameterName(char character) {
+        // Allows: [a-zA-Z_]
+        return Character.isLetter(character)
+                || character == '_';
+    }
+
     public void lex() {
         boolean inGroup = false;
         boolean inExpression = false;
         boolean inComment = false;
+        boolean inParameter = false;
         boolean escaping = false;
         int nestLevel = 0;
 
@@ -119,6 +127,42 @@ public class TSLLexer {
                 }
 
                 if (inComment) continue;
+
+                if (character == '{') {
+                    if (nextCharacter == '{') {
+                        if (inParameter) {
+                            throw new TSLSyntaxError("Unexpected capture parameter start", lineNo, charNo);
+                        }
+                        pushCharacters("{{", lineNo, charNo);
+                        inParameter = true;
+                        charNo++; // Skip the second '{' char
+                        continue;
+                    }
+                }
+
+                if (character == '}') {
+                    if (nextCharacter == '}') {
+                        if (!inParameter) {
+                            throw new TSLSyntaxError("Unexpected capture parameter end", lineNo, charNo);
+                        }
+                        pushCharacters("}}", lineNo, charNo);
+                        inParameter = false;
+                        charNo++; // Skip the second '}' char
+                        continue;
+
+                    } else if (inExpression && !inGroup) {
+                        pushCharacter('}', lineNo, charNo);
+                        pushToken();
+                        inExpression = false;
+                        continue;
+                    }
+                }
+
+                if (inParameter) {
+                    if (!allowedParameterName(character)) {
+                        throw new TSLSyntaxError("Illegal parameter name", lineNo, charNo);
+                    }
+                }
 
                 if (character == '(') {
                     if (!inGroup && !inExpression && !escaping && allowsNesting(previousCharacter)) {
@@ -205,15 +249,6 @@ public class TSLLexer {
                             charNo++; // Skip '{' char
                             continue;
                         }
-                    }
-                }
-
-                if (character == '}') {
-                    if (inExpression && !inGroup) {
-                        pushCharacter('}', lineNo, charNo);
-                        pushToken();
-                        inExpression = false;
-                        continue;
                     }
                 }
 

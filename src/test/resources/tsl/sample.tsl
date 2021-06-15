@@ -12,16 +12,16 @@ $someAction
 = PRINT %Hello World!% # Inline comment!
 
 $parameterizedCapture1{x,y,z}
-= PRINT ${param("x") + param("y") + param("z") + hex("#FFFFFF")}
+= PRINT ${{{x}} + {{y}} + {{z}} + hex("#FFFFFF")}
 
 $parameterizedCapture2{x}
-= PRINT %apple{x}%
+= PRINT %apple{{x}}%
 
 $parameterizedCapture3{x,y,z}
-= PRINT {x} {y} {z}
+= PRINT {{x}} {{y}} {{z}}
 
 $embeddedAction
-= PRINT $parameterizedAction{$name,"is","it"} # Inline comment!
+= PRINT $parameterizedAction{$name,is,it} # Inline comment!
 
 #### Rules ####
 

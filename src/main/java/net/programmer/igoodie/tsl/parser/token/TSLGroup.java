@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.util.ExpressionUtils;
 
 public class TSLGroup extends TSLToken {
 
@@ -9,6 +10,10 @@ public class TSLGroup extends TSLToken {
     public TSLGroup(int line, int character, String group) {
         super(line, character);
         this.group = group;
+    }
+
+    public String getGroup() {
+        return group;
     }
 
     @Override
@@ -23,7 +28,7 @@ public class TSLGroup extends TSLToken {
 
     @Override
     public String evaluate(TSLContext context) {
-        return TSLExpression.replaceExpressions(group, (expression) ->
+        return ExpressionUtils.replaceExpressions(group, (expression) ->
                 context.getEngine().evaluate(expression, context));
     }
 

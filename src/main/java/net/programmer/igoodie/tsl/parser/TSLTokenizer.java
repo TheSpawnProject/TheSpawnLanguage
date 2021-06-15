@@ -38,8 +38,8 @@ public class TSLTokenizer {
             return new TSLDecoratorCall(line, character, name, Arrays.asList(args));
         }
 
-        if (text.startsWith("{") && text.endsWith("}")) {
-            return new TSLCaptureParameter(line, character, text.substring(1, text.length() - 1));
+        if (text.startsWith("{{") && text.endsWith("}}")) {
+            return new TSLCaptureParameter(line, character, text.substring(2, text.length() - 2));
         }
 
         if (text.matches("\\w+")) {

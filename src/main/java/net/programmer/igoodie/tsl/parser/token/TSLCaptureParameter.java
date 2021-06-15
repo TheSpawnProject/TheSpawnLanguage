@@ -22,7 +22,7 @@ public class TSLCaptureParameter extends TSLToken {
 
     @Override
     public String getRaw() {
-        return "{" + parameterName + "}";
+        return "{{" + parameterName + "}}";
     }
 
     @Override
