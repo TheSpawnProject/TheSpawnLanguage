@@ -39,15 +39,7 @@ public class TSLParser {
                 ruleset.addCapture(parseCapture(ruleset, buffer));
 
             } else if (buffer.getType() == TSLSnippetBuffer.Type.RULE) {
-                System.out.println("Parsing rule tokens...");
-                TSLRule rule = parseRule(ruleset, buffer);
-                TSLRuleSnippet ruleSnippet = rule.getSnippet();
-                System.out.println("Decorators: " + rule.getAttributeList().getDecorators());
-                System.out.println("Action: " + ruleSnippet.getActionSnippet());
-                System.out.println("Event: " + ruleSnippet.getEventSnippet());
-                System.out.println("Predicates: " + ruleSnippet.getPredicateSnippets());
-                System.out.println("--------------------");
-                // TODO: Add to ruleset
+                ruleset.addRule(parseRule(ruleset, buffer));
             }
         }
 
@@ -183,6 +175,11 @@ public class TSLParser {
 
         TSLAction actionDefinition = getAction(((TSLString) actionName));
 
+        // TODO:
+//        if (actionDefinition.verifyTokenCount()) {
+//
+//        }
+
         return new TSLActionSnippet(ruleset, actionDefinition,
                 ((TSLString) actionName),
                 actionTokens.subList(1, actionTokens.size()));
@@ -227,7 +224,7 @@ public class TSLParser {
          */
 
         // TODO: Parse predicate
-        System.out.println("Parse: " + tokens);
+        System.out.println("Parse predicate: " + tokens);
 
         TSLToken withToken = tokens.get(0);
 

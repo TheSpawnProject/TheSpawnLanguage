@@ -42,7 +42,7 @@ public class PredicateNode implements RuleNode {
     @Override
     public boolean proceed(TSLContext context) {
         TSLRule rule = context.getRule();
-        HookList hooks = rule.getRuleset().getHookList();
+        HookList hooks = rule.getAssociatedRuleset().getHookList();
 
         hooks.onPredicateReached(rule, this, context);
 

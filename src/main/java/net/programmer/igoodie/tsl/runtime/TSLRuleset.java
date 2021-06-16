@@ -1,13 +1,13 @@
 package net.programmer.igoodie.tsl.runtime;
 
 import com.google.gson.JsonObject;
+import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLTagSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.runtime.attribute.Attributable;
 import net.programmer.igoodie.tsl.runtime.attribute.TSLAttributeList;
 import net.programmer.igoodie.tsl.runtime.hook.HookList;
@@ -105,12 +105,20 @@ public class TSLRuleset implements Attributable {
         captures.put(captureSnippet.getName(), captureSnippet);
     }
 
-    // TODO: Implement with TSLRuleSnippet
-//    public void addRule(TSLRule rule) {
-//        rule.setRuleset(this);
-//        this.rules.add(rule);
-//    }
+    public void addRule(TSLRule rule) {
+        rule.setAssociatedRuleset(this);
+        this.rules.add(rule);
+    }
 
     /* ----------------------------------------- */
+
+    public boolean perform(TSLContext context) {
+        boolean performed = false;
+        for (TSLRule rule : rules) {
+            context.setRule(rule);
+            performed |= rule.perform(context);
+        }
+        return performed;
+    }
 
 }

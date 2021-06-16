@@ -1,29 +1,29 @@
 package net.programmer.igoodie.tsl.runtime;
 
 import com.google.gson.JsonObject;
+import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
 import net.programmer.igoodie.tsl.parser.snippet.TSLRuleSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.attribute.Attributable;
 import net.programmer.igoodie.tsl.runtime.attribute.TSLAttributeList;
-import net.programmer.igoodie.tsl.runtime.node_old.EventNode;
 import net.programmer.igoodie.tsl.util.GsonUtils;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class TSLRule implements Attributable {
 
-    protected TSLRuleset ruleset;
+    protected TSLRuleset associatedRuleset;
     protected TSLAttributeList attributeList;
 
     protected TSLRuleSnippet snippet;
 
     protected TSLEvent event;
     // TODO: Predicates
+    protected TSLAction action;
 
     public TSLRule() {
         this.attributeList = new TSLAttributeList();
@@ -31,27 +31,26 @@ public class TSLRule implements Attributable {
 
     public TSLRule(TSLRuleset ruleset) {
         this();
-        this.ruleset = ruleset;
+        this.associatedRuleset = ruleset;
     }
 
-    public TSLRule(TSLRuleset ruleset, TSLRuleSnippet snippet, TSLEvent event) {
+    public TSLRule(TSLRuleset ruleset, TSLRuleSnippet snippet) {
         this(ruleset);
-        this.snippet = snippet;
-        this.event = event;
+        this.setSnippet(snippet);
     }
 
     public TSLAttributeList getAttributeList() {
         return attributeList;
     }
 
-    public TSLRuleset getRuleset() {
-        return ruleset;
+    public TSLRuleset getAssociatedRuleset() {
+        return associatedRuleset;
     }
 
-    public void setRuleset(TSLRuleset ruleset) {
-        if (this.ruleset != null)
+    public void setAssociatedRuleset(TSLRuleset associatedRuleset) {
+        if (this.associatedRuleset != null)
             throw new IllegalStateException("Ruleset MUST not be re-initialized");
-        this.ruleset = ruleset;
+        this.associatedRuleset = associatedRuleset;
     }
 
     public TSLRuleSnippet getSnippet() {
@@ -62,6 +61,8 @@ public class TSLRule implements Attributable {
         if (this.snippet != null)
             throw new IllegalStateException("Snippet MUST not be re-initialized");
         this.snippet = snippet;
+        this.event = snippet.getEventSnippet().getEventDefinition();
+        this.action = snippet.getActionSnippet().getActionDefinition();
     }
 
     /* ----------------------------------- */
@@ -72,7 +73,7 @@ public class TSLRule implements Attributable {
     }
 
     public JsonObject getCalculatedAttributes() {
-        return GsonUtils.mergeOverriding(ruleset.getAttributes(), this.getAttributes());
+        return GsonUtils.mergeOverriding(associatedRuleset.getAttributes(), this.getAttributes());
     }
 
     /* ----------------------------------- */
@@ -81,6 +82,18 @@ public class TSLRule implements Attributable {
         this.attributeList.addDecorator(decoratorDefinition, decoratorCall);
     }
 
-    // TODO: Handler thingy
+    public boolean perform(TSLContext context) {
+        if (context.getEvent() != this.event) {
+            return false;
+        }
+
+        // TODO: traverse predicates
+
+        context.setAttributes(getCalculatedAttributes());
+
+        List<TSLToken> actionArgs = snippet.getActionSnippet().getActionArgs();
+        action.perform(actionArgs, context);
+        return true;
+    }
 
 }

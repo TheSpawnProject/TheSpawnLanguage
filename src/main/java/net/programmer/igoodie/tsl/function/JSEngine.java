@@ -4,9 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import net.programmer.igoodie.tsl.context.TSLContext;
-import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.registry.FunctionRegistry;
-import net.programmer.igoodie.tsl.registry.ITSLRegistry;
 
 import javax.script.*;
 import java.util.Map;

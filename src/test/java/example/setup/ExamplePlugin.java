@@ -9,6 +9,7 @@ import example.setup.fields.TimeField;
 import example.setup.functions.CurrentUnixFunction;
 import example.setup.functions.GetVariableFunction;
 import example.setup.functions.MaximumOfFunction;
+import example.setup.functions.MultFunction;
 import example.setup.tag.CooldownTag;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
@@ -72,6 +73,7 @@ public class ExamplePlugin extends TSLPlugin {
         registry.register(CurrentUnixFunction.INSTANCE);
         registry.register(MaximumOfFunction.INSTANCE);
         registry.register(GetVariableFunction.INSTANCE);
+        registry.register(MultFunction.INSTANCE);
     }
 
 }

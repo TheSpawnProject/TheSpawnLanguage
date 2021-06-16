@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.context;
 
 import com.google.gson.JsonObject;
+import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
@@ -24,6 +25,18 @@ public class TSLContext {
 
     /* ----------------------------------- */
 
+    protected TSLEvent event;
+
+    public TSLEvent getEvent() {
+        return event;
+    }
+
+    public void setEvent(TSLEvent event) {
+        this.event = event;
+    }
+
+    /* ----------------------------------- */
+
     protected JsonObject eventArguments = new JsonObject();
 
     public JsonObject getEventArguments() {
@@ -36,15 +49,15 @@ public class TSLContext {
 
     /* ----------------------------------- */
 
-    protected List<TSLToken> actionTokens = new LinkedList<>();
-
-    public List<TSLToken> getActionTokens() {
-        return actionTokens;
-    }
-
-    public void setActionTokens(List<TSLToken> actionTokens) {
-        this.actionTokens = actionTokens;
-    }
+//    protected List<TSLToken> actionTokens = new LinkedList<>();
+//
+//    public List<TSLToken> getActionTokens() {
+//        return actionTokens;
+//    }
+//
+//    public void setActionTokens(List<TSLToken> actionTokens) {
+//        this.actionTokens = actionTokens;
+//    }
 
     /* ----------------------------------- */
 
@@ -72,27 +85,27 @@ public class TSLContext {
 
     /* ----------------------------------- */
 
-    protected Map<String, Object> customDataMap;
-
-    public Map<String, Object> getCustomDataMap() {
-        return customDataMap == null ? new HashMap<>() : customDataMap;
-    }
-
-    public Object getCustomData(String dataName) {
-        return getCustomDataMap().get(dataName);
-    }
-
-    public <T> T getCustomData(String dataName, Class<T> type) {
-        Map<String, Object> customDataMap = getCustomDataMap();
-        Object rawData = customDataMap.get(dataName);
-
-        if (rawData == null) return null;
-
-        if (type.isInstance(rawData)) {
-            return type.cast(rawData);
-        }
-
-        return null;
-    }
+//    protected Map<String, Object> customDataMap;
+//
+//    public Map<String, Object> getCustomDataMap() {
+//        return customDataMap == null ? new HashMap<>() : customDataMap;
+//    }
+//
+//    public Object getCustomData(String dataName) {
+//        return getCustomDataMap().get(dataName);
+//    }
+//
+//    public <T> T getCustomData(String dataName, Class<T> type) {
+//        Map<String, Object> customDataMap = getCustomDataMap();
+//        Object rawData = customDataMap.get(dataName);
+//
+//        if (rawData == null) return null;
+//
+//        if (type.isInstance(rawData)) {
+//            return type.cast(rawData);
+//        }
+//
+//        return null;
+//    }
 
 }
