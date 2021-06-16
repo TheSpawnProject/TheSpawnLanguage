@@ -1,6 +1,24 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "http://repository.jsweet.org/artifactory/libs-release-local" }
+        maven { url "http://repository.jsweet.org/artifactory/libs-snapshot-local" }
+        maven { url "http://repository.jsweet.org/artifactory/plugins-release-local" }
+        maven { url "http://repository.jsweet.org/artifactory/plugins-snapshot-local" }
+        maven { url "http://google-diff-match-patch.googlecode.com/svn/trunk/maven" }
+    }
+    dependencies {
+        classpath('org.jsweet:jsweet-gradle-plugin:3.0.0') { //
+            transitive = true
+        }
+    }
+}
+
 plugins {
     id 'java'
 }
+
+apply plugin: 'org.jsweet.jsweet-gradle-plugin'
 
 group 'net.programmer.igoodie'
 version '0.0.0'
@@ -9,10 +27,19 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven { url "http://repository.jsweet.org/artifactory/libs-release-local" }
+    maven { url "http://repository.jsweet.org/artifactory/libs-snapshot-local" }
+    maven { url "http://repository.jsweet.org/artifactory/plugins-release-local" }
+    maven { url "http://repository.jsweet.org/artifactory/plugins-snapshot-local" }
+    maven { url "http://google-diff-match-patch.googlecode.com/svn/trunk/maven" }
 }
 
 dependencies {
     compile 'org.jetbrains:annotations:16.0.2'
+    compile group: 'org.jsweet', name: 'jsweet-transpiler', version: '3.0.0'
+    compile group: 'org.jsweet', name: 'jsweet-core', version: "6"
+    compile group: 'org.jsweet.candies', name: 'angular', version: "1.4.0-20170726"
+    compile group: 'org.jsweet.candies', name: 'angular-route', version: "1.2.0-20170726"
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
@@ -29,4 +56,18 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+jsweet {
+    veryVerbose = true
+    verbose = true
+    encoding = 'UTF-8'
+//    sourceMap = true
+    tsserver = true
+    tsOnly = true
+    tsOut = project.file('target/typescript')
+//    outDir = project.file('target/javascript')
+//    candiesJsOut = project.file('target/candies')
+    targetVersion = 'ES6'
+    includes = ['**/*.java']
 }
