@@ -33,7 +33,7 @@ public class TSLDecoratorCall extends TSLToken {
         StringBuilder builder = new StringBuilder("@");
         builder.append(name);
         if (args.size() != 0) {
-            builder.append(String.join(",", args));
+            builder.append("(").append(String.join(",", args)).append(")");
         }
         return builder.toString();
     }

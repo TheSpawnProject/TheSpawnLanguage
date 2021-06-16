@@ -1,0 +1,4 @@
+PRINT foo
+ ON Alert Event
+ WITH foo bar baz
+ WITH uno dos tres

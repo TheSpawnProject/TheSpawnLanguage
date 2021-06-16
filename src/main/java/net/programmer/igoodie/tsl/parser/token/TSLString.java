@@ -15,6 +15,18 @@ public class TSLString extends TSLToken {
         return word;
     }
 
+    public boolean isTrue() {
+        String word = getWord();
+        return word.equalsIgnoreCase("TRUE")
+                || word.equals("1");
+    }
+
+    public boolean isFalse() {
+        String word = getWord();
+        return word.equalsIgnoreCase("FALSE")
+                || word.equals("0");
+    }
+
     @Override
     public String getTypeName() {
         return "String Word";

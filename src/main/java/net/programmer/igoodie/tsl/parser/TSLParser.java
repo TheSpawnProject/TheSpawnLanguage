@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class TSLParser {
 
-    private TheSpawnLanguage tsl;
+    private final TheSpawnLanguage tsl;
 
     public TSLParser(TheSpawnLanguage tsl) {
         this.tsl = tsl;
@@ -143,14 +143,14 @@ public class TSLParser {
         // Parse 3 fundamental parts
         TSLEventSnippet eventSnippet = parseEvent(ruleset, tokens, indexOn, indexWith);
         TSLActionSnippet actionSnippet = parseAction(ruleset, tokens, indexLastDecorator, indexOn);
-        // TODO: Parse predicates
+        List<TSLPredicateSnippet> predicateSnippets = parsePredicates(ruleset, eventSnippet, tokens, indexWith);
 
         // Compose a rule snippet and bind
         TSLRuleSnippet ruleSnippet = new TSLRuleSnippet(ruleset,
                 decoratorCalls,
                 actionSnippet,
                 eventSnippet,
-                new LinkedList<>());
+                predicateSnippets);
 
         rule.setSnippet(ruleSnippet);
 
@@ -186,6 +186,62 @@ public class TSLParser {
         return new TSLActionSnippet(ruleset, actionDefinition,
                 ((TSLString) actionName),
                 actionTokens.subList(1, actionTokens.size()));
+    }
+
+    public List<TSLPredicateSnippet> parsePredicates(TSLRuleset ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens, int indexWith) {
+        if (indexWith == -1) {
+            return Collections.emptyList();
+        }
+
+        List<TSLPredicateSnippet> predicateSnippets = new LinkedList<>();
+
+        List<TSLToken> predicatePart = tokens.subList(indexWith, tokens.size());
+        List<TSLToken> predicateTokens = new LinkedList<>();
+
+        for (int i = 0; i < predicatePart.size(); i++) {
+            TSLToken token = predicatePart.get(i);
+            boolean isLastToken = i == predicatePart.size() - 1;
+            if (isLastToken || token instanceof TSLString && token.getRaw().equalsIgnoreCase("WITH")) {
+                if (isLastToken) predicateTokens.add(token);
+                if (!predicateTokens.isEmpty()) {
+                    predicateSnippets.add(parsePredicate(ruleset, eventSnippet, predicateTokens));
+                    predicateTokens = new LinkedList<>();
+                }
+            }
+            predicateTokens.add(token);
+        }
+
+        return predicateSnippets;
+    }
+
+    public TSLPredicateSnippet parsePredicate(TSLRuleset ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens) {
+        /*
+            WITH field IN RANGE [0, 20]
+            WITH field = 20
+            WITH field IS 30
+
+            WITH field SATISFIES ${field * field >= 10}
+            WITH field SATISFIES ${Math.random() <= field}
+
+            WITH true/false
+         */
+
+        // TODO: Parse predicate
+        System.out.println("Parse: " + tokens);
+
+        TSLToken withToken = tokens.get(0);
+
+        if (!(withToken instanceof TSLString)) {
+            throw new TSLSyntaxError("Predicates MUST start with WITH keyword.", withToken);
+        }
+
+        if (!((TSLString) withToken).getWord().equalsIgnoreCase("WITH")) {
+            throw new TSLSyntaxError("Predicates MUST start with WITH keyword.", withToken);
+        }
+
+        return new TSLPredicateSnippet(ruleset,
+                ((TSLString) withToken),
+                tokens.subList(1, tokens.size()));
     }
 
     public List<TSLDecoratorCall> parseDecorators(TSLRule rule, List<TSLToken> tokens) {
