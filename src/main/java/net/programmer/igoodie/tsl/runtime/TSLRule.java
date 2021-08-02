@@ -87,6 +87,8 @@ public class TSLRule implements Attributable {
             return false;
         }
 
+        System.out.println("Performing " + snippet.getAllTokens());
+
         // TODO: traverse predicates
 
         context.setAttributes(getCalculatedAttributes());

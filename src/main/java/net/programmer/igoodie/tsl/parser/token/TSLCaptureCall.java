@@ -40,7 +40,7 @@ public class TSLCaptureCall extends TSLToken {
         if (args.size() == 0) {
             return "$" + captureName;
         } else {
-            return "$" + captureName + "{" + String.join(",", args) + "}";
+            return "$" + captureName + "(" + String.join(",", args) + ")";
         }
     }
 

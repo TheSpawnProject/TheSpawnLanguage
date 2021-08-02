@@ -12,11 +12,12 @@ import java.util.stream.Collectors;
 public class TSLTokenizer {
 
     public static final Pattern RULE_DECORATOR_PATTERN = Pattern.compile("@(?<name>[\\w_-]+)(?<args>\\(\\w+(,\\w+)*\\))?");
-    public static final Pattern CAPTURE_CALL_PATTERN = Pattern.compile("(?<name>\\$[\\w_-]+)(?<args>\\{([^\\[,]+,?)*})?");
+    public static final Pattern CAPTURE_CALL_PATTERN = Pattern.compile("(?<name>\\$[\\w_-]+)(?<args>\\(([^\\[,]+,?)*\\))?");
 
     public TSLToken tokenize(String text, int line, int character) {
         if (text.startsWith("%") && text.endsWith("%")) {
-            return new TSLGroup(line, character, text.substring(1, text.length() - 1));
+            String groupFragment = StringUtils.shrink(text, 1, 1);
+            return new TSLGroup(line, character, groupFragment);
         }
 
         if (text.startsWith("${") && text.endsWith("}")) {
@@ -56,7 +57,7 @@ public class TSLTokenizer {
             String nestFragment = StringUtils.shrink(text, 1, 1);
             TSLLexer subLexer = new TSLLexer(nestFragment).withOffset(line - 1, character);
             subLexer.lex();
-            return new TSLNest(line, character, subLexer.getSnippetsBuffers().get(0).getTokens());
+            return new TSLNest(line, character, subLexer.getSnippets().get(0).getTokens());
         }
 
         return new TSLString(line, character, text);

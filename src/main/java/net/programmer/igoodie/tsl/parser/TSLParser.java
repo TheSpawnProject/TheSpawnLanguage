@@ -31,7 +31,7 @@ public class TSLParser {
         TSLLexer lexer = new TSLLexer(script);
         lexer.lex();
 
-        for (TSLSnippetBuffer buffer : lexer.getSnippetsBuffers()) {
+        for (TSLSnippetBuffer buffer : lexer.getSnippets()) {
             if (buffer.getType() == TSLSnippetBuffer.Type.TAG) {
                 ruleset.addTag(parseTag(ruleset, buffer));
 

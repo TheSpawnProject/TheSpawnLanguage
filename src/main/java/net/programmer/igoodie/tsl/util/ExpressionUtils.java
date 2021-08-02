@@ -24,6 +24,8 @@ public class ExpressionUtils {
         int start = 0;
         try {
             while (matcher.find()) {
+                // TODO: Do not evaluate if escaped
+
                 String expression = matcher.group(1);
 
                 // Append previous part

@@ -1,11 +1,7 @@
 package automated;
 
-import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
-import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import util.TestFiles;
@@ -22,7 +18,7 @@ public class LexerTests {
         TSLLexer lexer = new TSLLexer(script);
         lexer.lex();
 
-        List<TSLSnippetBuffer> buffers = lexer.getSnippetsBuffers();
+        List<TSLSnippetBuffer> buffers = lexer.getSnippets();
         Assertions.assertEquals(buffers.get(0).getType(), TSLSnippetBuffer.Type.TAG);
         Assertions.assertEquals(buffers.get(1).getType(), TSLSnippetBuffer.Type.TAG);
         Assertions.assertEquals(buffers.get(2).getType(), TSLSnippetBuffer.Type.TAG);
