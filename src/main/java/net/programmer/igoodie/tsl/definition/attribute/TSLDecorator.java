@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.definition.attribute;
 
-import com.google.gson.JsonObject;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
@@ -19,7 +19,7 @@ public abstract class TSLDecorator extends TSLAttributeGenerator {
 
     @NotNull
     @Override
-    public final JsonObject evaluateAttributes(List<TSLToken> tokens) throws TSLRuntimeError {
+    public final GoodieObject evaluateAttributes(List<TSLToken> tokens) throws TSLRuntimeError {
         if (tokens.isEmpty()) {
             throw new TSLInternalError("Need at least one token");
         }
@@ -40,6 +40,6 @@ public abstract class TSLDecorator extends TSLAttributeGenerator {
     }
 
     @NotNull
-    public abstract JsonObject evaluateDecoratorAttributes(List<String> argument) throws TSLRuntimeError;
+    public abstract GoodieObject evaluateDecoratorAttributes(List<String> argument) throws TSLRuntimeError;
 
 }

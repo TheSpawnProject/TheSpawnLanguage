@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.definition;
 
-import com.google.gson.JsonObject;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 
 public abstract class TSLEventField<T> extends TSLDefinition {
@@ -11,6 +11,6 @@ public abstract class TSLEventField<T> extends TSLDefinition {
 
     /* ---------------------------------- */
 
-    public abstract T extractValue(JsonObject json);
+    public abstract T extractValue(GoodieObject goodie);
 
 }

@@ -1,8 +1,8 @@
 package automated;
 
-import com.google.gson.JsonObject;
 import example.setup.ExamplePlugin;
 import example.setup.event.AlertEvent;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
@@ -48,7 +48,7 @@ public class RulesetTests {
         TSLContext context = new TSLContext();
         context.setEvent(AlertEvent.INSTANCE);
         context.setEngine(TSL.getJsEngine());
-        context.setEventArguments(new JsonObject());
+        context.setEventArguments(new GoodieObject());
 
         for (List<TSLToken> tslTokens : ruleset.getRules().stream()
                 .map(rule -> rule.getSnippet().getAllTokens())

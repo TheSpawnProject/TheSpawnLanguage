@@ -1,15 +1,9 @@
 package net.programmer.igoodie.tsl.context;
 
-import com.google.gson.JsonObject;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.function.JSEngine;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 public class TSLContext {
 
@@ -37,13 +31,13 @@ public class TSLContext {
 
     /* ----------------------------------- */
 
-    protected JsonObject eventArguments = new JsonObject();
+    protected GoodieObject eventArguments = new GoodieObject();
 
-    public JsonObject getEventArguments() {
+    public GoodieObject getEventArguments() {
         return eventArguments;
     }
 
-    public void setEventArguments(JsonObject eventArguments) {
+    public void setEventArguments(GoodieObject eventArguments) {
         this.eventArguments = eventArguments;
     }
 
@@ -73,13 +67,13 @@ public class TSLContext {
 
     /* ----------------------------------- */
 
-    protected JsonObject attributes;
+    protected GoodieObject attributes;
 
-    public JsonObject getAttributes() {
+    public GoodieObject getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(JsonObject attributes) {
+    public void setAttributes(GoodieObject attributes) {
         this.attributes = attributes;
     }
 

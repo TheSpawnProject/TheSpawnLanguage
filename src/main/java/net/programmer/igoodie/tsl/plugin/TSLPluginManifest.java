@@ -1,9 +1,9 @@
 package net.programmer.igoodie.tsl.plugin;
 
-import com.google.gson.JsonObject;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.util.ISerializable;
 
-public class TSLPluginManifest implements ISerializable<JsonObject> {
+public class TSLPluginManifest implements ISerializable<GoodieObject> {
 
     protected String pluginId, name, version;
     protected String author;
@@ -36,21 +36,21 @@ public class TSLPluginManifest implements ISerializable<JsonObject> {
     }
 
     @Override
-    public JsonObject serialize() {
-        JsonObject json = new JsonObject();
-        json.addProperty("PluginID", pluginId);
-        json.addProperty("Name", name);
-        json.addProperty("Version", version);
-        json.addProperty("Author", author);
-        return json;
+    public GoodieObject serialize() {
+        GoodieObject goodie = new GoodieObject();
+        goodie.put("PluginID", pluginId);
+        goodie.put("Name", name);
+        goodie.put("Version", version);
+        goodie.put("Author", author);
+        return goodie;
     }
 
     @Override
-    public void deserialize(JsonObject json) {
-        this.pluginId = json.get("PluginID").getAsString();
-        this.name = json.get("Name").getAsString();
-        this.version = json.get("Version").getAsString();
-        this.author = json.get("Author").getAsString();
+    public void deserialize(GoodieObject goodie) {
+        this.pluginId = goodie.get("PluginID").asPrimitive().getString();
+        this.name = goodie.get("Name").asPrimitive().getString();
+        this.version = goodie.get("Version").asPrimitive().getString();
+        this.author = goodie.get("Author").asPrimitive().getString();
     }
 
 }

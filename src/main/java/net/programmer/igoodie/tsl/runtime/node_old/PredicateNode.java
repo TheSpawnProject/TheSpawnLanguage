@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.node_old;
 
-import com.google.gson.JsonObject;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLComparator;
 import net.programmer.igoodie.tsl.definition.TSLEventField;
@@ -46,7 +46,7 @@ public class PredicateNode implements RuleNode {
 
         hooks.onPredicateReached(rule, this, context);
 
-        JsonObject eventArguments = context.getEventArguments();
+        GoodieObject eventArguments = context.getEventArguments();
 
         Object lefthand = field.extractValue(eventArguments);
         String righthand = this.righthand.evaluate(context);

@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.runtime;
 
-import com.google.gson.JsonObject;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
@@ -10,7 +10,7 @@ import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.attribute.Attributable;
 import net.programmer.igoodie.tsl.runtime.attribute.TSLAttributeList;
-import net.programmer.igoodie.tsl.util.GsonUtils;
+import net.programmer.igoodie.tsl.util.GoodieUtils;
 
 import java.util.List;
 
@@ -68,12 +68,12 @@ public class TSLRule implements Attributable {
     /* ----------------------------------- */
 
     @Override
-    public JsonObject getAttributes() {
+    public GoodieObject getAttributes() {
         return attributeList.getSquashedAttributes();
     }
 
-    public JsonObject getCalculatedAttributes() {
-        return GsonUtils.mergeOverriding(associatedRuleset.getAttributes(), this.getAttributes());
+    public GoodieObject getCalculatedAttributes() {
+        return GoodieUtils.mergeOverriding(associatedRuleset.getAttributes(), this.getAttributes());
     }
 
     /* ----------------------------------- */

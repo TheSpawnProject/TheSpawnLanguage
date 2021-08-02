@@ -1,7 +1,7 @@
 package example.setup.tag;
 
-import com.google.gson.JsonObject;
 import example.setup.ExamplePlugin;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
@@ -20,15 +20,15 @@ public class CooldownTag extends TSLTag {
 
     @NotNull
     @Override
-    public JsonObject evaluateTagAttributes(TSLString tagName, List<TSLString> arguments) throws TSLRuntimeError {
-        JsonObject attributes = new JsonObject();
+    public GoodieObject evaluateTagAttributes(TSLString tagName, List<TSLString> arguments) throws TSLRuntimeError {
+        GoodieObject attributes = new GoodieObject();
 
         if (arguments.size() < 1)
             throw new TSLSyntaxError("Expected cooldown duration.", tagName);
 
         TSLString cooldownDuration = arguments.get(0);
 
-        attributes.addProperty("cooldown_duration", parseDouble(cooldownDuration));
+        attributes.put("cooldown_duration", parseDouble(cooldownDuration));
 
         return attributes;
     }

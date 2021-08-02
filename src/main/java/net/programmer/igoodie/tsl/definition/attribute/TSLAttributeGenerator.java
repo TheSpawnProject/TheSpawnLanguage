@@ -1,13 +1,13 @@
 package net.programmer.igoodie.tsl.definition.attribute;
 
-import com.google.gson.JsonObject;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.definition.TSLDefinition;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
-import net.programmer.igoodie.tsl.util.GsonUtils;
+import net.programmer.igoodie.tsl.util.GoodieUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -19,13 +19,13 @@ public abstract class TSLAttributeGenerator extends TSLDefinition {
         super(plugin, name);
     }
 
-    public final JsonObject evaluateAttributesWithNamespace(List<TSLToken> tokens) {
+    public final GoodieObject evaluateAttributesWithNamespace(List<TSLToken> tokens) {
         TSLPlugin plugin = getPlugin();
-        return GsonUtils.mapKeys(evaluateAttributes(tokens), plugin::prependNamespace);
+        return GoodieUtils.mapKeys(evaluateAttributes(tokens), plugin::prependNamespace);
     }
 
     @NotNull
-    public abstract JsonObject evaluateAttributes(List<TSLToken> tokens) throws TSLRuntimeError;
+    public abstract GoodieObject evaluateAttributes(List<TSLToken> tokens) throws TSLRuntimeError;
 
     /* ------------------------------------ */
 

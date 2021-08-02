@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.runtime;
 
-import com.google.gson.JsonObject;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
@@ -87,7 +87,7 @@ public class TSLRuleset implements Attributable {
     }
 
     @Override
-    public JsonObject getAttributes() {
+    public GoodieObject getAttributes() {
         return attributeList.getSquashedAttributes();
     }
 

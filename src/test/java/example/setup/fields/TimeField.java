@@ -1,7 +1,7 @@
 package example.setup.fields;
 
-import com.google.gson.JsonObject;
 import example.setup.ExamplePlugin;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.definition.TSLEventField;
 
 public class TimeField extends TSLEventField<Long> {
@@ -13,8 +13,8 @@ public class TimeField extends TSLEventField<Long> {
     }
 
     @Override
-    public Long extractValue(JsonObject json) {
-        return json.get(getName()).getAsLong();
+    public Long extractValue(GoodieObject goodie) {
+        return goodie.get(getName()).asPrimitive().getLong();
     }
 
 }

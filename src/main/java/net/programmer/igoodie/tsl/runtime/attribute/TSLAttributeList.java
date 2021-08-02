@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.attribute;
 
-import com.google.gson.JsonObject;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.definition.attribute.TSLAttributeGenerator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class TSLAttributeList {
 
     protected List<TSLAttributeGenerator> generators;
-    protected List<JsonObject> attributeContainers;
+    protected List<GoodieObject> attributeContainers;
 
     public TSLAttributeList() {
         this.generators = new LinkedList<>();
@@ -42,14 +42,14 @@ public class TSLAttributeList {
 
     public void addTag(TSLTag tagDefinition, TSLString tagName, List<TSLString> tagArguments) {
         List<TSLToken> tokens = CollectionUtils.asSpreadList(TSLToken.class, tagName, tagArguments);
-        JsonObject attributes = tagDefinition.evaluateAttributesWithNamespace(tokens);
+        GoodieObject attributes = tagDefinition.evaluateAttributesWithNamespace(tokens);
         this.generators.add(tagDefinition);
         this.attributeContainers.add(attributes);
     }
 
     public void addDecorator(TSLDecorator decoratorDefinition, TSLDecoratorCall decoratorCall) {
         List<TSLToken> tokens = Collections.singletonList(decoratorCall);
-        JsonObject attributes = decoratorDefinition.evaluateAttributesWithNamespace(tokens);
+        GoodieObject attributes = decoratorDefinition.evaluateAttributesWithNamespace(tokens);
         this.generators.add(decoratorDefinition);
         this.attributeContainers.add(attributes);
     }
@@ -79,12 +79,12 @@ public class TSLAttributeList {
 
     /* ---------------------------------- */
 
-    public JsonObject getSquashedAttributes() {
-        JsonObject squashed = new JsonObject();
+    public GoodieObject getSquashedAttributes() {
+        GoodieObject squashed = new GoodieObject();
 
-        for (JsonObject attributeContainer : attributeContainers) {
+        for (GoodieObject attributeContainer : attributeContainers) {
             for (String attributeName : attributeContainer.keySet()) {
-                squashed.add(attributeName, attributeContainer.get(attributeName));
+                squashed.put(attributeName, attributeContainer.get(attributeName));
             }
         }
 

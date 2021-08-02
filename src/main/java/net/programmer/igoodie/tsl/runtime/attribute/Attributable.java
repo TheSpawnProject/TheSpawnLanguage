@@ -1,9 +1,9 @@
 package net.programmer.igoodie.tsl.runtime.attribute;
 
-import com.google.gson.JsonObject;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 
 public interface Attributable {
 
-    JsonObject getAttributes();
+    GoodieObject getAttributes();
 
 }

@@ -1,7 +1,7 @@
 package example.setup.action;
 
-import com.google.gson.JsonObject;
 import example.setup.ExamplePlugin;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
@@ -31,9 +31,9 @@ public class PrintAction extends TSLAction {
 
     @Override
     public void perform(List<TSLToken> tokens, TSLContext context) {
-        JsonObject attributes = context.getAttributes();
+        GoodieObject attributes = context.getAttributes();
 
-        if (attributes.has("exampleplugin:notificationsMuted")) {
+        if (attributes.containsKey("exampleplugin:notificationsMuted")) {
             ExamplePlugin.LOGGER.info("Suppressed.");
             return;
         }
