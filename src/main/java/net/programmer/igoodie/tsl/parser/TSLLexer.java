@@ -51,6 +51,10 @@ public class TSLLexer {
         return snippets;
     }
 
+    protected boolean inNest() {
+        return nestLevel >= 1;
+    }
+
     protected boolean allowedParameterCharacter(char character) {
         // Allows: [a-zA-Z_]
         return Character.isLetter(character)
@@ -209,8 +213,19 @@ public class TSLLexer {
                 continue;
             }
 
+            if (character == '(' && previousCharacter == ' ' && !inExpression && !inGroup) { // Nest ((()))
+                pushCharacter('(');
+                nestLevel++;
+                continue;
+            }
+
             if (character == ')') {
                 if (!inGroup && !inExpression) {
+                    if (inNest()) {
+                        pushCharacter(')');
+                        nestLevel--;
+                        continue;
+                    }
                     if (!inCallArguments) {
                         throw new TSLSyntaxError("Unexpected character", lineNo(), charNo());
                     }
@@ -225,7 +240,7 @@ public class TSLLexer {
                     throw new TSLSyntaxError("Invalid escape sequence", lineNo(), charNo() - 1);
                 }
 
-                if (!inGroup && !inExpression && !inCallArguments) {
+                if (!inGroup && !inExpression && !inCallArguments && !inNest()) {
                     pushToken();
                     continue;
                 }

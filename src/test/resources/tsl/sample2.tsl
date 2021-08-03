@@ -56,6 +56,22 @@ PRINT
 %${_mult(10,20)} \${escaped! \%100 Time to ditch indentations, ${"aye"}!%
 ON Alert Event
 
+#@notificationVolume(2f)
+#@notificationPitch(2f)
+EITHER
+ DROP $name
+ OR
+ (EITHER DROP apple OR DROP string)
+ OR
+ (EITHER
+    DROP apple
+    OR
+    (EITHER
+        DROP string
+        OR
+        DROP diamond))
+ ON Alert Event
+
 ### SOME EDGE CASES ###
 
 #*
