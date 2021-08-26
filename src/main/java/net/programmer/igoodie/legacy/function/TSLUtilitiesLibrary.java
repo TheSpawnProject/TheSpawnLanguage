@@ -1,7 +1,8 @@
-package net.programmer.igoodie.tsl.function;
+package net.programmer.igoodie.legacy.function;
 
 import java.util.*;
 
+@Deprecated
 public class TSLUtilitiesLibrary {
 
     public Date now() {

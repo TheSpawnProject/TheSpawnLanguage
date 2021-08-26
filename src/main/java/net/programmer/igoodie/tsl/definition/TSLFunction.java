@@ -1,45 +1,45 @@
 package net.programmer.igoodie.tsl.definition;
 
+import net.programmer.igoodie.tsl.exception.TSLExpressionException;
+import net.programmer.igoodie.tsl.function.binding.JSFunctionBinding;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import net.programmer.igoodie.util.ArrayAccessor;
+import net.programmer.igoodie.util.TypeUtilities;
 
 public abstract class TSLFunction extends TSLDefinition {
 
-    protected boolean global;
-
-    public TSLFunction(TSLPlugin plugin, String name, boolean global) {
+    public TSLFunction(TSLPlugin plugin, String name) {
         super(plugin, name);
-        this.global = global;
     }
 
-    public boolean isGlobal() {
-        return global;
+    public abstract Object calculate(Object... arguments) throws TSLExpressionException;
+
+    public JSFunctionBinding getBinding() {
+        return new JSFunctionBinding() {
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public Calculator getCalculator() {
+                return TSLFunction.this::calculate;
+            }
+        };
     }
 
-    public abstract Object getBindingObject();
+    /* ----------------------------------- */
 
-    @FunctionalInterface
-    public interface withNoParams {
-        Object calculate();
+    protected String stringArgument(Object[] args, int index) {
+        Object element = ArrayAccessor.of(args).getOrDefault(index, null);
+        if (element instanceof String) return ((String) element);
+        throw new TSLExpressionException("Expected string argument at index:" + index);
     }
 
-    @FunctionalInterface
-    public interface with1Param<T1> {
-        Object calculate(T1 arg1);
-    }
-
-    @FunctionalInterface
-    public interface with2Params<T1, T2> {
-        Object calculate(T1 arg1, T2 arg2);
-    }
-
-    @FunctionalInterface
-    public interface with3Params<T1, T2, T3> {
-        Object calculate(T1 arg1, T2 arg2, T3 arg3);
-    }
-
-    @FunctionalInterface
-    public interface with4Params<T1, T2, T3, T4> {
-        Object calculate(T1 arg1, T2 arg2, T3 arg3, T4 arg4);
+    protected Number numberArgument(Object[] args, int index) {
+        Object element = ArrayAccessor.of(args).getOrDefault(index, null);
+        if (element != null && TypeUtilities.isNumeric(element.getClass())) return ((Number) element);
+        throw new TSLExpressionException("Expected number argument at index:" + index);
     }
 
 }

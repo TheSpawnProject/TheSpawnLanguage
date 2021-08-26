@@ -5,10 +5,16 @@ import example.setup.event.AlertEvent;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.definition.TSLAction;
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
+import net.programmer.igoodie.tsl.registry.ActionRegistry;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,6 +32,26 @@ public class RulesetTests {
     public static void init() {
         TSL = new TheSpawnLanguage();
         TSL.loadPlugin(new ExamplePlugin());
+
+
+        TSL.loadPlugin(new TSLPlugin(new TSLPluginManifest("", "", "")) {
+            @Override
+            public void registerActions(ActionRegistry registry) {
+                TSLAction dummyEitherAction = new TSLAction(this, "EITHER") {
+                    @Override
+                    public String getUsage() {
+                        return "~";
+                    }
+
+                    @Override
+                    public void verifyTokenCount(List<TSLToken> tokens, TSLRule rule) throws TSLSyntaxError {}
+
+                    @Override
+                    public void perform(List<TSLToken> tokens, TSLContext context) {}
+                };
+                registry.register(dummyEitherAction);
+            }
+        });
     }
 
     @Test

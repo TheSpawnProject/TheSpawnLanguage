@@ -1,15 +1,11 @@
 package example.setup;
 
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.logging.TSLLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
-import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
-import net.programmer.igoodie.tsl.plugin.TSLPluginLogger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 public class ManifestTest {
 
@@ -25,7 +21,7 @@ public class ManifestTest {
         try {
             Class<?> pluginClass = Class.forName("example.setup.ExamplePlugin");
 
-            Object plugin = pluginClass.newInstance();
+            Object plugin = pluginClass.getDeclaredConstructor().newInstance();
 
             if (plugin instanceof TSLPlugin) {
                 TSL.loadPlugin((TSLPlugin) plugin);
@@ -40,12 +36,22 @@ public class ManifestTest {
             System.out.println("Unknown class name");
             e.printStackTrace();
 
+        } catch (NoSuchMethodException e) {
+            System.out.println("Plugin's default constructor is missing.");
+            e.printStackTrace();
+
         } catch (IllegalAccessException e) {
             System.out.println("Plugin's constructor must be public.");
             e.printStackTrace();
 
         } catch (InstantiationException e) {
+            System.out.println("Plugin MUST not be an abstract class.");
             e.printStackTrace();
+
+        } catch (InvocationTargetException e) {
+            System.out.println("Plugin's constructor threw an exception");
+            e.printStackTrace();
+
         }
     }
 

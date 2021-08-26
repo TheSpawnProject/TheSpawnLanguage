@@ -1,10 +1,12 @@
 package net.programmer.igoodie.plugins.grammar;
 
 import net.programmer.igoodie.plugins.grammar.actions.VariableAction;
+import net.programmer.igoodie.plugins.grammar.functions.RunFunction;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
 import net.programmer.igoodie.tsl.registry.ActionRegistry;
+import net.programmer.igoodie.tsl.registry.FunctionRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +27,11 @@ public class TSLGrammarCore extends TSLPlugin {
     @Override
     public void registerActions(ActionRegistry registry) {
         registry.register(VariableAction.INSTANCE);
+    }
+
+    @Override
+    public void registerFunctions(FunctionRegistry registry) {
+        registry.register(RunFunction.INSTANCE);
     }
 
 }

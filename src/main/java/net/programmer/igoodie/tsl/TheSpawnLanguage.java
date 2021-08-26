@@ -1,8 +1,8 @@
 package net.programmer.igoodie.tsl;
 
+import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
+import net.programmer.igoodie.plugins.library.TSLUtilitiesLibrary;
 import net.programmer.igoodie.tsl.function.JSEngine;
-import net.programmer.igoodie.tsl.function.TSLDebugLibrary;
-import net.programmer.igoodie.tsl.function.TSLUtilitiesLibrary;
 import net.programmer.igoodie.tsl.logging.TSLLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
@@ -38,16 +38,21 @@ public class TheSpawnLanguage {
         EVENT_FIELD_REGISTRY = new EventFieldRegistry();
         ACTION_REGISTRY = new ActionRegistry();
         COMPARATOR_REGISTRY = new ComparatorRegistry();
-        FUNCTION_REGISTRY = new FunctionRegistry();
+        FUNCTION_REGISTRY = new FunctionRegistry(this);
 
-        jsEngine = new JSEngine(FUNCTION_REGISTRY);
-        jsEngine.putGlobalBinding("TSL_VERSION", "0.0.0");
-        jsEngine.putGlobalBinding("_", new TSLUtilitiesLibrary());
-        jsEngine.putGlobalBinding("_D", new TSLDebugLibrary(jsEngine));
+        jsEngine = new JSEngine();
+
+        loadBuiltInPackages();
     }
 
     public JSEngine getJsEngine() {
         return jsEngine;
+    }
+
+    private void loadBuiltInPackages() {
+        jsEngine.defineConst("$TSL_VERSION", "0.0.0");
+        jsEngine.loadLibrary(new TSLUtilitiesLibrary());
+        loadPlugin(new TSLGrammarCore());
     }
 
     public void loadPlugin(TSLPlugin plugin) {
@@ -61,6 +66,7 @@ public class TheSpawnLanguage {
 
         assignAnnotatedFields(plugin);
 
+        plugin.setLanguage(this);
         plugin.registerTags(TAG_REGISTRY);
         plugin.registerDecorators(DECORATOR_REGISTRY);
         plugin.registerEvents(EVENT_REGISTRY);

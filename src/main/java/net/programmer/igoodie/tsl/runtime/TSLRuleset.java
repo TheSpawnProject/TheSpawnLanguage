@@ -106,6 +106,7 @@ public class TSLRuleset implements Attributable {
     }
 
     public void addRule(TSLRule rule) {
+        snippets.add(rule.getSnippet());
         rule.setAssociatedRuleset(this);
         this.rules.add(rule);
     }

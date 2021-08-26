@@ -26,4 +26,5 @@ public class CaptureTests {
         List<TSLToken> flattenedCapture = capture.flattenInline("15");
         System.out.println(flattenedCapture);
     }
+
 }

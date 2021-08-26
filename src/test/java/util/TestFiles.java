@@ -17,6 +17,10 @@ public class TestFiles {
         return loadFile("fragments/" + filename);
     }
 
+    public static String loadJS(String filename) throws IOException {
+        return loadFile("rhino/" + filename);
+    }
+
     @SuppressWarnings("UnstableApiUsage")
     private static String loadFile(String path) throws IOException {
         URL resourceURL = Resources.getResource(path);

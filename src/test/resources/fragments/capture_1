@@ -1,3 +1,3 @@
-$dropAxeWithFireAspect{level}
+$dropAxeWithFireAspect(level)
 = DROP %diamond_axe{Enchantments:[{id:fire_aspect,lvl:{{level}}]}% ${{{level}} + 1}
 

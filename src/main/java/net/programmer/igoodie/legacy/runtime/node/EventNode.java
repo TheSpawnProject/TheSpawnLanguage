@@ -1,4 +1,4 @@
-package net.programmer.igoodie.tsl.runtime.node_old;
+package net.programmer.igoodie.legacy.runtime.node;
 
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
