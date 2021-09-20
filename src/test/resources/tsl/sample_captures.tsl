@@ -6,4 +6,4 @@ $myCapture{x,y,z}
 PRINT
 ${_.iff(true, 1, 2)}
 $myCapture{$identity{1},2,3}
-ON Alert Event
+ON Dummy Event

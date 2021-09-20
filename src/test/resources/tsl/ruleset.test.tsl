@@ -1,0 +1,8 @@
+$printPrefix(prefix)
+ = %[{{prefix}}][${Date.now().toString()}]%
+
+$printAction(text)
+ = PRINT $printPrefix(TSL) {{text}}
+
+$printAction(%${"foo"} bar baz%)
+ ON Dummy Event

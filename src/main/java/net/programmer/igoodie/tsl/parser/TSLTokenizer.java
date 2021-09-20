@@ -1,13 +1,16 @@
 package net.programmer.igoodie.tsl.parser;
 
+import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.*;
 import net.programmer.igoodie.tsl.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TSLTokenizer {
 
@@ -73,6 +76,15 @@ public class TSLTokenizer {
 
     public List<TSLToken> tokenizeAll(List<String> texts) {
         return texts.stream().map(this::tokenize).collect(Collectors.toList());
+    }
+
+    public long tokenCount(String text) {
+        TSLLexer lexer = new TSLLexer(text);
+        lexer.lex();
+        return lexer.getSnippets().stream()
+                .map(TSLSnippetBuffer::getTokens)
+                .mapToLong(Collection::size)
+                .sum();
     }
 
 }

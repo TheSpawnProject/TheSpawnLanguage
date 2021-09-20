@@ -58,13 +58,18 @@ public class TSLCaptureSnippet extends TSLSnippet {
     /* -------------------------------------------- */
 
     public List<TSLToken> flattenInline(String... arguments) {
-        TSLTokenizer tokenizer = new TSLTokenizer();
-        return flatten(tokenizer.tokenizeAll(arguments));
+        return flattenInline(Arrays.asList(arguments));
     }
 
     public List<TSLToken> flattenInline(List<String> arguments) {
         TSLTokenizer tokenizer = new TSLTokenizer();
-        return flatten(tokenizer.tokenizeAll(arguments));
+        List<TSLToken> tokens = tokenizer.tokenizeAll(arguments);
+        for (TSLToken token : tokens) {
+            if (tokenizer.tokenCount(token.getRaw()) != 1) {
+                throw new IllegalArgumentException("Invalid argument passed -> " + token.getRaw());
+            }
+        }
+        return flatten(tokens);
     }
 
     public List<TSLToken> flatten(TSLToken... arguments) {

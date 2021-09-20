@@ -1,4 +1,4 @@
 PRINT foo
- ON Alert Event
+ ON Dummy Event
  WITH foo bar baz
  WITH uno dos tres

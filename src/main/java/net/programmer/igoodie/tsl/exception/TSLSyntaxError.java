@@ -34,7 +34,7 @@ public class TSLSyntaxError extends RuntimeException {
 
     @Override
     public String toString() {
-        return String.format("Syntax Error: %s at (line:%d, char:%d) %s",
+        return String.format("Syntax Error: %s @ (line:%d, char:%d) %s",
                 getMessage(), line + 1, character + 1, filePath == null ? "" : filePath);
     }
 

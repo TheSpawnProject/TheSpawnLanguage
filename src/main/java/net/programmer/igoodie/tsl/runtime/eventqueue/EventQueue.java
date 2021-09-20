@@ -10,9 +10,9 @@ public class EventQueue {
 
     private final Thread innerThread;
 
-    private volatile Deque<EventQueueTask> tasks;
+    private final Deque<EventQueueTask> tasks;
 
-    private long delayBetweenTasks; // milliseconds
+    private final long delayBetweenTasks; // milliseconds
     private int succeededTasks;
     private int discardedTasks;
 
@@ -31,16 +31,16 @@ public class EventQueue {
     private void stepThread() {
         try {
             if (hasUnhandledTasks()) {
-                EventQueueTask task = tasks.remove();
+                synchronized (tasks) {
+                    EventQueueTask task = tasks.remove();
 
-                if (task.getType() == EventQueueTask.Type.SLEEP) {
-                    state = State.COOLDOWN;
-                }
+                    if (task.getType() == EventQueueTask.Type.SLEEP)
+                        state = State.COOLDOWN;
 
-                task.run();
+                    task.run();
 
-                if (task.getType() == EventQueueTask.Type.SLEEP) {
-                    state = State.RUNNING;
+                    if (task.getType() == EventQueueTask.Type.SLEEP)
+                        state = State.RUNNING;
                 }
 
             } else {

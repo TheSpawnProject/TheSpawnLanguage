@@ -31,28 +31,28 @@ $swordWithName{name}
 #### Rules ####
 
 $parameterizedCapture3{1,2,%Hey there%}
- ON Alert Event
+ ON Dummy Event
 
 @suppressNotifications
 @suppressNotifications
 PRINT $swordWithName{%My Mighty Sword!%}
- ON Alert Event
+ ON Dummy Event
 
 @suppressNotifications
 @suppressNotifications
 PRINT foo
- ON Alert Event
+ ON Dummy Event
 
 $someAction # Inline comment!
- ON Alert Event
+ ON Dummy Event
 
 PRINT %Hey dude! This message is evaluated @ ${_currentUnix()}%
- ON Alert Event
+ ON Dummy Event
  WITH time = 12345
 
 @suppressNotifications
 PRINT ${_maximumOf(10,20) + Math.random()}
- ON Alert Event
+ ON Dummy Event
 
 # Eyyy, a comment here!
 
@@ -74,8 +74,8 @@ EITHER
         DROP string
         OR
         DROP diamond))
- ON Alert Event
+ ON Dummy Event
 
 PRINT
 %${_mult(10,20)} Time to ditch indentations, ${"aye"}!%
-ON Alert Event
+ON Dummy Event

@@ -1,9 +1,7 @@
-package automated;
+package old.automated;
 
 import example.plugin.ExamplePlugin;
-import example.plugin.event.DummyEvent;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,7 +10,7 @@ import util.TestFiles;
 
 import java.io.IOException;
 
-public class RulesetTests {
+public class PredicateTests {
 
     private static TheSpawnLanguage TSL;
 
@@ -23,16 +21,11 @@ public class RulesetTests {
     }
 
     @Test
-    public void ruleset1() throws IOException {
-        String script = TestFiles.loadTSLScript("ruleset.test.tsl");
+    public void shallParseTokensCorrectly() throws IOException {
+        String script = TestFiles.loadTSLScript("predicates.tsl");
 
         TSLParser parser = new TSLParser(TSL);
         TSLRuleset ruleset = parser.parse(script);
-
-        TSLContext context = new TSLContext(TSL);
-        context.setEvent(DummyEvent.INSTANCE);
-
-        ruleset.perform(context);
     }
 
 }

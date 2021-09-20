@@ -19,7 +19,7 @@ public abstract class TSLEvent extends TSLDefinition {
 
     /* ---------------------------------- */
 
-    protected Set<TSLEventField<?>> fieldsAsSet(TSLEventField<?>... fields) {
+    protected Set<TSLEventField<?>> eventFields(TSLEventField<?>... fields) {
         Set<TSLEventField<?>> set = new HashSet<>();
         Collections.addAll(set, fields);
         return set;
