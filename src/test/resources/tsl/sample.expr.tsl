@@ -1,0 +1,18 @@
+PRINT DROP diamond ${Math.floor(donation / 10)}
+ ON Alert Event
+
+PRINT ${Math.sin(donation * 123)}
+ ON Alert Event
+
+PRINT ${_.randomOne(_.union(["a"], ["b"], ["c"]))}
+ ON Alert Event
+
+PRINT ${_.randomOne("a", "b", "c")}
+ ON Alert Event
+
+PRINT ${_.randomOne(["a", "b", $TSL_VERSION])}
+ ON Alert Event
+
+PRINT ${runScript("./src/test/resources/rhino/module.test.js")}
+ ON Alert Event
+

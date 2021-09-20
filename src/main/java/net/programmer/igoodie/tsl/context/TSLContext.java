@@ -1,20 +1,20 @@
 package net.programmer.igoodie.tsl.context;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
-import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 
 public class TSLContext {
 
-    protected JSEngine engine;
+    protected TheSpawnLanguage language;
 
-    public JSEngine getEngine() {
-        return engine;
+    public TSLContext(TheSpawnLanguage language) {
+        this.language = language;
     }
 
-    public void setEngine(JSEngine engine) {
-        this.engine = engine;
+    public TheSpawnLanguage getLanguage() {
+        return language;
     }
 
     /* ----------------------------------- */

@@ -31,7 +31,7 @@ public class TSLExpression extends TSLToken {
 
     @Override
     public String evaluate(TSLContext context) {
-        return context.getEngine().evaluate(expression, context);
+        return context.getLanguage().getJsEngine().evaluate(expression, context);
     }
 
 }

@@ -21,6 +21,12 @@ public class TSLUtilitiesLibrary extends JSLibraryBinding {
     }
 
     @JSFunction
+    public Object randomOne(List<Object> objects) {
+        int randomIndex = new Random().nextInt(objects.size());
+        return objects.get(randomIndex);
+    }
+
+    @JSFunction
     public Object randomOne(Object... objects) {
         int randomIndex = new Random().nextInt(objects.length);
         return objects[randomIndex];

@@ -10,26 +10,35 @@ import org.mozilla.javascript.Undefined;
 import java.io.File;
 import java.io.IOException;
 
-public class RunFunction extends TSLFunction {
+public class RunScriptFunction extends TSLFunction {
 
-    public static final RunFunction INSTANCE = new RunFunction(System.getProperty("user.dir"));
+    public static final RunScriptFunction INSTANCE = new RunScriptFunction(System.getProperty("user.dir"));
 
-    private String relativeFolder;
+    private String rootFolder;
+    private boolean rootFolderSet;
 
-    private RunFunction(String relativeFolder) {
-        super(TSLGrammarCore.PLUGIN_INSTANCE, "run");
-        this.relativeFolder = relativeFolder;
+    private RunScriptFunction(String relativeFolder) {
+        super(TSLGrammarCore.PLUGIN_INSTANCE, "runScript");
+        this.rootFolder = relativeFolder;
+    }
+
+    /**
+     * <b>DO NOT USE!</b>
+     * For internal use only.
+     */
+    public void setRootFolder(String rootFolder) {
+        if (this.rootFolderSet)
+            throw new IllegalStateException("Root folder is already set.");
+        this.rootFolder = rootFolder;
+        this.rootFolderSet = true;
     }
 
     @Override
     public Object calculate(Object... arguments) throws TSLExpressionException {
         String scriptPath = stringArgument(arguments, 0);
 
-//        System.out.println("Reading for JS: " + (isAbsolutePath(scriptPath)
-//                ? scriptPath : resolvePath(relativeFolder, scriptPath)));
-
         String readScript = IOUtils.readString(isAbsolutePath(scriptPath)
-                ? scriptPath : resolvePath(relativeFolder, scriptPath));
+                ? scriptPath : resolvePath(rootFolder, scriptPath));
 
         if (readScript == null) {
             return Undefined.instance;

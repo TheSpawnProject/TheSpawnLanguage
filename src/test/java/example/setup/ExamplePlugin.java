@@ -1,7 +1,6 @@
 package example.setup;
 
 import example.setup.action.PrintAction;
-import example.setup.action.VariableAction;
 import example.setup.comparator.EqualsComparator;
 import example.setup.decorator.SuppressNotificationsDecorator;
 import example.setup.event.AlertEvent;
@@ -65,7 +64,6 @@ public class ExamplePlugin extends TSLPlugin {
     @Override
     public void registerActions(ActionRegistry registry) {
         registry.register(PrintAction.INSTANCE);
-        registry.register(VariableAction.INSTANCE);
     }
 
     @Override

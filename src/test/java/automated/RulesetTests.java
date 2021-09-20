@@ -71,9 +71,8 @@ public class RulesetTests {
 
         System.out.println("Rule count: " + ruleset.getRules().size());
 
-        TSLContext context = new TSLContext();
+        TSLContext context = new TSLContext(TSL);
         context.setEvent(AlertEvent.INSTANCE);
-        context.setEngine(TSL.getJsEngine());
         context.setEventArguments(new GoodieObject());
 
         for (List<TSLToken> tslTokens : ruleset.getRules().stream()

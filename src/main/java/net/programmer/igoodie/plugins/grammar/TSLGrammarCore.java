@@ -1,7 +1,7 @@
 package net.programmer.igoodie.plugins.grammar;
 
 import net.programmer.igoodie.plugins.grammar.actions.VariableAction;
-import net.programmer.igoodie.plugins.grammar.functions.RunFunction;
+import net.programmer.igoodie.plugins.grammar.functions.RunScriptFunction;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
@@ -31,7 +31,7 @@ public class TSLGrammarCore extends TSLPlugin {
 
     @Override
     public void registerFunctions(FunctionRegistry registry) {
-        registry.register(RunFunction.INSTANCE);
+        registry.register(RunScriptFunction.INSTANCE);
     }
 
 }
