@@ -50,7 +50,7 @@ public class JSEngineTests {
         jsEngine.defineConst("PI", 3.14);
         jsEngine.loadFunction(MaximumOfFunction.INSTANCE);
 
-        String script = "run('./src/test/resources/rhino/module.test.js')";
+        String script = "runScript('./src/test/resources/rhino/module.test.js')";
 
         String evaluation = jsEngine.evaluate(script, tslContext);
         System.out.println(evaluation);

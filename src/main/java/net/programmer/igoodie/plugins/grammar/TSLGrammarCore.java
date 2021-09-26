@@ -18,8 +18,6 @@ public class TSLGrammarCore extends TSLPlugin {
     @TSLPluginInstance
     public static TSLGrammarCore PLUGIN_INSTANCE;
 
-    public static Map<String, Object> VARIABLE_CACHE = new HashMap<>();
-
     public TSLGrammarCore() {
         super(new TSLPluginManifest("core", "TSL Core", VERSION).setAuthor("iGoodie"));
     }

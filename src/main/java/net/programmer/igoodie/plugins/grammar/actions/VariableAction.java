@@ -7,11 +7,15 @@ import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class VariableAction extends TSLAction {
 
     public static final VariableAction INSTANCE = new VariableAction();
+
+    public final Map<String, Object> VARIABLE_CACHE = new HashMap<>();
 
     private VariableAction() {
         super(TSLGrammarCore.PLUGIN_INSTANCE, "VARIABLE");
@@ -44,11 +48,11 @@ public class VariableAction extends TSLAction {
     }
 
     public Object fetchVariable(String key) {
-        return TSLGrammarCore.VARIABLE_CACHE.get(key);
+        return VARIABLE_CACHE.get(key);
     }
 
     public void saveVariable(String key, Object value) {
-        TSLGrammarCore.VARIABLE_CACHE.put(key, value);
+        VARIABLE_CACHE.put(key, value);
     }
 
 }
