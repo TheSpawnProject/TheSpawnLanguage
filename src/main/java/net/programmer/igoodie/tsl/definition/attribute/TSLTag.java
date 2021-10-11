@@ -6,16 +6,22 @@ import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import net.programmer.igoodie.tsl.registry.TSLRegistrable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
 
 // #! TAG_NAME ARG1 ARG2
-public abstract class TSLTag extends TSLAttributeGenerator {
+public abstract class TSLTag extends TSLAttributeGenerator implements TSLRegistrable {
 
     public TSLTag(TSLPlugin plugin, String name) {
         super(plugin, name);
+    }
+
+    @Override
+    public String getRegistryId() {
+        return getName();
     }
 
     @NotNull

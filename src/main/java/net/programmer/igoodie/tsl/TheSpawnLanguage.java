@@ -2,13 +2,17 @@ package net.programmer.igoodie.tsl;
 
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.plugins.library.TSLUtilitiesLibrary;
+import net.programmer.igoodie.tsl.definition.*;
+import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
+import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.logging.TSLLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPluginLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
-import net.programmer.igoodie.tsl.registry.*;
+import net.programmer.igoodie.tsl.registry.TSLRegistry;
+import net.programmer.igoodie.tsl.util.StringUtils;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -19,26 +23,31 @@ public class TheSpawnLanguage {
 
     public final Set<String> LOADED_PLUGINS;
 
-    public final TagRegistry TAG_REGISTRY;
-    public final DecoratorRegistry DECORATOR_REGISTRY;
-    public final EventRegistry EVENT_REGISTRY;
-    public final EventFieldRegistry EVENT_FIELD_REGISTRY;
-    public final ActionRegistry ACTION_REGISTRY;
-    public final ComparatorRegistry COMPARATOR_REGISTRY;
-    public final FunctionRegistry FUNCTION_REGISTRY;
+    public final TSLRegistry<TSLTag> TAG_REGISTRY;
+    public final TSLRegistry<TSLDecorator> DECORATOR_REGISTRY;
+    public final TSLRegistry<TSLEvent> EVENT_REGISTRY;
+    public final TSLRegistry<TSLEventField<?>> EVENT_FIELD_REGISTRY;
+    public final TSLRegistry<TSLAction> ACTION_REGISTRY;
+    public final TSLRegistry<TSLComparator> COMPARATOR_REGISTRY;
+    public final TSLRegistry<TSLFunction> FUNCTION_REGISTRY;
 
     protected final JSEngine jsEngine;
 
     public TheSpawnLanguage() {
         LOADED_PLUGINS = new HashSet<>();
 
-        TAG_REGISTRY = new TagRegistry();
-        DECORATOR_REGISTRY = new DecoratorRegistry();
-        EVENT_REGISTRY = new EventRegistry();
-        EVENT_FIELD_REGISTRY = new EventFieldRegistry();
-        ACTION_REGISTRY = new ActionRegistry();
-        COMPARATOR_REGISTRY = new ComparatorRegistry();
-        FUNCTION_REGISTRY = new FunctionRegistry(this);
+        TAG_REGISTRY = new TSLRegistry<>(StringUtils::upperSnake);
+        DECORATOR_REGISTRY = new TSLRegistry<>();
+        EVENT_REGISTRY = new TSLRegistry<>(StringUtils::upperFirstLetters);
+        EVENT_FIELD_REGISTRY = new TSLRegistry<>();
+        ACTION_REGISTRY = new TSLRegistry<>(StringUtils::allUpper);
+        COMPARATOR_REGISTRY = new TSLRegistry<>(StringUtils::allUpper);
+        FUNCTION_REGISTRY = new TSLRegistry<TSLFunction>() {
+            @Override
+            public void postRegister(TSLFunction function) {
+                jsEngine.loadFunction(function);
+            }
+        };
 
         jsEngine = new JSEngine();
 

@@ -13,7 +13,7 @@ import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
-import net.programmer.igoodie.tsl.registry.ActionRegistry;
+import net.programmer.igoodie.tsl.registry.TSLRegistry;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,7 +36,7 @@ public class RulesetTests {
 
         TSL.loadPlugin(new TSLPlugin(new TSLPluginManifest("", "", "")) {
             @Override
-            public void registerActions(ActionRegistry registry) {
+            public void registerActions(TSLRegistry<TSLAction> registry) {
                 TSLAction dummyEitherAction = new TSLAction(this, "EITHER") {
                     @Override
                     public String getUsage() {

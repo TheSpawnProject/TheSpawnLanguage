@@ -8,6 +8,8 @@ import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.hook.HookList;
 
+import java.util.LinkedList;
+
 public class PredicateNode implements RuleNode {
 
     protected TSLEventField<?> field;
@@ -51,7 +53,7 @@ public class PredicateNode implements RuleNode {
         Object lefthand = field.extractValue(eventArguments);
         String righthand = this.righthand.evaluate(context);
 
-        if (!comparator.compare(lefthand, righthand)) {
+        if (!comparator.satisfies(lefthand, new LinkedList<>())) {
             hooks.onPredicateFailed(rule, this, context);
             return false;
         } else {

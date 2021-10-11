@@ -10,11 +10,14 @@ import example.plugin.functions.GetVariableFunction;
 import example.plugin.functions.MaximumOfFunction;
 import example.plugin.functions.MultFunction;
 import example.plugin.tag.CooldownTag;
+import net.programmer.igoodie.tsl.definition.*;
+import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
+import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPluginLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
-import net.programmer.igoodie.tsl.registry.*;
+import net.programmer.igoodie.tsl.registry.TSLRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,38 +39,38 @@ public class ExamplePlugin extends TSLPlugin {
     }
 
     @Override
-    public void registerTags(TagRegistry registry) {
+    public void registerTags(TSLRegistry<TSLTag> registry) {
         registry.register(CooldownTag.INSTANCE);
     }
 
     @Override
-    public void registerDecorators(DecoratorRegistry registry) {
+    public void registerDecorators(TSLRegistry<TSLDecorator> registry) {
         registry.register(SuppressNotificationsDecorator.INSTANCE);
     }
 
     @Override
-    public void registerEvents(EventRegistry registry) {
+    public void registerEvents(TSLRegistry<TSLEvent> registry) {
         registry.register(DummyEvent.INSTANCE);
         LOGGER.info("Registered all the events!");
     }
 
     @Override
-    public void registerEventFields(EventFieldRegistry registry) {
+    public void registerEventFields(TSLRegistry<TSLEventField<?>> registry) {
         registry.register(TimeField.INSTANCE);
     }
 
     @Override
-    public void registerComparator(ComparatorRegistry registry) {
+    public void registerComparator(TSLRegistry<TSLComparator> registry) {
         registry.register(EqualsComparator.INSTANCE);
     }
 
     @Override
-    public void registerActions(ActionRegistry registry) {
+    public void registerActions(TSLRegistry<TSLAction> registry) {
         registry.register(PrintAction.INSTANCE);
     }
 
     @Override
-    public void registerFunctions(FunctionRegistry registry) {
+    public void registerFunctions(TSLRegistry<TSLFunction> registry) {
         registry.register(CurrentUnixFunction.INSTANCE);
         registry.register(MaximumOfFunction.INSTANCE);
         registry.register(GetVariableFunction.INSTANCE);

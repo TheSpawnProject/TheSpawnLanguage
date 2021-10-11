@@ -1,7 +1,10 @@
 package net.programmer.igoodie.tsl.plugin;
 
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.registry.*;
+import net.programmer.igoodie.tsl.definition.*;
+import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
+import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
+import net.programmer.igoodie.tsl.registry.TSLRegistry;
 
 public abstract class TSLPlugin {
 
@@ -30,18 +33,18 @@ public abstract class TSLPlugin {
         return language;
     }
 
-    public void registerTags(TagRegistry registry) {}
+    public void registerTags(TSLRegistry<TSLTag> registry) {}
 
-    public void registerDecorators(DecoratorRegistry registry) {}
+    public void registerDecorators(TSLRegistry<TSLDecorator> registry) {}
 
-    public void registerEvents(EventRegistry registry) {}
+    public void registerEvents(TSLRegistry<TSLEvent> registry) {}
 
-    public void registerEventFields(EventFieldRegistry registry) {}
+    public void registerEventFields(TSLRegistry<TSLEventField<?>> registry) {}
 
-    public void registerActions(ActionRegistry registry) {}
+    public void registerActions(TSLRegistry<TSLAction> registry) {}
 
-    public void registerComparator(ComparatorRegistry registry) {}
+    public void registerComparator(TSLRegistry<TSLComparator> registry) {}
 
-    public void registerFunctions(FunctionRegistry registry) {}
+    public void registerFunctions(TSLRegistry<TSLFunction> registry) {}
 
 }
