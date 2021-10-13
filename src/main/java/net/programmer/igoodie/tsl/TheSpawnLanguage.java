@@ -28,6 +28,7 @@ public class TheSpawnLanguage {
     public final TSLRegistry<TSLEvent> EVENT_REGISTRY;
     public final TSLRegistry<TSLEventField<?>> EVENT_FIELD_REGISTRY;
     public final TSLRegistry<TSLAction> ACTION_REGISTRY;
+    public final TSLRegistry<TSLPredicate> PREDICATE_REGISTRY;
     public final TSLRegistry<TSLComparator> COMPARATOR_REGISTRY;
     public final TSLRegistry<TSLFunction> FUNCTION_REGISTRY;
 
@@ -41,6 +42,7 @@ public class TheSpawnLanguage {
         EVENT_REGISTRY = new TSLRegistry<>(StringUtils::upperFirstLetters);
         EVENT_FIELD_REGISTRY = new TSLRegistry<>();
         ACTION_REGISTRY = new TSLRegistry<>(StringUtils::allUpper);
+        PREDICATE_REGISTRY = TSLRegistry.createWithCapacity(2);
         COMPARATOR_REGISTRY = new TSLRegistry<>(StringUtils::allUpper);
         FUNCTION_REGISTRY = new TSLRegistry<TSLFunction>() {
             @Override
@@ -81,7 +83,8 @@ public class TheSpawnLanguage {
         plugin.registerEvents(EVENT_REGISTRY);
         plugin.registerEventFields(EVENT_FIELD_REGISTRY);
         plugin.registerActions(ACTION_REGISTRY);
-        plugin.registerComparator(COMPARATOR_REGISTRY);
+        plugin.registerPredicates(PREDICATE_REGISTRY);
+        plugin.registerComparators(COMPARATOR_REGISTRY);
         plugin.registerFunctions(FUNCTION_REGISTRY);
         LOADED_PLUGINS.add(pluginId);
     }

@@ -25,7 +25,7 @@ public abstract class TSLDecorator extends TSLAttributeGenerator implements TSLR
 
     @NotNull
     @Override
-    public final GoodieObject evaluateAttributes(List<TSLToken> tokens) throws TSLRuntimeError {
+    public final GoodieObject generateAttributes(List<TSLToken> tokens) throws TSLRuntimeError {
         if (tokens.isEmpty()) {
             throw new TSLInternalError("Need at least one token");
         }
@@ -38,7 +38,7 @@ public abstract class TSLDecorator extends TSLAttributeGenerator implements TSLR
 
         try {
             List<String> arguments = ((TSLDecoratorCall) token).getArgs();
-            return evaluateDecoratorAttributes(arguments);
+            return generateDecoratorAttributes(arguments);
 
         } catch (TSLRuntimeError error) {
             throw new TSLRuntimeError(error.getMessage(), token);
@@ -46,6 +46,6 @@ public abstract class TSLDecorator extends TSLAttributeGenerator implements TSLR
     }
 
     @NotNull
-    public abstract GoodieObject evaluateDecoratorAttributes(List<String> argument) throws TSLRuntimeError;
+    public abstract GoodieObject generateDecoratorAttributes(List<String> argument) throws TSLRuntimeError;
 
 }

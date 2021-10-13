@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.parser;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
+import net.programmer.igoodie.tsl.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
@@ -12,10 +13,9 @@ import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TSLParser {
 
@@ -212,20 +212,6 @@ public class TSLParser {
     }
 
     public TSLPredicateSnippet parsePredicate(TSLRuleset ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens) {
-        /*
-            WITH field IN RANGE [0, 20]
-            WITH field = 20
-            WITH field IS 30
-
-            WITH field SATISFIES ${field * field >= 10}
-            WITH field SATISFIES ${Math.random() <= field}
-
-            WITH true/false
-         */
-
-        // TODO: Parse predicate
-        System.out.println("Parse predicate: " + tokens);
-
         TSLToken withToken = tokens.get(0);
 
         if (!(withToken instanceof TSLString)) {
@@ -236,15 +222,27 @@ public class TSLParser {
             throw new TSLSyntaxError("Predicates MUST start with WITH keyword.", withToken);
         }
 
+        List<TSLToken> predicateTokens = tokens.subList(1, tokens.size());
+
+        Optional<TSLPredicate> matchingPredicateFormat = tsl.PREDICATE_REGISTRY.stream()
+                .map(Map.Entry::getValue)
+                .filter(predicate -> predicate.formatMatches(predicateTokens))
+                .findFirst();
+
+        if (!matchingPredicateFormat.isPresent()) {
+            throw new TSLSyntaxError("Unknown Predicate declaration format.", withToken);
+        }
+
         return new TSLPredicateSnippet(ruleset,
+                matchingPredicateFormat.get(),
                 ((TSLString) withToken),
-                tokens.subList(1, tokens.size()));
+                predicateTokens);
     }
 
     public List<TSLDecoratorCall> parseDecorators(TSLRule rule, List<TSLToken> tokens) {
         int indexLastDecorator = indexLastDecorator(tokens);
         List<TSLDecoratorCall> decoratorTokens = tokens.subList(0,
-                indexLastDecorator == -1 ? 0 : indexLastDecorator + 1)
+                        indexLastDecorator == -1 ? 0 : indexLastDecorator + 1)
                 .stream().map(token -> ((TSLDecoratorCall) token))
                 .collect(Collectors.toList());
 

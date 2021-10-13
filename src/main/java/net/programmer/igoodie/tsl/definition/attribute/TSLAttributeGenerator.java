@@ -19,33 +19,13 @@ public abstract class TSLAttributeGenerator extends TSLDefinition {
         super(plugin, name);
     }
 
-    public final GoodieObject evaluateAttributesWithNamespace(List<TSLToken> tokens) {
+    public final GoodieObject generateAttributesWithNamespace(List<TSLToken> tokens) {
         TSLPlugin plugin = getPlugin();
-        return GoodieUtils.mapKeys(evaluateAttributes(tokens), plugin::prependNamespace);
+        GoodieObject generateAttributes = generateAttributes(tokens);
+        return GoodieUtils.mapKeys(generateAttributes, plugin::prependNamespace);
     }
 
     @NotNull
-    public abstract GoodieObject evaluateAttributes(List<TSLToken> tokens) throws TSLRuntimeError;
-
-    /* ------------------------------------ */
-
-    protected boolean parseBoolean(TSLString argument) throws TSLSyntaxError {
-        String argLowercase = argument.getWord().toLowerCase();
-
-        if (argLowercase.equals("true"))
-            return true;
-        else if (argLowercase.equals("false"))
-            return false;
-        else throw new TSLSyntaxError("Expected either 'true' or 'false'", argument);
-    }
-
-    protected double parseDouble(TSLString argument) throws TSLSyntaxError {
-        try {
-            return Double.parseDouble(argument.getWord());
-
-        } catch (NumberFormatException e) {
-            throw new TSLSyntaxError("Expected number", argument);
-        }
-    }
+    public abstract GoodieObject generateAttributes(List<TSLToken> tokens) throws TSLRuntimeError;
 
 }

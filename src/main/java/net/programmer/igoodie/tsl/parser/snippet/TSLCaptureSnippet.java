@@ -14,17 +14,29 @@ import java.util.*;
 public class TSLCaptureSnippet extends TSLSnippet {
 
     protected TSLCaptureCall header;
+    protected TSLSymbol equalsSign;
     protected List<TSLToken> capturedTokens;
 
     public TSLCaptureSnippet(TSLRuleset ruleset, TSLCaptureCall header, TSLSymbol equalsSign, List<TSLToken> tokens) {
         super(ruleset, CollectionUtils.asSpreadList(TSLToken.class, header, equalsSign, tokens));
         this.header = header;
+        this.equalsSign = equalsSign;
         this.capturedTokens = tokens;
     }
 
-    public TSLCaptureCall getHeader() {
+    public TSLCaptureCall getHeaderToken() {
         return header;
     }
+
+    public TSLSymbol getEqualsSignToken() {
+        return equalsSign;
+    }
+
+    public List<TSLToken> getCapturedTokens() {
+        return capturedTokens;
+    }
+
+    /* -------------------------------------------- */
 
     public String getName() {
         return header.getCaptureName();
@@ -32,10 +44,6 @@ public class TSLCaptureSnippet extends TSLSnippet {
 
     public List<String> getParameterNames() {
         return header.getArgs();
-    }
-
-    public List<TSLToken> getCapturedTokens() {
-        return capturedTokens;
     }
 
     /* -------------------------------------------- */

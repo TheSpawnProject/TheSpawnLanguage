@@ -95,9 +95,9 @@ public class TSLRuleset implements Attributable {
 
     public void addTag(TSLTagSnippet tagSnippet) {
         snippets.add(tagSnippet);
-        this.attributeList.addTag(tagSnippet.getTag(),
-                tagSnippet.getTagName(),
-                tagSnippet.getTagArguments());
+        this.attributeList.addTag(tagSnippet.getTagDefinition(),
+                tagSnippet.getTagNameToken(),
+                tagSnippet.getTagArgTokens());
     }
 
     public void addCapture(TSLCaptureSnippet captureSnippet) {

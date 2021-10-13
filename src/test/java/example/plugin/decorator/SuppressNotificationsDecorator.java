@@ -18,7 +18,7 @@ public class SuppressNotificationsDecorator extends TSLDecorator {
 
     @NotNull
     @Override
-    public GoodieObject evaluateDecoratorAttributes(List<String> argument) throws TSLRuntimeError {
+    public GoodieObject generateDecoratorAttributes(List<String> argument) throws TSLRuntimeError {
         GoodieObject attributes = new GoodieObject();
         attributes.put("notificationsMuted", true);
         return attributes;

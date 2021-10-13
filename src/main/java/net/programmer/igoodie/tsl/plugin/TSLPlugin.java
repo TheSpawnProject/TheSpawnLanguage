@@ -43,7 +43,9 @@ public abstract class TSLPlugin {
 
     public void registerActions(TSLRegistry<TSLAction> registry) {}
 
-    public void registerComparator(TSLRegistry<TSLComparator> registry) {}
+    public void registerComparators(TSLRegistry<TSLComparator> registry) {}
+
+    public void registerPredicates(TSLRegistry<TSLPredicate> registry) {}
 
     public void registerFunctions(TSLRegistry<TSLFunction> registry) {}
 

@@ -4,7 +4,9 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
+import net.programmer.igoodie.tsl.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
+import net.programmer.igoodie.tsl.parser.snippet.TSLPredicateSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLRuleSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
@@ -13,6 +15,7 @@ import net.programmer.igoodie.tsl.runtime.attribute.TSLAttributeList;
 import net.programmer.igoodie.tsl.util.GoodieUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TSLRule implements Attributable {
 
@@ -22,7 +25,7 @@ public class TSLRule implements Attributable {
     protected TSLRuleSnippet snippet;
 
     protected TSLEvent event;
-    // TODO: Predicates
+    protected List<TSLPredicate> predicates;
     protected TSLAction action;
 
     public TSLRule() {
@@ -62,6 +65,8 @@ public class TSLRule implements Attributable {
             throw new IllegalStateException("Snippet MUST not be re-initialized");
         this.snippet = snippet;
         this.event = snippet.getEventSnippet().getEventDefinition();
+        this.predicates = snippet.getPredicateSnippets().stream()
+                .map(TSLPredicateSnippet::getPredicateDefinition).collect(Collectors.toList());
         this.action = snippet.getActionSnippet().getActionDefinition();
     }
 
@@ -72,7 +77,7 @@ public class TSLRule implements Attributable {
         return attributeList.getSquashedAttributes();
     }
 
-    public GoodieObject getCalculatedAttributes() {
+    public GoodieObject getOverriddenAttributes() {
         return GoodieUtils.mergeOverriding(associatedRuleset.getAttributes(), this.getAttributes());
     }
 
@@ -87,13 +92,16 @@ public class TSLRule implements Attributable {
             return false;
         }
 
-        System.out.println("Performing " + snippet.getAllTokens());
+        context.setAttributes(getOverriddenAttributes());
 
-        // TODO: traverse predicates
+        for (TSLPredicateSnippet predicateSnippet : snippet.getPredicateSnippets()) {
+            TSLPredicate predicate = predicateSnippet.getPredicateDefinition();
+            if (!predicate.satisfies(context, predicateSnippet.getPredicateTokens())) {
+                return false;
+            }
+        }
 
-        context.setAttributes(getCalculatedAttributes());
-
-        List<TSLToken> actionArgs = snippet.getActionSnippet().getActionArgs();
+        List<TSLToken> actionArgs = snippet.getActionSnippet().getActionArgTokens();
         action.perform(actionArgs, context);
         return true;
     }

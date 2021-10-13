@@ -12,22 +12,33 @@ import java.util.stream.Collectors;
 // [ON] [Event Name]
 public class TSLEventSnippet extends TSLSnippet {
 
+    protected TSLString keywordOn;
     protected List<TSLString> eventName;
+
     protected TSLEvent eventDefinition;
 
     public TSLEventSnippet(TSLRuleset ruleset, TSLEvent eventDefinition, TSLString keywordOn, List<TSLString> eventName) {
         super(ruleset, CollectionUtils.asSpreadList(TSLToken.class, keywordOn, eventName));
+        this.keywordOn = keywordOn;
         this.eventName = eventName;
         this.eventDefinition = eventDefinition;
     }
+
+    public TSLString getOnKeywordToken() {
+        return keywordOn;
+    }
+
+    public List<TSLString> getEventNameTokens() {
+        return eventName;
+    }
+
+    /* ------------------------------ */
 
     public TSLEvent getEventDefinition() {
         return eventDefinition;
     }
 
-    public List<TSLString> getEventNameWords() {
-        return eventName;
-    }
+    /* ------------------------------ */
 
     public String getEventName() {
         return eventName.stream()

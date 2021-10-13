@@ -43,30 +43,6 @@ public class TSLContext {
 
     /* ----------------------------------- */
 
-//    protected List<TSLToken> actionTokens = new LinkedList<>();
-//
-//    public List<TSLToken> getActionTokens() {
-//        return actionTokens;
-//    }
-//
-//    public void setActionTokens(List<TSLToken> actionTokens) {
-//        this.actionTokens = actionTokens;
-//    }
-
-    /* ----------------------------------- */
-
-    protected TSLRule rule;
-
-    public TSLRule getRule() {
-        return rule;
-    }
-
-    public void setRule(TSLRule rule) {
-        this.rule = rule;
-    }
-
-    /* ----------------------------------- */
-
     protected GoodieObject attributes;
 
     public GoodieObject getAttributes() {
@@ -79,27 +55,17 @@ public class TSLContext {
 
     /* ----------------------------------- */
 
-//    protected Map<String, Object> customDataMap;
-//
-//    public Map<String, Object> getCustomDataMap() {
-//        return customDataMap == null ? new HashMap<>() : customDataMap;
-//    }
-//
-//    public Object getCustomData(String dataName) {
-//        return getCustomDataMap().get(dataName);
-//    }
-//
-//    public <T> T getCustomData(String dataName, Class<T> type) {
-//        Map<String, Object> customDataMap = getCustomDataMap();
-//        Object rawData = customDataMap.get(dataName);
-//
-//        if (rawData == null) return null;
-//
-//        if (type.isInstance(rawData)) {
-//            return type.cast(rawData);
-//        }
-//
-//        return null;
-//    }
+    @Deprecated
+    protected TSLRule rule;
+
+    @Deprecated
+    public TSLRule getRule() {
+        return rule;
+    }
+
+    @Deprecated
+    public void setRule(TSLRule rule) {
+        this.rule = rule;
+    }
 
 }

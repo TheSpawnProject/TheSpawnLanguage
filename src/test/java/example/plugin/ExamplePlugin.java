@@ -60,7 +60,7 @@ public class ExamplePlugin extends TSLPlugin {
     }
 
     @Override
-    public void registerComparator(TSLRegistry<TSLComparator> registry) {
+    public void registerComparators(TSLRegistry<TSLComparator> registry) {
         registry.register(EqualsComparator.INSTANCE);
     }
 

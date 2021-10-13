@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 public class TSLAttributeList {
 
     protected List<TSLAttributeGenerator> generators;
-    protected List<GoodieObject> attributeContainers;
+    protected List<GoodieObject> generatedAttributes;
 
     public TSLAttributeList() {
         this.generators = new LinkedList<>();
-        this.attributeContainers = new LinkedList<>();
+        this.generatedAttributes = new LinkedList<>();
     }
 
     public List<TSLTag> getTags() {
@@ -42,16 +42,16 @@ public class TSLAttributeList {
 
     public void addTag(TSLTag tagDefinition, TSLString tagName, List<TSLString> tagArguments) {
         List<TSLToken> tokens = CollectionUtils.asSpreadList(TSLToken.class, tagName, tagArguments);
-        GoodieObject attributes = tagDefinition.evaluateAttributesWithNamespace(tokens);
+        GoodieObject attributes = tagDefinition.generateAttributesWithNamespace(tokens);
         this.generators.add(tagDefinition);
-        this.attributeContainers.add(attributes);
+        this.generatedAttributes.add(attributes);
     }
 
     public void addDecorator(TSLDecorator decoratorDefinition, TSLDecoratorCall decoratorCall) {
         List<TSLToken> tokens = Collections.singletonList(decoratorCall);
-        GoodieObject attributes = decoratorDefinition.evaluateAttributesWithNamespace(tokens);
+        GoodieObject attributes = decoratorDefinition.generateAttributesWithNamespace(tokens);
         this.generators.add(decoratorDefinition);
-        this.attributeContainers.add(attributes);
+        this.generatedAttributes.add(attributes);
     }
 
     /* ---------------------------------- */
@@ -64,7 +64,7 @@ public class TSLAttributeList {
             return false;
         }
 
-        attributeContainers.remove(index);
+        generatedAttributes.remove(index);
         generators.remove(index);
         return true;
     }
@@ -82,7 +82,7 @@ public class TSLAttributeList {
     public GoodieObject getSquashedAttributes() {
         GoodieObject squashed = new GoodieObject();
 
-        for (GoodieObject attributeContainer : attributeContainers) {
+        for (GoodieObject attributeContainer : generatedAttributes) {
             for (String attributeName : attributeContainer.keySet()) {
                 squashed.put(attributeName, attributeContainer.get(attributeName));
             }

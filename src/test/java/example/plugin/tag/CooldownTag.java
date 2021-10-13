@@ -20,7 +20,7 @@ public class CooldownTag extends TSLTag {
 
     @NotNull
     @Override
-    public GoodieObject evaluateTagAttributes(TSLString tagName, List<TSLString> arguments) throws TSLRuntimeError {
+    public GoodieObject generateTagAttributes(TSLString tagName, List<TSLString> arguments) throws TSLRuntimeError {
         GoodieObject attributes = new GoodieObject();
 
         if (arguments.size() < 1)

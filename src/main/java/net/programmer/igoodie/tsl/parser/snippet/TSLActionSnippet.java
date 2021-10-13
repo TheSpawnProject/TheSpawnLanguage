@@ -19,6 +19,7 @@ public class TSLActionSnippet extends TSLSnippet {
 
     protected TSLString actionName;
     protected List<TSLToken> actionArgs;
+
     protected TSLAction actionDefinition;
 
     public TSLActionSnippet(TSLRuleset ruleset, TSLAction actionDefinition, TSLString actionName, List<TSLToken> actionArgs) {
@@ -28,16 +29,18 @@ public class TSLActionSnippet extends TSLSnippet {
         this.actionDefinition = actionDefinition;
     }
 
-    public TSLAction getActionDefinition() {
-        return actionDefinition;
-    }
-
-    public TSLString getActionNameWord() {
+    public TSLString getActionNameToken() {
         return actionName;
     }
 
-    public List<TSLToken> getActionArgs() {
+    public List<TSLToken> getActionArgTokens() {
         return actionArgs;
+    }
+
+    /* -------------------------- */
+
+    public TSLAction getActionDefinition() {
+        return actionDefinition;
     }
 
     /* -------------------------- */

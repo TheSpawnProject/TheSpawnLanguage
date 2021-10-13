@@ -2,8 +2,11 @@ package net.programmer.igoodie.plugins.grammar;
 
 import net.programmer.igoodie.plugins.grammar.actions.VariableAction;
 import net.programmer.igoodie.plugins.grammar.functions.RunScriptFunction;
+import net.programmer.igoodie.plugins.grammar.predicates.BinaryOperationPredicate;
+import net.programmer.igoodie.plugins.grammar.predicates.BooleanPredicate;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.definition.TSLFunction;
+import net.programmer.igoodie.tsl.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
@@ -11,13 +14,16 @@ import net.programmer.igoodie.tsl.registry.TSLRegistry;
 
 public class TSLGrammarCore extends TSLPlugin {
 
-    private static String VERSION = "2.0.0-alpha";
+    private static final String VERSION = "2.0.0-alpha";
+
+    private static final TSLPluginManifest MANIFEST = new TSLPluginManifest("core", "TSL Core", VERSION)
+            .setAuthor("iGoodie");
 
     @TSLPluginInstance
     public static TSLGrammarCore PLUGIN_INSTANCE;
 
     public TSLGrammarCore() {
-        super(new TSLPluginManifest("core", "TSL Core", VERSION).setAuthor("iGoodie"));
+        super(MANIFEST);
     }
 
     @Override
@@ -28,6 +34,12 @@ public class TSLGrammarCore extends TSLPlugin {
     @Override
     public void registerFunctions(TSLRegistry<TSLFunction> registry) {
         registry.register(RunScriptFunction.INSTANCE);
+    }
+
+    @Override
+    public void registerPredicates(TSLRegistry<TSLPredicate> registry) {
+        registry.register(BooleanPredicate.INSTANCE);
+        registry.register(BinaryOperationPredicate.INSTANCE);
     }
 
 }

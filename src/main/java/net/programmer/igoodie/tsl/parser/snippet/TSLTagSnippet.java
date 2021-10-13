@@ -12,27 +12,36 @@ import java.util.List;
 // [#!] [COOLDOWN] [3000]
 public class TSLTagSnippet extends TSLSnippet {
 
-    protected TSLTag tag;
+    protected TSLSymbol tagSymbol;
     protected TSLString tagName;
     protected List<TSLString> tagArguments;
 
-    public TSLTagSnippet(TSLRuleset ruleset, TSLTag tag, TSLSymbol tagSymbol, TSLString tagName, List<TSLString> tagArguments) {
+    protected TSLTag tagDefinition;
+
+    public TSLTagSnippet(TSLRuleset ruleset, TSLTag tagDefinition, TSLSymbol tagSymbol, TSLString tagName, List<TSLString> tagArguments) {
         super(ruleset, CollectionUtils.asSpreadList(TSLToken.class, tagSymbol, tagName, tagArguments));
-        this.tag = tag;
+        this.tagSymbol = tagSymbol;
         this.tagName = tagName;
         this.tagArguments = tagArguments;
+        this.tagDefinition = tagDefinition;
     }
 
-    public TSLTag getTag() {
-        return tag;
+    public TSLSymbol getTagSymbolToken() {
+        return tagSymbol;
     }
 
-    public TSLString getTagName() {
+    public TSLString getTagNameToken() {
         return tagName;
     }
 
-    public List<TSLString> getTagArguments() {
+    public List<TSLString> getTagArgTokens() {
         return tagArguments;
+    }
+
+    /* ------------------------- */
+
+    public TSLTag getTagDefinition() {
+        return tagDefinition;
     }
 
 }

@@ -1,13 +1,22 @@
 package net.programmer.igoodie.tsl.registry;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-public class TSLRegistry<T extends TSLRegistrable> {
+public class TSLRegistry<T extends TSLRegistrable> implements Iterable<Map.Entry<String, T>> {
 
+    protected int capacity = -1;
     protected Function<String, String> idMapper;
     protected Map<String, T> registry = new HashMap<>();
+
+    public static <T extends TSLRegistrable> TSLRegistry<T> createWithCapacity(int capacity) {
+        TSLRegistry<T> registry = new TSLRegistry<>();
+        registry.capacity = capacity;
+        return registry;
+    }
 
     public TSLRegistry() {
         this(i -> i);
@@ -20,6 +29,10 @@ public class TSLRegistry<T extends TSLRegistrable> {
     public T register(T entry) {
         if (has(entry)) {
             throw new IllegalArgumentException("Cannot register entry, it is already registered -> " + entry.getRegistryId());
+        }
+
+        if (capacity != -1 && registry.size() >= capacity) {
+            throw new IllegalArgumentException("");
         }
 
         registry.put(entry.getRegistryId(), entry);
@@ -39,6 +52,15 @@ public class TSLRegistry<T extends TSLRegistrable> {
 
     public T get(String registryId) {
         return registry.get(idMapper.apply(registryId));
+    }
+
+    @Override
+    public Iterator<Map.Entry<String, T>> iterator() {
+        return registry.entrySet().iterator();
+    }
+
+    public Stream<Map.Entry<String, T>> stream() {
+        return registry.entrySet().stream();
     }
 
 }

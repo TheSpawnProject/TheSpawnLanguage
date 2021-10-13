@@ -26,7 +26,7 @@ public abstract class TSLTag extends TSLAttributeGenerator implements TSLRegistr
 
     @NotNull
     @Override
-    public final GoodieObject evaluateAttributes(List<TSLToken> tokens) throws TSLRuntimeError {
+    public final GoodieObject generateAttributes(List<TSLToken> tokens) throws TSLRuntimeError {
         if (tokens.isEmpty()) {
             throw new TSLInternalError("Need at least one token");
         }
@@ -47,10 +47,10 @@ public abstract class TSLTag extends TSLAttributeGenerator implements TSLRegistr
             stringArguments.add(((TSLString) argument));
         }
 
-        return evaluateTagAttributes(((TSLString) tagName), stringArguments);
+        return generateTagAttributes(((TSLString) tagName), stringArguments);
     }
 
     @NotNull
-    public abstract GoodieObject evaluateTagAttributes(TSLString tagName, List<TSLString> arguments) throws TSLRuntimeError;
+    public abstract GoodieObject generateTagAttributes(TSLString tagName, List<TSLString> arguments) throws TSLRuntimeError;
 
 }
