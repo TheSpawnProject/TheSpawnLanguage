@@ -6,4 +6,4 @@ $printAction(text)
 
 $printAction(%${"foo"} bar baz%)
  ON Dummy Event
- WITH false
+ WITH time = 5

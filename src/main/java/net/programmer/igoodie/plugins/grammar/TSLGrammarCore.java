@@ -1,10 +1,12 @@
 package net.programmer.igoodie.plugins.grammar;
 
 import net.programmer.igoodie.plugins.grammar.actions.VariableAction;
+import net.programmer.igoodie.plugins.grammar.comparators.EqualsComparator;
 import net.programmer.igoodie.plugins.grammar.functions.RunScriptFunction;
 import net.programmer.igoodie.plugins.grammar.predicates.BinaryOperationPredicate;
 import net.programmer.igoodie.plugins.grammar.predicates.BooleanPredicate;
 import net.programmer.igoodie.tsl.definition.TSLAction;
+import net.programmer.igoodie.tsl.definition.TSLComparator;
 import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
@@ -40,6 +42,11 @@ public class TSLGrammarCore extends TSLPlugin {
     public void registerPredicates(TSLRegistry<TSLPredicate> registry) {
         registry.register(BooleanPredicate.INSTANCE);
         registry.register(BinaryOperationPredicate.INSTANCE);
+    }
+
+    @Override
+    public void registerComparators(TSLRegistry<TSLComparator> registry) {
+        registry.register(EqualsComparator.INSTANCE);
     }
 
 }

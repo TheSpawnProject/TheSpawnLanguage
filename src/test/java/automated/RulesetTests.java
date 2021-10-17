@@ -2,6 +2,7 @@ package automated;
 
 import example.plugin.ExamplePlugin;
 import example.plugin.event.DummyEvent;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.parser.TSLParser;
@@ -29,8 +30,12 @@ public class RulesetTests {
         TSLParser parser = new TSLParser(TSL);
         TSLRuleset ruleset = parser.parse(script);
 
+        GoodieObject eventArguments = new GoodieObject();
+        eventArguments.put("time", 5);
+
         TSLContext context = new TSLContext(TSL);
         context.setEvent(DummyEvent.INSTANCE);
+        context.setEventArguments(eventArguments);
 
         ruleset.perform(context);
     }

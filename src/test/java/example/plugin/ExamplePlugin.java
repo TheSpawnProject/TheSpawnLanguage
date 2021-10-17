@@ -1,7 +1,6 @@
 package example.plugin;
 
 import example.plugin.action.PrintAction;
-import example.plugin.comparator.EqualsComparator;
 import example.plugin.decorator.SuppressNotificationsDecorator;
 import example.plugin.event.DummyEvent;
 import example.plugin.fields.TimeField;
@@ -10,7 +9,10 @@ import example.plugin.functions.GetVariableFunction;
 import example.plugin.functions.MaximumOfFunction;
 import example.plugin.functions.MultFunction;
 import example.plugin.tag.CooldownTag;
-import net.programmer.igoodie.tsl.definition.*;
+import net.programmer.igoodie.tsl.definition.TSLAction;
+import net.programmer.igoodie.tsl.definition.TSLEvent;
+import net.programmer.igoodie.tsl.definition.TSLEventField;
+import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
@@ -57,11 +59,6 @@ public class ExamplePlugin extends TSLPlugin {
     @Override
     public void registerEventFields(TSLRegistry<TSLEventField<?>> registry) {
         registry.register(TimeField.INSTANCE);
-    }
-
-    @Override
-    public void registerComparators(TSLRegistry<TSLComparator> registry) {
-        registry.register(EqualsComparator.INSTANCE);
     }
 
     @Override

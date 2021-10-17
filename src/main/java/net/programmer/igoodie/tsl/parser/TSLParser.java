@@ -226,7 +226,7 @@ public class TSLParser {
 
         Optional<TSLPredicate> matchingPredicateFormat = tsl.PREDICATE_REGISTRY.stream()
                 .map(Map.Entry::getValue)
-                .filter(predicate -> predicate.formatMatches(predicateTokens))
+                .filter(predicate -> predicate.formatMatches(tsl, eventSnippet.getEventDefinition(), predicateTokens))
                 .findFirst();
 
         if (!matchingPredicateFormat.isPresent()) {

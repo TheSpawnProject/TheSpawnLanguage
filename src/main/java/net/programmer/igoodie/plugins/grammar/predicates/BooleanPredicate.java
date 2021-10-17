@@ -1,7 +1,9 @@
 package net.programmer.igoodie.plugins.grammar.predicates;
 
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
+import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 
@@ -16,7 +18,7 @@ public class BooleanPredicate extends TSLPredicate {
     }
 
     @Override
-    public boolean formatMatches(List<TSLToken> tokens) {
+    public boolean formatMatches(TheSpawnLanguage language, TSLEvent event, List<TSLToken> tokens) {
         return tokens.size() == 1;
     }
 
