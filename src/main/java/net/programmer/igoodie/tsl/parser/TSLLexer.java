@@ -2,9 +2,7 @@ package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
-import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
-import net.programmer.igoodie.tsl.parser.token.TSLSymbol;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.parser.token.*;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -304,10 +302,26 @@ public class TSLLexer {
 
             if (snippetBuffer.getTokens().size() == 1) { // Inserting the second token
                 TSLToken firstToken = snippetBuffer.getTokens().get(0);
+
                 if (firstToken instanceof TSLCaptureCall) {
                     if (TSLSymbol.equals(token, TSLSymbol.Type.CAPTURE_DECLARATION)) {
                         snippetBuffer.setType(TSLSnippetBuffer.Type.CAPTURE);
                     }
+                }
+            }
+
+            if (snippetBuffer.getTokens().size() == 3) { // Inserting the fourth token
+                TSLToken firstToken = snippetBuffer.getTokens().get(0);
+                TSLToken secondToken = snippetBuffer.getTokens().get(1);
+                TSLToken thirdToken = snippetBuffer.getTokens().get(2);
+
+                if (firstToken instanceof TSLDecoratorCall
+                        && secondToken instanceof TSLCaptureCall
+                        && thirdToken instanceof TSLSymbol
+                        && new TSLTokenizer().tokenizeAll(((TSLCaptureCall) secondToken).getArgs())
+                        .stream().allMatch(arg -> arg instanceof TSLString)
+                        && ((TSLSymbol) thirdToken).getType() == TSLSymbol.Type.CAPTURE_DECLARATION) {
+                    throw new TSLSyntaxError("Captures CANNOT be decorated.", firstToken);
                 }
             }
 

@@ -27,16 +27,16 @@ public class VariableAction extends TSLAction {
     }
 
     @Override
-    public void verifyTokenCount(List<TSLToken> tokens, TSLRule rule) throws TSLSyntaxError {
-        if (tokens.size() != 2) {
+    public void validateTokens(List<TSLToken> arguments, TSLRule rule) throws TSLSyntaxError {
+        if (arguments.size() != 2) {
             throw new TSLSyntaxError(getName() + " MUST have a variable name and a value", rule);
         }
     }
 
     @Override
-    public void perform(List<TSLToken> tokens, TSLContext context) {
-        String variableName = tokens.get(0).evaluate(context);
-        String valueRaw = tokens.get(1).evaluate(context);
+    public void perform(List<TSLToken> arguments, TSLContext context) {
+        String variableName = arguments.get(0).evaluate(context);
+        String valueRaw = arguments.get(1).evaluate(context);
 
         try {
             double variableValue = Double.parseDouble(valueRaw);

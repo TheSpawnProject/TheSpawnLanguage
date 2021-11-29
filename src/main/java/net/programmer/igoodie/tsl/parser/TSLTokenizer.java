@@ -2,7 +2,7 @@ package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.*;
-import net.programmer.igoodie.tsl.util.StringUtils;
+import net.programmer.igoodie.util.StringUtilities;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TSLTokenizer {
 
@@ -19,7 +18,7 @@ public class TSLTokenizer {
 
     public TSLToken tokenize(String text, int line, int character) {
         if (text.startsWith("%") && text.endsWith("%")) {
-            String groupFragment = StringUtils.shrink(text, 1, 1);
+            String groupFragment = StringUtilities.shrink(text, 1, 1);
             return new TSLGroup(line, character, groupFragment);
         }
 
@@ -31,14 +30,14 @@ public class TSLTokenizer {
         if (captureMatcher.matches()) {
             String name = captureMatcher.group("name");
             String[] args = captureMatcher.group("args") == null
-                    ? new String[0] : StringUtils.shrink(captureMatcher.group("args"), 1, 1).split(",");
+                    ? new String[0] : StringUtilities.shrink(captureMatcher.group("args"), 1, 1).split(",\\s*");
             return new TSLCaptureCall(line, character, name.substring(1), Arrays.asList(args));
         }
 
         Matcher decoratorMatcher = RULE_DECORATOR_PATTERN.matcher(text);
         if (decoratorMatcher.matches()) {
             String name = decoratorMatcher.group("name");
-            String[] args = decoratorMatcher.group("args") == null ? new String[0] : decoratorMatcher.group("args").split(",");
+            String[] args = decoratorMatcher.group("args") == null ? new String[0] : decoratorMatcher.group("args").split(",\\s*");
             return new TSLDecoratorCall(line, character, name, Arrays.asList(args));
         }
 
@@ -57,7 +56,7 @@ public class TSLTokenizer {
         }
 
         if (text.startsWith("(") && text.endsWith(")")) {
-            String nestFragment = StringUtils.shrink(text, 1, 1);
+            String nestFragment = StringUtilities.shrink(text, 1, 1);
             TSLLexer subLexer = new TSLLexer(nestFragment).withOffset(line - 1, character);
             subLexer.lex();
             return new TSLNest(line, character, subLexer.getSnippets().get(0).getTokens());

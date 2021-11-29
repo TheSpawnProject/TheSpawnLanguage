@@ -15,7 +15,6 @@ import net.programmer.igoodie.tsl.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class TSLParser {
 
@@ -52,7 +51,7 @@ public class TSLParser {
         List<TSLToken> tokens = buffer.getTokens();
 
         if (tokens.size() < 2) {
-            throw new TSLSyntaxError("Malformed tag snippet", buffer);
+            throw new TSLSyntaxError("Tag snippet missing a tag name", buffer);
         }
 
         TSLToken tagNameToken = tokens.get(1);
@@ -122,7 +121,7 @@ public class TSLParser {
         // Fetch index of ON keyword
         int indexOn = indexOfKeyword(tokens, "ON");
         if (indexOn == -1) {
-            throw new TSLSyntaxError("Rules MUST have an Event statement.", buffer);
+            throw new TSLSyntaxError("Incomplete rule. Missing an event statement.", buffer);
         }
 
         // Fetch index of first WITH keyword
@@ -146,6 +145,10 @@ public class TSLParser {
 
         rule.setSnippet(ruleSnippet);
 
+        // Validate actions arguments
+        actionSnippet.getActionDefinition()
+                .validateTokens(actionSnippet.getActionArgTokens(), rule);
+
         return rule;
     }
 
@@ -168,6 +171,7 @@ public class TSLParser {
         }
 
         TSLToken actionName = actionTokens.get(0);
+        List<TSLToken> actionArgs = actionTokens.subList(1, actionTokens.size());
 
         if (!(actionName instanceof TSLString)) {
             throw new TSLSyntaxError("Action name MUST be a String Word.", actionName);
@@ -175,14 +179,8 @@ public class TSLParser {
 
         TSLAction actionDefinition = getAction(((TSLString) actionName));
 
-        // TODO:
-//        if (actionDefinition.verifyTokenCount()) {
-//
-//        }
-
         return new TSLActionSnippet(ruleset, actionDefinition,
-                ((TSLString) actionName),
-                actionTokens.subList(1, actionTokens.size()));
+                ((TSLString) actionName), actionArgs);
     }
 
     public List<TSLPredicateSnippet> parsePredicates(TSLRuleset ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens, int indexWith) {
@@ -299,7 +297,7 @@ public class TSLParser {
         TSLEvent tslEvent = tsl.EVENT_REGISTRY.get(eventName);
 
         if (tslEvent == null) {
-            throw new TSLSyntaxError("Unknown event statement -> " + eventName, eventTokens.get(0));
+            throw new TSLSyntaxError("Unknown event name -> " + eventName, eventTokens.get(0));
         }
 
         return tslEvent;
@@ -311,7 +309,7 @@ public class TSLParser {
 
         if (eventTokens.size() == 0) {
             TSLToken keywordOn = tokens.get(indexOn);
-            throw new TSLSyntaxError("Event statement MUST contain at least one word", keywordOn);
+            throw new TSLSyntaxError("Missing event name.", keywordOn);
         }
 
         List<TSLString> eventTokensAsString = new LinkedList<>();

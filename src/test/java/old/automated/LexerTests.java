@@ -4,7 +4,7 @@ import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import util.TestFiles;
+import util.TestUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +13,7 @@ public class LexerTests {
 
     @Test
     public void shouldLexeSnippets() throws IOException {
-        String script = TestFiles.loadTSLScript("snippets.tsl");
+        String script = TestUtils.loadTSLScript("snippets.tsl");
 
         TSLLexer lexer = new TSLLexer(script);
         lexer.lex();

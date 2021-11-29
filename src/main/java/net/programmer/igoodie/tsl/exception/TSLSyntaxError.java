@@ -32,10 +32,22 @@ public class TSLSyntaxError extends RuntimeException {
         this.filePath = filePath;
     }
 
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public int getCharacter() {
+        return character;
+    }
+
     @Override
     public String toString() {
         return String.format("Syntax Error: %s @ (line:%d, char:%d) %s",
-                getMessage(), line + 1, character + 1, filePath == null ? "" : filePath);
+                getMessage(), line, character, filePath == null ? "" : filePath);
     }
 
 }

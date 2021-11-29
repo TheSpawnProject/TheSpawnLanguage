@@ -14,7 +14,7 @@ public final class TSLSnippetBuffer {
     }
 
     private Type type;
-    private List<TSLToken> tokens;
+    private final List<TSLToken> tokens;
 
     public TSLSnippetBuffer() {
         this.tokens = new LinkedList<>();

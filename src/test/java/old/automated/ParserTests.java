@@ -15,7 +15,7 @@ import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import util.TestFiles;
+import util.TestUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,10 +39,10 @@ public class ParserTests {
                     }
 
                     @Override
-                    public void verifyTokenCount(List<TSLToken> tokens, TSLRule rule) throws TSLSyntaxError {}
+                    public void validateTokens(List<TSLToken> arguments, TSLRule rule) throws TSLSyntaxError {}
 
                     @Override
-                    public void perform(List<TSLToken> tokens, TSLContext context) {}
+                    public void perform(List<TSLToken> arguments, TSLContext context) {}
                 };
                 registry.register(dummyEitherAction);
             }
@@ -51,7 +51,7 @@ public class ParserTests {
 
     @Test
     public void shouldParseScripts() throws IOException {
-        String script = TestFiles.loadTSLScript("sample2.tsl");
+        String script = TestUtils.loadTSLScript("sample2.tsl");
 
         TSLParser parser = new TSLParser(TSL);
         TSLRuleset ruleset = parser.parse(script);

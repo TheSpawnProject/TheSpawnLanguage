@@ -10,7 +10,7 @@ import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.Test;
-import util.TestFiles;
+import util.TestUtils;
 
 import java.io.IOException;
 
@@ -21,7 +21,7 @@ public class JSEngineTests {
         TheSpawnLanguage language = new TheSpawnLanguage();
         language.loadPlugin(new ExamplePlugin());
 
-        String tslScript = TestFiles.loadTSLScript("sample.expr.tsl");
+        String tslScript = TestUtils.loadTSLScript("sample.expr.tsl");
 
         TSLParser parser = new TSLParser(language);
         TSLRuleset ruleset = parser.parse(tslScript);

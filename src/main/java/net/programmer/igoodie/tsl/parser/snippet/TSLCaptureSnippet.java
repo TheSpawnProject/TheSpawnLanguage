@@ -10,7 +10,7 @@ import net.programmer.igoodie.tsl.util.ExpressionUtils;
 import java.util.*;
 
 // [$captureName] [=] [DROP apple]
-// [$captureName{x,y}] [=] [DROP {x} {y}]
+// [$captureName(x,y)] [=] [DROP {x} {y}]
 public class TSLCaptureSnippet extends TSLSnippet {
 
     protected TSLCaptureCall header;
@@ -108,15 +108,12 @@ public class TSLCaptureSnippet extends TSLSnippet {
             }
         }
 
-        System.out.println("Replaced: " + replaced);
-
         return replaced;
     }
 
     public static TSLToken fillWithParameters(TSLToken target, Map<String, TSLToken> argumentMap) {
         if (target instanceof TSLCaptureParameter) {
             TSLCaptureParameter parameterToken = (TSLCaptureParameter) target;
-            System.out.println("Parameter: " + parameterToken + parameterToken.getParameterName() + " | " + argumentMap);
             return argumentMap.get(parameterToken.getParameterName());
 
         } else if (target instanceof TSLString) {

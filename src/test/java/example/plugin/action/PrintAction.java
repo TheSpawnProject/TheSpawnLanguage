@@ -1,6 +1,7 @@
 package example.plugin.action;
 
 import example.plugin.ExamplePlugin;
+import example.plugin.decorator.SuppressNotificationsDecorator;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
@@ -25,24 +26,24 @@ public class PrintAction extends TSLAction {
     }
 
     @Override
-    public void verifyTokenCount(List<TSLToken> tokens, TSLRule rule) throws TSLSyntaxError {
-        // TODO
+    public void validateTokens(List<TSLToken> arguments, TSLRule rule) throws TSLSyntaxError {
+        // Should always be valid.
     }
 
     @Override
-    public void perform(List<TSLToken> tokens, TSLContext context) {
+    public void perform(List<TSLToken> arguments, TSLContext context) {
         GoodieObject attributes = context.getAttributes();
 
-        if (attributes.containsKey("exampleplugin:notificationsMuted")) {
+        if(SuppressNotificationsDecorator.ATTR_NOTIFICATION_MUTED.isContained(attributes)) {
             ExamplePlugin.LOGGER.info("Suppressed.");
             return;
         }
 
-        String printText = tokens.stream()
+        String printText = arguments.stream()
                 .map(token -> token.evaluate(context))
                 .collect(Collectors.joining(" "));
 
-        ExamplePlugin.LOGGER.info(printText);
+        ExamplePlugin.LOGGER.info(printText + " @ " + attributes);
     }
 
 }

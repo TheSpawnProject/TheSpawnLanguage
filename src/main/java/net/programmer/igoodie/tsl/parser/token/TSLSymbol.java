@@ -42,7 +42,7 @@ public class TSLSymbol extends TSLToken {
         MULTI_LINE_COMMENT_END("*#"),
         SINGLE_LINE_COMMENT("#");
 
-        private String symbol;
+        private final String symbol;
 
         Type(String symbol) {
             this.symbol = symbol;

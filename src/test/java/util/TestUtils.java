@@ -7,7 +7,11 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class TestFiles {
+public class TestUtils {
+
+    public static String constructTSLScript(String... lines) {
+        return String.join("\n", lines);
+    }
 
     public static String loadTSLScript(String filename) throws IOException {
         return loadFile("tsl/" + filename);

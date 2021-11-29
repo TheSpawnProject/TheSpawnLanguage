@@ -4,7 +4,7 @@ import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.parser.token.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import util.TestFiles;
+import util.TestUtils;
 
 import java.io.IOException;
 
@@ -24,7 +24,7 @@ public class TokenizerTests {
 
     @Test
     public void shouldTokenizeNestDepths() throws IOException {
-        String nestRaw = TestFiles.loadFragment("nest_1");
+        String nestRaw = TestUtils.loadFragment("nest_1");
         TSLNest nest = (TSLNest) new TSLTokenizer().tokenize(nestRaw);
 
         Assertions.assertEquals(6, nest.depth());

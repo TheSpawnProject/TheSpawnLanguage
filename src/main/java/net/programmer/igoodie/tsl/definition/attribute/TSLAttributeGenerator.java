@@ -1,10 +1,9 @@
 package net.programmer.igoodie.tsl.definition.attribute;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.definition.TSLDefinition;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
-import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.util.GoodieUtils;
@@ -21,8 +20,13 @@ public abstract class TSLAttributeGenerator extends TSLDefinition {
 
     public final GoodieObject generateAttributesWithNamespace(List<TSLToken> tokens) {
         TSLPlugin plugin = getPlugin();
-        GoodieObject generateAttributes = generateAttributes(tokens);
-        return GoodieUtils.mapKeys(generateAttributes, plugin::prependNamespace);
+        GoodieObject generatedAttributes = generateAttributes(tokens);
+
+        if (plugin instanceof TSLGrammarCore) {
+            return generatedAttributes;
+        } else {
+            return GoodieUtils.mapKeys(generatedAttributes, plugin::prependNamespace);
+        }
     }
 
     @NotNull

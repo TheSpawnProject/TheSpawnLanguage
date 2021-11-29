@@ -10,8 +10,8 @@ import net.programmer.igoodie.tsl.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
-import net.programmer.igoodie.tsl.util.StringUtils;
 import net.programmer.igoodie.util.Couple;
+import net.programmer.igoodie.util.StringUtilities;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -73,7 +73,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
             TSLToken token = tokens.get(i);
 
             if (comparatorId.length() != 0) comparatorId.append(" ");
-            comparatorId.append(StringUtils.allUpper(token.getRaw()));
+            comparatorId.append(StringUtilities.allUpper(token.getRaw()));
 
             TSLComparator comparator = language.COMPARATOR_REGISTRY.get(comparatorId.toString());
             if (comparator != null) {

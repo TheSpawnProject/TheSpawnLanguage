@@ -9,7 +9,7 @@ import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import util.TestFiles;
+import util.TestUtils;
 
 import java.io.IOException;
 
@@ -25,7 +25,7 @@ public class RulesetTests {
 
     @Test
     public void ruleset1() throws IOException {
-        String script = TestFiles.loadTSLScript("ruleset.test.tsl");
+        String script = TestUtils.loadTSLScript("ruleset.test.tsl");
 
         TSLParser parser = new TSLParser(TSL);
         TSLRuleset ruleset = parser.parse(script);

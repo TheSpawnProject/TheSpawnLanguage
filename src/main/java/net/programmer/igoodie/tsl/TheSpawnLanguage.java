@@ -12,14 +12,18 @@ import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPluginLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
-import net.programmer.igoodie.tsl.util.StringUtils;
+import net.programmer.igoodie.util.ReflectionUtilities;
+import net.programmer.igoodie.util.StringUtilities;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class TheSpawnLanguage {
+
+    public static final String TSL_VERSION = "0.0.0";
 
     public final Set<String> LOADED_PLUGINS;
 
@@ -37,13 +41,13 @@ public class TheSpawnLanguage {
     public TheSpawnLanguage() {
         LOADED_PLUGINS = new HashSet<>();
 
-        TAG_REGISTRY = new TSLRegistry<>(StringUtils::upperSnake);
+        TAG_REGISTRY = new TSLRegistry<>(StringUtilities::upperSnake);
         DECORATOR_REGISTRY = new TSLRegistry<>();
-        EVENT_REGISTRY = new TSLRegistry<>(StringUtils::upperFirstLetters);
+        EVENT_REGISTRY = new TSLRegistry<>(StringUtilities::upperFirstLetters);
         EVENT_FIELD_REGISTRY = new TSLRegistry<>();
-        ACTION_REGISTRY = new TSLRegistry<>(StringUtils::allUpper);
+        ACTION_REGISTRY = new TSLRegistry<>(StringUtilities::allUpper);
         PREDICATE_REGISTRY = TSLRegistry.createWithCapacity(2);
-        COMPARATOR_REGISTRY = new TSLRegistry<>(StringUtils::allUpper);
+        COMPARATOR_REGISTRY = new TSLRegistry<>(StringUtilities::allUpper);
         FUNCTION_REGISTRY = new TSLRegistry<TSLFunction>() {
             @Override
             public void postRegister(TSLFunction function) {
@@ -61,7 +65,7 @@ public class TheSpawnLanguage {
     }
 
     private void loadBuiltInPackages() {
-        jsEngine.defineConst("$TSL_VERSION", "0.0.0");
+        jsEngine.defineConst("$TSL_VERSION", TSL_VERSION);
         jsEngine.loadLibrary(new TSLUtilitiesLibrary());
         loadPlugin(new TSLGrammarCore());
     }
@@ -92,22 +96,11 @@ public class TheSpawnLanguage {
     private void assignAnnotatedFields(TSLPlugin plugin) {
         for (Field field : plugin.getClass().getFields()) {
             if (field.isAnnotationPresent(TSLPluginInstance.class)) {
-                try {
-                    field.set(null, plugin);
-                } catch (IllegalAccessException e) {
-                    // TODO: Log properly
-                    System.out.println("Plugin's instance field must be public.");
-                    e.printStackTrace();
-                }
+                ReflectionUtilities.setValue(null, field, plugin);
 
             } else if (field.isAnnotationPresent(TSLPluginLogger.class)) {
-                try {
-                    field.set(null, TSLLogger.createLogger(new File("logs"), plugin, true));
-                } catch (IllegalAccessException e) {
-                    // TODO: Log properly
-                    System.out.println("Plugin's logger field must be public.");
-                    e.printStackTrace();
-                }
+                Logger logger = TSLLogger.createLogger(new File("logs"), plugin, true);
+                ReflectionUtilities.setValue(null, field, logger);
             }
         }
     }

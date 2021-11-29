@@ -6,14 +6,14 @@ import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistrable;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
-import net.programmer.igoodie.tsl.util.StringUtils;
+import net.programmer.igoodie.util.StringUtilities;
 
 import java.util.List;
 
 public abstract class TSLAction extends TSLDefinition implements TSLRegistrable {
 
     public TSLAction(TSLPlugin plugin, String name) {
-        super(plugin, StringUtils.upperSnake(name));
+        super(plugin, StringUtilities.upperSnake(name));
     }
 
     @Override
@@ -23,8 +23,8 @@ public abstract class TSLAction extends TSLDefinition implements TSLRegistrable 
 
     public abstract String getUsage();
 
-    public abstract void verifyTokenCount(List<TSLToken> tokens, TSLRule rule) throws TSLSyntaxError;
+    public abstract void validateTokens(List<TSLToken> arguments, TSLRule rule) throws TSLSyntaxError;
 
-    public abstract void perform(List<TSLToken> tokens, TSLContext context);
+    public abstract void perform(List<TSLToken> arguments, TSLContext context);
 
 }

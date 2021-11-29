@@ -45,7 +45,7 @@ dependencies {
 //    compile group: 'org.jsweet.candies', name: 'angular-route', version: "1.2.0-20170726"
 
     // RuntimeGoodies
-    implementation 'com.github.iGoodie:RuntimeGoodies:5f2bef466f'
+    implementation 'com.github.iGoodie:RuntimeGoodies:fc573e635f'
 
     // Rhino - JS Engine
     compile 'org.mozilla:rhino:1.7.13'

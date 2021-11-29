@@ -6,7 +6,7 @@ import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import util.TestFiles;
+import util.TestUtils;
 
 import java.io.IOException;
 
@@ -22,7 +22,7 @@ public class PredicateTests {
 
     @Test
     public void shallParseTokensCorrectly() throws IOException {
-        String script = TestFiles.loadTSLScript("predicates.tsl");
+        String script = TestUtils.loadTSLScript("predicates.tsl");
 
         TSLParser parser = new TSLParser(TSL);
         TSLRuleset ruleset = parser.parse(script);
