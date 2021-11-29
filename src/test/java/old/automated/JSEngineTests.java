@@ -53,7 +53,7 @@ public class JSEngineTests {
         String script = "runScript('./src/test/resources/rhino/module.test.js')";
 
         String evaluation = jsEngine.evaluate(script, tslContext);
-        System.out.println(evaluation);
+        System.out.println("Evalutation = " + evaluation);
     }
 
 }

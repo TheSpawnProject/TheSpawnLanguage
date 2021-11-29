@@ -7,7 +7,6 @@ import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.function.binding.JSFunctionBinding;
 import net.programmer.igoodie.tsl.function.binding.JSLibraryBinding;
 import org.mozilla.javascript.*;
-import org.mozilla.javascript.regexp.NativeRegExp;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -126,10 +125,10 @@ public class JSEngine {
             return stringifyObject((NativeObject) value);
         if (value instanceof NativeArray)
             return stringifyArray((NativeArray) value);
-        if (value instanceof NativeRegExp)
-            return ""; // TODO: What now?
-        if (value instanceof Function)
-            return ""; // TODO: What now?
+        if (value instanceof ArrowFunction)
+            return "[ArrowFunc]";
+        if (value instanceof NativeFunction)
+            return "[NativeFunc]";
         if (value instanceof Undefined)
             return "undefined";
         if (value == null)

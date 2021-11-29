@@ -46,7 +46,10 @@ public class RunScriptFunction extends TSLFunction {
 
         JSEngine jsEngine = getPlugin().getLanguage().getJsEngine();
 
-        return jsEngine.evaluate(readScript);
+        String wrappedScript = String.format("(function(){%s})()",
+                readScript.replace("tslReturn", "return"));
+
+        return jsEngine.evaluate(wrappedScript);
     }
 
     private boolean isAbsolutePath(String path) {
