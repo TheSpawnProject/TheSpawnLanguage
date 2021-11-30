@@ -30,9 +30,9 @@ public abstract class TSLDefinition {
     /* ----------------------------- */
 
     protected boolean parseBoolean(String arg, boolean defaultValue) {
-        if (arg.equals("true"))
+        if (arg.equalsIgnoreCase("true"))
             return true;
-        else if (arg.equals("false"))
+        else if (arg.equalsIgnoreCase("false"))
             return false;
         else return defaultValue;
     }
@@ -45,6 +45,15 @@ public abstract class TSLDefinition {
         else if (argLowercase.equals("false"))
             return false;
         else throw new TSLSyntaxError("Expected either 'true' or 'false'", argument);
+    }
+
+    protected int parseInteger(String arg, int defaultValue) {
+        try {
+            return Integer.parseInt(arg);
+
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 
     protected double parseDouble(String arg, double defaultValue) {

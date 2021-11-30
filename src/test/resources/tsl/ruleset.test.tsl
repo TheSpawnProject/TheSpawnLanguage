@@ -59,4 +59,10 @@ ELSE
 ON Dummy Event
 WITH time = 5
 
-
+FOR 50 TIMES
+ IF ${Math.random() > 0.5} THEN
+  PRINT %Yahhooo!!%
+ ELSE
+  PRINT %Booo...%
+ON Dummy Event
+WITH time = 5

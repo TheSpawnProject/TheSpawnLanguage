@@ -23,12 +23,12 @@ public class IfMetaAction extends TSLAction {
 
     @Override
     public String getUsage() {
-        return getName() + " <condition> THEN <action> (ELSE IF <condition> THEN <action>)* (ELSE THEN <action>)?";
+        return getName() + " <condition> THEN <action> (ELSEIF <condition> THEN <action>)* (ELSE <action>)?";
     }
 
     @Override
     public void validateTokens(List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {
-        if (arguments.size() < 2) {
+        if (arguments.size() < 3) {
             throw new TSLSyntaxError("Expected condition and the action.", rule);
         }
 
@@ -42,36 +42,36 @@ public class IfMetaAction extends TSLAction {
                     throw new TSLSyntaxError("Invalid IF statement", rule);
                 }
 
-                TSLToken keywordThen = part.get(1);
-                if (!(keywordThen instanceof TSLString)) {
-                    throw new TSLSyntaxError("THEN keyword MUST be a plain string.", keywordThen);
-                }
-                if (!keywordThen.getRaw().equalsIgnoreCase("THEN")) {
-                    throw new TSLSyntaxError("IF statement must continue with a condition and THEN keyword.", keywordThen);
-                }
+                TSLToken thenKeyword = part.get(1);
+                List<TSLToken> actionTokens = part.subList(2, part.size());
 
-                List<TSLToken> actionPart = part.subList(2, part.size());
-                parser.parseAction(null, actionPart);
+                if (!(thenKeyword instanceof TSLString)) {
+                    throw new TSLSyntaxError("THEN keyword MUST be a plain string.", thenKeyword);
+                }
+                if (!thenKeyword.getRaw().equalsIgnoreCase("THEN")) {
+                    throw new TSLSyntaxError("IF statement must continue with a condition and THEN keyword.", thenKeyword);
+                }
+                parser.parseAction(null, actionTokens);
 
             } else if (i != part.size() - 1) { // ELSEIF part
                 if (part.size() < 4) {
                     throw new TSLSyntaxError("Invalid ELSEIF statement", rule);
                 }
 
-                TSLToken keywordThen = part.get(2);
-                if (!(keywordThen instanceof TSLString)) {
-                    throw new TSLSyntaxError("THEN keyword MUST be a plain string.", keywordThen);
-                }
-                if (!keywordThen.getRaw().equalsIgnoreCase("THEN")) {
-                    throw new TSLSyntaxError("ELSEIF statement must continue with a condition and THEN keyword.", keywordThen);
-                }
+                TSLToken thenKeyword = part.get(2);
+                List<TSLToken> actionTokens = part.subList(3, part.size());
 
-                List<TSLToken> actionPart = part.subList(3, part.size());
-                parser.parseAction(null, actionPart);
+                if (!(thenKeyword instanceof TSLString)) {
+                    throw new TSLSyntaxError("THEN keyword MUST be a plain string.", thenKeyword);
+                }
+                if (!thenKeyword.getRaw().equalsIgnoreCase("THEN")) {
+                    throw new TSLSyntaxError("ELSEIF statement must continue with a condition and THEN keyword.", thenKeyword);
+                }
+                parser.parseAction(null, actionTokens);
 
             } else if (part.get(0).getRaw().equalsIgnoreCase("ELSE")) { // ELSE part
-                List<TSLToken> actionPart = part.subList(1, part.size());
-                parser.parseAction(null, actionPart);
+                List<TSLToken> actionTokens = part.subList(1, part.size());
+                parser.parseAction(null, actionTokens);
             }
         }
     }
@@ -95,8 +95,9 @@ public class IfMetaAction extends TSLAction {
 
             } else {
                 TSLParser parser = new TSLParser(context);
-                TSLActionSnippet action = parser.parseAction(null, part);
-                action.getActionDefinition().perform(action.getActionArgTokens(), context);
+                TSLActionSnippet actionSnippet = parser.parseAction(null, part);
+                TSLAction actionDefinition = actionSnippet.getActionDefinition();
+                actionDefinition.perform(actionSnippet.getActionArgTokens(), context);
                 break;
             }
         }

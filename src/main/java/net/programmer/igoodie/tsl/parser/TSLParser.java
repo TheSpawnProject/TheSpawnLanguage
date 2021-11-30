@@ -13,6 +13,7 @@ import net.programmer.igoodie.tsl.parser.token.*;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -176,7 +177,7 @@ public class TSLParser {
         return parseAction(ruleset, actionTokens);
     }
 
-    public TSLActionSnippet parseAction(TSLRuleset ruleset, List<TSLToken> actionTokens) {
+    public TSLActionSnippet parseAction(@Nullable TSLRuleset ruleset, List<TSLToken> actionTokens) {
         TSLToken actionName = actionTokens.get(0);
         List<TSLToken> actionArgs = actionTokens.subList(1, actionTokens.size());
 
