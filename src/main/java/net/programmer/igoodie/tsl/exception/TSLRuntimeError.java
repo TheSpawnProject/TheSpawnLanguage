@@ -41,7 +41,7 @@ public class TSLRuntimeError extends RuntimeException {
 
     @Override
     public String toString() {
-        return String.format("Runtime Error: %s caused by (line:%d, char:%d) %s",
+        return String.format("Runtime Error: %s @ (line:%d, char:%d) %s",
                 getMessage(), line, character, filePath == null ? "" : filePath);
     }
 

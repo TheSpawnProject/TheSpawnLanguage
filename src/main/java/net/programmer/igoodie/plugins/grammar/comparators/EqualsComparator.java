@@ -25,8 +25,12 @@ public class EqualsComparator extends TSLComparator {
     public boolean satisfies(Object leftHand, List<String> rightHand) throws TSLRuntimeError {
         String rightHandValue = rightHand.get(0);
 
-        if(leftHand instanceof Number) {
-            return ((Number) leftHand).doubleValue() == parseDouble(rightHandValue, 0);
+        if (leftHand instanceof Number) {
+            try {
+                return ((Number) leftHand).doubleValue() == Double.parseDouble(rightHandValue);
+            } catch (NumberFormatException e) {
+                return false;
+            }
         }
 
         return leftHand.toString().equals(rightHandValue);

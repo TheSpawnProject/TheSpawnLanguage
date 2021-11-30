@@ -1,7 +1,10 @@
 package net.programmer.igoodie.tsl.definition;
 
+import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 
 public abstract class TSLDefinition {
@@ -47,31 +50,30 @@ public abstract class TSLDefinition {
         else throw new TSLSyntaxError("Expected either 'true' or 'false'", argument);
     }
 
-    protected int parseInteger(String arg, int defaultValue) {
+    protected int parseInteger(TSLToken token, TSLContext context) {
         try {
-            return Integer.parseInt(arg);
+            return Integer.parseInt(token.evaluate(context));
 
         } catch (NumberFormatException e) {
-            return defaultValue;
+            throw new TSLRuntimeError("Expected integer", token);
         }
     }
 
-    protected double parseDouble(String arg, double defaultValue) {
+    protected double parseDouble(TSLToken token, String evaluatedValue) {
         try {
-            return Double.parseDouble(arg);
+            return Double.parseDouble(token.getRaw());
 
         } catch (NumberFormatException e) {
-            return defaultValue;
+            throw new TSLRuntimeError("Expected floating point number", token);
         }
     }
 
-    protected double parseDouble(TSLString argument) throws TSLSyntaxError {
-        try {
-            return Double.parseDouble(argument.getWord());
+    protected double parseDouble(TSLToken token, TSLContext context) {
+        return parseDouble(token, token.evaluate(context));
+    }
 
-        } catch (NumberFormatException e) {
-            throw new TSLSyntaxError("Expected number", argument);
-        }
+    protected double parseDouble(TSLString token) {
+        return parseDouble(token, token.getWord());
     }
 
 }

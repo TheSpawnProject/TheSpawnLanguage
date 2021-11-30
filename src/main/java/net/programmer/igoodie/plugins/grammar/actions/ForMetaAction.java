@@ -48,7 +48,7 @@ public class ForMetaAction extends TSLAction {
         TSLToken countToken = arguments.get(0);
         List<TSLToken> actionTokens = arguments.subList(2, arguments.size());
 
-        int count = parseInteger(countToken.evaluate(context), 0);
+        int count = parseInteger(countToken, context);
 
         for (int i = 0; i < count; i++) {
             TSLParser parser = new TSLParser(context);
