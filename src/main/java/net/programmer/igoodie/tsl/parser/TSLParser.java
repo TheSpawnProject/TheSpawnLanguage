@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
+import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLPredicate;
@@ -19,6 +20,10 @@ import java.util.stream.Collectors;
 public class TSLParser {
 
     private final TheSpawnLanguage tsl;
+
+    public TSLParser(TSLContext context) {
+        this(context.getLanguage());
+    }
 
     public TSLParser(TheSpawnLanguage tsl) {
         this.tsl = tsl;
@@ -147,7 +152,7 @@ public class TSLParser {
 
         // Validate actions arguments
         actionSnippet.getActionDefinition()
-                .validateTokens(actionSnippet.getActionArgTokens(), rule);
+                .validateTokens(actionSnippet.getActionArgTokens(), rule, this);
 
         return rule;
     }
@@ -163,13 +168,15 @@ public class TSLParser {
 
     public TSLActionSnippet parseAction(TSLRuleset ruleset, List<TSLToken> tokens, int indexLastDecorator, int indexOn) {
         List<TSLToken> actionTokens = TSLActionSnippet.flatten(ruleset,
-                tokens.subList(indexLastDecorator == -1 ? 0 : indexLastDecorator + 1, indexOn)
-        );
+                tokens.subList(indexLastDecorator == -1 ? 0 : indexLastDecorator + 1, indexOn));
 
         if (actionTokens.size() == 0) {
             throw new TSLSyntaxError("Rule missing action tokens.", tokens.get(0));
         }
+        return parseAction(ruleset, actionTokens);
+    }
 
+    public TSLActionSnippet parseAction(TSLRuleset ruleset, List<TSLToken> actionTokens) {
         TSLToken actionName = actionTokens.get(0);
         List<TSLToken> actionArgs = actionTokens.subList(1, actionTokens.size());
 

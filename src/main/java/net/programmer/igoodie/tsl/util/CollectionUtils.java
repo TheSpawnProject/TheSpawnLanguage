@@ -41,4 +41,25 @@ public final class CollectionUtils {
         return -1;
     }
 
+    public static <T> List<List<T>> splitBy(List<T> list, boolean includeDelimiter, Predicate<T> predicate) {
+        List<List<T>> split = new LinkedList<>();
+        List<T> buffer = new LinkedList<>();
+
+        for (T current : list) {
+            if (predicate.test(current)) {
+                split.add(buffer);
+                buffer = new LinkedList<>();
+                if (includeDelimiter) {
+                    buffer.add(current);
+                }
+
+            } else {
+                buffer.add(current);
+            }
+        }
+
+        split.add(buffer);
+        return split;
+    }
+
 }

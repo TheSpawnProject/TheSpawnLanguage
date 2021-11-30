@@ -25,6 +25,11 @@ public abstract class TSLToken {
 
     public abstract String evaluate(TSLContext context);
 
+    public boolean isTrue(TSLContext context) {
+        String evaluation = evaluate(context);
+        return evaluation.equalsIgnoreCase("TRUE") || evaluation.equals("1");
+    }
+
     @Override
     public String toString() {
         return String.format("%s(%s)", getClass().getSimpleName(), getRaw());

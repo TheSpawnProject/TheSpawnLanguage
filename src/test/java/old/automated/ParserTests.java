@@ -39,7 +39,7 @@ public class ParserTests {
                     }
 
                     @Override
-                    public void validateTokens(List<TSLToken> arguments, TSLRule rule) throws TSLSyntaxError {}
+                    public void validateTokens(List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {}
 
                     @Override
                     public void perform(List<TSLToken> arguments, TSLContext context) {}

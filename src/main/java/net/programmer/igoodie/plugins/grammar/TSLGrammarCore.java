@@ -1,5 +1,6 @@
 package net.programmer.igoodie.plugins.grammar;
 
+import net.programmer.igoodie.plugins.grammar.actions.IfMetaAction;
 import net.programmer.igoodie.plugins.grammar.actions.VariableAction;
 import net.programmer.igoodie.plugins.grammar.comparators.EqualsComparator;
 import net.programmer.igoodie.plugins.grammar.functions.RunScriptFunction;
@@ -30,6 +31,7 @@ public class TSLGrammarCore extends TSLPlugin {
 
     @Override
     public void registerActions(TSLRegistry<TSLAction> registry) {
+        registry.register(IfMetaAction.INSTANCE);
         registry.register(VariableAction.INSTANCE);
     }
 

@@ -6,6 +6,7 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 
@@ -26,7 +27,7 @@ public class PrintAction extends TSLAction {
     }
 
     @Override
-    public void validateTokens(List<TSLToken> arguments, TSLRule rule) throws TSLSyntaxError {
+    public void validateTokens(List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {
         // Should always be valid.
     }
 

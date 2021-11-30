@@ -12,6 +12,51 @@ $printAction(%${"foo"} bar baz%)
  ON Dummy Event
  WITH time = 5
 
-$printAction(%${"foo"} bar baz%)
- ON Dummy Event
- WITH time = 5
+$ifStatement(a,b)
+ = IF {{a}} THEN
+    $printAction(%${"foo"} bar baz%)
+   ELSEIF {{b}} THEN
+    PRINT %Elif!%
+   ELSE
+    PRINT Oppsie
+
+$ifStatement(true, true)
+ON Dummy Event
+WITH time = 5
+
+$ifStatement(false, true)
+ON Dummy Event
+WITH time = 5
+
+$ifStatement(false, false)
+ON Dummy Event
+WITH time = 5
+
+IF ${1===1} THEN
+ $printAction(%${"foo"} bar baz%)
+ELSEIF true THEN
+ PRINT %Elif!%
+ELSE
+ PRINT Oppsie
+ON Dummy Event
+WITH time = 5
+
+IF false THEN
+ $printAction(%${"foo"} bar baz%)
+ELSEIF true THEN
+ PRINT %Elif!%
+ELSE
+ PRINT Oppsie
+ON Dummy Event
+WITH time = 5
+
+IF false THEN
+ $printAction(%${"foo"} bar baz%)
+ELSEIF false THEN
+ PRINT %Elif!%
+ELSE
+ PRINT Oppsie
+ON Dummy Event
+WITH time = 5
+
+
