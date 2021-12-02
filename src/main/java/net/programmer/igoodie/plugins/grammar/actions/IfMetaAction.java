@@ -34,9 +34,9 @@ public class IfMetaAction extends TSLAction {
     }
 
     @Override
-    public void validateTokens(List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {
+    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {
         if (arguments.size() < 3) {
-            throw new TSLSyntaxError("Expected condition and the action.", rule);
+            throw new TSLSyntaxError("Expected condition and the action.", nameToken);
         }
 
         List<List<TSLToken>> parts = splitParts(arguments, true);
@@ -46,7 +46,7 @@ public class IfMetaAction extends TSLAction {
 
             if (i == 0) { // IF part
                 if (part.size() < 3) {
-                    throw new TSLSyntaxError("Invalid IF statement", rule);
+                    throw new TSLSyntaxError("Invalid IF statement", nameToken);
                 }
 
                 TSLToken thenKeyword = part.get(1);
@@ -62,7 +62,7 @@ public class IfMetaAction extends TSLAction {
 
             } else if (i != part.size() - 1) { // ELSEIF part
                 if (part.size() < 4) {
-                    throw new TSLSyntaxError("Invalid ELSEIF statement", rule);
+                    throw new TSLSyntaxError("Invalid ELSEIF statement", nameToken);
                 }
 
                 TSLToken thenKeyword = part.get(2);

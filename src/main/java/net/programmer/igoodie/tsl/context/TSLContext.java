@@ -21,14 +21,14 @@ public class TSLContext {
 
     /* ----------------------------------- */
 
-    protected ScriptableObject scope;
+    protected ScriptableObject ruleScope;
 
-    public ScriptableObject getScope() {
-        return scope;
+    public ScriptableObject getRuleScope() {
+        return ruleScope;
     }
 
-    public void setScope(ScriptableObject scope) {
-        this.scope = scope;
+    public void setRuleScope(ScriptableObject ruleScope) {
+        this.ruleScope = ruleScope;
     }
 
     /* ----------------------------------- */

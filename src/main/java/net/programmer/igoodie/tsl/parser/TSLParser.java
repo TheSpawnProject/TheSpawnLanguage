@@ -153,7 +153,7 @@ public class TSLParser {
 
         // Validate actions arguments
         actionSnippet.getActionDefinition()
-                .validateTokens(actionSnippet.getActionTokens(), rule, this);
+                .validateTokens(actionSnippet.getActionNameToken(), actionSnippet.getActionTokens(), rule, this);
 
         return rule;
     }

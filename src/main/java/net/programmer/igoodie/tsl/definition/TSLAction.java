@@ -28,7 +28,7 @@ public abstract class TSLAction extends TSLDefinition implements TSLRegistrable 
 
     public abstract String getUsage();
 
-    public abstract void validateTokens(List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError;
+    public abstract void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError;
 
     public @NotNull Couple<List<TSLToken>, TSLToken> splitByDisplaying(List<TSLToken> tokens) {
         int displayingIndex = CollectionUtils.lastIndexOfBy(tokens,

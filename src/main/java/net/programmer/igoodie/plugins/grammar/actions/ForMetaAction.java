@@ -33,9 +33,9 @@ public class ForMetaAction extends TSLAction {
     }
 
     @Override
-    public void validateTokens(List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {
+    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {
         if (arguments.size() < 3) {
-            throw new TSLSyntaxError("Expected loop count and the action", rule);
+            throw new TSLSyntaxError("Expected loop count and the action", nameToken);
         }
 
         TSLToken timesKeyword = arguments.get(1);

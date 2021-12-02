@@ -3,6 +3,7 @@ package net.programmer.igoodie.plugins.grammar;
 import net.programmer.igoodie.plugins.grammar.actions.ForMetaAction;
 import net.programmer.igoodie.plugins.grammar.actions.IfMetaAction;
 import net.programmer.igoodie.plugins.grammar.actions.VariableAction;
+import net.programmer.igoodie.plugins.grammar.actions.WaitMetaAction;
 import net.programmer.igoodie.plugins.grammar.comparators.EqualsComparator;
 import net.programmer.igoodie.plugins.grammar.functions.RunScriptFunction;
 import net.programmer.igoodie.plugins.grammar.predicates.BinaryOperationPredicate;
@@ -34,6 +35,7 @@ public class TSLGrammarCore extends TSLPlugin {
     public void registerActions(TSLRegistry<TSLAction> registry) {
         registry.register(IfMetaAction.INSTANCE);
         registry.register(ForMetaAction.INSTANCE);
+        registry.register(WaitMetaAction.INSTANCE);
         registry.register(VariableAction.INSTANCE);
     }
 

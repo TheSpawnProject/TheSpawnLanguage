@@ -7,6 +7,9 @@ import net.programmer.igoodie.tsl.function.binding.JSFunctionBinding;
 import net.programmer.igoodie.tsl.function.binding.JSLibraryBinding;
 import org.mozilla.javascript.*;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -15,24 +18,49 @@ import java.util.stream.Stream;
 public class JSEngine {
 
     private boolean sealed;
-    private final Context jsContext;
-    private final ScriptableObject globalScope;
+
+    private ScriptableObject globalScope;
+
+    private final Map<String, Object> definedConsts = new HashMap<>();
+    private final List<JSLibraryBinding> loadedLibraries = new LinkedList<>();
+    private final List<TSLFunction> loadedFunctions = new LinkedList<>();
 
     public JSEngine() {
-        this.jsContext = Context.enter();
-        this.jsContext.setOptimizationLevel(-1);
-        this.jsContext.setMaximumInterpreterStackDepth(255);
-        this.jsContext.setLanguageVersion(Context.VERSION_ES6);
-
-        this.globalScope = this.jsContext.initSafeStandardObjects();
-
-        this.jsContext.seal(null);
+        ensureContext();
     }
+
+    public Context getJsContext() {
+        ensureContext();
+        return Context.getCurrentContext();
+    }
+
+    private void ensureContext() {
+        if (Context.getCurrentContext() == null) {
+            Context context = Context.enter();
+            context.setOptimizationLevel(-1);
+            context.setMaximumInterpreterStackDepth(255);
+            context.setLanguageVersion(Context.VERSION_ES6);
+
+            if (this.globalScope == null) {
+                this.globalScope = context.initSafeStandardObjects();
+            }
+
+            context.seal(null);
+
+//            definedConsts.forEach((name, value) -> globalScope.putConst(name, globalScope, value));
+//            loadedLibraries.forEach(library -> globalScope.put(library.getName(), globalScope, library));
+//            loadedFunctions.forEach(function -> globalScope.defineProperty(function.getName(), function.getBinding(),
+//                    ScriptableObject.PERMANENT | ScriptableObject.DONTENUM | ScriptableObject.READONLY));
+        }
+    }
+
+    /* ------------------------ */
 
     public boolean defineConst(String name, Object value) {
         if (sealed) return false;
         if (this.globalScope.has(name, globalScope)) return false;
         this.globalScope.putConst(name, globalScope, value);
+        definedConsts.put(name, value);
         return true;
     }
 
@@ -40,6 +68,7 @@ public class JSEngine {
         if (sealed) return false;
         if (this.globalScope.has(library.getName(), globalScope)) return false;
         this.globalScope.put(library.getName(), globalScope, library);
+        loadedLibraries.add(library);
         return true;
     }
 
@@ -47,6 +76,7 @@ public class JSEngine {
         JSFunctionBinding binding = function.getBinding();
         this.globalScope.defineProperty(function.getName(), binding,
                 ScriptableObject.PERMANENT | ScriptableObject.DONTENUM | ScriptableObject.READONLY);
+        loadedFunctions.add(function);
         return true;
     }
 
@@ -55,7 +85,7 @@ public class JSEngine {
     }
 
     public ScriptableObject createChildScope() {
-        ScriptableObject scope = (ScriptableObject) jsContext.newObject(globalScope);
+        ScriptableObject scope = (ScriptableObject) getJsContext().newObject(globalScope);
         scope.setPrototype(globalScope);
         scope.setParentScope(null);
         return scope;
@@ -86,7 +116,7 @@ public class JSEngine {
     /* ------------------------------------ */
 
     public String evaluate(String script, TSLContext tslContext) throws EcmaError {
-        Scriptable scope = tslContext.getScope();
+        Scriptable scope = tslContext.getRuleScope();
         return evaluate(script, scope == null ? globalScope : scope);
     }
 
@@ -96,7 +126,8 @@ public class JSEngine {
 
     public String evaluate(String script, Scriptable scope) throws EcmaError {
         String sourceName = "immediate_evaluator";
-        Object evaluation = this.jsContext.evaluateString(scope, script, sourceName, 0, null);
+        Context context = getJsContext();
+        Object evaluation = context.evaluateString(scope, script, sourceName, 0, null);
         return stringify(evaluation);
     }
 

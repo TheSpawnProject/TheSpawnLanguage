@@ -28,7 +28,7 @@ public class VariableAction extends TSLAction {
     }
 
     @Override
-    public void validateTokens(List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {
+    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {
         if (arguments.size() != 2) {
             throw new TSLSyntaxError(getName() + " MUST have a variable name and a value", rule);
         }

@@ -44,7 +44,7 @@ public class RulesetTests {
                     }
 
                     @Override
-                    public void validateTokens(List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {}
+                    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {}
 
                     @Override
                     public void perform(List<TSLToken> arguments, TSLContext context) {}

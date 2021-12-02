@@ -99,7 +99,7 @@ public class TSLRule implements Attributable {
         JSEngine jsEngine = context.getLanguage().getJsEngine();
         ScriptableObject scope = jsEngine.createChildScope();
         jsEngine.loadTSLContext(scope, context);
-        context.setScope(scope);
+        context.setRuleScope(scope);
 
         for (TSLPredicateSnippet predicateSnippet : snippet.getPredicateSnippets()) {
             TSLPredicate predicate = predicateSnippet.getPredicateDefinition();

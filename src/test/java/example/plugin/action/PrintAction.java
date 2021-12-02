@@ -27,7 +27,7 @@ public class PrintAction extends TSLAction {
     }
 
     @Override
-    public void validateTokens(List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {
+    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {
         // Should always be valid.
     }
 
