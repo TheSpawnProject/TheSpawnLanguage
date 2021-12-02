@@ -153,7 +153,7 @@ public class TSLParser {
 
         // Validate actions arguments
         actionSnippet.getActionDefinition()
-                .validateTokens(actionSnippet.getActionArgTokens(), rule, this);
+                .validateTokens(actionSnippet.getActionTokens(), rule, this);
 
         return rule;
     }
@@ -177,9 +177,9 @@ public class TSLParser {
         return parseAction(ruleset, actionTokens);
     }
 
-    public TSLActionSnippet parseAction(@Nullable TSLRuleset ruleset, List<TSLToken> actionTokens) {
-        TSLToken actionName = actionTokens.get(0);
-        List<TSLToken> actionArgs = actionTokens.subList(1, actionTokens.size());
+    public TSLActionSnippet parseAction(@Nullable TSLRuleset ruleset, List<TSLToken> tokens) {
+        TSLToken actionName = tokens.get(0);
+        List<TSLToken> actionTokens = tokens.subList(1, tokens.size());
 
         if (!(actionName instanceof TSLString)) {
             throw new TSLSyntaxError("Action name MUST be a String Word.", actionName);
@@ -188,7 +188,7 @@ public class TSLParser {
         TSLAction actionDefinition = getAction(((TSLString) actionName));
 
         return new TSLActionSnippet(ruleset, actionDefinition,
-                ((TSLString) actionName), actionArgs);
+                ((TSLString) actionName), actionTokens);
     }
 
     public List<TSLPredicateSnippet> parsePredicates(TSLRuleset ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens, int indexWith) {

@@ -10,6 +10,8 @@ import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
+import net.programmer.igoodie.util.Couple;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -24,6 +26,11 @@ public class IfMetaAction extends TSLAction {
     @Override
     public String getUsage() {
         return getName() + " <condition> THEN <action> (ELSEIF <condition> THEN <action>)* (ELSE <action>)?";
+    }
+
+    @Override
+    public @NotNull Couple<List<TSLToken>, TSLToken> splitByDisplaying(List<TSLToken> tokens) {
+        return new Couple<>(tokens, null); // Does not support DISPLAYING statement
     }
 
     @Override
@@ -88,8 +95,9 @@ public class IfMetaAction extends TSLAction {
                 TSLToken condition = statement.get(0).get(0);
                 if (condition.isTrue(context)) {
                     TSLParser parser = new TSLParser(context);
-                    TSLActionSnippet action = parser.parseAction(null, statement.get(1));
-                    action.getActionDefinition().perform(action.getActionArgTokens(), context);
+                    TSLActionSnippet actionSnippet = parser.parseAction(null, statement.get(1));
+                    TSLAction actionDefinition = actionSnippet.getActionDefinition();
+                    actionDefinition.performRaw(actionSnippet.getActionTokens(), context);
                     break;
                 }
 
@@ -97,7 +105,7 @@ public class IfMetaAction extends TSLAction {
                 TSLParser parser = new TSLParser(context);
                 TSLActionSnippet actionSnippet = parser.parseAction(null, part);
                 TSLAction actionDefinition = actionSnippet.getActionDefinition();
-                actionDefinition.perform(actionSnippet.getActionArgTokens(), context);
+                actionDefinition.performRaw(actionSnippet.getActionTokens(), context);
                 break;
             }
         }

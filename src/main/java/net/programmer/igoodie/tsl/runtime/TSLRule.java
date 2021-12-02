@@ -108,8 +108,8 @@ public class TSLRule implements Attributable {
             }
         }
 
-        List<TSLToken> actionArgs = snippet.getActionSnippet().getActionArgTokens();
-        action.perform(actionArgs, context);
+        List<TSLToken> actionTokens = snippet.getActionSnippet().getActionTokens();
+        action.performRaw(actionTokens, context);
         return true;
     }
 

@@ -1,17 +1,17 @@
 package net.programmer.igoodie.tsl.runtime.hook;
 
+import net.programmer.igoodie.legacy.runtime.node.ActionNode;
+import net.programmer.igoodie.legacy.runtime.node.PredicateNode;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
-import net.programmer.igoodie.legacy.runtime.node.ActionNode;
-import net.programmer.igoodie.legacy.runtime.node.PredicateNode;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public final class HookList extends TSLRulesetHook {
 
-    protected List<TSLRulesetHook> hookList;
+    private final List<TSLRulesetHook> hookList;
 
     public HookList() {
         this.hookList = new LinkedList<>();

@@ -2,14 +2,14 @@
 #! COOLDOWN 100
 
 $fizzBuzz
-= IF ${++i % 15 == 0} THEN
+= IF ${++i % 16 == 0} THEN
    PRINT Fizzbuzz
   ELSEIF ${i % 3 == 0} THEN
    PRINT Fizz
   ELSEIF ${i % 5 == 0} THEN
-   PRINT Buzz
+   PRINT Buzz DISPLAYING %elseif%
   ELSE
-   PRINT ${i}
+   PRINT ${i} DISPLAYING %else%
 
 FOR ${i=0; 15} TIMES $fizzBuzz
 ON Dummy Event

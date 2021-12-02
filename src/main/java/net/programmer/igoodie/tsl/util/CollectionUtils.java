@@ -41,6 +41,16 @@ public final class CollectionUtils {
         return -1;
     }
 
+    public static <T> int lastIndexOfBy(List<T> list, Predicate<T> predicate) {
+        for (int i = list.size() - 1; i >= 0; i--) {
+            T element = list.get(i);
+            if (predicate.test(element)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public static <T> List<List<T>> splitBy(List<T> list, boolean includeDelimiter, Predicate<T> predicate) {
         List<List<T>> split = new LinkedList<>();
         List<T> buffer = new LinkedList<>();

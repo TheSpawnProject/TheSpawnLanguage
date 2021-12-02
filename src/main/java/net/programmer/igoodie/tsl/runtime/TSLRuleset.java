@@ -114,6 +114,8 @@ public class TSLRuleset implements Attributable {
     /* ----------------------------------------- */
 
     public boolean perform(TSLContext context) {
+        context.setMessageToken(null);
+
         boolean performed = false;
         for (TSLRule rule : rules) {
             context.setRule(rule);

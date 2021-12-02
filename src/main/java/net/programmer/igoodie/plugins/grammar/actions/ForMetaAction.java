@@ -9,6 +9,8 @@ import net.programmer.igoodie.tsl.parser.snippet.TSLActionSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
+import net.programmer.igoodie.util.Couple;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -23,6 +25,11 @@ public class ForMetaAction extends TSLAction {
     @Override
     public String getUsage() {
         return getName() + " <count> TIMES <action>";
+    }
+
+    @Override
+    public @NotNull Couple<List<TSLToken>, TSLToken> splitByDisplaying(List<TSLToken> tokens) {
+        return new Couple<>(tokens, null);
     }
 
     @Override
@@ -54,7 +61,7 @@ public class ForMetaAction extends TSLAction {
             TSLParser parser = new TSLParser(context);
             TSLActionSnippet actionSnippet = parser.parseAction(null, actionTokens);
             TSLAction actionDefinition = actionSnippet.getActionDefinition();
-            actionDefinition.perform(actionSnippet.getActionArgTokens(), context);
+            actionDefinition.perform(actionSnippet.getActionTokens(), context);
         }
     }
 

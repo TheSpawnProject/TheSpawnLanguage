@@ -38,6 +38,8 @@ public class RulesetTests {
         context.setEventArguments(eventArguments);
 
         ruleset.perform(context);
+
+        System.out.println("DISPLAY: " + context.getMessageToken());
     }
 
 }

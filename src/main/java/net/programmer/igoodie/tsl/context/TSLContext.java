@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.context;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
+import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import org.mozilla.javascript.ScriptableObject;
 
@@ -79,6 +80,18 @@ public class TSLContext {
     @Deprecated
     public void setRule(TSLRule rule) {
         this.rule = rule;
+    }
+
+    /* ----------------------------------- */
+
+    protected TSLToken messageToken;
+
+    public TSLToken getMessageToken() {
+        return messageToken;
+    }
+
+    public void setMessageToken(TSLToken messageToken) {
+        this.messageToken = messageToken;
     }
 
 }
