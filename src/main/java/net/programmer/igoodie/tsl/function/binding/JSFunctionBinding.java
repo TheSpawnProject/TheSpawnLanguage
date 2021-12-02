@@ -18,12 +18,12 @@ public abstract class JSFunctionBinding extends BaseFunction {
 
     @Override
     public final Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
-        return getCalculator().calculate(args);
+        return getCalculator().calculate(scope, args);
     }
 
     @FunctionalInterface
     public interface Calculator {
-        Object calculate(Object... arguments) throws TSLExpressionException;
+        Object calculate(Scriptable scope, Object... arguments) throws TSLExpressionException;
     }
 
 }

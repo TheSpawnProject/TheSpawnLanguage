@@ -3,6 +3,7 @@ package example.plugin.functions;
 import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
+import org.mozilla.javascript.Scriptable;
 
 public class MultFunction extends TSLFunction {
 
@@ -13,7 +14,7 @@ public class MultFunction extends TSLFunction {
     }
 
     @Override
-    public Object calculate(Object... arguments) throws TSLExpressionException {
+    public Object calculate(Scriptable scope, Object... arguments) throws TSLExpressionException {
         Number a = numberArgument(arguments, 0);
         Number b = numberArgument(arguments, 1);
         return a.doubleValue() * b.doubleValue();

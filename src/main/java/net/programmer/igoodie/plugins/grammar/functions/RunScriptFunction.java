@@ -5,6 +5,7 @@ import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.util.IOUtils;
+import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.Undefined;
 
 import java.io.File;
@@ -34,7 +35,7 @@ public class RunScriptFunction extends TSLFunction {
     }
 
     @Override
-    public Object calculate(Object... arguments) throws TSLExpressionException {
+    public Object calculate(Scriptable scope, Object... arguments) throws TSLExpressionException {
         String scriptPath = stringArgument(arguments, 0);
 
         String readScript = IOUtils.readString(isAbsolutePath(scriptPath)
@@ -49,7 +50,7 @@ public class RunScriptFunction extends TSLFunction {
         String wrappedScript = String.format("(function(){%s})()",
                 readScript.replace("tslReturn", "return"));
 
-        return jsEngine.evaluate(wrappedScript);
+        return jsEngine.evaluate(wrappedScript, scope);
     }
 
     private boolean isAbsolutePath(String path) {

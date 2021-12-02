@@ -6,6 +6,7 @@ import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistrable;
 import net.programmer.igoodie.util.ArrayAccessor;
 import net.programmer.igoodie.util.TypeUtilities;
+import org.mozilla.javascript.Scriptable;
 
 public abstract class TSLFunction extends TSLDefinition implements TSLRegistrable {
 
@@ -18,7 +19,7 @@ public abstract class TSLFunction extends TSLDefinition implements TSLRegistrabl
         return getName();
     }
 
-    public abstract Object calculate(Object... arguments) throws TSLExpressionException;
+    public abstract Object calculate(Scriptable scope, Object... arguments) throws TSLExpressionException;
 
     public JSFunctionBinding getBinding() {
         return new JSFunctionBinding() {

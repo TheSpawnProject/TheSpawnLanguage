@@ -3,6 +3,7 @@ package example.plugin.functions;
 import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
+import org.mozilla.javascript.Scriptable;
 
 import java.time.Instant;
 
@@ -15,7 +16,7 @@ public class CurrentUnixFunction extends TSLFunction {
     }
 
     @Override
-    public Object calculate(Object... arguments) throws TSLExpressionException {
+    public Object calculate(Scriptable scope, Object... arguments) throws TSLExpressionException {
         return Instant.now().getEpochSecond();
     }
 

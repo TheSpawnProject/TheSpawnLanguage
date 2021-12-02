@@ -61,7 +61,7 @@ public abstract class TSLDefinition {
 
     protected double parseDouble(TSLToken token, String evaluatedValue) {
         try {
-            return Double.parseDouble(token.getRaw());
+            return Double.parseDouble(evaluatedValue);
 
         } catch (NumberFormatException e) {
             throw new TSLRuntimeError("Expected floating point number", token);

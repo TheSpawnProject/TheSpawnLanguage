@@ -24,17 +24,17 @@ public class ExampleTest {
     @Order(2)
     public void shouldEvaluateExpressions() {
         ExamplePlugin.LOGGER.info(TSL.getJsEngine()
-                .evaluate("_currentUnix() + ' ' + _maximumOf(5,10)", null));
+                .evaluate("_currentUnix() + ' ' + _maximumOf(5,10)"));
 
         ExamplePlugin.LOGGER.info(TSL.getJsEngine()
-                .evaluate("_.iff('truthy', TSL_VERSION, 0)", null));
+                .evaluate("_.iff('truthy', TSL_VERSION, 0)"));
 
         ExamplePlugin.LOGGER.info(TSL.getJsEngine()
-                .evaluate("_.union(['A', 1, 'B'], _D.methods(_.now()))", null));
+                .evaluate("_.union(['A', 1, 'B'], _D.methods(_.now()))"));
 
         for (int i = 0; i < 5; i++) {
             ExamplePlugin.LOGGER.info(TSL.getJsEngine()
-                    .evaluate("_.randomOne('apple','banana','orange', 'tangerine')", null));
+                    .evaluate("_.randomOne('apple','banana','orange', 'tangerine')"));
         }
 
     }

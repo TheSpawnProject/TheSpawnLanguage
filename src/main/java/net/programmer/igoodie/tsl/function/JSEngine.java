@@ -1,6 +1,5 @@
 package net.programmer.igoodie.tsl.function;
 
-import net.programmer.igoodie.goodies.runtime.GoodieElement;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLFunction;
@@ -55,67 +54,50 @@ public class JSEngine {
         this.sealed = true;
     }
 
-    private ScriptableObject createChildScope() {
-        return new ScriptableObject(globalScope, null) {
-            @Override
-            public String getClassName() {
-                return null;
-            }
-        };
+    public ScriptableObject createChildScope() {
+        ScriptableObject scope = (ScriptableObject) jsContext.newObject(globalScope);
+        scope.setPrototype(globalScope);
+        scope.setParentScope(null);
+        return scope;
     }
 
     /* ------------------------------------ */
 
-    private void loadTSLContext(TSLContext tslContext) {
+    public void loadTSLContext(ScriptableObject scope, TSLContext tslContext) {
         if (tslContext != null) {
             GoodieObject eventArguments = tslContext.getEventArguments();
             if (eventArguments != null) {
                 for (String argumentName : eventArguments.keySet()) {
                     Object argument = extractField(eventArguments, argumentName);
-                    this.globalScope.putConst(argumentName, globalScope, argument);
-                }
-            }
-        }
-    }
-
-    private void unloadTSLContext(TSLContext tslContext) {
-        if (tslContext != null) {
-            GoodieObject eventArguments = tslContext.getEventArguments();
-            if (eventArguments != null) {
-                for (String argumentName : eventArguments.keySet()) {
-                    this.globalScope.delete(argumentName);
+                    scope.putConst(argumentName, globalScope, argument);
                 }
             }
         }
     }
 
     private Object extractField(GoodieObject eventArguments, String fieldName) {
-        GoodieElement argument = eventArguments.get(fieldName);
-        try {return argument.asPrimitive().getNumber();} catch (Throwable ignored) {}
-        try {return argument.asPrimitive().getBoolean();} catch (Throwable ignored) {}
-        return argument.asPrimitive().getString();
+        if (eventArguments.hasNumber(fieldName))
+            return eventArguments.getNumber(fieldName).orElse(-1);
+        if (eventArguments.hasBoolean(fieldName))
+            return eventArguments.getBoolean(fieldName).orElse(false);
+        return eventArguments.getString(fieldName);
     }
 
     /* ------------------------------------ */
 
-    public String evaluate(String script, TSLContext tslContext) {
-        loadTSLContext(tslContext);
-        String evaluation = evaluate(script);
-        unloadTSLContext(tslContext);
-        return evaluation;
+    public String evaluate(String script, TSLContext tslContext) throws EcmaError {
+        Scriptable scope = tslContext.getScope();
+        return evaluate(script, scope == null ? globalScope : scope);
     }
 
-    public String evaluate(String script) {
-        try {
-            String sourceName = "immediate_evaluator";
-            ScriptableObject childScope = createChildScope();
-            Object evaluation = this.jsContext.evaluateString(childScope, script, sourceName, 0, null);
-            return stringify(evaluation);
+    public String evaluate(String script) throws EcmaError {
+        return evaluate(script, createChildScope());
+    }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "#!ERROR!#"; // TODO: Throw appropriate error
-        }
+    public String evaluate(String script, Scriptable scope) throws EcmaError {
+        String sourceName = "immediate_evaluator";
+        Object evaluation = this.jsContext.evaluateString(scope, script, sourceName, 0, null);
+        return stringify(evaluation);
     }
 
     private String stringify(Object value) {

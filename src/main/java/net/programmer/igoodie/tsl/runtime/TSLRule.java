@@ -6,6 +6,7 @@ import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
+import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.parser.snippet.TSLPredicateSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLRuleSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
@@ -13,6 +14,7 @@ import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.attribute.Attributable;
 import net.programmer.igoodie.tsl.runtime.attribute.TSLAttributeList;
 import net.programmer.igoodie.tsl.util.GoodieUtils;
+import org.mozilla.javascript.ScriptableObject;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -93,6 +95,11 @@ public class TSLRule implements Attributable {
         }
 
         context.setAttributes(getOverriddenAttributes());
+
+        JSEngine jsEngine = context.getLanguage().getJsEngine();
+        ScriptableObject scope = jsEngine.createChildScope();
+        jsEngine.loadTSLContext(scope, context);
+        context.setScope(scope);
 
         for (TSLPredicateSnippet predicateSnippet : snippet.getPredicateSnippets()) {
             TSLPredicate predicate = predicateSnippet.getPredicateDefinition();

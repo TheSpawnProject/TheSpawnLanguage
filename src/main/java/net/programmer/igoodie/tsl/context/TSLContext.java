@@ -4,6 +4,7 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
+import org.mozilla.javascript.ScriptableObject;
 
 public class TSLContext {
 
@@ -15,6 +16,18 @@ public class TSLContext {
 
     public TheSpawnLanguage getLanguage() {
         return language;
+    }
+
+    /* ----------------------------------- */
+
+    protected ScriptableObject scope;
+
+    public ScriptableObject getScope() {
+        return scope;
+    }
+
+    public void setScope(ScriptableObject scope) {
+        this.scope = scope;
     }
 
     /* ----------------------------------- */
