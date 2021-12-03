@@ -67,16 +67,16 @@ test {
     useJUnitPlatform()
 }
 
-jsweet {
-    veryVerbose = true
-    verbose = true
-    encoding = 'UTF-8'
-//    sourceMap = true
-    tsserver = true
-    tsOnly = true
-    tsOut = project.file('target/typescript')
-//    outDir = project.file('target/javascript')
-//    candiesJsOut = project.file('target/candies')
-    targetVersion = 'ES6'
-    includes = ['**/*.java']
-}
+//jsweet {
+//    veryVerbose = true
+//    verbose = true
+//    encoding = 'UTF-8'
+////    sourceMap = true
+//    tsserver = true
+//    tsOnly = true
+//    tsOut = project.file('target/typescript')
+////    outDir = project.file('target/javascript')
+////    candiesJsOut = project.file('target/candies')
+//    targetVersion = 'ES6'
+//    includes = ['**/*.java']
+//}
