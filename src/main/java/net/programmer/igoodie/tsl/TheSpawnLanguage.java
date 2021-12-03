@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl;
 
 import com.vdurmont.semver4j.Semver;
+import net.programmer.igoodie.plugins.events.common.CommonEvents;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.plugins.library.TSLUtilitiesLibrary;
 import net.programmer.igoodie.tsl.definition.*;
@@ -71,6 +72,7 @@ public class TheSpawnLanguage {
         jsEngine.defineConst("$TSL_VERSION", TSL_VERSION);
         jsEngine.loadLibrary(new TSLUtilitiesLibrary());
         loadPlugin(new TSLGrammarCore());
+        loadPlugin(new CommonEvents());
     }
 
     public void loadPlugin(TSLPlugin plugin) {

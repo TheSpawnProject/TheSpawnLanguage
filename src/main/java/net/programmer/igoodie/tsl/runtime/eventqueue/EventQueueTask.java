@@ -5,27 +5,33 @@ import java.util.TimerTask;
 
 public class EventQueueTask {
 
-    final String name;
-    Runnable taskRoutine;
-    long cooldown;
+    private String name;
+    private Runnable taskRoutine;
+    private long cooldown;
 
-    public EventQueueTask(Runnable taskRoutine) {
-        this("Executable Task", taskRoutine);
+    public static EventQueueTask sleepTask(long cooldown) {
+        return sleepTask("Cooldown Task", cooldown);
     }
 
-    public EventQueueTask(String name, Runnable taskRoutine) {
-        this.name = name;
-        this.taskRoutine = taskRoutine;
+    public static EventQueueTask sleepTask(String name, long cooldown) {
+        EventQueueTask queueTask = new EventQueueTask();
+        queueTask.name = name;
+        queueTask.cooldown = cooldown;
+        return queueTask;
     }
 
-    public EventQueueTask(long cooldown) {
-        this("Cooldown Task", cooldown);
+    public static EventQueueTask routineTask(Runnable taskRoutine) {
+        return routineTask("Executable Task", taskRoutine);
     }
 
-    public EventQueueTask(String name, long cooldown) {
-        this.name = name;
-        this.cooldown = cooldown;
+    public static EventQueueTask routineTask(String name, Runnable taskRoutine) {
+        EventQueueTask queueTask = new EventQueueTask();
+        queueTask.name = name;
+        queueTask.taskRoutine = taskRoutine;
+        return queueTask;
     }
+
+    private EventQueueTask() {}
 
     private void sleep(long millis) throws InterruptedException {
         final Thread sleepingThread = Thread.currentThread();

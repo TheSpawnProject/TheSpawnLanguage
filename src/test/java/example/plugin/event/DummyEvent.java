@@ -2,8 +2,10 @@ package example.plugin.event;
 
 import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
+import net.programmer.igoodie.util.Couple;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
+import java.util.Map;
 
 public class DummyEvent extends TSLEvent {
 
@@ -14,9 +16,9 @@ public class DummyEvent extends TSLEvent {
     }
 
     @Override
-    public Set<String> getAcceptedFields() {
+    public @NotNull Map<String, Class<?>> getAcceptedFields() {
         return eventFields(
-                "time"
+                new Couple<>("time", Long.class)
         );
     }
 

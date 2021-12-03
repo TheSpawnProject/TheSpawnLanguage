@@ -6,6 +6,12 @@ import java.util.List;
 
 public class EventQueue {
 
+    enum State {
+        RUNNING,
+        COOLDOWN,
+        PAUSED
+    }
+
     private volatile State state;
 
     private final Thread innerThread;
@@ -33,14 +39,7 @@ public class EventQueue {
             if (hasUnhandledTasks()) {
                 synchronized (tasks) {
                     EventQueueTask task = tasks.remove();
-
-                    if (task.getType() == EventQueueTask.Type.SLEEP)
-                        state = State.COOLDOWN;
-
-                    task.run();
-
-                    if (task.getType() == EventQueueTask.Type.SLEEP)
-                        state = State.RUNNING;
+                    executeUnhandledTask(task);
                 }
 
             } else {
@@ -50,6 +49,16 @@ public class EventQueue {
             discardedTasks++;
             error.printStackTrace();
         }
+    }
+
+    protected void executeUnhandledTask(EventQueueTask task) throws InterruptedException {
+        if (task.getType() == EventQueueTask.Type.SLEEP)
+            state = State.COOLDOWN;
+
+        task.run();
+
+        if (task.getType() == EventQueueTask.Type.SLEEP)
+            state = State.RUNNING;
     }
 
     private void unpause() {
@@ -90,7 +99,7 @@ public class EventQueue {
     }
 
     public void queueSleepFirst(long millis) {
-        tasks.addFirst(new EventQueueTask("Sleep", millis));
+        queueTaskFirst(EventQueueTask.sleepTask("Sleep", millis));
     }
 
     public void queueSleep() {
@@ -98,11 +107,11 @@ public class EventQueue {
     }
 
     public void queueSleep(long millis) {
-        tasks.add(new EventQueueTask("Sleep", millis));
+        queueTask(EventQueueTask.sleepTask("Sleep", millis));
     }
 
     public void queueFirst(String name, Runnable task) {
-        tasks.addFirst(new EventQueueTask(name, task));
+        queueTaskFirst(EventQueueTask.routineTask(name, task));
     }
 
     public void queue(Runnable task) {
@@ -110,12 +119,17 @@ public class EventQueue {
     }
 
     public void queue(String name, Runnable task) {
-        tasks.add(new EventQueueTask(name, task));
+        queueTask(EventQueueTask.routineTask(name, task));
     }
 
+    private void queueTask(EventQueueTask task) {
+        tasks.add(task);
+        unpause();
+    }
 
-    public void updateThread() {
-        if (state == State.PAUSED) unpause();
+    private void queueTaskFirst(EventQueueTask task) {
+        tasks.addFirst(task);
+        unpause();
     }
 
     /* --------------------------------- */
@@ -126,14 +140,6 @@ public class EventQueue {
 
     public synchronized boolean hasUnhandledTasks() {
         return !tasks.isEmpty();
-    }
-
-    /* --------------------------------- */
-
-    enum State {
-        RUNNING,
-        COOLDOWN,
-        PAUSED
     }
 
 }

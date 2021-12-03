@@ -3,11 +3,12 @@ package net.programmer.igoodie.tsl.definition;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistrable;
+import net.programmer.igoodie.util.Couple;
 import net.programmer.igoodie.util.StringUtilities;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class TSLEvent extends TSLDefinition implements TSLRegistrable {
 
@@ -22,11 +23,15 @@ public abstract class TSLEvent extends TSLDefinition implements TSLRegistrable {
 
     /* ---------------------------------- */
 
-    // TODO: turn into Set<Couple<String, Class<?>>>
-    public abstract Set<String> getAcceptedFields();
+    public abstract @NotNull Map<String, Class<?>> getAcceptedFields();
 
-    protected Set<String> eventFields(String... fields) {
-        return new HashSet<>(Arrays.asList(fields));
+    @SafeVarargs
+    protected final Map<String, Class<?>> eventFields(Couple<String, Class<?>>... fields) {
+        Map<String, Class<?>> eventFields = new HashMap<>();
+        for (Couple<String, Class<?>> field : fields) {
+            eventFields.put(field.getFirst(), field.getSecond());
+        }
+        return eventFields;
     }
 
     public static Object extractField(GoodieObject eventArguments, String fieldName) {

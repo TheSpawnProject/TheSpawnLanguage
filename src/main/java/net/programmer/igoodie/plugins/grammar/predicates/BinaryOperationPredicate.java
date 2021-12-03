@@ -1,11 +1,13 @@
 package net.programmer.igoodie.plugins.grammar.predicates;
 
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLComparator;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLPredicate;
+import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
@@ -13,6 +15,7 @@ import net.programmer.igoodie.util.Couple;
 import net.programmer.igoodie.util.StringUtilities;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BinaryOperationPredicate extends TSLPredicate {
@@ -37,7 +40,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
 
         String eventField = ((TSLString) eventFieldToken).getWord();
 
-        if (eventField == null || !event.getAcceptedFields().contains(eventField)) {
+        if (eventField == null || !event.getAcceptedFields().containsKey(eventField)) {
             throw new TSLSyntaxError("Unknown field for the event -> " + eventFieldToken, eventFieldToken);
         }
 
@@ -50,17 +53,40 @@ public class BinaryOperationPredicate extends TSLPredicate {
 
     @Override
     public boolean satisfies(TSLContext context, List<TSLToken> tokens) {
-        TSLToken eventFieldToken = tokens.get(0);
-        String eventField = ((TSLString) eventFieldToken).getWord();
+        TSLToken fieldNameToken = tokens.get(0);
+        String fieldName = ((TSLString) fieldNameToken).getWord();
+
+        GoodieObject eventArguments = context.getEventArguments();
+        Object eventFieldValue = TSLEvent.extractField(eventArguments, fieldName);
+
+        checkFieldValueType(context, fieldNameToken);
 
         Couple<TSLComparator, Integer> couple = longestMatchingComparator(context.getLanguage(), tokens);
         TSLComparator comparator = couple.getFirst();
         Integer argsTokenIndex = couple.getSecond();
 
         return comparator.satisfies(
-                TSLEvent.extractField(context.getEventArguments(), eventField),
+                eventFieldValue,
                 tokens.subList(argsTokenIndex, tokens.size()).stream().map(t -> t.evaluate(context)).collect(Collectors.toList())
         );
+    }
+
+    private void checkFieldValueType(TSLContext context, TSLToken fieldNameToken) {
+        String fieldName = ((TSLString) fieldNameToken).getWord();
+
+        TSLEvent event = context.getEvent();
+        Map<String, Class<?>> acceptedFields = event.getAcceptedFields();
+
+        GoodieObject eventArguments = context.getEventArguments();
+        Object eventFieldValue = TSLEvent.extractField(eventArguments, fieldName);
+
+        Class<?> actualType = eventFieldValue.getClass();
+        Class<?> expectedType = acceptedFields.get(fieldName);
+
+        if (!expectedType.isAssignableFrom(actualType)) {
+            throw new TSLRuntimeError(String.format("Event Field value mismatches expected type. (Expected: %s, Found: %s)",
+                    expectedType, actualType), fieldNameToken);
+        }
     }
 
     private Couple<TSLComparator, Integer> longestMatchingComparator(TheSpawnLanguage language, List<TSLToken> tokens) {
