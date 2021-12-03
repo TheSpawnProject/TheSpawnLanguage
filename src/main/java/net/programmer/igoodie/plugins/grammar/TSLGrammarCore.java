@@ -13,19 +13,37 @@ import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
+import net.programmer.igoodie.util.ReflectionUtilities;
+
+import java.lang.reflect.Field;
+import java.util.jar.Attributes;
 
 public class TSLGrammarCore extends TSLPlugin {
 
     private static final String VERSION = "2.0.0-alpha";
 
-    private static final TSLPluginManifest MANIFEST = new TSLPluginManifest("core", "TSL Core", VERSION)
-            .setAuthor("iGoodie");
-
     @TSLPluginInstance
     public static TSLGrammarCore PLUGIN_INSTANCE;
 
     public TSLGrammarCore() {
-        super(MANIFEST);
+        try {
+            Field manifestField = TSLPlugin.class.getDeclaredField("manifest");
+            TSLPluginManifest manifest = new TSLPluginManifest(getJarAttributes());
+            ReflectionUtilities.setValue(this, manifestField, manifest);
+
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+            throw new InternalError();
+        }
+    }
+
+    private Attributes getJarAttributes() {
+        Attributes attributes = new Attributes();
+        attributes.putValue(TSLPluginManifest.ATTR_PLUGIN_ID, "tsl_core");
+        attributes.putValue(TSLPluginManifest.ATTR_PLUGIN_NAME, "TSL Core");
+        attributes.putValue(TSLPluginManifest.ATTR_PLUGIN_VERSION, VERSION);
+        attributes.putValue(TSLPluginManifest.ATTR_PLUGIN_AUTHOR, "iGoodie");
+        return attributes;
     }
 
     @Override

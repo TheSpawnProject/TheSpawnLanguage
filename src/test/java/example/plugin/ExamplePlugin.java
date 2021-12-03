@@ -20,9 +20,12 @@ import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPluginLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
+import net.programmer.igoodie.util.ReflectionUtilities;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.jar.Attributes;
 import java.util.logging.Logger;
 
 public class ExamplePlugin extends TSLPlugin {
@@ -36,8 +39,24 @@ public class ExamplePlugin extends TSLPlugin {
     public static final Map<String, Object> VARIABLE_CACHE = new HashMap<>();
 
     public ExamplePlugin() {
-        super(new TSLPluginManifest("exampleplugin", "ExamplePlugin", "0.0.1"));
-        getManifest().setAuthor("iGoodie");
+        try {
+            Field manifestField = TSLPlugin.class.getDeclaredField("manifest");
+            TSLPluginManifest manifest = new TSLPluginManifest(getJarAttributes());
+            ReflectionUtilities.setValue(this, manifestField, manifest);
+
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+            throw new InternalError();
+        }
+    }
+
+    private Attributes getJarAttributes() {
+        Attributes attributes = new Attributes();
+        attributes.putValue(TSLPluginManifest.ATTR_PLUGIN_ID, "exampleplugin");
+        attributes.putValue(TSLPluginManifest.ATTR_PLUGIN_NAME, "Example Plugin");
+        attributes.putValue(TSLPluginManifest.ATTR_PLUGIN_VERSION, "0.0.1");
+        attributes.putValue(TSLPluginManifest.ATTR_PLUGIN_AUTHOR, "iGoodie");
+        return attributes;
     }
 
     @Override

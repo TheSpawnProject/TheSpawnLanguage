@@ -47,7 +47,7 @@ dependencies {
     // RuntimeGoodies
     implementation 'com.github.iGoodie:RuntimeGoodies:fc573e635f'
 
-    // Rhino - JS Engine
+    // Rhino - Used in JS Engine
     compile 'org.mozilla:rhino:1.7.13'
 
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine

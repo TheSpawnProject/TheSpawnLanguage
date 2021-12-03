@@ -12,7 +12,6 @@ import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
-import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
@@ -34,7 +33,7 @@ public class RulesetTests {
         TSL.loadPlugin(new ExamplePlugin());
 
 
-        TSL.loadPlugin(new TSLPlugin(new TSLPluginManifest("", "", "")) {
+        TSL.loadPlugin(new TSLPlugin() {
             @Override
             public void registerActions(TSLRegistry<TSLAction> registry) {
                 TSLAction dummyEitherAction = new TSLAction(this, "EITHER") {
