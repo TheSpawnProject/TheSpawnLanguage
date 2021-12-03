@@ -8,9 +8,9 @@ buildscript {
         maven { url "http://google-diff-match-patch.googlecode.com/svn/trunk/maven" }
     }
     dependencies {
-        classpath('org.jsweet:jsweet-gradle-plugin:3.0.0') { //
-            transitive = true
-        }
+//        classpath('org.jsweet:jsweet-gradle-plugin:3.0.0') { //
+//            transitive = true
+//        }
     }
 }
 
