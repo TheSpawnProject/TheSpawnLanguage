@@ -4,6 +4,10 @@ public class TSLPluginLoadingException extends RuntimeException {
 
     protected String filePath;
 
+    public TSLPluginLoadingException(String reason) {
+        this(reason, null, null);
+    }
+
     public TSLPluginLoadingException(String reason, String filePath) {
         this(reason, null, filePath);
     }

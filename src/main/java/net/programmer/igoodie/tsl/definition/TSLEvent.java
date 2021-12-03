@@ -1,10 +1,11 @@
 package net.programmer.igoodie.tsl.definition;
 
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistrable;
 import net.programmer.igoodie.util.StringUtilities;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,14 +22,19 @@ public abstract class TSLEvent extends TSLDefinition implements TSLRegistrable {
 
     /* ---------------------------------- */
 
-    public abstract Set<TSLEventField<?>> getAcceptedFields();
+    // TODO: turn into Set<Couple<String, Class<?>>>
+    public abstract Set<String> getAcceptedFields();
 
-    /* ---------------------------------- */
+    protected Set<String> eventFields(String... fields) {
+        return new HashSet<>(Arrays.asList(fields));
+    }
 
-    protected Set<TSLEventField<?>> eventFields(TSLEventField<?>... fields) {
-        Set<TSLEventField<?>> set = new HashSet<>();
-        Collections.addAll(set, fields);
-        return set;
+    public static Object extractField(GoodieObject eventArguments, String fieldName) {
+        if (eventArguments.hasNumber(fieldName))
+            return eventArguments.getNumber(fieldName).orElse(-1);
+        if (eventArguments.hasBoolean(fieldName))
+            return eventArguments.getBoolean(fieldName).orElse(false);
+        return eventArguments.getString(fieldName);
     }
 
 }

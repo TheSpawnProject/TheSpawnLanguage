@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.function;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.function.binding.JSFunctionBinding;
 import net.programmer.igoodie.tsl.function.binding.JSLibraryBinding;
@@ -98,19 +99,11 @@ public class JSEngine {
             GoodieObject eventArguments = tslContext.getEventArguments();
             if (eventArguments != null) {
                 for (String argumentName : eventArguments.keySet()) {
-                    Object argument = extractField(eventArguments, argumentName);
+                    Object argument = TSLEvent.extractField(eventArguments, argumentName);
                     scope.putConst(argumentName, globalScope, argument);
                 }
             }
         }
-    }
-
-    private Object extractField(GoodieObject eventArguments, String fieldName) {
-        if (eventArguments.hasNumber(fieldName))
-            return eventArguments.getNumber(fieldName).orElse(-1);
-        if (eventArguments.hasBoolean(fieldName))
-            return eventArguments.getBoolean(fieldName).orElse(false);
-        return eventArguments.getString(fieldName);
     }
 
     /* ------------------------------------ */

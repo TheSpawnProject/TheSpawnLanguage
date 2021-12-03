@@ -30,7 +30,7 @@ public class ManifestTest {
                 throw new IllegalArgumentException("example.setup.ExamplePlugin is not a TSL plugin.");
             }
 
-            System.out.println(TSL.LOADED_PLUGINS);
+            System.out.println(TSL.LOADED_PLUGIN_IDS);
 
         } catch (ClassNotFoundException e) {
             System.out.println("Unknown class name");

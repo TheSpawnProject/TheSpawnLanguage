@@ -3,7 +3,6 @@ package net.programmer.igoodie.legacy.runtime.node;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLComparator;
-import net.programmer.igoodie.tsl.definition.TSLEventField;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.hook.HookList;
@@ -12,20 +11,14 @@ import java.util.LinkedList;
 
 public class PredicateNode implements RuleNode {
 
-    protected TSLEventField<?> field;
     protected TSLComparator comparator;
     protected TSLToken righthand;
 
     protected RuleNode nextNode;
 
-    public PredicateNode(TSLEventField<?> field, TSLComparator comparator, TSLToken righthand) {
-        this.field = field;
+    public PredicateNode( TSLComparator comparator, TSLToken righthand) {
         this.comparator = comparator;
         this.righthand = righthand;
-    }
-
-    public TSLEventField<?> getField() {
-        return field;
     }
 
     public TSLComparator getComparator() {
@@ -50,7 +43,7 @@ public class PredicateNode implements RuleNode {
 
         GoodieObject eventArguments = context.getEventArguments();
 
-        Object lefthand = field.extractValue(eventArguments);
+        Object lefthand = null;
         String righthand = this.righthand.evaluate(context);
 
         if (!comparator.satisfies(lefthand, new LinkedList<>())) {

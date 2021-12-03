@@ -35,8 +35,6 @@ public abstract class TSLPlugin {
 
     public void registerEvents(TSLRegistry<TSLEvent> registry) {}
 
-    public void registerEventFields(TSLRegistry<TSLEventField<?>> registry) {}
-
     public void registerActions(TSLRegistry<TSLAction> registry) {}
 
     public void registerComparators(TSLRegistry<TSLComparator> registry) {}

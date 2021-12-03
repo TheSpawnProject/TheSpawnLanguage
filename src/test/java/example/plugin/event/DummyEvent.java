@@ -1,9 +1,7 @@
 package example.plugin.event;
 
 import example.plugin.ExamplePlugin;
-import example.plugin.fields.TimeField;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
-import net.programmer.igoodie.tsl.definition.TSLEventField;
 
 import java.util.Set;
 
@@ -16,9 +14,9 @@ public class DummyEvent extends TSLEvent {
     }
 
     @Override
-    public Set<TSLEventField<?>> getAcceptedFields() {
+    public Set<String> getAcceptedFields() {
         return eventFields(
-                TimeField.INSTANCE
+                "time"
         );
     }
 

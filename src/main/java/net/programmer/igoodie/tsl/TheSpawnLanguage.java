@@ -1,10 +1,12 @@
 package net.programmer.igoodie.tsl;
 
+import com.vdurmont.semver4j.Semver;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.plugins.library.TSLUtilitiesLibrary;
 import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
+import net.programmer.igoodie.tsl.exception.TSLPluginLoadingException;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.logging.TSLLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
@@ -24,13 +26,14 @@ import java.util.logging.Logger;
 public class TheSpawnLanguage {
 
     public static final String TSL_VERSION = "0.0.0";
+    public static final Semver TSL_SEMVER = new Semver(TSL_VERSION, Semver.SemverType.NPM);
 
-    public final Set<String> LOADED_PLUGINS;
+    public final Set<String> LOADED_PLUGIN_IDS;
+    public final Set<TSLPlugin> LOADED_PLUGINS;
 
     public final TSLRegistry<TSLTag> TAG_REGISTRY;
     public final TSLRegistry<TSLDecorator> DECORATOR_REGISTRY;
     public final TSLRegistry<TSLEvent> EVENT_REGISTRY;
-    public final TSLRegistry<TSLEventField<?>> EVENT_FIELD_REGISTRY;
     public final TSLRegistry<TSLAction> ACTION_REGISTRY;
     public final TSLRegistry<TSLPredicate> PREDICATE_REGISTRY;
     public final TSLRegistry<TSLComparator> COMPARATOR_REGISTRY;
@@ -39,12 +42,12 @@ public class TheSpawnLanguage {
     protected final JSEngine jsEngine;
 
     public TheSpawnLanguage() {
+        LOADED_PLUGIN_IDS = new HashSet<>();
         LOADED_PLUGINS = new HashSet<>();
 
         TAG_REGISTRY = new TSLRegistry<>(StringUtilities::upperSnake);
         DECORATOR_REGISTRY = new TSLRegistry<>();
         EVENT_REGISTRY = new TSLRegistry<>(StringUtilities::upperFirstLetters);
-        EVENT_FIELD_REGISTRY = new TSLRegistry<>();
         ACTION_REGISTRY = new TSLRegistry<>(StringUtilities::allUpper);
         PREDICATE_REGISTRY = TSLRegistry.createWithCapacity(2);
         COMPARATOR_REGISTRY = new TSLRegistry<>(StringUtilities::allUpper);
@@ -71,13 +74,16 @@ public class TheSpawnLanguage {
     }
 
     public void loadPlugin(TSLPlugin plugin) {
+        loadPlugin(plugin, null);
+    }
+
+    public void loadPlugin(TSLPlugin plugin, String filePath) {
         TSLPluginManifest manifest = plugin.getManifest();
-        String pluginId = manifest.getName() + ":" + manifest.getVersion();
+        String pluginId = manifest.getPluginId();
 
-        // TODO: Disallow loading of same plugin but different versions
-
-        if (LOADED_PLUGINS.contains(pluginId))
-            return; // TODO: What to do here? Consider
+        if (LOADED_PLUGIN_IDS.contains(pluginId)) {
+            throw new TSLPluginLoadingException("Plugin already has loaded in (id = " + pluginId + ")", filePath);
+        }
 
         assignAnnotatedFields(plugin);
 
@@ -85,12 +91,12 @@ public class TheSpawnLanguage {
         plugin.registerTags(TAG_REGISTRY);
         plugin.registerDecorators(DECORATOR_REGISTRY);
         plugin.registerEvents(EVENT_REGISTRY);
-        plugin.registerEventFields(EVENT_FIELD_REGISTRY);
         plugin.registerActions(ACTION_REGISTRY);
         plugin.registerPredicates(PREDICATE_REGISTRY);
         plugin.registerComparators(COMPARATOR_REGISTRY);
         plugin.registerFunctions(FUNCTION_REGISTRY);
-        LOADED_PLUGINS.add(pluginId);
+        LOADED_PLUGIN_IDS.add(pluginId);
+        LOADED_PLUGINS.add(plugin);
     }
 
     private void assignAnnotatedFields(TSLPlugin plugin) {
