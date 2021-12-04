@@ -23,7 +23,7 @@ public class TSLPluginLoader {
 
     private static final Map<String, Class<?>> ALL_LOADED_CLASSES = new HashMap<>();
 
-    enum State {
+    public enum State {
         PRISTINE, LOADING, FAIL, SUCCESS;
     }
 

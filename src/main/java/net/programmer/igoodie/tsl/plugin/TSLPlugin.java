@@ -8,8 +8,8 @@ import net.programmer.igoodie.tsl.registry.TSLRegistry;
 
 public abstract class TSLPlugin {
 
-    protected TheSpawnLanguage language;
-    protected TSLPluginManifest manifest;
+    private TheSpawnLanguage language;
+    private TSLPluginManifest manifest;
 
     public TSLPlugin() {}
 
