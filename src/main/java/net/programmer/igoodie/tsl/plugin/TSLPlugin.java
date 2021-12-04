@@ -11,6 +11,12 @@ public abstract class TSLPlugin {
     protected TheSpawnLanguage language;
     protected TSLPluginManifest manifest;
 
+    public TSLPlugin() {}
+
+    public TSLPlugin(TSLPluginManifest manifest) {
+        this.manifest = manifest;
+    }
+
     public TSLPluginManifest getManifest() {
         return manifest;
     }
