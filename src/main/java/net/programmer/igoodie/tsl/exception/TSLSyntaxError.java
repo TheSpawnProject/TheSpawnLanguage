@@ -3,11 +3,13 @@ package net.programmer.igoodie.tsl.exception;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
+import org.jetbrains.annotations.Nullable;
 
 public class TSLSyntaxError extends RuntimeException {
 
     protected String filePath;
     protected int line, character;
+    protected @Nullable TSLToken associatedToken;
 
     public TSLSyntaxError(String reason, TSLSnippetBuffer snippetBuffer) {
         this(reason, snippetBuffer.getTokens().get(0));
@@ -19,6 +21,7 @@ public class TSLSyntaxError extends RuntimeException {
 
     public TSLSyntaxError(String reason, TSLToken token) {
         this(reason, null, token.getLine(), token.getCharacter());
+        associatedToken = token;
     }
 
     public TSLSyntaxError(String reason, int line, int character) {
@@ -42,6 +45,10 @@ public class TSLSyntaxError extends RuntimeException {
 
     public int getCharacter() {
         return character;
+    }
+
+    public @Nullable TSLToken getAssociatedToken() {
+        return associatedToken;
     }
 
     @Override

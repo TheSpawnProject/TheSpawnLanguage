@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.util;
 
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,6 +45,13 @@ public class ExpressionUtils {
         builder.append(input, start, input.length());
 
         return builder.toString();
+    }
+
+    public static void traverseMatches(String input, Pattern expressionPattern, BiConsumer<Integer, Integer> rangeConsumer) {
+        Matcher matcher = expressionPattern.matcher(input);
+        while (matcher.find()) {
+            rangeConsumer.accept(matcher.start(), matcher.end());
+        }
     }
 
 }

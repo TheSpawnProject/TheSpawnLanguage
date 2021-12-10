@@ -6,6 +6,7 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,12 +31,21 @@ public class RulesetTests {
         TSLParser parser = new TSLParser(TSL);
         TSLRuleset ruleset = parser.parse(script);
 
+        System.out.println("Snippet Length: " + ruleset.getSnippets().size());
+
+        for (TSLSnippet snippet : ruleset.getSnippets()) {
+            System.out.println(snippet);
+        }
+
         GoodieObject eventArguments = new GoodieObject();
         eventArguments.put("time", 5);
 
         TSLContext context = new TSLContext(TSL);
         context.setEvent(DummyEvent.INSTANCE);
         context.setEventArguments(eventArguments);
+
+        System.out.println("Event: " + context.getEvent());
+        System.out.println("Args: " + eventArguments);
 
         ruleset.perform(context);
 

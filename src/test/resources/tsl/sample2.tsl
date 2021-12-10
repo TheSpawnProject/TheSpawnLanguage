@@ -1,5 +1,6 @@
 # IMPORT myLibrary %path/to/my/file.js% # Future Idea
 #! COOLDOWN 1000
+#! COOLDOWN ${foo} # bar
 
 #### Captures ####
 
@@ -11,6 +12,9 @@ $someAction
 
 $parameterizedCapture1(x, y, z)
 = PRINT ${{{x}} + {{y}} + {{z}} + hex("#FFFFFF")}
+
+$parameterizedCapture1(x, y, z)
+= PRINT ${{{x}} / {{y}} / {{z}} + hex("#FFFFFF")}
 
 $parameterizedCapture2(x)
 = PRINT %apple{{x}}%
@@ -31,7 +35,7 @@ $swordWithName(name)
 PRINT $swordWithName(${"Asdfff"})
  ON Dummy Event
 
-$parameterizedCapture3(${3+1}, 2, %Hey there%)
+$parameterizedCapture3(${3 + 1}, 2, %Hey there%)
  ON Dummy Event
 
 @suppressNotifications
@@ -53,11 +57,11 @@ PRINT ${_maximumOf(10,20) + Math.random()}
  ON Dummy Event
 
 PRINT
-%${_mult(10,20)} \${escaped! \%100 Time to ditch indentations, ${"aye"}!%
+%${_mult(10,20) % 5} word1 word2 word 3 \${escaped! \%100 Time to ditch indentations, ${"aye"}!%
 ON Dummy Event
 
-#@notificationVolume(2f)
-#@notificationPitch(2f)
+# @notificationVolume(2f)
+# @notificationPitch(2f, %foo%)
 EITHER
  DROP $name
  OR

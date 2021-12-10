@@ -127,6 +127,7 @@ public class TSLParser {
         // Fetch index of ON keyword
         int indexOn = indexOfKeyword(tokens, "ON");
         if (indexOn == -1) {
+            // TODO: Can we fill captures before even checking on events?
             throw new TSLSyntaxError("Incomplete rule. Missing an event statement.", buffer);
         }
 
