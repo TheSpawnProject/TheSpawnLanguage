@@ -10,7 +10,8 @@ public final class TSLSnippetBuffer {
     public enum Type {
         TAG,
         CAPTURE,
-        RULE
+        RULE,
+        COMMENT
     }
 
     private Type type;

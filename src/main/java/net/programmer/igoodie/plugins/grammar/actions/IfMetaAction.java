@@ -60,7 +60,7 @@ public class IfMetaAction extends TSLAction {
                 }
                 parser.parseAction(null, actionTokens);
 
-            } else if (i != part.size() - 1) { // ELSEIF part
+            } else if (i != parts.size() - 1) { // ELSEIF part
                 if (part.size() < 4) {
                     throw new TSLSyntaxError("Invalid ELSEIF statement", nameToken);
                 }

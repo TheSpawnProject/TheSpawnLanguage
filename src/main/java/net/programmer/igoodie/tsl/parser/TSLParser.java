@@ -13,6 +13,7 @@ import net.programmer.igoodie.tsl.parser.token.*;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
+import net.programmer.igoodie.util.Couple;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -152,9 +153,16 @@ public class TSLParser {
 
         rule.setSnippet(ruleSnippet);
 
+        // Destruct action tokens
+        TSLString actionNameToken = actionSnippet.getActionNameToken();
+        TSLAction actionDefinition = actionSnippet.getActionDefinition();
+
+        Couple<List<TSLToken>, TSLToken> couple = actionDefinition.splitByDisplaying(actionSnippet.getActionTokens());
+        List<TSLToken> actionTokens = couple.getFirst();
+        TSLToken messageToken = couple.getSecond();
+
         // Validate actions arguments
-        actionSnippet.getActionDefinition()
-                .validateTokens(actionSnippet.getActionNameToken(), actionSnippet.getActionTokens(), rule, this);
+        actionDefinition.validateTokens(actionNameToken, actionTokens, rule, this);
 
         return rule;
     }
@@ -187,6 +195,11 @@ public class TSLParser {
         }
 
         TSLAction actionDefinition = getAction(((TSLString) actionName));
+
+        Couple<List<TSLToken>, TSLToken> couple = actionDefinition.splitByDisplaying(actionTokens);
+        List<TSLToken> actionTokensSplitted = couple.getFirst();
+
+        actionDefinition.validateTokens(actionName, actionTokensSplitted, null, this);
 
         return new TSLActionSnippet(ruleset, actionDefinition,
                 ((TSLString) actionName), actionTokens);

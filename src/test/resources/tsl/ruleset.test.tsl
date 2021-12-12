@@ -1,5 +1,7 @@
-$myNickname = iGoodie
-
-PRINT %Hey there,% $myNickname
- ON Dummy Event
- WITH time = 5
+IF true THEN
+  NOTHING DISPLAYING %This is the IF block%
+ ELSEIF true THEN
+  NOTHING DISPLAYING %This is the ELSEIF block%
+ ELSE
+  NOTHING DISPLAYING %This is the ELSE block%
+ON Manual Trigger

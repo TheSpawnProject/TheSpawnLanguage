@@ -22,6 +22,7 @@ public class TSLLexer {
 
     boolean escaping = false;
     boolean inComment = false;
+    boolean inBlockComment = false;
     boolean inGroup = false;
     boolean inExpression = false;
     boolean inParameter = false;
@@ -72,7 +73,7 @@ public class TSLLexer {
                 pushSnippet();
             }
 
-            if (line.trim().isEmpty()) { // An empty line between snippets
+            if (!inBlockComment && line.trim().isEmpty()) { // An empty line between snippets
                 pushSnippet();
                 continue;
             }
@@ -107,6 +108,8 @@ public class TSLLexer {
 
             if (character == '#' && nextCharacter == '*') { // #*
                 inComment = true;
+                inBlockComment = true;
+                pushCharacters("#*");
                 continue;
             }
 
@@ -115,11 +118,13 @@ public class TSLLexer {
                     throw new TSLSyntaxError("Unexpected comment end", lineNo(), charNo());
                 }
                 inComment = false;
-                skipCharacters(1); // Skip the '#' character
+                inBlockComment = false;
+                pushCharacters("*#");
+                pushSnippet(); // End of the block comment
                 continue;
             }
 
-            if (inComment) {
+            if (inComment && !inBlockComment) {
                 continue;
             }
 
@@ -297,6 +302,8 @@ public class TSLLexer {
             if (snippetBuffer.getTokens().size() == 0) { // Inserting the very first token
                 if (TSLSymbol.equals(token, TSLSymbol.Type.RULESET_TAG_BEGIN)) {
                     snippetBuffer.setType(TSLSnippetBuffer.Type.TAG);
+                } else if (TSLSymbol.equals(token, TSLSymbol.Type.MULTI_LINE_COMMENT_BEGIN)) {
+                    snippetBuffer.setType(TSLSnippetBuffer.Type.COMMENT);
                 }
             }
 

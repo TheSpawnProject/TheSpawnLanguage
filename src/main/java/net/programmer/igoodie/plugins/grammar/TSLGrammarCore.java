@@ -2,13 +2,11 @@ package net.programmer.igoodie.plugins.grammar;
 
 import net.programmer.igoodie.plugins.grammar.actions.*;
 import net.programmer.igoodie.plugins.grammar.comparators.EqualsComparator;
+import net.programmer.igoodie.plugins.grammar.events.ManualTriggerEvent;
 import net.programmer.igoodie.plugins.grammar.functions.RunScriptFunction;
 import net.programmer.igoodie.plugins.grammar.predicates.BinaryOperationPredicate;
 import net.programmer.igoodie.plugins.grammar.predicates.BooleanPredicate;
-import net.programmer.igoodie.tsl.definition.TSLAction;
-import net.programmer.igoodie.tsl.definition.TSLComparator;
-import net.programmer.igoodie.tsl.definition.TSLFunction;
-import net.programmer.igoodie.tsl.definition.TSLPredicate;
+import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
@@ -37,6 +35,11 @@ public class TSLGrammarCore extends TSLPlugin {
         registry.register(WaitMetaAction.INSTANCE);
         registry.register(NothingMetaAction.INSTANCE);
         registry.register(VariableAction.INSTANCE);
+    }
+
+    @Override
+    public void registerEvents(TSLRegistry<TSLEvent> registry) {
+        registry.register(ManualTriggerEvent.INSTANCE);
     }
 
     @Override

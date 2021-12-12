@@ -1,11 +1,11 @@
 buildscript {
     repositories {
         mavenCentral()
-        maven { url "http://repository.jsweet.org/artifactory/libs-release-local" }
-        maven { url "http://repository.jsweet.org/artifactory/libs-snapshot-local" }
-        maven { url "http://repository.jsweet.org/artifactory/plugins-release-local" }
-        maven { url "http://repository.jsweet.org/artifactory/plugins-snapshot-local" }
-        maven { url "http://google-diff-match-patch.googlecode.com/svn/trunk/maven" }
+//        maven { url "http://repository.jsweet.org/artifactory/libs-release-local" }
+//        maven { url "http://repository.jsweet.org/artifactory/libs-snapshot-local" }
+//        maven { url "http://repository.jsweet.org/artifactory/plugins-release-local" }
+//        maven { url "http://repository.jsweet.org/artifactory/plugins-snapshot-local" }
+//        maven { url "http://google-diff-match-patch.googlecode.com/svn/trunk/maven" }
     }
     dependencies {
 //        classpath('org.jsweet:jsweet-gradle-plugin:3.0.0') { //
@@ -27,16 +27,16 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    maven { url "http://repository.jsweet.org/artifactory/libs-release-local" }
-    maven { url "http://repository.jsweet.org/artifactory/libs-snapshot-local" }
-    maven { url "http://repository.jsweet.org/artifactory/plugins-release-local" }
-    maven { url "http://repository.jsweet.org/artifactory/plugins-snapshot-local" }
-    maven { url "http://google-diff-match-patch.googlecode.com/svn/trunk/maven" }
+//    maven { url "http://repository.jsweet.org/artifactory/libs-release-local" }
+//    maven { url "http://repository.jsweet.org/artifactory/libs-snapshot-local" }
+//    maven { url "http://repository.jsweet.org/artifactory/plugins-release-local" }
+//    maven { url "http://repository.jsweet.org/artifactory/plugins-snapshot-local" }
+//    maven { url "http://google-diff-match-patch.googlecode.com/svn/trunk/maven" }
     maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    compile 'org.jetbrains:annotations:16.0.2'
+    implementation 'org.jetbrains:annotations:16.0.2'
 
     // JSweet
 //    compile group: 'org.jsweet', name: 'jsweet-transpiler', version: '3.0.0'
@@ -48,10 +48,10 @@ dependencies {
     implementation 'com.github.iGoodie:RuntimeGoodies:fc573e635f'
 
     // Rhino - Used in JS Engine
-    compile 'org.mozilla:rhino:1.7.13'
+    implementation 'org.mozilla:rhino:1.7.13'
 
     // Semver4j - SemVer parser
-    compile 'com.vdurmont:semver4j:3.1.0'
+    implementation 'com.vdurmont:semver4j:3.1.0'
 
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'

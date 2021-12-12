@@ -12,6 +12,7 @@ import net.programmer.igoodie.tsl.util.CollectionUtils;
 import net.programmer.igoodie.util.Couple;
 import net.programmer.igoodie.util.StringUtilities;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public abstract class TSLAction extends TSLDefinition implements TSLRegistrable 
 
     public abstract String getUsage();
 
-    public abstract void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError;
+    public abstract void validateTokens(TSLToken nameToken, List<TSLToken> arguments, @Nullable TSLRule rule, TSLParser parser) throws TSLSyntaxError;
 
     public @NotNull Couple<List<TSLToken>, TSLToken> splitByDisplaying(List<TSLToken> tokens) {
         int displayingIndex = CollectionUtils.lastIndexOfBy(tokens,
