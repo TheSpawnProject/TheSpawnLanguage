@@ -1,6 +1,8 @@
 package net.programmer.igoodie.plugins.grammar.predicates;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.goodies.util.Couple;
+import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
@@ -11,8 +13,6 @@ import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
-import net.programmer.igoodie.util.Couple;
-import net.programmer.igoodie.util.StringUtilities;
 
 import java.util.List;
 import java.util.Map;

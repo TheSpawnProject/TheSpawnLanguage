@@ -1,8 +1,8 @@
 package net.programmer.igoodie.plugins.events.common.events;
 
+import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.plugins.events.common.CommonEvents;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
-import net.programmer.igoodie.util.Couple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

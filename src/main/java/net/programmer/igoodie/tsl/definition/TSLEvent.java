@@ -1,10 +1,10 @@
 package net.programmer.igoodie.tsl.definition;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.goodies.util.Couple;
+import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistrable;
-import net.programmer.igoodie.util.Couple;
-import net.programmer.igoodie.util.StringUtilities;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

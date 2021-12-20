@@ -1,5 +1,7 @@
 package net.programmer.igoodie.tsl.definition;
 
+import net.programmer.igoodie.goodies.util.Couple;
+import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParser;
@@ -9,8 +11,6 @@ import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistrable;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
-import net.programmer.igoodie.util.Couple;
-import net.programmer.igoodie.util.StringUtilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

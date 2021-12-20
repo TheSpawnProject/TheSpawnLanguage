@@ -1,9 +1,9 @@
 package net.programmer.igoodie.tsl.plugin;
 
 import com.vdurmont.semver4j.SemverException;
+import net.programmer.igoodie.goodies.util.ReflectionUtilities;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.exception.TSLPluginLoadingException;
-import net.programmer.igoodie.util.ReflectionUtilities;
 
 import java.io.File;
 import java.io.IOException;

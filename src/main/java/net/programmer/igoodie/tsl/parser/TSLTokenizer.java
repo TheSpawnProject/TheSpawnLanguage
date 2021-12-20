@@ -1,8 +1,8 @@
 package net.programmer.igoodie.tsl.parser;
 
+import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.*;
-import net.programmer.igoodie.util.StringUtilities;
 
 import java.util.Arrays;
 import java.util.Collection;

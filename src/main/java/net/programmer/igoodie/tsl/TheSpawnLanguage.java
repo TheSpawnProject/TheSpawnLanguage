@@ -1,6 +1,8 @@
 package net.programmer.igoodie.tsl;
 
 import com.vdurmont.semver4j.Semver;
+import net.programmer.igoodie.goodies.util.ReflectionUtilities;
+import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.plugins.events.common.CommonEvents;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.plugins.library.TSLUtilitiesLibrary;
@@ -15,8 +17,6 @@ import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPluginLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
-import net.programmer.igoodie.util.ReflectionUtilities;
-import net.programmer.igoodie.util.StringUtilities;
 
 import java.io.File;
 import java.lang.reflect.Field;

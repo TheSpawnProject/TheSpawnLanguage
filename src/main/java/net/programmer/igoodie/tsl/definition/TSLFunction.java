@@ -1,11 +1,11 @@
 package net.programmer.igoodie.tsl.definition;
 
+import net.programmer.igoodie.goodies.util.TypeUtilities;
+import net.programmer.igoodie.goodies.util.accessor.ArrayAccessor;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.binding.JSFunctionBinding;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistrable;
-import net.programmer.igoodie.util.ArrayAccessor;
-import net.programmer.igoodie.util.TypeUtilities;
 import org.mozilla.javascript.Scriptable;
 
 public abstract class TSLFunction extends TSLDefinition implements TSLRegistrable {

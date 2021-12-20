@@ -1,5 +1,6 @@
 package net.programmer.igoodie.plugins.grammar.actions;
 
+import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
@@ -9,7 +10,6 @@ import net.programmer.igoodie.tsl.parser.snippet.TSLActionSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
-import net.programmer.igoodie.util.Couple;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

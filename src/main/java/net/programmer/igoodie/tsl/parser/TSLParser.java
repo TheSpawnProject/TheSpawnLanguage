@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.parser;
 
+import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
@@ -13,7 +14,6 @@ import net.programmer.igoodie.tsl.parser.token.*;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
-import net.programmer.igoodie.util.Couple;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
