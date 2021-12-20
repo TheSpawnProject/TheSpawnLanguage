@@ -325,7 +325,7 @@ public class TSLParser {
         return tslEvent;
     }
 
-    private List<TSLString> getEventNameTokens(List<TSLToken> tokens, int indexOn, int indexWith) {
+    public static List<TSLString> getEventNameTokens(List<TSLToken> tokens, int indexOn, int indexWith) {
         List<TSLToken> eventTokens = tokens.subList(indexOn + 1,
                 indexWith == -1 ? tokens.size() : indexWith);
 

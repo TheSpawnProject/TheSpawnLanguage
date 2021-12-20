@@ -8,75 +8,65 @@ import net.programmer.igoodie.tsl.function.binding.JSFunctionBinding;
 import net.programmer.igoodie.tsl.function.binding.JSLibraryBinding;
 import org.mozilla.javascript.*;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 // Rhino syntax compatibility: https://mozilla.github.io/rhino/compat/engines.html
 public class JSEngine {
 
-    private boolean sealed;
+    private static final Map<Context, ScriptableObject> GLOBALS = new WeakHashMap<>();
 
-    private ScriptableObject globalScope;
+    private boolean sealed;
 
     private final Map<String, Object> definedConsts = new HashMap<>();
     private final List<JSLibraryBinding> loadedLibraries = new LinkedList<>();
     private final List<TSLFunction> loadedFunctions = new LinkedList<>();
 
-    public JSEngine() {
-        ensureContext();
-    }
+    public JSEngine() {}
 
     public Context getJsContext() {
-        ensureContext();
-        return Context.getCurrentContext();
-    }
-
-    private void ensureContext() {
-        if (Context.getCurrentContext() == null) {
+        return Optional.ofNullable(Context.getCurrentContext()).orElseGet(() -> {
             Context context = Context.enter();
             context.setOptimizationLevel(-1);
             context.setMaximumInterpreterStackDepth(255);
             context.setLanguageVersion(Context.VERSION_ES6);
+            return context;
+        });
+    }
 
-            if (this.globalScope == null) {
-                this.globalScope = context.initSafeStandardObjects();
-            }
-
-            context.seal(null);
-
-//            definedConsts.forEach((name, value) -> globalScope.putConst(name, globalScope, value));
-//            loadedLibraries.forEach(library -> globalScope.put(library.getName(), globalScope, library));
-//            loadedFunctions.forEach(function -> globalScope.defineProperty(function.getName(), function.getBinding(),
-//                    ScriptableObject.PERMANENT | ScriptableObject.DONTENUM | ScriptableObject.READONLY));
-        }
+    public ScriptableObject getGlobalScope() {
+        Context context = getJsContext();
+        return GLOBALS.computeIfAbsent(context, ctx -> ctx.initSafeStandardObjects(null, true));
     }
 
     /* ------------------------ */
 
     public boolean defineConst(String name, Object value) {
         if (sealed) return false;
-        if (this.globalScope.has(name, globalScope)) return false;
-        this.globalScope.putConst(name, globalScope, value);
+        ScriptableObject globalScope = getGlobalScope();
+        if (globalScope.has(name, globalScope)) return false;
+        globalScope.putConst(name, globalScope, value);
         definedConsts.put(name, value);
         return true;
     }
 
     public boolean loadLibrary(JSLibraryBinding library) {
         if (sealed) return false;
-        if (this.globalScope.has(library.getName(), globalScope)) return false;
-        this.globalScope.put(library.getName(), globalScope, library);
+        ScriptableObject globalScope = getGlobalScope();
+        if (globalScope.has(library.getName(), globalScope)) return false;
+        globalScope.put(library.getName(), globalScope, library);
         loadedLibraries.add(library);
         return true;
     }
 
     public boolean loadFunction(TSLFunction function) {
+        ScriptableObject globalScope = getGlobalScope();
         JSFunctionBinding binding = function.getBinding();
-        this.globalScope.defineProperty(function.getName(), binding,
-                ScriptableObject.PERMANENT | ScriptableObject.DONTENUM | ScriptableObject.READONLY);
+        int attributes = ScriptableObject.PERMANENT
+                | ScriptableObject.DONTENUM
+                | ScriptableObject.READONLY;
+        globalScope.defineProperty(function.getName(), binding, attributes);
         loadedFunctions.add(function);
         return true;
     }
@@ -86,6 +76,7 @@ public class JSEngine {
     }
 
     public ScriptableObject createChildScope() {
+        ScriptableObject globalScope = getGlobalScope();
         ScriptableObject scope = (ScriptableObject) getJsContext().newObject(globalScope);
         scope.setPrototype(globalScope);
         scope.setParentScope(null);
@@ -100,7 +91,7 @@ public class JSEngine {
             if (eventArguments != null) {
                 for (String argumentName : eventArguments.keySet()) {
                     Object argument = TSLEvent.extractField(eventArguments, argumentName);
-                    scope.putConst(argumentName, globalScope, argument);
+                    scope.putConst(argumentName, getGlobalScope(), argument);
                 }
             }
         }
@@ -110,7 +101,7 @@ public class JSEngine {
 
     public String evaluate(String script, TSLContext tslContext) throws EcmaError {
         Scriptable scope = tslContext.getRuleScope();
-        return evaluate(script, scope == null ? globalScope : scope);
+        return evaluate(script, scope == null ? getGlobalScope() : scope);
     }
 
     public String evaluate(String script) throws EcmaError {

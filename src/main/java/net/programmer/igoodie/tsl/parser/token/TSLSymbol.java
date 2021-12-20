@@ -38,6 +38,7 @@ public class TSLSymbol extends TSLToken {
     public enum Type {
         RULESET_TAG_BEGIN("#!"),
         CAPTURE_DECLARATION("="),
+        TSLDOC_BEGIN("#**"),
         MULTI_LINE_COMMENT_BEGIN("#*"),
         MULTI_LINE_COMMENT_END("*#"),
         SINGLE_LINE_COMMENT("#");

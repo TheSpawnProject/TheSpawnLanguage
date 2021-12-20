@@ -11,7 +11,8 @@ public final class TSLSnippetBuffer {
         TAG,
         CAPTURE,
         RULE,
-        COMMENT
+        COMMENT,
+        TSLDOC
     }
 
     private Type type;

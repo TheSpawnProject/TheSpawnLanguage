@@ -304,6 +304,8 @@ public class TSLLexer {
                     snippetBuffer.setType(TSLSnippetBuffer.Type.TAG);
                 } else if (TSLSymbol.equals(token, TSLSymbol.Type.MULTI_LINE_COMMENT_BEGIN)) {
                     snippetBuffer.setType(TSLSnippetBuffer.Type.COMMENT);
+                } else if (TSLSymbol.equals(token, TSLSymbol.Type.TSLDOC_BEGIN)) {
+                    snippetBuffer.setType(TSLSnippetBuffer.Type.TSLDOC);
                 }
             }
 
