@@ -1,28 +1,41 @@
 package net.programmer.igoodie.tsl.util;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class CollectionUtils {
 
     private CollectionUtils() {}
 
-    public static <T> List<T> asSpreadList(Class<T> type, Object... elements) {
-        List<T> spreadList = new LinkedList<>();
+    public static <T> List<T> flatAll(Class<T> targetType, Object... elements) {
+        return flatAll(targetType, Arrays.asList(elements));
+    }
 
-        for (Object element : elements) {
-            Class<?> elementType = element.getClass();
+    public static <T> List<T> flatAll(Class<T> targetType, Collection<?> collection) {
+        @SuppressWarnings("unchecked")
+        List<T> flattened = (List<T>) collection.stream()
+                .flatMap(element -> {
 
-            if (type.isAssignableFrom(elementType)) {
-                spreadList.add(type.cast(element));
+                    if (element == null) {
+                        return Stream.empty();
 
-            } else if (List.class.isAssignableFrom(elementType)) {
-                spreadList.addAll(((List<T>) element));
-            }
-        }
+                    } else if (element instanceof Collection) {
+                        return flatAll(targetType, (Collection<?>) element).stream();
 
-        return spreadList;
+                    } else if (targetType.isAssignableFrom(element.getClass())) {
+                        return Stream.of(element);
+
+                    } else {
+                        return Stream.empty(); // <-- targetType mismatch checked here
+                    }
+                })
+                .collect(Collectors.toList());
+        return flattened;
     }
 
     public static <T> T findBy(List<T> list, Predicate<T> predicate) {

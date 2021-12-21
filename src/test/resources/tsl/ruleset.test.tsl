@@ -1,7 +1,27 @@
-IF true THEN
-  NOTHING DISPLAYING %This is the IF block%
- ELSEIF true THEN
-  NOTHING DISPLAYING %This is the ELSEIF block%
- ELSE
-  NOTHING DISPLAYING %This is the ELSE block%
+#**
+ * This capture holds multiplication of given numbers
+ * @param a First number to be used
+ * @param b Second number to be used
+*#
+$multiplyNumbers(num1, num2)
+  = ${{{num1}} * {{num2}}}
+
+$myAction =
+FOR 5 TIMES
+  IF true THEN
+    WAIT 10 minutes
+  ELSE
+    NOTHING
+
+FOR 10 TIMES
+  IF true THEN
+    WAIT $multiplyNumbers(10, 20) minutes
+  ELSE
+    WAIT 10 seconds
 ON Manual Trigger
+WITH debug_data = 1
+
+$myAction
+ON Manual Trigger
+WITH debug_data = 2
+

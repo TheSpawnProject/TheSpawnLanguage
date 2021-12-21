@@ -41,7 +41,7 @@ public class TSLAttributeList {
     /* ---------------------------------- */
 
     public void addTag(TSLTag tagDefinition, TSLString tagName, List<TSLString> tagArguments) {
-        List<TSLToken> tokens = CollectionUtils.asSpreadList(TSLToken.class, tagName, tagArguments);
+        List<TSLToken> tokens = CollectionUtils.flatAll(TSLToken.class, tagName, tagArguments);
         GoodieObject attributes = tagDefinition.generateAttributesWithNamespace(tokens);
         this.generators.add(tagDefinition);
         this.generatedAttributes.add(attributes);

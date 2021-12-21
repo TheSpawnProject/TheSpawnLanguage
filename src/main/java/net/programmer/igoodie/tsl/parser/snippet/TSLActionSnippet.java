@@ -6,7 +6,6 @@ import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
-import net.programmer.igoodie.tsl.util.CollectionUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +19,7 @@ public class TSLActionSnippet extends TSLSnippet {
     protected TSLAction actionDefinition;
 
     public TSLActionSnippet(TSLRuleset ruleset, TSLAction actionDefinition, TSLString actionName, List<TSLToken> actionTokens) {
-        super(ruleset, CollectionUtils.asSpreadList(TSLToken.class, actionName, actionTokens));
+        super(ruleset, flatTokens(actionName, actionTokens));
         this.actionName = actionName;
         this.actionTokens = actionTokens;
         this.actionDefinition = actionDefinition;

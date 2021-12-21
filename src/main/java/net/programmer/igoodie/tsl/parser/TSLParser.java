@@ -46,6 +46,9 @@ public class TSLParser {
 
             } else if (buffer.getType() == TSLSnippetBuffer.Type.RULE) {
                 ruleset.addRule(parseRule(ruleset, buffer));
+
+            } else if (buffer.getType() == TSLSnippetBuffer.Type.TSLDOC) {
+                ruleset.addTSLDoc(parseTSLDoc(ruleset, buffer));
             }
         }
 
@@ -53,6 +56,36 @@ public class TSLParser {
     }
 
     /* --------------------------- */
+
+    public TSLDocSnippet parseTSLDoc(TSLRuleset ruleset, TSLSnippetBuffer buffer) {
+        List<TSLToken> tokens = buffer.getTokens();
+
+        TSLSymbol begin = (TSLSymbol) tokens.get(0);
+        TSLSymbol end = ((TSLSymbol) tokens.get(tokens.size() - 1));
+
+        List<TSLToken> docTokens = tokens.subList(1, tokens.size() - 1);
+        List<TSLString> trimmedDocTokens = new LinkedList<>();
+
+        // Trim trailing * tokens
+        int currentLine = begin.getLine();
+        for (TSLToken docToken : docTokens) {
+            int line = docToken.getLine();
+            int character = docToken.getCharacter();
+            String rawText = docToken.getRaw();
+
+            if (currentLine != line) {
+                if (!rawText.equals("*")) {
+                    trimmedDocTokens.add(new TSLString(line, character, rawText));
+                }
+                currentLine = line;
+
+            } else {
+                trimmedDocTokens.add(new TSLString(line, character, rawText));
+            }
+        }
+
+        return new TSLDocSnippet(ruleset, begin, trimmedDocTokens, end);
+    }
 
     public TSLTagSnippet parseTag(TSLRuleset ruleset, TSLSnippetBuffer buffer) throws TSLSyntaxError {
         List<TSLToken> tokens = buffer.getTokens();

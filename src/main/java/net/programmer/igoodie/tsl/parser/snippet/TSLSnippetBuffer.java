@@ -30,6 +30,16 @@ public final class TSLSnippetBuffer {
         return tokens;
     }
 
+    public int getBeginningLine() {
+        if (tokens.size() == 0) return -1;
+        return tokens.get(0).getLine();
+    }
+
+    public int getEndingLine() {
+        if (tokens.size() == 0) return -1;
+        return tokens.get(tokens.size() - 1).getLine();
+    }
+
     public void setType(Type type) {
         this.type = type;
     }

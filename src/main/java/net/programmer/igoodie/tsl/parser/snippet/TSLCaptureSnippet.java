@@ -4,7 +4,6 @@ import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.parser.token.*;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
-import net.programmer.igoodie.tsl.util.CollectionUtils;
 import net.programmer.igoodie.tsl.util.ExpressionUtils;
 
 import java.util.*;
@@ -18,7 +17,7 @@ public class TSLCaptureSnippet extends TSLSnippet {
     protected List<TSLToken> capturedTokens;
 
     public TSLCaptureSnippet(TSLRuleset ruleset, TSLCaptureCall header, TSLSymbol equalsSign, List<TSLToken> tokens) {
-        super(ruleset, CollectionUtils.asSpreadList(TSLToken.class, header, equalsSign, tokens));
+        super(ruleset, flatTokens(header, equalsSign, tokens));
         this.header = header;
         this.equalsSign = equalsSign;
         this.capturedTokens = tokens;

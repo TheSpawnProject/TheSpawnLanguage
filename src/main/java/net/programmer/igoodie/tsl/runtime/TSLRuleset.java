@@ -5,6 +5,7 @@ import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
+import net.programmer.igoodie.tsl.parser.snippet.TSLDocSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLTagSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
@@ -24,6 +25,7 @@ public class TSLRuleset implements Attributable {
     protected TSLAttributeList attributeList;
 
     protected List<TSLRule> rules;
+    protected Map<Integer, TSLDocSnippet> tslDocs;
     protected Map<String, TSLCaptureSnippet> captures;
 
     protected HookList hookList;
@@ -37,6 +39,7 @@ public class TSLRuleset implements Attributable {
         this.file = file;
         this.snippets = new LinkedList<>();
         this.rules = new LinkedList<>();
+        this.tslDocs = new HashMap<>();
         this.captures = new HashMap<>();
         this.attributeList = new TSLAttributeList();
         this.hookList = new HookList();
@@ -66,6 +69,10 @@ public class TSLRuleset implements Attributable {
         return attributeList;
     }
 
+    public TSLDocSnippet getTSLDoc(int beginningLine) {
+        return tslDocs.get(beginningLine);
+    }
+
     public Map<String, TSLCaptureSnippet> getCaptures() {
         return Collections.unmodifiableMap(captures);
     }
@@ -92,6 +99,11 @@ public class TSLRuleset implements Attributable {
     }
 
     /* ----------------------------------------- */
+
+    public void addTSLDoc(TSLDocSnippet tslDocSnippet) {
+        snippets.add(tslDocSnippet);
+        tslDocs.put(tslDocSnippet.getBeginningLine(), tslDocSnippet);
+    }
 
     public void addTag(TSLTagSnippet tagSnippet) {
         snippets.add(tagSnippet);

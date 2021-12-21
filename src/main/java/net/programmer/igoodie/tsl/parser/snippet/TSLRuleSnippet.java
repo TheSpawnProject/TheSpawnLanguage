@@ -1,12 +1,9 @@
 package net.programmer.igoodie.tsl.parser.snippet;
 
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
-import net.programmer.igoodie.tsl.util.CollectionUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 // <Action> <Event> [Predicates]
 public class TSLRuleSnippet extends TSLSnippet {
@@ -17,13 +14,11 @@ public class TSLRuleSnippet extends TSLSnippet {
     protected List<TSLPredicateSnippet> predicateSnippets;
 
     public TSLRuleSnippet(TSLRuleset ruleset, List<TSLDecoratorCall> decorators, TSLActionSnippet actionSnippet, TSLEventSnippet eventSnippet, List<TSLPredicateSnippet> predicateSnippets) {
-        super(ruleset, CollectionUtils.asSpreadList(TSLToken.class,
+        super(ruleset, flatTokens(
                 decorators,
                 actionSnippet.getAllTokens(),
                 eventSnippet.getAllTokens(),
-                predicateSnippets.stream()
-                        .flatMap(snippet -> snippet.getAllTokens().stream())
-                        .collect(Collectors.toList())));
+                predicateSnippets));
 
         this.decorators = decorators;
         this.actionSnippet = actionSnippet;

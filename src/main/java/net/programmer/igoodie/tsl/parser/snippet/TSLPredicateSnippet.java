@@ -4,7 +4,6 @@ import net.programmer.igoodie.tsl.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
-import net.programmer.igoodie.tsl.util.CollectionUtils;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class TSLPredicateSnippet extends TSLSnippet {
     protected TSLPredicate predicateDefinition;
 
     public TSLPredicateSnippet(TSLRuleset ruleset, TSLPredicate predicateDefinition, TSLString keywordWith, List<TSLToken> tokens) {
-        super(ruleset, CollectionUtils.asSpreadList(TSLToken.class, keywordWith, tokens));
+        super(ruleset, flatTokens(keywordWith, tokens));
         this.keywordWith = keywordWith;
         this.predicateTokens = tokens;
         this.predicateDefinition = predicateDefinition;

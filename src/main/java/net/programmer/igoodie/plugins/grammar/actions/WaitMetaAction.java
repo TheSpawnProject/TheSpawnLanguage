@@ -7,6 +7,7 @@ import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import org.jetbrains.annotations.Nullable;
@@ -51,8 +52,19 @@ public class WaitMetaAction extends TSLAction {
 
     @Override
     public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {
-        if (arguments.size() != 2) {
+        if (arguments.size() < 2) {
             throw new TSLSyntaxError("Expected amount and a time unit", nameToken);
+        }
+        if (arguments.size() > 2) {
+            throw new TSLSyntaxError("Expected 2 tokens, found " + arguments.size() + " instead", nameToken);
+        }
+
+        TSLToken unitToken = arguments.get(1);
+        if (unitToken instanceof TSLString) {
+            Long timeCoef = UNIT_COEF.get(unitToken.getRaw().toLowerCase());
+            if (timeCoef == null) {
+                throw new TSLSyntaxError("Unknown time unit", unitToken);
+            }
         }
     }
 
@@ -71,7 +83,6 @@ public class WaitMetaAction extends TSLAction {
         }
 
         sleepThread((long) (time * timeCoef));
-        System.out.println("Wait done (" + time + " " + unit + ") @ " + Thread.currentThread());
     }
 
     private void sleepThread(long millis) {
