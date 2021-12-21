@@ -1,11 +1,15 @@
 package net.programmer.igoodie.tsl.definition;
 
+import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public abstract class TSLDefinition {
 
@@ -23,6 +27,11 @@ public abstract class TSLDefinition {
 
     public String getName() {
         return name;
+    }
+
+    @Nullable
+    public List<Couple<String, String>> getCompletionSnippets() {
+        return null;
     }
 
     @Override

@@ -54,9 +54,10 @@ public class TSLLexer {
         return nestLevel >= 1;
     }
 
-    protected boolean allowedParameterCharacter(char character) {
-        // Allows: [a-zA-Z_]
-        return Character.isLetter(character)
+    protected boolean allowedParameterCharacter(char previousCharacter, char character) {
+        // Allows: [a-zA-Z_]+[0-9a-zA-Z_]*
+        return (Character.isLetter(previousCharacter) && Character.isDigit(character))
+                || Character.isLetter(character)
                 || character == '_';
     }
 
@@ -178,7 +179,7 @@ public class TSLLexer {
             }
 
             if (inParameter) {
-                if (!allowedParameterCharacter(character)) {
+                if (!allowedParameterCharacter(previousCharacter, character)) {
                     throw new TSLSyntaxError("Disallowed parameter character", lineNo(), charNo());
                 }
             }

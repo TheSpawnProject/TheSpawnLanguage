@@ -15,6 +15,7 @@ public class TSLTokenizer {
 
     public static final Pattern RULE_DECORATOR_PATTERN = Pattern.compile("@(?<name>[\\w_-]+)(?<args>\\(\\w+(,\\w+)*\\))?");
     public static final Pattern CAPTURE_CALL_PATTERN = Pattern.compile("(?<name>\\$[\\w_-]+)(?<args>\\(([^\\[,]+,?)*\\))?");
+    public static final Pattern VALID_PARAM = Pattern.compile("[a-zA-Z_]+[0-9a-zA-Z_]*");
 
     public TSLToken tokenize(String text, int line, int character) {
         if (text.startsWith("%") && text.endsWith("%")) {

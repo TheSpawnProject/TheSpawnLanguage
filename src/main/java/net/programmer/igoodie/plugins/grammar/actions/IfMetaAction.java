@@ -12,7 +12,9 @@ import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class IfMetaAction extends TSLAction {
@@ -26,6 +28,18 @@ public class IfMetaAction extends TSLAction {
     @Override
     public String getUsage() {
         return getName() + " <condition> THEN <action> (ELSEIF <condition> THEN <action>)* (ELSE <action>)?";
+    }
+
+    @Override
+    public @Nullable List<Couple<String, String>> getCompletionSnippets() {
+        return Arrays.asList(
+                new Couple<>("IF",
+                        "IF ${1:condition} THEN\n\t$0"),
+                new Couple<>("IF/ELSE",
+                        "IF ${1:condition} THEN\n\t$2\nELSE\n\t$3"),
+                new Couple<>("IF/ELSEIF/ELSE",
+                        "IF ${1:condition} THEN\n\t$3\nELSEIF ${2:condition} THEN\n\t$4\nELSE\n\t$5")
+        );
     }
 
     @Override

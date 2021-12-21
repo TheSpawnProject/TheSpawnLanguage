@@ -1,5 +1,6 @@
 package net.programmer.igoodie.plugins.grammar.actions;
 
+import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
@@ -8,8 +9,10 @@ import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,6 +35,18 @@ public class WaitMetaAction extends TSLAction {
     @Override
     public String getUsage() {
         return getName() + " <time> (minutes|seconds|milliseconds)";
+    }
+
+    @Override
+    public @Nullable List<Couple<String, String>> getCompletionSnippets() {
+        return Arrays.asList(
+                new Couple<>(getName() + " minutes",
+                        getName() + " ${1:time} minutes"),
+                new Couple<>(getName() + " seconds",
+                        getName() + " ${1:time} seconds"),
+                new Couple<>(getName() + " milliseconds",
+                        getName() + " ${1:time} milliseconds")
+        );
     }
 
     @Override

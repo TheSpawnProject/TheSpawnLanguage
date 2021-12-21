@@ -25,7 +25,7 @@ public class TSLSyntaxError extends RuntimeException {
     }
 
     public TSLSyntaxError(String reason, int line, int character) {
-        this(reason, null, line, character);
+        this(reason, null, line + 1, character + 1);
     }
 
     public TSLSyntaxError(String reason, String filePath, int line, int character) {

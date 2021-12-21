@@ -6,8 +6,10 @@ import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistrable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class TSLEvent extends TSLDefinition implements TSLRegistrable {
@@ -19,6 +21,11 @@ public abstract class TSLEvent extends TSLDefinition implements TSLRegistrable {
     @Override
     public String getRegistryId() {
         return getName();
+    }
+
+    @Override
+    public final @Nullable List<Couple<String, String>> getCompletionSnippets() {
+        return null; // Events do not have a completion snippet
     }
 
     /* ---------------------------------- */

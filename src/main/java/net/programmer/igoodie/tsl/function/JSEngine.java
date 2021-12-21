@@ -122,10 +122,8 @@ public class JSEngine {
             return stringifyObject((NativeObject) value);
         if (value instanceof NativeArray)
             return stringifyArray((NativeArray) value);
-        if (value instanceof ArrowFunction)
-            return "[ArrowFunc]";
-        if (value instanceof NativeFunction)
-            return "[NativeFunc]";
+        if (value instanceof BaseFunction)
+            return "[Func:" + ((BaseFunction) value).getFunctionName() + "]";
         if (value instanceof Undefined)
             return "undefined";
         if (value == null)

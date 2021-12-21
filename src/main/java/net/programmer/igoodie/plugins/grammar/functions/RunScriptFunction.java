@@ -1,15 +1,19 @@
 package net.programmer.igoodie.plugins.grammar.functions;
 
+import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.util.IOUtils;
+import org.jetbrains.annotations.Nullable;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.Undefined;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 public class RunScriptFunction extends TSLFunction {
 
@@ -32,6 +36,14 @@ public class RunScriptFunction extends TSLFunction {
             throw new IllegalStateException("Root folder is already set.");
         this.rootFolder = rootFolder;
         this.rootFolderSet = true;
+    }
+
+    @Override
+    public @Nullable List<Couple<String, String>> getCompletionSnippets() {
+        return Collections.singletonList(
+                new Couple<>(getName() + "(path)"
+                        , getName() + "(\"${1:path/to/your/script.js}\")$0")
+        );
     }
 
     @Override

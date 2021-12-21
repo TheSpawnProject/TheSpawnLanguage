@@ -102,6 +102,13 @@ public class TSLParser {
             throw new TSLSyntaxError(String.format("Invalid capture header -> %s", captureNameToken.getRaw()), buffer);
         }
 
+        TSLCaptureCall captureCallToken = (TSLCaptureCall) captureNameToken;
+        for (String argName : captureCallToken.getArgs()) {
+            if (!TSLTokenizer.VALID_PARAM.matcher(argName).matches()) {
+                throw new TSLSyntaxError(String.format("Illegal capture parameter name -> %s", argName), captureCallToken);
+            }
+        }
+
         TSLToken equalsSign = tokens.get(1);
 
         if (!(equalsSign instanceof TSLSymbol) || ((TSLSymbol) equalsSign).getType() != TSLSymbol.Type.CAPTURE_DECLARATION) {
@@ -110,7 +117,7 @@ public class TSLParser {
         List<TSLToken> capturedTokens = tokens.subList(2, tokens.size());
 
         return new TSLCaptureSnippet(ruleset,
-                ((TSLCaptureCall) captureNameToken),
+                captureCallToken,
                 ((TSLSymbol) equalsSign),
                 capturedTokens);
     }

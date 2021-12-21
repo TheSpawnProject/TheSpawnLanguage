@@ -11,7 +11,9 @@ import net.programmer.igoodie.tsl.parser.token.TSLString;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ForMetaAction extends TSLAction {
@@ -25,6 +27,13 @@ public class ForMetaAction extends TSLAction {
     @Override
     public String getUsage() {
         return getName() + " <count> TIMES <action>";
+    }
+
+    @Override
+    public @Nullable List<Couple<String, String>> getCompletionSnippets() {
+        return Collections.singletonList(
+                new Couple<>(getName(), getName() + " ${1:count} TIMES\n\t$0")
+        );
     }
 
     @Override
