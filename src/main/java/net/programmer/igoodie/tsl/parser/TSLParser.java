@@ -98,18 +98,18 @@ public class TSLParser {
         TSLTag tagDefinition = tsl.TAG_REGISTRY.get(tagNameToken.getRaw());
 
         if (tagDefinition == null) {
-            throw new TSLSyntaxError(String.format("Unknown tag name -> %s", tagNameToken.getRaw()), buffer);
+            throw new TSLSyntaxError(String.format("Unknown tag name -> %s", tagNameToken.getRaw()), tagNameToken);
         }
 
         if (!(tagNameToken instanceof TSLString)) {
-            throw new TSLSyntaxError(String.format("Invalid value -> %s", tagNameToken.getRaw()), buffer);
+            throw new TSLSyntaxError("Tag names MUST be plain strings.", tagNameToken);
         }
 
         List<TSLToken> argTokens = tokens.subList(1, tokens.size());
 
         for (TSLToken argToken : argTokens) {
             if (!(argToken instanceof TSLString)) {
-                throw new TSLSyntaxError(String.format("Invalid value -> %s", argToken.getRaw()), buffer);
+                throw new TSLSyntaxError("Tag arguments MUST be plain strings.", argToken);
             }
         }
 
