@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import org.mozilla.javascript.EcmaError;
 
 public class TSLExpression extends TSLToken {
@@ -30,7 +31,7 @@ public class TSLExpression extends TSLToken {
     public String evaluate(TSLContext context) {
         try {
             return context.getLanguage().getJsEngine().evaluate(expression, context);
-        } catch (EcmaError error) {
+        } catch (EcmaError | TSLExpressionException error) {
             return "#!ERROR!#";
         }
     }

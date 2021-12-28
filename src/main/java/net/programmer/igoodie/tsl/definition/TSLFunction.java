@@ -2,11 +2,14 @@ package net.programmer.igoodie.tsl.definition;
 
 import net.programmer.igoodie.goodies.util.TypeUtilities;
 import net.programmer.igoodie.goodies.util.accessor.ArrayAccessor;
+import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.binding.JSFunctionBinding;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistrable;
 import org.mozilla.javascript.Scriptable;
+
+import java.util.Optional;
 
 public abstract class TSLFunction extends TSLDefinition implements TSLRegistrable {
 
@@ -19,7 +22,7 @@ public abstract class TSLFunction extends TSLDefinition implements TSLRegistrabl
         return getName();
     }
 
-    public abstract Object calculate(Scriptable scope, Object... arguments) throws TSLExpressionException;
+    public abstract Object calculate(TSLContext tslContext, Scriptable scope, Object... arguments) throws TSLExpressionException;
 
     public final JSFunctionBinding getBinding() {
         return new JSFunctionBinding() {
@@ -38,15 +41,27 @@ public abstract class TSLFunction extends TSLDefinition implements TSLRegistrabl
     /* ----------------------------------- */
 
     protected String stringArgument(Object[] args, int index) {
-        Object element = ArrayAccessor.of(args).getOrDefault(index, null);
-        if (element instanceof String) return ((String) element);
-        throw new TSLExpressionException("Expected string argument at index:" + index);
+        return stringArgumentOpt(args, index).orElseThrow(
+                () -> new TSLExpressionException("Expected string argument at index:" + index));
+    }
+
+    protected Optional<String> stringArgumentOpt(Object[] args, int index) {
+        Object element = ArrayAccessor.of(args).get(index);
+        return element instanceof String
+                ? Optional.of(((String) element))
+                : Optional.empty();
     }
 
     protected Number numberArgument(Object[] args, int index) {
-        Object element = ArrayAccessor.of(args).getOrDefault(index, null);
-        if (element != null && TypeUtilities.isNumeric(element.getClass())) return ((Number) element);
-        throw new TSLExpressionException("Expected number argument at index:" + index);
+        return numberArgumentOpt(args, index).orElseThrow(
+                () -> new TSLExpressionException("Expected number argument at index:" + index));
+    }
+
+    protected Optional<Number> numberArgumentOpt(Object[] args, int index) {
+        Object element = ArrayAccessor.of(args).get(index);
+        return element != null && TypeUtilities.isNumeric(element.getClass())
+                ? Optional.of(((Number) element))
+                : Optional.empty();
     }
 
 }

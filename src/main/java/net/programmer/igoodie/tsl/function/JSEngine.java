@@ -6,6 +6,7 @@ import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.function.binding.JSFunctionBinding;
 import net.programmer.igoodie.tsl.function.binding.JSLibraryBinding;
+import net.programmer.igoodie.tsl.function.binding.TSLContextProxy;
 import org.mozilla.javascript.*;
 
 import java.util.*;
@@ -87,11 +88,13 @@ public class JSEngine {
 
     public void loadTSLContext(ScriptableObject scope, TSLContext tslContext) {
         if (tslContext != null) {
+            scope.putConst("__context", scope, new TSLContextProxy(tslContext));
+
             GoodieObject eventArguments = tslContext.getEventArguments();
             if (eventArguments != null) {
                 for (String argumentName : eventArguments.keySet()) {
                     Object argument = TSLEvent.extractField(eventArguments, argumentName);
-                    scope.putConst(argumentName, getGlobalScope(), argument);
+                    scope.putConst(argumentName, scope, argument);
                 }
             }
         }

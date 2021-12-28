@@ -1,6 +1,5 @@
 package net.programmer.igoodie.tsl.plugin;
 
-import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
@@ -9,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class TSLPlugin {
 
-    private TheSpawnLanguage language;
     private TSLPluginManifest manifest;
 
     public TSLPlugin() {}
@@ -32,16 +30,6 @@ public abstract class TSLPlugin {
 
     public String prependNamespace(String value) {
         return manifest.getPluginId() + ":" + value;
-    }
-
-    public void setLanguage(TheSpawnLanguage language) {
-        if (this.language != null)
-            throw new IllegalStateException();
-        this.language = language;
-    }
-
-    public TheSpawnLanguage getLanguage() {
-        return language;
     }
 
     public void registerTags(TSLRegistry<TSLTag> registry) {}

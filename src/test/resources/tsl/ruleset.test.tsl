@@ -25,5 +25,5 @@ $myAction
 ON Manual Trigger
 WITH debug_data = 2
 
-PRINT Helloo
+PRINT ${runScript(new String(__context()))}
  ON Dummy Event

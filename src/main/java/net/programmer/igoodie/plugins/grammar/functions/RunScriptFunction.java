@@ -2,6 +2,7 @@ package net.programmer.igoodie.plugins.grammar.functions;
 
 import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
+import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.JSEngine;
@@ -47,7 +48,7 @@ public class RunScriptFunction extends TSLFunction {
     }
 
     @Override
-    public Object calculate(Scriptable scope, Object... arguments) throws TSLExpressionException {
+    public Object calculate(TSLContext tslContext, Scriptable scope, Object... arguments) throws TSLExpressionException {
         String scriptPath = stringArgument(arguments, 0);
 
         String readScript = IOUtils.readString(isAbsolutePath(scriptPath)
@@ -57,7 +58,7 @@ public class RunScriptFunction extends TSLFunction {
             return Undefined.instance;
         }
 
-        JSEngine jsEngine = getPlugin().getLanguage().getJsEngine();
+        JSEngine jsEngine = tslContext.getLanguage().getJsEngine();
 
         String wrappedScript = String.format("(function(){%s})()",
                 readScript.replace("tslReturn", "return"));

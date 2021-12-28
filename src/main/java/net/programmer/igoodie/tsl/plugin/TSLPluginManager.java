@@ -70,7 +70,6 @@ public class TSLPluginManager {
 
         assignAnnotatedFields(plugin);
 
-        plugin.setLanguage(language);
         plugin.registerTags(language.TAG_REGISTRY);
         plugin.registerDecorators(language.DECORATOR_REGISTRY);
         plugin.registerEvents(language.EVENT_REGISTRY);
