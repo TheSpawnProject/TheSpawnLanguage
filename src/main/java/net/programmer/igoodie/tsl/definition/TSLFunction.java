@@ -15,13 +15,13 @@ public abstract class TSLFunction extends TSLDefinition implements TSLRegistrabl
     }
 
     @Override
-    public String getRegistryId() {
+    public final String getRegistryId() {
         return getName();
     }
 
     public abstract Object calculate(Scriptable scope, Object... arguments) throws TSLExpressionException;
 
-    public JSFunctionBinding getBinding() {
+    public final JSFunctionBinding getBinding() {
         return new JSFunctionBinding() {
             @Override
             public String getName() {

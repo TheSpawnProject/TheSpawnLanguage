@@ -13,7 +13,7 @@ public class TSLExecutor {
 
     public TSLExecutor(String threadGroupName) {
         this.threadGroup = new ThreadGroup(threadGroupName);
-        this.executorService = Executors.newCachedThreadPool(runnable -> new Thread(threadGroup, runnable));
+        this.executorService = Executors.newSingleThreadExecutor(runnable -> new Thread(threadGroup, runnable));
     }
 
     public void execute(TSLRuleset ruleset, TSLContext context) {

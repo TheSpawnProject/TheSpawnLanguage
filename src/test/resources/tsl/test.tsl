@@ -3,16 +3,17 @@
  * @param a First number to be used
  * @param b Second number to be used
 *#
-$multiplyNumbers(num1, num2)
+$multiplyNumbers(num1, num2) 
   = ${{{num1}} * {{num2}}}
 
-$myAction =
-FOR 5 TIMES
+$myAction = FOR 5 TIMES
   IF true THEN
     WAIT 10 minutes
   ELSE
     NOTHING
 
+
+# Waits stuff and does other jazz
 FOR 10 TIMES
   IF true THEN
     WAIT $multiplyNumbers(10, 20) minutes
@@ -20,10 +21,11 @@ FOR 10 TIMES
     WAIT 10 seconds
 ON Manual Trigger
 WITH debug_data = 1
-
+ 
 $myAction
 ON Manual Trigger
 WITH debug_data = 2
 
-PRINT Helloo
- ON Dummy Event
+NOTHING DISPLAYING %Mult = $multiplyNumbers(5, 10)%
+ ON  Donation
+

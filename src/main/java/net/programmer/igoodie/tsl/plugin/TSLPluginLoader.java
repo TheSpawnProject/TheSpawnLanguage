@@ -27,20 +27,19 @@ public class TSLPluginLoader {
         PRISTINE, LOADING, FAIL, SUCCESS;
     }
 
-    private final TheSpawnLanguage tsl;
     private final URI uri;
 
     private final Set<Class<?>> loadedClasses = new HashSet<>();
     private State state = State.PRISTINE;
     private Throwable failCause;
     private TSLPluginManifest pluginManifest;
+    private TSLPlugin loadedPlugin;
 
-    public TSLPluginLoader(TheSpawnLanguage tsl, File file) {
-        this(tsl, file.toURI());
+    public TSLPluginLoader(File file) {
+        this(file.toURI());
     }
 
-    public TSLPluginLoader(TheSpawnLanguage tsl, URI uri) {
-        this.tsl = tsl;
+    public TSLPluginLoader(URI uri) {
         this.uri = uri;
     }
 
@@ -56,12 +55,21 @@ public class TSLPluginLoader {
         return Collections.unmodifiableSet(loadedClasses);
     }
 
+    public TSLPlugin getLoadedPlugin() {
+        return loadedPlugin;
+    }
+
+    public TSLPluginManifest getPluginManifest() {
+        return pluginManifest;
+    }
+
     public void load() {
         try {
             state = State.LOADING;
 
+            loadManifest();
             loadJAR();
-            loadPlugin();
+            loadPluginClass();
 
             state = State.SUCCESS;
 
@@ -72,13 +80,17 @@ public class TSLPluginLoader {
         }
     }
 
-    private void loadJAR() throws TSLPluginLoadingException {
+    public void loadManifest() {
         JarFile jarFile = getJarFile();
 
         checkForConflicts(jarFile);
         checkManifestIntegrity(jarFile);
 
         pluginManifest = new TSLPluginManifest(getJarManifestAttrs(jarFile));
+    }
+
+    private void loadJAR() throws TSLPluginLoadingException {
+        JarFile jarFile = getJarFile();
 
         Enumeration<JarEntry> entries = jarFile.entries();
 
@@ -105,15 +117,15 @@ public class TSLPluginLoader {
         }
     }
 
-    private void loadPlugin() throws TSLPluginLoadingException {
+    private void loadPluginClass() throws TSLPluginLoadingException {
         List<Class<? extends TSLPlugin>> pluginClasses = getPluginClasses();
 
         if (pluginClasses.size() == 0) {
-            throw new TSLPluginLoadingException("JAR does not contain a plugin.", uri.getPath());
+            throw new TSLPluginLoadingException("JAR does not contain a plugin.").withFilePath(uri.getPath());
         }
 
         if (pluginClasses.size() > 1) {
-            throw new TSLPluginLoadingException("Plugin JAR MUST not contain multiple plugin classes", uri.getPath());
+            throw new TSLPluginLoadingException("Plugin JAR MUST NOT contain multiple plugin classes").withFilePath(uri.getPath());
         }
 
         checkTargetVersionIntegrity(pluginManifest);
@@ -123,13 +135,13 @@ public class TSLPluginLoader {
             TSLPlugin plugin = ReflectionUtilities.createNullaryInstance(pluginClass);
             Field manifestField = TSLPlugin.class.getDeclaredField("manifest");
             ReflectionUtilities.setValue(plugin, manifestField, pluginManifest);
-            tsl.loadPlugin(plugin, uri.getPath());
+            this.loadedPlugin = plugin;
 
         } catch (InstantiationException e) {
-            throw new TSLPluginLoadingException("Failed to instantiate the Plugin", e, uri.getPath());
+            throw new TSLPluginLoadingException("Failed to instantiate the Plugin", e).withFilePath(uri.getPath());
 
         } catch (IllegalAccessException e) {
-            throw new TSLPluginLoadingException("Plugin's nullary constructor MUST be accessible", uri.getPath());
+            throw new TSLPluginLoadingException("Plugin's nullary constructor MUST be accessible").withFilePath(uri.getPath());
 
         } catch (NoSuchFieldException e) {
             throw new InternalError();
@@ -143,7 +155,7 @@ public class TSLPluginLoader {
             return new JarFile(new File(uri));
 
         } catch (IOException e) {
-            throw new TSLPluginLoadingException("IOException raised", e, uri.getPath());
+            throw new TSLPluginLoadingException("IOException raised", e).withFilePath(uri.getPath());
         }
     }
 
@@ -154,7 +166,7 @@ public class TSLPluginLoader {
             return URLClassLoader.newInstance(urls, currentClassLoader);
 
         } catch (MalformedURLException e) {
-            throw new TSLPluginLoadingException("Malformed URL", e, uri.getPath());
+            throw new TSLPluginLoadingException("Malformed URL", e).withFilePath(uri.getPath());
         }
     }
 
@@ -164,7 +176,7 @@ public class TSLPluginLoader {
             return manifest.getMainAttributes();
 
         } catch (IOException e) {
-            throw new TSLPluginLoadingException("", e, uri.getPath());
+            throw new TSLPluginLoadingException("", e).withFilePath(uri.getPath());
         }
     }
 
@@ -183,7 +195,7 @@ public class TSLPluginLoader {
     private void checkForConflicts(JarFile jarFile) {
         traverseClassNames(jarFile, className -> {
             if (ALL_LOADED_CLASSES.containsKey(className)) {
-                throw new TSLPluginLoadingException("Confliction detected! Class already loaded in -> " + className, jarFile.getName());
+                throw new TSLPluginLoadingException("Confliction detected! Class already loaded in -> " + className).withFilePath(jarFile.getName());
             }
         });
     }
@@ -192,16 +204,16 @@ public class TSLPluginLoader {
         Attributes manifestAttrs = getJarManifestAttrs(jarFile);
 
         if (manifestAttrs.getValue(TSLPluginManifest.ATTR_PLUGIN_ID) == null) {
-            throw new TSLPluginLoadingException("Plugin manifest MUST have " + TSLPluginManifest.ATTR_PLUGIN_ID, uri.getPath());
+            throw new TSLPluginLoadingException("Plugin manifest MUST have " + TSLPluginManifest.ATTR_PLUGIN_ID).withFilePath(uri.getPath());
         }
         if (manifestAttrs.getValue(TSLPluginManifest.ATTR_PLUGIN_NAME) == null) {
-            throw new TSLPluginLoadingException("Plugin manifest MUST have " + TSLPluginManifest.ATTR_PLUGIN_NAME, uri.getPath());
+            throw new TSLPluginLoadingException("Plugin manifest MUST have " + TSLPluginManifest.ATTR_PLUGIN_NAME).withFilePath(uri.getPath());
         }
         if (manifestAttrs.getValue(TSLPluginManifest.ATTR_PLUGIN_VERSION) == null) {
-            throw new TSLPluginLoadingException("Plugin manifest MUST have " + TSLPluginManifest.ATTR_PLUGIN_VERSION, uri.getPath());
+            throw new TSLPluginLoadingException("Plugin manifest MUST have " + TSLPluginManifest.ATTR_PLUGIN_VERSION).withFilePath(uri.getPath());
         }
         if (manifestAttrs.getValue(TSLPluginManifest.ATTR_VERSION_TARGET) == null) {
-            throw new TSLPluginLoadingException("Plugin manifest MUST have " + TSLPluginManifest.ATTR_VERSION_TARGET, uri.getPath());
+            throw new TSLPluginLoadingException("Plugin manifest MUST have " + TSLPluginManifest.ATTR_VERSION_TARGET).withFilePath(uri.getPath());
         }
     }
 
@@ -210,11 +222,11 @@ public class TSLPluginLoader {
             if (!TheSpawnLanguage.TSL_SEMVER.satisfies(manifest.getTargetVersion())) {
                 String message = String.format("Plugin does not fit this version on TSL. (TSL Version: %s, Plugin Target: %s)",
                         TheSpawnLanguage.TSL_VERSION, manifest.getTargetVersion());
-                throw new TSLPluginLoadingException(message, uri.getPath());
+                throw new TSLPluginLoadingException(message).withFilePath(uri.getPath());
             }
 
         } catch (SemverException e) {
-            throw new TSLPluginLoadingException("Malformed TSL version target -> " + manifest.getTargetVersion(), e, uri.getPath());
+            throw new TSLPluginLoadingException("Malformed TSL version target -> " + manifest.getTargetVersion(), e).withFilePath(uri.getPath());
         }
     }
 

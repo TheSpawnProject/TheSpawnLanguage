@@ -19,7 +19,7 @@ public class JSEngineTests {
     @Test
     public void shouldEvaluateExpr() throws IOException {
         TheSpawnLanguage language = new TheSpawnLanguage();
-        language.loadPlugin(new ExamplePlugin());
+        language.getPluginManager().loadPlugin(new ExamplePlugin());
 
         String tslScript = TestUtils.loadTSLScript("sample.expr.tsl");
 

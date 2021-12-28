@@ -26,9 +26,9 @@ public class ParserTests {
     @BeforeAll
     public static void init() {
         TSL = new TheSpawnLanguage();
-        TSL.loadPlugin(new ExamplePlugin());
+        TSL.getPluginManager().loadPlugin(new ExamplePlugin());
 
-        TSL.loadPlugin(new TSLPlugin() {
+        TSL.getPluginManager().loadPlugin(new TSLPlugin() {
             @Override
             public void registerActions(TSLRegistry<TSLAction> registry) {
                 TSLAction dummyEitherAction = new TSLAction(this, "EITHER") {

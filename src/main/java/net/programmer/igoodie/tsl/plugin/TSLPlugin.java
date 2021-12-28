@@ -5,6 +5,7 @@ import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class TSLPlugin {
 
@@ -19,6 +20,14 @@ public abstract class TSLPlugin {
 
     public TSLPluginManifest getManifest() {
         return manifest;
+    }
+
+    public @Nullable String getDescription() {
+        return null;
+    }
+
+    public @Nullable String getBannerURL() {
+        return null;
     }
 
     public String prependNamespace(String value) {

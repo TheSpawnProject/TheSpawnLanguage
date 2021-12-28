@@ -15,7 +15,7 @@ public class ExecutorTests {
     @Test
     public void test() throws InterruptedException {
         TheSpawnLanguage tsl = new TheSpawnLanguage();
-        tsl.loadPlugin(new ExamplePlugin());
+        tsl.getPluginManager().loadPlugin(new ExamplePlugin());
 
         TSLParser parser = new TSLParser(tsl);
 

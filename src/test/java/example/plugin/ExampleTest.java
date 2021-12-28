@@ -17,7 +17,7 @@ public class ExampleTest {
     @Test
     @Order(1)
     public void shouldLoadPlugins() {
-        TSL.loadPlugin(new ExamplePlugin());
+        TSL.getPluginManager().loadPlugin(new ExamplePlugin());
     }
 
     @Test

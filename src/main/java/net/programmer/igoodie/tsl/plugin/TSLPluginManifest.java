@@ -17,11 +17,10 @@ public class TSLPluginManifest implements ISerializable<GoodieObject> {
     public static final String ATTR_PLUGIN_AUTHOR = "TSL-Plugin-Author";
     public static final String ATTR_VERSION_TARGET = "TSL-Version-Target";
 
-    private @NotNull String pluginId, name;
-    private @NotNull String targetVersion;
     private String author;
-    private @NotNull String version;
-    private @NotNull Semver semver;
+    private @NotNull String pluginId, name;
+    private @NotNull Semver version;
+    private @NotNull String targetVersion;
 
     public TSLPluginManifest(Attributes jarAttributes) {
         this(jarAttributes.getValue(ATTR_PLUGIN_ID),
@@ -29,6 +28,14 @@ public class TSLPluginManifest implements ISerializable<GoodieObject> {
                 jarAttributes.getValue(ATTR_PLUGIN_VERSION),
                 jarAttributes.getValue(ATTR_PLUGIN_AUTHOR),
                 jarAttributes.getValue(ATTR_VERSION_TARGET));
+    }
+
+    public TSLPluginManifest(GoodieObject goodie) {
+        this(goodie.getString(ATTR_PLUGIN_ID).orElseThrow(IllegalArgumentException::new),
+                goodie.getString(ATTR_PLUGIN_NAME).orElseThrow(IllegalArgumentException::new),
+                goodie.getString(ATTR_PLUGIN_VERSION).orElseThrow(IllegalArgumentException::new),
+                goodie.getString(ATTR_PLUGIN_AUTHOR).orElse(null),
+                goodie.getString(ATTR_VERSION_TARGET).orElseThrow(IllegalArgumentException::new));
     }
 
     public TSLPluginManifest(@NotNull String pluginId,
@@ -47,12 +54,7 @@ public class TSLPluginManifest implements ISerializable<GoodieObject> {
         this.name = name;
         this.author = author;
         this.targetVersion = targetVersion;
-        setVersion(version);
-    }
-
-    private void setVersion(String version) throws SemverException {
-        this.version = version;
-        this.semver = new Semver(version, Semver.SemverType.NPM);
+        this.version = new Semver(version, Semver.SemverType.NPM);
     }
 
     public @NotNull String getPluginId() {
@@ -63,16 +65,12 @@ public class TSLPluginManifest implements ISerializable<GoodieObject> {
         return name;
     }
 
-    public @NotNull String getVersion() {
+    public @NotNull Semver getVersion() {
         return version;
     }
 
     public @NotNull String getTargetVersion() {
         return targetVersion;
-    }
-
-    public @NotNull Semver getSemver() {
-        return semver;
     }
 
     public String getAuthor() {
@@ -84,7 +82,7 @@ public class TSLPluginManifest implements ISerializable<GoodieObject> {
         GoodieObject goodie = new GoodieObject();
         goodie.put("PluginId", pluginId);
         goodie.put("Name", name);
-        goodie.put("Version", version);
+        goodie.put("Version", version.getValue());
         goodie.put("Target", targetVersion);
         goodie.put("Author", author);
         return goodie;
@@ -94,7 +92,7 @@ public class TSLPluginManifest implements ISerializable<GoodieObject> {
     public void deserialize(GoodieObject goodie) {
         this.pluginId = goodie.getString("PluginId").orElse("unknown");
         this.name = goodie.getString("Name").orElse("Unknown Plugin");
-        setVersion(goodie.getString("Version").orElse("0.0.0"));
+        this.version = new Semver(goodie.getString("Version").orElse("0.0.0"), Semver.SemverType.NPM);
         this.targetVersion = goodie.getString("Target").orElse("0.0.0");
         this.author = goodie.getString("Author").orElse(null);
     }

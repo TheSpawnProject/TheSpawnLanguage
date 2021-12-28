@@ -19,7 +19,7 @@ public class ParserTests {
     @Test
     public void foo() {
         TheSpawnLanguage tsl = new TheSpawnLanguage();
-        tsl.loadPlugin(new ExamplePlugin());
+        tsl.getPluginManager().loadPlugin(new ExamplePlugin());
 
         TSLParser parser = new TSLParser(tsl);
         TSLRuleset ruleset = parser.parse("PRINT x DISPLAYING A B C ON Dummy Event");

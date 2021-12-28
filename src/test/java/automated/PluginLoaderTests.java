@@ -5,14 +5,13 @@ import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.plugin.TSLPluginLoader;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 public class PluginLoaderTests {
 
@@ -21,13 +20,8 @@ public class PluginLoaderTests {
         TheSpawnLanguage tsl = new TheSpawnLanguage();
 
         // Loads the plugin from JAR
-        URI pluginURL = TestUtils.pluginPath("example.jar").toURI();
-
-        TSLPluginLoader pluginLoader = new TSLPluginLoader(tsl, pluginURL);
-
-        System.out.println("Begin loading");
-
-        pluginLoader.load();
+        URL pluginURL = TestUtils.pluginPath("example.jar");
+        tsl.getPluginManager().loadPlugin(pluginURL.toURI());
 
         // Parse the ruleset
         TSLParser parser = new TSLParser(tsl);

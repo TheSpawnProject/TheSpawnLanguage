@@ -6,7 +6,7 @@ import java.util.logging.LogRecord;
 
 public class TSLLogFormatter extends Formatter {
 
-    private String name;
+    private final String name;
 
     public TSLLogFormatter(String name) {
         this.name = name;

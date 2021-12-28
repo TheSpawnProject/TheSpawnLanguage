@@ -17,7 +17,7 @@ public class PredicateTests {
     @BeforeAll
     public static void init() {
         TSL = new TheSpawnLanguage();
-        TSL.loadPlugin(new ExamplePlugin());
+        TSL.getPluginManager().loadPlugin(new ExamplePlugin());
     }
 
     @Test

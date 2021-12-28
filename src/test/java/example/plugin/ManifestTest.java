@@ -24,13 +24,13 @@ public class ManifestTest {
             Object plugin = pluginClass.getDeclaredConstructor().newInstance();
 
             if (plugin instanceof TSLPlugin) {
-                TSL.loadPlugin((TSLPlugin) plugin);
+                TSL.getPluginManager().loadPlugin((TSLPlugin) plugin);
 
             } else {
                 throw new IllegalArgumentException("example.setup.ExamplePlugin is not a TSL plugin.");
             }
 
-            System.out.println(TSL.LOADED_PLUGIN_IDS);
+            System.out.println(TSL.getPluginManager().LOADED_PLUGIN_IDS);
 
         } catch (ClassNotFoundException e) {
             System.out.println("Unknown class name");
