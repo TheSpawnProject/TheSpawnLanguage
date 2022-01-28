@@ -1,5 +1,6 @@
 package automated;
 
+import coconut.plugin.CoconutPlugin;
 import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
@@ -11,7 +12,9 @@ import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import util.TestUtils;
 
+import java.io.IOException;
 import java.util.List;
 
 public class ParserTests {
@@ -34,6 +37,17 @@ public class ParserTests {
 
         System.out.println(actionArgs);
         System.out.println(message);
+    }
+
+    @Test
+    public void shouldParseCoconutsPluginExtensions() throws IOException {
+        TheSpawnLanguage tsl = new TheSpawnLanguage();
+        tsl.getPluginManager().loadPlugin(new CoconutPlugin());
+
+        TSLParser parser = new TSLParser(tsl);
+        TSLRuleset ruleset = parser.parse(TestUtils.loadTSLScript("coconutorange.rule.tsl"));
+
+        TSLRule rule = ruleset.getRules().get(0);
     }
 
 }

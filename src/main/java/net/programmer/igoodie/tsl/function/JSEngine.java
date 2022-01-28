@@ -18,8 +18,6 @@ public class JSEngine {
 
     private static final Map<Context, ScriptableObject> GLOBALS = new WeakHashMap<>();
 
-    private boolean sealed;
-
     private final Map<String, Object> definedConsts = new HashMap<>();
     private final List<JSLibraryBinding> loadedLibraries = new LinkedList<>();
     private final List<TSLFunction> loadedFunctions = new LinkedList<>();
@@ -43,25 +41,21 @@ public class JSEngine {
 
     /* ------------------------ */
 
-    public boolean defineConst(String name, Object value) {
-        if (sealed) return false;
+    public void defineConst(String name, Object value) {
         ScriptableObject globalScope = getGlobalScope();
-        if (globalScope.has(name, globalScope)) return false;
+        if (globalScope.has(name, globalScope)) return;
         globalScope.putConst(name, globalScope, value);
         definedConsts.put(name, value);
-        return true;
     }
 
-    public boolean loadLibrary(JSLibraryBinding library) {
-        if (sealed) return false;
+    public void loadLibrary(JSLibraryBinding library) {
         ScriptableObject globalScope = getGlobalScope();
-        if (globalScope.has(library.getName(), globalScope)) return false;
+        if (globalScope.has(library.getName(), globalScope)) return;
         globalScope.put(library.getName(), globalScope, library);
         loadedLibraries.add(library);
-        return true;
     }
 
-    public boolean loadFunction(TSLFunction function) {
+    public void loadFunction(TSLFunction function) {
         ScriptableObject globalScope = getGlobalScope();
         JSFunctionBinding binding = function.getBinding();
         int attributes = ScriptableObject.PERMANENT
@@ -69,11 +63,6 @@ public class JSEngine {
                 | ScriptableObject.READONLY;
         globalScope.defineProperty(function.getName(), binding, attributes);
         loadedFunctions.add(function);
-        return true;
-    }
-
-    public void seal() {
-        this.sealed = true;
     }
 
     public ScriptableObject createChildScope() {

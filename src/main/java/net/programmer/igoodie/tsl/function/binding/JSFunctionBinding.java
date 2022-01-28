@@ -21,8 +21,6 @@ public abstract class JSFunctionBinding extends BaseFunction {
     public final Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
         TSLContextProxy contextGetter = (TSLContextProxy) scope.get("__context", scope);
         TSLContext tslContext = (TSLContext) contextGetter.call(cx, scope, thisObj, args);
-//        System.out.println(tslContext.get);
-
         return getCalculator().calculate(tslContext, scope, args);
     }
 

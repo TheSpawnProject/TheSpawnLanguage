@@ -27,6 +27,7 @@ public class TSLLexer {
     boolean inExpression = false;
     boolean inParameter = false;
     boolean inCallArguments = false;
+    boolean inDecoratorArguments = false;
     int nestLevel = 0;
 
     private int lineOffset;
@@ -217,6 +218,15 @@ public class TSLLexer {
                 continue;
             }
 
+            if (character == '(' && accumulatedString().startsWith("@") && !inExpression) { // @call()
+                if (inDecoratorArguments) {
+                    throw new TSLSyntaxError("Unexpected character", lineNo(), charNo());
+                }
+                inDecoratorArguments = true;
+                pushCharacter('(');
+                continue;
+            }
+
             if (character == '(' && previousCharacter == ' ' && !inExpression && !inGroup) { // Nest ((()))
                 pushCharacter('(');
                 nestLevel++;
@@ -230,10 +240,13 @@ public class TSLLexer {
                         nestLevel--;
                         continue;
                     }
-                    if (!inCallArguments) {
+                    if (inCallArguments) {
+                        inCallArguments = false;
+                    } else if (inDecoratorArguments) {
+                        inDecoratorArguments = false;
+                    } else {
                         throw new TSLSyntaxError("Unexpected character", lineNo(), charNo());
                     }
-                    inCallArguments = false;
                     pushCharacter(')');
                     continue;
                 }

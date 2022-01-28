@@ -25,5 +25,5 @@ $myAction
 ON Manual Trigger
 WITH debug_data = 2
 
-PRINT ${runScript(new String(__context()))}
- ON Dummy Event
+# PRINT ${runScript(new String(__context()))}
+#  ON Dummy Event

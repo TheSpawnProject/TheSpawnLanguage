@@ -32,6 +32,7 @@ public class TSLPluginManager {
     public void loadPlugin(URI uri) {
         String filePath = uri.getPath();
 
+        // In order not to load from same file path
         if (LOADED_PATHS.containsKey(filePath)) {
             loadPlugin(LOADED_PATHS.get(filePath));
             return;
@@ -43,6 +44,7 @@ public class TSLPluginManager {
             loader.loadManifest();
             TSLPluginManifest manifest = loader.getPluginManifest();
 
+            // In order not to load the same plugin id
             if (LOADED_PLUGIN_IDS.contains(manifest.getPluginId())) {
                 throw new TSLPluginLoadingException("Plugin already has loaded in")
                         .withManifest(manifest).withFilePath(filePath);

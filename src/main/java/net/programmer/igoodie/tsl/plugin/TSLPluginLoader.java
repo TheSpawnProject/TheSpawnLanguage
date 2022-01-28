@@ -74,7 +74,6 @@ public class TSLPluginLoader {
             state = State.SUCCESS;
 
         } catch (TSLPluginLoadingException e) {
-            e.printStackTrace();
             failCause = e;
             state = State.FAIL;
         }
