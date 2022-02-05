@@ -62,9 +62,19 @@ class LexerModeString extends LexerMode {
             }
         }
 
-        if (character == ' ') {
-            lexer.pushToken();
-            return LexResult.nothing();
+        if (lexer.isUsingCommaDelimiter()) {
+            if (character == ' ') {
+                return LexResult.nothing();
+            }
+            if (character == ',') {
+                lexer.pushToken();
+                return LexResult.nothing();
+            }
+        } else {
+            if (character == ' ') {
+                lexer.pushToken();
+                return LexResult.nothing();
+            }
         }
 
         lexer.pushCharacter(character);

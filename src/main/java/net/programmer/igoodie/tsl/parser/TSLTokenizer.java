@@ -8,6 +8,7 @@ import net.programmer.igoodie.tsl.parser.token.*;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 public class TSLTokenizer {
 
     public static final Pattern RULE_DECORATOR_PATTERN = Pattern.compile("@(?<name>[.\\w_-]+)(?<args>\\(.*\\))?");
-    public static final Pattern CAPTURE_CALL_PATTERN = Pattern.compile("(?<name>\\$[\\w_-]+)(?<args>\\(([^\\[,]+,?)*\\))?");
+    public static final Pattern CAPTURE_CALL_PATTERN = Pattern.compile("\\$(?<name>[\\w_-]+)(?<args>\\(.*\\))?");
     public static final Pattern VALID_PARAM = Pattern.compile("[a-zA-Z_]+[0-9a-zA-Z_]*");
 
     public TSLToken tokenize(String text, int line, int character) {
@@ -32,16 +33,23 @@ public class TSLTokenizer {
         Matcher captureMatcher = CAPTURE_CALL_PATTERN.matcher(text);
         if (captureMatcher.matches()) {
             String name = captureMatcher.group("name");
-            String[] args = captureMatcher.group("args") == null
-                    ? new String[0] : StringUtilities.shrink(captureMatcher.group("args"), 1, 1).split(",\\s*");
-            return new TSLCaptureCall(line, character, name.substring(1), Arrays.asList(args));
+            String argsGroup = captureMatcher.group("args");
+            List<String> args = new LinkedList<>();
+            if (argsGroup != null) {
+                args = TSLLexer.lexArgumentsRaw(StringUtilities.shrink(argsGroup, 1, 1));
+            }
+            return new TSLCaptureCall(line, character, name, args);
         }
 
         Matcher decoratorMatcher = RULE_DECORATOR_PATTERN.matcher(text);
         if (decoratorMatcher.matches()) {
             String name = decoratorMatcher.group("name");
-            String[] args = decoratorMatcher.group("args") == null ? new String[0] : decoratorMatcher.group("args").split(",\\s*");
-            return new TSLDecoratorCall(line, character, name, Arrays.asList(args));
+            String argsGroup = decoratorMatcher.group("args");
+            List<String> args = new LinkedList<>();
+            if (argsGroup != null) {
+                args = TSLLexer.lexArgumentsRaw(StringUtilities.shrink(argsGroup, 1, 1));
+            }
+            return new TSLDecoratorCall(line, character, name, args);
         }
 
         if (text.startsWith("{{") && text.endsWith("}}")) {

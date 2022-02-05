@@ -8,6 +8,7 @@ import net.programmer.igoodie.tsl.parser.token.*;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TSLLexer {
 
@@ -18,6 +19,7 @@ public class TSLLexer {
     private int lineOffset;
     private int charOffset;
 
+    private boolean usingCommaDelimiter;
     private LexerMode mode = new LexerModeString(this);
     private int lineNo = 0, charNo = 0;
     private String line;
@@ -36,6 +38,11 @@ public class TSLLexer {
         this.tokenizer = new TSLTokenizer();
     }
 
+    public TSLLexer useCommaDelimiter() {
+        this.usingCommaDelimiter = true;
+        return this;
+    }
+
     public TSLLexer withOffset(int lineOffset, int charOffset) {
         this.lineOffset = lineOffset;
         this.charOffset = charOffset;
@@ -51,6 +58,7 @@ public class TSLLexer {
             chars = line.toCharArray();
             List<TSLToken> tokens = snippetBuffer.getTokens();
 
+//            TODO:
 //            if (escaping) {
 //                throw new TSLSyntaxError("Invalid escape sequence", lineNo(), charNo());
 //            }
@@ -90,6 +98,10 @@ public class TSLLexer {
 
     private int charNo() {
         return charNo + charOffset;
+    }
+
+    public boolean isUsingCommaDelimiter() {
+        return usingCommaDelimiter;
     }
 
     private boolean inCharacterRange(int index) {
@@ -140,8 +152,6 @@ public class TSLLexer {
             TSLToken token = tokenizer.tokenize(text,
                     1 + tokenBeginLine + lineOffset,
                     1 + tokenBeginChar + charOffset);
-
-            System.out.println("Pushing " + token);
 
             if (snippetBuffer.getTokens().size() == 0) { // Inserting the very first token
                 if (TSLSymbol.equals(token, TSLSymbol.Type.RULESET_TAG_BEGIN)) {
@@ -200,6 +210,24 @@ public class TSLLexer {
         }
 
         snippetBuffer = new TSLSnippetBuffer();
+    }
+
+    /* ---------------------------------------- */
+
+    public static List<TSLToken> lexArgumentTokens(String text) {
+        List<TSLToken> args = new LinkedList<>();
+        TSLLexer lexer = new TSLLexer(text).useCommaDelimiter().lex();
+        TSLSnippetBuffer snippet = lexer.getSnippets().get(0);
+        if (snippet != null) {
+            args.addAll(snippet.getTokens());
+        }
+        return args;
+    }
+
+    public static List<String> lexArgumentsRaw(String text) {
+        return lexArgumentTokens(text).stream()
+                .map(TSLToken::getRaw)
+                .collect(Collectors.toList());
     }
 
 }

@@ -37,8 +37,7 @@ public class LexerTests {
     public void shouldLexRulesets() throws IOException {
         String script = TestUtils.loadTSLScript("lexer.test.tsl");
 
-        TSLLexer lexer = new TSLLexer(script);
-        lexer.lex();
+        TSLLexer lexer = new TSLLexer(script).lex();
 
         List<TSLSnippetBuffer> lexedSnippets = lexer.getSnippets();
 
@@ -63,8 +62,7 @@ public class LexerTests {
 
         String script = joinKeywords(keywords);
 
-        TSLLexer lexer = new TSLLexer(script);
-        lexer.lex();
+        TSLLexer lexer = new TSLLexer(script).useCommaDelimiter().lex();
 
         List<TSLSnippetBuffer> lexedSnippets = lexer.getSnippets();
         Assertions.assertEquals(1, lexedSnippets.size());
