@@ -58,11 +58,6 @@ public class TSLLexer {
             chars = line.toCharArray();
             List<TSLToken> tokens = snippetBuffer.getTokens();
 
-//            TODO:
-//            if (escaping) {
-//                throw new TSLSyntaxError("Invalid escape sequence", lineNo(), charNo());
-//            }
-
             if (tokens.size() != 0 && TSLSymbol.equals(tokens.get(0), TSLSymbol.Type.RULESET_TAG_BEGIN)) {
                 pushSnippet();
             }
@@ -82,6 +77,10 @@ public class TSLLexer {
                 if (result.shouldPushToken()) pushToken();
                 if (result.getChangeMode() != null) mode = result.getChangeMode();
                 if (result.shouldSkipLine()) continue lineLoop;
+            }
+
+            if (accumulatedString().endsWith("\\")) {
+                throw new TSLSyntaxError("Invalid escape sequence", lineNo(), charNo());
             }
         }
 

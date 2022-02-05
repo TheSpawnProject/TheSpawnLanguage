@@ -77,6 +77,14 @@ class LexerModeString extends LexerMode {
             }
         }
 
+        if (lexer.isUsingCommaDelimiter()) {
+            if (prevCharacter == ' ' && character != ',') {
+                if (!lexer.accumulatedString().trim().isEmpty()) {
+                    throw new TSLSyntaxError("Unexpected space between arguments", lineNo, characterNo);
+                }
+            }
+        }
+
         lexer.pushCharacter(character);
         return LexResult.nothing();
     }

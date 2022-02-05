@@ -2,10 +2,7 @@ package automated;
 
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
-import net.programmer.igoodie.tsl.parser.token.TSLExpression;
-import net.programmer.igoodie.tsl.parser.token.TSLGroup;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.parser.token.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
@@ -33,6 +30,12 @@ public class LexerTests {
         return builder.toString();
     }
 
+    private TSLToken lexSingle(String text) {
+        TSLLexer lexer = new TSLLexer(text).lex();
+        if (lexer.getSnippets().size() == 0) return null;
+        return lexer.getSnippets().get(0).getTokens().get(0);
+    }
+
     @Test
     public void shouldLexRulesets() throws IOException {
         String script = TestUtils.loadTSLScript("lexer.test.tsl");
@@ -41,6 +44,7 @@ public class LexerTests {
 
         List<TSLSnippetBuffer> lexedSnippets = lexer.getSnippets();
 
+        System.out.println();
         for (TSLSnippetBuffer snippet : lexedSnippets) {
             System.out.println(snippet.getType());
             for (TSLToken token : snippet.getTokens()) {
@@ -57,7 +61,8 @@ public class LexerTests {
                 "NAMESPACE.KEYWORD2",
                 "%GROUP HERE!%",
                 "${some + expression + Math.random()}",
-                "@decorator(${foo(1, 2, 3, 4)}, %Foo, Bar, Baz!%)"
+                "@decorator(${foo(1, 2, 3, 4)}, %Foo, Bar, Baz!%)",
+                "$concat(ABC, DEF)"
         };
 
         String script = joinKeywords(keywords);
@@ -86,6 +91,34 @@ public class LexerTests {
         Assertions.assertEquals(TSLString.class, tokens.get(1).getClass());
         Assertions.assertEquals(TSLGroup.class, tokens.get(2).getClass());
         Assertions.assertEquals(TSLExpression.class, tokens.get(3).getClass());
+    }
+
+    @Test
+    public void shouldLexIntoCorrectTypes() {
+        Assertions.assertDoesNotThrow(() -> {
+            String raw = "%a group containing percent (\\%) sign%";
+            TSLToken token = lexSingle(raw);
+            System.out.println(token);
+            Assertions.assertNotNull(token);
+            Assertions.assertEquals(TSLGroup.class, token.getClass());
+            Assertions.assertEquals(raw, token.getRaw());
+        });
+        Assertions.assertDoesNotThrow(() -> {
+            String raw = "@decorate(ABC, 123, %group!%, $capture, ${1 + 1 + {foo:1}.foo})";
+            TSLToken token = lexSingle(raw);
+            System.out.println(token);
+            Assertions.assertNotNull(token);
+            Assertions.assertEquals(TSLDecoratorCall.class, token.getClass());
+            Assertions.assertEquals(raw, token.getRaw());
+        });
+        Assertions.assertDoesNotThrow(() -> {
+            String raw = "$capture(${'ABC' + {bar:1}.bar}, ABC)";
+            TSLToken token = lexSingle(raw);
+            System.out.println(token);
+            Assertions.assertNotNull(token);
+            Assertions.assertEquals(TSLCaptureCall.class, token.getClass());
+            Assertions.assertEquals(raw, token.getRaw());
+        });
     }
 
 }
