@@ -6,22 +6,42 @@
 #! IMPORT Minecraft FROM mcutils
 #!IMPORT Hallo FROM Iskallia
 
-EITHER
- (DROP diamond 1 ${'{' + _.random({min:1,max:10}) + ")"})
- OR
- (DROP %diamond% 1 %{name:"100\% Real Diamond"}%)
- OR
- (EITHER (DROP diamond) OR (DROP apple))
- ON Donation
+$capture = HERE IS A CAPTURE
 
-@silent
-#* Literally does nothing! *#
-NOTHING DISPLAYING ${"Hello" + "peeps!"}
- #*Yea, no jokes here.. *#
+$dev = iGoodie
+
+$mult(x,y) = ${ {{x}} * {{y}} }
+
+EITHER
+#*Nest 1 *#
+(DROP diamond 1 ${'{' + _.random({min:1,max:10}) + ")"})
+OR
+#* Nest 2 *#
+(DROP %diamond% 1 %{name:"100\% Real Diamond"}%)
+OR
+#*
+Nest
+3
+*#
+(EITHER
+   (DROP diamond)
+     OR
+      (DROP apple))
+ON Donation
+
+DROP $dev DISPLAYING ${"Hello" + "peeps!"}
  ON Walk FROM Minecraft
 
+@silent
 @Redux.silent
+@Redux.silent(5, MINUTES)
 @Webhooks.hook(%https://domain.com/endpoint%)
 Redux.DISPATCH %{event:"fell_from_sky", height:${event.height}, baz:{ foo:123 }}%
  ON Fall From Sky FROM Minecraft
  WITH height > 20
+
+DROP diamond $mult(1, 5)
+ON Manual Trigger
+WITH ${true}
+
+

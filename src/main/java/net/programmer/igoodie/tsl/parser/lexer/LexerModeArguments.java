@@ -1,13 +1,13 @@
 package net.programmer.igoodie.tsl.parser.lexer;
 
-public class LexerModeNest extends LexerMode {
+class LexerModeArguments extends LexerMode {
 
     private boolean inExpression = false;
     private boolean inGroup = false;
+    private boolean inNest = false;
     private LexerMode subMode;
-    private int nestLevel = 0;
 
-    public LexerModeNest(TSLLexer lexer) {
+    public LexerModeArguments(TSLLexer lexer) {
         super(lexer);
     }
 
@@ -34,6 +34,15 @@ public class LexerModeNest extends LexerMode {
             return result.revertChangeMode().revertPushToken();
         }
 
+        if (inNest) {
+            LexResult result = subMode.step(lineNo, characterNo, character);
+            if (result.getChangeMode() != null) {
+                inNest = false;
+                subMode = null;
+            }
+            return result.revertChangeMode().revertPushToken();
+        }
+
         if (character == '%' && prevCharacter != '\\') {
             inGroup = true;
             subMode = new LexerModeGroup(lexer);
@@ -48,17 +57,16 @@ public class LexerModeNest extends LexerMode {
             return LexResult.nothing();
         }
 
-        if (character == '(') {
-            nestLevel++;
+        if (character == '(' && prevCharacter != '\\') {
+            inNest = true;
+            subMode = new LexerModeNest(lexer);
+            lexer.pushCharacter('(');
+            return LexResult.nothing();
         }
 
-        if (character == ')') {
-            if (nestLevel == 0) {
-                lexer.pushCharacter(')');
-                return LexResult.changeMode(new LexerModeString(lexer));
-            } else {
-                nestLevel--;
-            }
+        if (character == ')' && prevCharacter != '\\') {
+            lexer.pushCharacter(')');
+            return LexResult.changeMode(new LexerModeString(lexer));
         }
 
         lexer.pushCharacter(character);

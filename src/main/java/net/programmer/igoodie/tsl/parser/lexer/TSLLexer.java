@@ -59,9 +59,13 @@ public class TSLLexer {
                 pushSnippet();
             }
 
-            if (/*TODO:!inBlockComment &&*/ line.trim().isEmpty()) { // An empty line between snippets
+            if (!(mode instanceof LexerModeBlockComment) && line.trim().isEmpty()) { // An empty line between snippets
                 pushSnippet();
                 continue;
+            }
+
+            if (!(mode instanceof LexerModeNest)) { // Not in a nest, and it's a new line break
+                pushToken();
             }
 
             for (charNo = 0; charNo < chars.length; charNo++) {

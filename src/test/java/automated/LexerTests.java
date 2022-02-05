@@ -58,7 +58,7 @@ public class LexerTests {
                 "NAMESPACE.KEYWORD2",
                 "%GROUP HERE!%",
                 "${some + expression + Math.random()}",
-                "@decorator(${foo(1,2,3,4)}, %Foo, Bar, Baz!%)"
+                "@decorator(${foo(1, 2, 3, 4)}, %Foo, Bar, Baz!%)"
         };
 
         String script = joinKeywords(keywords);

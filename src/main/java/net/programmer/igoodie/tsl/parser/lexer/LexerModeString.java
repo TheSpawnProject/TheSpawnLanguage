@@ -34,12 +34,12 @@ class LexerModeString extends LexerMode {
             }
         }
 
-        if (character == '%') {
+        if (character == '%' && prevCharacter != '\\') {
             lexer.pushCharacter('%');
             return LexResult.changeMode(new LexerModeGroup(lexer));
         }
 
-        if (character == '$' && nextCharacter == '{') {
+        if (character == '$' && nextCharacter == '{' && prevCharacter != '\\') {
             lexer.pushCharacters("${");
             return LexResult.changeMode(new LexerModeExpression(lexer));
         }
@@ -50,10 +50,12 @@ class LexerModeString extends LexerMode {
                 return LexResult.changeMode(new LexerModeNest(lexer));
 
             } else if (lexer.accumulatedString().startsWith("$")) {
-                // TODO: Capture call
+                lexer.pushCharacter('(');
+                return LexResult.changeMode(new LexerModeArguments(lexer));
 
             } else if (lexer.accumulatedString().startsWith("@")) {
-                // TODO: Decorator args call
+                lexer.pushCharacter('(');
+                return LexResult.changeMode(new LexerModeArguments(lexer));
 
             } else {
                 throw new TSLSyntaxError("Unexpected parenthesis character", lineNo, characterNo);

@@ -16,8 +16,9 @@ public class LexerModeGroup extends LexerMode {
 
         if (character == '%' && prevCharacter != '\\') {
             if (!inExpression) {
-                lexer.pushCharacter(character);
-                return LexResult.changeMode(new LexerModeString(lexer));
+                lexer.pushCharacter('%');
+                return LexResult.merge(LexResult.pushToken(),
+                        LexResult.changeMode(new LexerModeString(lexer)));
             }
         }
 

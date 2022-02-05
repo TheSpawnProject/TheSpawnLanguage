@@ -6,6 +6,16 @@ class LexResult {
     private boolean pushToken = false;
     private LexerMode changeMode = null;
 
+    public LexResult revertChangeMode() {
+        this.changeMode = null;
+        return this;
+    }
+
+    public LexResult revertPushToken() {
+        this.pushToken = false;
+        return this;
+    }
+
     public boolean shouldSkipLine() {
         return skipLine;
     }
