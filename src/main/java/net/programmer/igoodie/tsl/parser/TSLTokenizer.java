@@ -1,6 +1,8 @@
 package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.goodies.util.StringUtilities;
+import net.programmer.igoodie.legacy.parser.TSLLexerOld;
+import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.*;
 
@@ -13,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class TSLTokenizer {
 
-    public static final Pattern RULE_DECORATOR_PATTERN = Pattern.compile("@(?<name>[\\w_-]+)(?<args>\\(\\w+(,\\w+)*\\))?");
+    public static final Pattern RULE_DECORATOR_PATTERN = Pattern.compile("@(?<name>[.\\w_-]+)(?<args>\\(.*\\))?");
     public static final Pattern CAPTURE_CALL_PATTERN = Pattern.compile("(?<name>\\$[\\w_-]+)(?<args>\\(([^\\[,]+,?)*\\))?");
     public static final Pattern VALID_PARAM = Pattern.compile("[a-zA-Z_]+[0-9a-zA-Z_]*");
 
@@ -79,7 +81,7 @@ public class TSLTokenizer {
     }
 
     public long tokenCount(String text) {
-        TSLLexer lexer = new TSLLexer(text);
+        TSLLexerOld lexer = new TSLLexerOld(text);
         lexer.lex();
         return lexer.getSnippets().stream()
                 .map(TSLSnippetBuffer::getTokens)

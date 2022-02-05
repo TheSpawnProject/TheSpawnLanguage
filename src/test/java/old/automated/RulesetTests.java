@@ -3,11 +3,11 @@ package old.automated;
 import example.plugin.ExamplePlugin;
 import example.plugin.event.DummyEvent;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.legacy.parser.TSLLexerOld;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
@@ -57,7 +57,7 @@ public class RulesetTests {
     public void foo() throws IOException {
         String script = TestUtils.loadTSLScript("sample2.tsl");
 
-        TSLLexer lexer = new TSLLexer(script).lex();
+        TSLLexerOld lexer = new TSLLexerOld(script).lex();
 
         for (TSLSnippetBuffer snippet : lexer.getSnippets()) {
             System.out.println(snippet);

@@ -1,0 +1,27 @@
+#* tsl-no-diagnostics *#
+#*tsl-no-diagnostics *#
+
+#! IMPORT Redux FROM redux
+#! IMPORT Webhooks FROM webhooks
+#! IMPORT Minecraft FROM mcutils
+#!IMPORT Hallo FROM Iskallia
+
+EITHER
+ (DROP diamond 1 ${'{' + _.random({min:1,max:10}) + ")"})
+ OR
+ (DROP %diamond% 1 %{name:"100\% Real Diamond"}%)
+ OR
+ (EITHER (DROP diamond) OR (DROP apple))
+ ON Donation
+
+@silent
+#* Literally does nothing! *#
+NOTHING DISPLAYING ${"Hello" + "peeps!"}
+ #*Yea, no jokes here.. *#
+ ON Walk FROM Minecraft
+
+@Redux.silent
+@Webhooks.hook(%https://domain.com/endpoint%)
+Redux.DISPATCH %{event:"fell_from_sky", height:${event.height}, baz:{ foo:123 }}%
+ ON Fall From Sky FROM Minecraft
+ WITH height > 20

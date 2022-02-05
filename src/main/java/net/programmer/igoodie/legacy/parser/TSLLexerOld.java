@@ -1,6 +1,7 @@
-package net.programmer.igoodie.tsl.parser;
+package net.programmer.igoodie.legacy.parser;
 
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.*;
 
@@ -8,12 +9,13 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TSLLexer {
+public class TSLLexerOld {
 
     private final List<String> lines;
     private final List<TSLSnippetBuffer> snippets = new LinkedList<>();
 
     private final TSLTokenizer tokenizer = new TSLTokenizer();
+    private boolean usingCommaDelimiter;
 
     private int lineNo = 0, charNo = 0;
     private int tokenBeginLine = -1, tokenBeginChar = -1;
@@ -33,17 +35,22 @@ public class TSLLexer {
     private int lineOffset;
     private int charOffset;
 
-    public TSLLexer(String script) {
+    public TSLLexerOld(String script) {
         this(Arrays.asList(script.split("\\r?\\n")));
     }
 
-    public TSLLexer(List<String> lines) {
+    public TSLLexerOld(List<String> lines) {
         this.lines = lines;
     }
 
-    public TSLLexer withOffset(int lineOffset, int charOffset) {
+    public TSLLexerOld withOffset(int lineOffset, int charOffset) {
         this.lineOffset = lineOffset;
         this.charOffset = charOffset;
+        return this;
+    }
+
+    public TSLLexerOld usingCommaDelimiter() {
+        this.usingCommaDelimiter = true;
         return this;
     }
 
@@ -62,7 +69,7 @@ public class TSLLexer {
                 || character == '_';
     }
 
-    public TSLLexer lex() {
+    public TSLLexerOld lex() {
         for (lineNo = 0; lineNo < lines.size(); lineNo++) {
             String line = lines.get(lineNo);
             List<TSLToken> tokens = snippetBuffer.getTokens();
@@ -170,8 +177,9 @@ public class TSLLexer {
             }
 
             if (character == '}' && nextCharacter == '}') { // }}
-                if (!inParameter) {
+                if (!inGroup && !inParameter) {
                     // Might have an oversight here :thinking:
+                    System.out.println(accumulatedString());
                     throw new TSLSyntaxError("Unexpected parameter end", lineNo(), charNo());
                 }
                 inParameter = false;
@@ -218,15 +226,6 @@ public class TSLLexer {
                 continue;
             }
 
-            if (character == '(' && accumulatedString().startsWith("@") && !inExpression) { // @call()
-                if (inDecoratorArguments) {
-                    throw new TSLSyntaxError("Unexpected character", lineNo(), charNo());
-                }
-                inDecoratorArguments = true;
-                pushCharacter('(');
-                continue;
-            }
-
             if (character == '(' && previousCharacter == ' ' && !inExpression && !inGroup) { // Nest ((()))
                 pushCharacter('(');
                 nestLevel++;
@@ -252,20 +251,42 @@ public class TSLLexer {
                 }
             }
 
-            if (character == ' ') {
-                if (escaping) {
-                    throw new TSLSyntaxError("Invalid escape sequence", lineNo(), charNo() - 1);
-                }
-
-                if (!inGroup && !inExpression && !inCallArguments && !inNest()) {
-                    pushToken();
-                    continue;
-                }
+            if (lexDelimiter(character)) {
+                continue;
             }
 
             escaping = false;
             pushCharacter(character);
         }
+    }
+
+    private boolean lexDelimiter(char character) {
+        if (usingCommaDelimiter) {
+            if (character == ' ') {
+                if (escaping) {
+                    throw new TSLSyntaxError("Invalid escape sequence", lineNo(), charNo() - 1);
+                }
+                return !inGroup && !inDecoratorArguments && !inExpression && !inCallArguments && !inNest();
+
+            } else if (character == ',') {
+                if (!inGroup && !inDecoratorArguments && !inExpression && !inCallArguments && !inNest()) {
+                    pushToken();
+                    return true;
+                }
+            }
+
+        } else if (character == ' ') {
+            if (escaping) {
+                throw new TSLSyntaxError("Invalid escape sequence", lineNo(), charNo() - 1);
+            }
+
+            if (!inGroup && !inExpression && !inCallArguments && !inNest()) {
+                pushToken();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /* ---------------------------------------- */

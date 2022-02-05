@@ -1,6 +1,6 @@
 package old.automated;
 
-import net.programmer.igoodie.tsl.parser.TSLLexer;
+import net.programmer.igoodie.legacy.parser.TSLLexerOld;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
@@ -13,7 +13,7 @@ public class LexerRefactorTests {
     public void foo() throws IOException {
         String script = TestUtils.loadTSLScript("sample2.tsl");
 
-        TSLLexer lexer = new TSLLexer(script);
+        TSLLexerOld lexer = new TSLLexerOld(script);
         lexer.lex();
 
         System.out.println("Snippet count = " + lexer.getSnippets().size());

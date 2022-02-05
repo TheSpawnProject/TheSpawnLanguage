@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.goodies.util.Couple;
+import net.programmer.igoodie.legacy.parser.TSLLexerOld;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
@@ -34,7 +35,7 @@ public class TSLParser {
     public TSLRuleset parse(String script) throws TSLSyntaxError {
         TSLRuleset ruleset = new TSLRuleset();
 
-        TSLLexer lexer = new TSLLexer(script);
+        TSLLexerOld lexer = new TSLLexerOld(script);
         lexer.lex();
 
         for (TSLSnippetBuffer buffer : lexer.getSnippets()) {
