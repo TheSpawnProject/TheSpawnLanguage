@@ -87,8 +87,8 @@ public class LexerTests {
         Assertions.assertIterableEquals(Arrays.asList(keywords),
                 tokens.stream().map(TSLToken::getRaw).collect(Collectors.toList()));
 
-        Assertions.assertEquals(TSLString.class, tokens.get(0).getClass());
-        Assertions.assertEquals(TSLString.class, tokens.get(1).getClass());
+        Assertions.assertEquals(TSLPlainWord.class, tokens.get(0).getClass());
+        Assertions.assertEquals(TSLPlainWord.class, tokens.get(1).getClass());
         Assertions.assertEquals(TSLGroup.class, tokens.get(2).getClass());
         Assertions.assertEquals(TSLExpression.class, tokens.get(3).getClass());
     }

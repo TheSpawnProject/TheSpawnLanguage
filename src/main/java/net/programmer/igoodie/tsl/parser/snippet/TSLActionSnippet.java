@@ -3,7 +3,7 @@ package net.programmer.igoodie.tsl.parser.snippet;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 
@@ -13,19 +13,19 @@ import java.util.List;
 // [DROP] [apple 2]
 public class TSLActionSnippet extends TSLSnippet {
 
-    protected TSLString actionName;
+    protected TSLPlainWord actionName;
     protected List<TSLToken> actionTokens;
 
     protected TSLAction actionDefinition;
 
-    public TSLActionSnippet(TSLRuleset ruleset, TSLAction actionDefinition, TSLString actionName, List<TSLToken> actionTokens) {
+    public TSLActionSnippet(TSLRuleset ruleset, TSLAction actionDefinition, TSLPlainWord actionName, List<TSLToken> actionTokens) {
         super(ruleset, flatTokens(actionName, actionTokens));
         this.actionName = actionName;
         this.actionTokens = actionTokens;
         this.actionDefinition = actionDefinition;
     }
 
-    public TSLString getActionNameToken() {
+    public TSLPlainWord getActionNameToken() {
         return actionName;
     }
 

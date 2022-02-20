@@ -2,9 +2,9 @@ package net.programmer.igoodie.tsl.parser.lexer;
 
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 
-class LexerModeString extends LexerMode {
+class LexerModePlainWord extends LexerMode {
 
-    public LexerModeString(TSLLexer lexer) {
+    public LexerModePlainWord(TSLLexer lexer) {
         super(lexer);
     }
 
@@ -19,10 +19,18 @@ class LexerModeString extends LexerMode {
 
         if (character == '#') {
             if (nextCharacter == '*') {
-                lexer.pushToken();
-                lexer.pushCharacters("#*");
-                lexer.pushToken();
-                return LexResult.changeMode(new LexerModeBlockComment(lexer));
+                if (lexer.getCharacter(2) == '*') {
+                    lexer.pushToken();
+                    lexer.pushCharacters("#**");
+                    lexer.pushToken();
+                    return LexResult.changeMode(new LexerModeTSLDoc(lexer));
+
+                } else {
+                    lexer.pushToken();
+                    lexer.pushCharacters("#*");
+                    lexer.pushToken();
+                    return LexResult.changeMode(new LexerModeBlockComment(lexer));
+                }
 
             } else if (nextCharacter == '!') {
                 lexer.pushCharacters("#!");

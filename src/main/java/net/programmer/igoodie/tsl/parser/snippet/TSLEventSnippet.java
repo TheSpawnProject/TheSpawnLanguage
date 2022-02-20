@@ -1,7 +1,7 @@
 package net.programmer.igoodie.tsl.parser.snippet;
 
 import net.programmer.igoodie.tsl.definition.TSLEvent;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 
 import java.util.List;
@@ -10,23 +10,23 @@ import java.util.stream.Collectors;
 // [ON] [Event Name]
 public class TSLEventSnippet extends TSLSnippet {
 
-    protected TSLString keywordOn;
-    protected List<TSLString> eventName;
+    protected TSLPlainWord keywordOn;
+    protected List<TSLPlainWord> eventName;
 
     protected TSLEvent eventDefinition;
 
-    public TSLEventSnippet(TSLRuleset ruleset, TSLEvent eventDefinition, TSLString keywordOn, List<TSLString> eventName) {
+    public TSLEventSnippet(TSLRuleset ruleset, TSLEvent eventDefinition, TSLPlainWord keywordOn, List<TSLPlainWord> eventName) {
         super(ruleset, flatTokens(keywordOn, eventName));
         this.keywordOn = keywordOn;
         this.eventName = eventName;
         this.eventDefinition = eventDefinition;
     }
 
-    public TSLString getOnKeywordToken() {
+    public TSLPlainWord getOnKeywordToken() {
         return keywordOn;
     }
 
-    public List<TSLString> getEventNameTokens() {
+    public List<TSLPlainWord> getEventNameTokens() {
         return eventName;
     }
 
@@ -40,7 +40,7 @@ public class TSLEventSnippet extends TSLSnippet {
 
     public String getEventName() {
         return eventName.stream()
-                .map(TSLString::getRaw)
+                .map(TSLPlainWord::getRaw)
                 .collect(Collectors.joining(" "));
     }
 

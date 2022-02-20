@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.context.TSLContext;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class TSLToken {
 
@@ -24,6 +25,14 @@ public abstract class TSLToken {
     public abstract String getRaw();
 
     public abstract String evaluate(TSLContext context);
+
+    public boolean hasNamespace() {
+        return getNamespace() != null;
+    }
+
+    public @Nullable String getNamespace() {
+        return null;
+    }
 
     public boolean isTrue(TSLContext context) {
         String evaluation = evaluate(context);

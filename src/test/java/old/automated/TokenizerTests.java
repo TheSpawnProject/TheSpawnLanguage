@@ -14,7 +14,7 @@ public class TokenizerTests {
     public void shouldTokenizeTypes() {
         TSLTokenizer tokenizer = new TSLTokenizer();
 
-        Assertions.assertEquals(tokenizer.tokenize("String").getClass(), TSLString.class);
+        Assertions.assertEquals(tokenizer.tokenize("String").getClass(), TSLPlainWord.class);
         Assertions.assertEquals(tokenizer.tokenize("=").getClass(), TSLSymbol.class);
         Assertions.assertEquals(tokenizer.tokenize("(foo (bar))").getClass(), TSLNest.class);
         Assertions.assertEquals(tokenizer.tokenize("$call").getClass(), TSLCaptureCall.class);

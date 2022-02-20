@@ -8,6 +8,7 @@
 
 $capture = HERE IS A CAPTURE
 
+#* Devname *#
 $dev = iGoodie
 
 $mult(x,y) = ${ {{x}} * {{y}} }
@@ -29,6 +30,11 @@ Nest
       (DROP apple))
 ON Donation
 
+#**
+ *
+ * Some stuff on walk!
+ *
+ *#
 DROP $dev DISPLAYING ${"Hello" + "peeps!"}
  ON Walk FROM Minecraft
 
@@ -42,6 +48,6 @@ Redux.DISPATCH %{event:"fell_from_sky", height:${event.height}, baz:{ foo:123 }}
 
 DROP diamond $mult(1, 5)
 ON Manual Trigger
-WITH ${true}
+WITH ${1 + 1 == 2}
 
 

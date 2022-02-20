@@ -5,7 +5,7 @@ import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistrable;
@@ -33,7 +33,7 @@ public abstract class TSLAction extends TSLDefinition implements TSLRegistrable 
 
     public @NotNull Couple<List<TSLToken>, TSLToken> splitByDisplaying(List<TSLToken> tokens) {
         int displayingIndex = CollectionUtils.lastIndexOfBy(tokens,
-                token -> token instanceof TSLString && token.getRaw().equalsIgnoreCase("DISPLAYING"));
+                token -> token instanceof TSLPlainWord && token.getRaw().equalsIgnoreCase("DISPLAYING"));
 
         if (displayingIndex != -1 && displayingIndex == tokens.size() - 2) {
             List<TSLToken> actionArgs = tokens.subList(0, displayingIndex);

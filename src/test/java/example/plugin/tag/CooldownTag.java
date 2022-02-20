@@ -5,7 +5,7 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -20,13 +20,13 @@ public class CooldownTag extends TSLTag {
 
     @NotNull
     @Override
-    public GoodieObject generateTagAttributes(TSLString tagName, List<TSLString> arguments) throws TSLRuntimeError {
+    public GoodieObject generateTagAttributes(TSLPlainWord tagName, List<TSLPlainWord> arguments) throws TSLRuntimeError {
         GoodieObject attributes = new GoodieObject();
 
         if (arguments.size() < 1)
             throw new TSLSyntaxError("Expected cooldown duration.", tagName);
 
-        TSLString cooldownDuration = arguments.get(0);
+        TSLPlainWord cooldownDuration = arguments.get(0);
 
         attributes.put("cooldown_duration", parseDouble(cooldownDuration));
 

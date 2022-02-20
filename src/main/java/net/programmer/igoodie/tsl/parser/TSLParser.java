@@ -65,7 +65,7 @@ public class TSLParser {
         TSLSymbol end = ((TSLSymbol) tokens.get(tokens.size() - 1));
 
         List<TSLToken> docTokens = tokens.subList(1, tokens.size() - 1);
-        List<TSLString> trimmedDocTokens = new LinkedList<>();
+        List<TSLPlainWord> trimmedDocTokens = new LinkedList<>();
 
         // Trim trailing * tokens
         int currentLine = begin.getLine();
@@ -76,12 +76,12 @@ public class TSLParser {
 
             if (currentLine != line) {
                 if (!rawText.equals("*")) {
-                    trimmedDocTokens.add(new TSLString(line, character, rawText));
+                    trimmedDocTokens.add(new TSLPlainWord(line, character, rawText));
                 }
                 currentLine = line;
 
             } else {
-                trimmedDocTokens.add(new TSLString(line, character, rawText));
+                trimmedDocTokens.add(new TSLPlainWord(line, character, rawText));
             }
         }
 
@@ -102,14 +102,14 @@ public class TSLParser {
             throw new TSLSyntaxError(String.format("Unknown tag name -> %s", tagNameToken.getRaw()), tagNameToken);
         }
 
-        if (!(tagNameToken instanceof TSLString)) {
+        if (!(tagNameToken instanceof TSLPlainWord)) {
             throw new TSLSyntaxError("Tag names MUST be plain strings.", tagNameToken);
         }
 
         List<TSLToken> argTokens = tokens.subList(1, tokens.size());
 
         for (TSLToken argToken : argTokens) {
-            if (!(argToken instanceof TSLString)) {
+            if (!(argToken instanceof TSLPlainWord)) {
                 throw new TSLSyntaxError("Tag arguments MUST be plain strings.", argToken);
             }
         }
@@ -117,9 +117,9 @@ public class TSLParser {
         return new TSLTagSnippet(ruleset,
                 tagDefinition,
                 ((TSLSymbol) tokens.get(0)),
-                ((TSLString) tagNameToken),
+                ((TSLPlainWord) tagNameToken),
                 tokens.subList(2, tokens.size()).stream()
-                        .map(token -> ((TSLString) token))
+                        .map(token -> ((TSLPlainWord) token))
                         .collect(Collectors.toList()));
     }
 
@@ -195,7 +195,7 @@ public class TSLParser {
         rule.setSnippet(ruleSnippet);
 
         // Destruct action tokens
-        TSLString actionNameToken = actionSnippet.getActionNameToken();
+        TSLPlainWord actionNameToken = actionSnippet.getActionNameToken();
         TSLAction actionDefinition = actionSnippet.getActionDefinition();
 
         Couple<List<TSLToken>, TSLToken> couple = actionDefinition.splitByDisplaying(actionSnippet.getActionTokens());
@@ -209,11 +209,11 @@ public class TSLParser {
     }
 
     public TSLEventSnippet parseEvent(TSLRuleset ruleset, List<TSLToken> tokens, int indexOn, int indexWith) {
-        List<TSLString> eventTokens = getEventNameTokens(tokens, indexOn, indexWith);
+        List<TSLPlainWord> eventTokens = getEventNameTokens(tokens, indexOn, indexWith);
         TSLEvent eventDefinition = getEvent(eventTokens);
 
         return new TSLEventSnippet(ruleset, eventDefinition,
-                ((TSLString) tokens.get(indexOn)),
+                ((TSLPlainWord) tokens.get(indexOn)),
                 eventTokens);
     }
 
@@ -231,11 +231,11 @@ public class TSLParser {
         TSLToken actionName = tokens.get(0);
         List<TSLToken> actionTokens = tokens.subList(1, tokens.size());
 
-        if (!(actionName instanceof TSLString)) {
+        if (!(actionName instanceof TSLPlainWord)) {
             throw new TSLSyntaxError("Action name MUST be a String Word.", actionName);
         }
 
-        TSLAction actionDefinition = getAction(((TSLString) actionName));
+        TSLAction actionDefinition = getAction(((TSLPlainWord) actionName));
 
         Couple<List<TSLToken>, TSLToken> couple = actionDefinition.splitByDisplaying(actionTokens);
         List<TSLToken> actionTokensSplitted = couple.getFirst();
@@ -243,7 +243,7 @@ public class TSLParser {
         actionDefinition.validateTokens(actionName, actionTokensSplitted, null, this);
 
         return new TSLActionSnippet(ruleset, actionDefinition,
-                ((TSLString) actionName), actionTokens);
+                ((TSLPlainWord) actionName), actionTokens);
     }
 
     public List<TSLPredicateSnippet> parsePredicates(TSLRuleset ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens, int indexWith) {
@@ -259,7 +259,7 @@ public class TSLParser {
         for (int i = 0; i < predicatePart.size(); i++) {
             TSLToken token = predicatePart.get(i);
             boolean isLastToken = i == predicatePart.size() - 1;
-            if (isLastToken || token instanceof TSLString && token.getRaw().equalsIgnoreCase("WITH")) {
+            if (isLastToken || token instanceof TSLPlainWord && token.getRaw().equalsIgnoreCase("WITH")) {
                 if (isLastToken) predicateTokens.add(token);
                 if (!predicateTokens.isEmpty()) {
                     predicateSnippets.add(parsePredicate(ruleset, eventSnippet, predicateTokens));
@@ -275,11 +275,11 @@ public class TSLParser {
     public TSLPredicateSnippet parsePredicate(TSLRuleset ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens) {
         TSLToken withToken = tokens.get(0);
 
-        if (!(withToken instanceof TSLString)) {
+        if (!(withToken instanceof TSLPlainWord)) {
             throw new TSLSyntaxError("Predicates MUST start with WITH keyword.", withToken);
         }
 
-        if (!((TSLString) withToken).getWord().equalsIgnoreCase("WITH")) {
+        if (!((TSLPlainWord) withToken).getWord().equalsIgnoreCase("WITH")) {
             throw new TSLSyntaxError("Predicates MUST start with WITH keyword.", withToken);
         }
 
@@ -296,7 +296,7 @@ public class TSLParser {
 
         return new TSLPredicateSnippet(ruleset,
                 matchingPredicateFormat.get(),
-                ((TSLString) withToken),
+                ((TSLPlainWord) withToken),
                 predicateTokens);
     }
 
@@ -353,9 +353,9 @@ public class TSLParser {
 
     /* --------------------------- */
 
-    private TSLEvent getEvent(List<TSLString> eventTokens) {
+    private TSLEvent getEvent(List<TSLPlainWord> eventTokens) {
         String eventName = eventTokens.stream()
-                .map(TSLString::getRaw)
+                .map(TSLPlainWord::getRaw)
                 .collect(Collectors.joining(" "));
         TSLEvent tslEvent = tsl.EVENT_REGISTRY.get(eventName);
 
@@ -366,7 +366,7 @@ public class TSLParser {
         return tslEvent;
     }
 
-    public static List<TSLString> getEventNameTokens(List<TSLToken> tokens, int indexOn, int indexWith) {
+    public static List<TSLPlainWord> getEventNameTokens(List<TSLToken> tokens, int indexOn, int indexWith) {
         List<TSLToken> eventTokens = tokens.subList(indexOn + 1,
                 indexWith == -1 ? tokens.size() : indexWith);
 
@@ -375,12 +375,12 @@ public class TSLParser {
             throw new TSLSyntaxError("Missing event name.", keywordOn);
         }
 
-        List<TSLString> eventTokensAsString = new LinkedList<>();
+        List<TSLPlainWord> eventTokensAsString = new LinkedList<>();
         for (TSLToken token : eventTokens) {
-            if (!(token instanceof TSLString)) {
+            if (!(token instanceof TSLPlainWord)) {
                 throw new TSLSyntaxError("Event statements MUST contain only String Words. Instead found -> " + token.getTypeName() + " " + token.getRaw(), token);
             }
-            eventTokensAsString.add(((TSLString) token));
+            eventTokensAsString.add(((TSLPlainWord) token));
         }
 
         return eventTokensAsString;
@@ -388,7 +388,7 @@ public class TSLParser {
 
     /* --------------------------- */
 
-    private TSLAction getAction(TSLString actionName) {
+    private TSLAction getAction(TSLPlainWord actionName) {
         TSLAction tslAction = tsl.ACTION_REGISTRY.get(actionName.getRaw());
 
         if (tslAction == null) {

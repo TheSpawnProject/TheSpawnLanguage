@@ -4,7 +4,7 @@ import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import org.jetbrains.annotations.Nullable;
@@ -49,7 +49,7 @@ public abstract class TSLDefinition {
         else return defaultValue;
     }
 
-    protected boolean parseBoolean(TSLString argument) throws TSLSyntaxError {
+    protected boolean parseBoolean(TSLPlainWord argument) throws TSLSyntaxError {
         String argLowercase = argument.getWord().toLowerCase();
 
         if (argLowercase.equals("true"))
@@ -81,7 +81,7 @@ public abstract class TSLDefinition {
         return parseDouble(token, token.evaluate(context));
     }
 
-    protected double parseDouble(TSLString token) {
+    protected double parseDouble(TSLPlainWord token) {
         return parseDouble(token, token.getWord());
     }
 

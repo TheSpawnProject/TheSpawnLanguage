@@ -363,7 +363,7 @@ public class TSLLexerOld {
                         && secondToken instanceof TSLCaptureCall
                         && thirdToken instanceof TSLSymbol
                         && new TSLTokenizer().tokenizeAll(((TSLCaptureCall) secondToken).getArgs())
-                        .stream().allMatch(arg -> arg instanceof TSLString)
+                        .stream().allMatch(arg -> arg instanceof TSLPlainWord)
                         && ((TSLSymbol) thirdToken).getType() == TSLSymbol.Type.CAPTURE_DECLARATION) {
                     throw new TSLSyntaxError("Captures CANNOT be decorated.", firstToken);
                 }

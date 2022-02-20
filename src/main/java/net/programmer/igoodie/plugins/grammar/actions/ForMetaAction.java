@@ -7,7 +7,7 @@ import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.snippet.TSLActionSnippet;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +50,7 @@ public class ForMetaAction extends TSLAction {
         TSLToken timesKeyword = arguments.get(1);
         List<TSLToken> actionTokens = arguments.subList(2, arguments.size());
 
-        if (!(timesKeyword instanceof TSLString)) {
+        if (!(timesKeyword instanceof TSLPlainWord)) {
             throw new TSLSyntaxError("TIMES keyword MUST be a plain string.", timesKeyword);
         }
         if (!timesKeyword.getRaw().equalsIgnoreCase("TIMES")) {

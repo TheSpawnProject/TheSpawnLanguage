@@ -5,7 +5,7 @@ import net.programmer.igoodie.tsl.definition.attribute.TSLAttributeGenerator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 
@@ -40,7 +40,7 @@ public class TSLAttributeList {
 
     /* ---------------------------------- */
 
-    public void addTag(TSLTag tagDefinition, TSLString tagName, List<TSLString> tagArguments) {
+    public void addTag(TSLTag tagDefinition, TSLPlainWord tagName, List<TSLPlainWord> tagArguments) {
         List<TSLToken> tokens = CollectionUtils.flatAll(TSLToken.class, tagName, tagArguments);
         GoodieObject attributes = tagDefinition.generateAttributesWithNamespace(tokens);
         this.generators.add(tagDefinition);

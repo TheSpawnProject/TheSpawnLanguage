@@ -2,9 +2,9 @@ package net.programmer.igoodie.tsl.parser.lexer;
 
 import net.programmer.igoodie.tsl.parser.token.TSLSymbol;
 
-public class LexerModeBlockComment extends LexerMode {
+public class LexerModeTSLDoc extends LexerMode {
 
-    public LexerModeBlockComment(TSLLexer lexer) {
+    public LexerModeTSLDoc(TSLLexer lexer) {
         super(lexer);
     }
 
@@ -16,7 +16,7 @@ public class LexerModeBlockComment extends LexerMode {
             lexer.pushToken();
             lexer.pushCharacters("*#");
 
-            if (TSLSymbol.equals(lexer.getSnippetBuffer().getTokens().get(0), TSLSymbol.Type.MULTI_LINE_COMMENT_BEGIN)) {
+            if (TSLSymbol.equals(lexer.getSnippetBuffer().getTokens().get(0), TSLSymbol.Type.TSLDOC_BEGIN)) {
                 lexer.pushSnippet();
             } else {
                 lexer.pushToken();

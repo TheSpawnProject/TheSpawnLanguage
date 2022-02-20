@@ -66,7 +66,7 @@ class LexerModeArguments extends LexerMode {
 
         if (character == ')' && prevCharacter != '\\') {
             lexer.pushCharacter(')');
-            return LexResult.changeMode(new LexerModeString(lexer));
+            return LexResult.changeMode(new LexerModePlainWord(lexer));
         }
 
         lexer.pushCharacter(character);

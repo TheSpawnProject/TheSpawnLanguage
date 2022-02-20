@@ -7,7 +7,7 @@ import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.snippet.TSLActionSnippet;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
@@ -66,7 +66,7 @@ public class IfMetaAction extends TSLAction {
                 TSLToken thenKeyword = part.get(1);
                 List<TSLToken> actionTokens = part.subList(2, part.size());
 
-                if (!(thenKeyword instanceof TSLString)) {
+                if (!(thenKeyword instanceof TSLPlainWord)) {
                     throw new TSLSyntaxError("THEN keyword MUST be a plain string.", thenKeyword);
                 }
                 if (!thenKeyword.getRaw().equalsIgnoreCase("THEN")) {
@@ -82,7 +82,7 @@ public class IfMetaAction extends TSLAction {
                 TSLToken thenKeyword = part.get(2);
                 List<TSLToken> actionTokens = part.subList(3, part.size());
 
-                if (!(thenKeyword instanceof TSLString)) {
+                if (!(thenKeyword instanceof TSLPlainWord)) {
                     throw new TSLSyntaxError("THEN keyword MUST be a plain string.", thenKeyword);
                 }
                 if (!thenKeyword.getRaw().equalsIgnoreCase("THEN")) {
@@ -102,7 +102,7 @@ public class IfMetaAction extends TSLAction {
         List<List<TSLToken>> parts = splitParts(arguments, false);
 
         for (List<TSLToken> part : parts) {
-            List<List<TSLToken>> statement = CollectionUtils.splitBy(part, false, token -> token instanceof TSLString
+            List<List<TSLToken>> statement = CollectionUtils.splitBy(part, false, token -> token instanceof TSLPlainWord
                     && token.getRaw().equalsIgnoreCase("THEN"));
 
             if (statement.size() == 2) {
@@ -127,7 +127,7 @@ public class IfMetaAction extends TSLAction {
 
     private List<List<TSLToken>> splitParts(List<TSLToken> arguments, boolean includeDelimiter) {
         return CollectionUtils.splitBy(arguments, includeDelimiter, token -> {
-            if (!(token instanceof TSLString)) return false;
+            if (!(token instanceof TSLPlainWord)) return false;
             return token.getRaw().equalsIgnoreCase("ELSEIF")
                     || token.getRaw().equalsIgnoreCase("ELSE");
         });

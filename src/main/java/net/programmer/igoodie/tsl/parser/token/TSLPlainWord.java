@@ -2,11 +2,11 @@ package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.context.TSLContext;
 
-public class TSLString extends TSLToken {
+public class TSLPlainWord extends TSLToken {
 
     protected String word;
 
-    public TSLString(int line, int character, String word) {
+    public TSLPlainWord(int line, int character, String word) {
         super(line, character);
         this.word = word;
     }
@@ -27,9 +27,14 @@ public class TSLString extends TSLToken {
                 || word.equals("0");
     }
 
+//    @Override
+//    public @Nullable String getNamespace() {
+//        return word.get
+//    }
+
     @Override
     public String getTypeName() {
-        return "String Word";
+        return "Plain Word";
     }
 
     @Override

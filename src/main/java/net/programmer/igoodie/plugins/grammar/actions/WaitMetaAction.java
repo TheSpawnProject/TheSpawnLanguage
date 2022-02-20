@@ -7,7 +7,7 @@ import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import org.jetbrains.annotations.Nullable;
@@ -60,7 +60,7 @@ public class WaitMetaAction extends TSLAction {
         }
 
         TSLToken unitToken = arguments.get(1);
-        if (unitToken instanceof TSLString) {
+        if (unitToken instanceof TSLPlainWord) {
             Long timeCoef = UNIT_COEF.get(unitToken.getRaw().toLowerCase());
             if (timeCoef == null) {
                 throw new TSLSyntaxError("Unknown time unit", unitToken);

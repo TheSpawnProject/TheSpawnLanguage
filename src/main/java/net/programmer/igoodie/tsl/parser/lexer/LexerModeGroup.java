@@ -18,7 +18,7 @@ public class LexerModeGroup extends LexerMode {
             if (!inExpression) {
                 lexer.pushCharacter('%');
                 return LexResult.merge(LexResult.pushToken(),
-                        LexResult.changeMode(new LexerModeString(lexer)));
+                        LexResult.changeMode(new LexerModePlainWord(lexer)));
             }
         }
 

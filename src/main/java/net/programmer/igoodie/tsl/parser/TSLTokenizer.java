@@ -57,7 +57,7 @@ public class TSLTokenizer {
         }
 
         if (text.matches("\\w+")) {
-            return new TSLString(line, character, text);
+            return new TSLPlainWord(line, character, text);
         }
 
         for (TSLSymbol.Type symbolType : TSLSymbol.Type.values()) {
@@ -73,7 +73,7 @@ public class TSLTokenizer {
             return new TSLNest(line, character, subLexer.getSnippets().get(0).getTokens());
         }
 
-        return new TSLString(line, character, text);
+        return new TSLPlainWord(line, character, text);
     }
 
     public TSLToken tokenize(String text) {

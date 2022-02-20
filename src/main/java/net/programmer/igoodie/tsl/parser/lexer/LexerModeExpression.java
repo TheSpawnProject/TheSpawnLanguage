@@ -40,7 +40,7 @@ public class LexerModeExpression extends LexerMode {
             if (curlyLevel == 0) {
                 lexer.pushCharacter('}');
                 return LexResult.merge(LexResult.pushToken(),
-                        LexResult.changeMode(new LexerModeString(lexer)));
+                        LexResult.changeMode(new LexerModePlainWord(lexer)));
 
             } else {
                 curlyLevel--;

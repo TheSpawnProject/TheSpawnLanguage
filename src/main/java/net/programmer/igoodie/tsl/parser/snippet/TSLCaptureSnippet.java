@@ -115,9 +115,9 @@ public class TSLCaptureSnippet extends TSLSnippet {
             TSLCaptureParameter parameterToken = (TSLCaptureParameter) target;
             return argumentMap.get(parameterToken.getParameterName());
 
-        } else if (target instanceof TSLString) {
-            String filled = fillWithParameters(((TSLString) target).getWord(), argumentMap);
-            return new TSLString(target.getLine(), target.getCharacter(), filled);
+        } else if (target instanceof TSLPlainWord) {
+            String filled = fillWithParameters(((TSLPlainWord) target).getWord(), argumentMap);
+            return new TSLPlainWord(target.getLine(), target.getCharacter(), filled);
 
         } else if (target instanceof TSLGroup) {
             String filled = fillWithParameters(((TSLGroup) target).getGroup(), argumentMap);

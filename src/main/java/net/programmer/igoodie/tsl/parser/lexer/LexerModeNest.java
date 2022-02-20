@@ -55,7 +55,7 @@ public class LexerModeNest extends LexerMode {
         if (character == ')') {
             if (nestLevel == 0) {
                 lexer.pushCharacter(')');
-                return LexResult.changeMode(new LexerModeString(lexer));
+                return LexResult.changeMode(new LexerModePlainWord(lexer));
             } else {
                 nestLevel--;
             }

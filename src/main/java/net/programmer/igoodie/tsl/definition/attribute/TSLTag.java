@@ -3,7 +3,7 @@ package net.programmer.igoodie.tsl.definition.attribute;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistrable;
@@ -33,24 +33,24 @@ public abstract class TSLTag extends TSLAttributeGenerator implements TSLRegistr
 
         TSLToken tagName = tokens.get(0);
 
-        if (!(tagName instanceof TSLString)) {
+        if (!(tagName instanceof TSLPlainWord)) {
             throw new TSLInternalError("Expected tag name to be a TSL String", tagName);
         }
 
         List<TSLToken> arguments = tokens.subList(1, tokens.size());
-        List<TSLString> stringArguments = new LinkedList<>();
+        List<TSLPlainWord> stringArguments = new LinkedList<>();
 
         for (TSLToken argument : arguments) {
-            if (!(argument instanceof TSLString)) {
+            if (!(argument instanceof TSLPlainWord)) {
                 throw new TSLInternalError("Expected argument to be a TSL String", argument);
             }
-            stringArguments.add(((TSLString) argument));
+            stringArguments.add(((TSLPlainWord) argument));
         }
 
-        return generateTagAttributes(((TSLString) tagName), stringArguments);
+        return generateTagAttributes(((TSLPlainWord) tagName), stringArguments);
     }
 
     @NotNull
-    public abstract GoodieObject generateTagAttributes(TSLString tagName, List<TSLString> arguments) throws TSLRuntimeError;
+    public abstract GoodieObject generateTagAttributes(TSLPlainWord tagName, List<TSLPlainWord> arguments) throws TSLRuntimeError;
 
 }

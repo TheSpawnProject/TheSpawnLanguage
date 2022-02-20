@@ -11,7 +11,7 @@ import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.parser.token.TSLString;
+import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 
 import java.util.List;
@@ -34,11 +34,11 @@ public class BinaryOperationPredicate extends TSLPredicate {
 
         TSLToken eventFieldToken = tokens.get(0);
 
-        if (!(eventFieldToken instanceof TSLString)) {
+        if (!(eventFieldToken instanceof TSLPlainWord)) {
             return false;
         }
 
-        String eventField = ((TSLString) eventFieldToken).getWord();
+        String eventField = ((TSLPlainWord) eventFieldToken).getWord();
 
         if (eventField == null || !event.getAcceptedFields().containsKey(eventField)) {
             throw new TSLSyntaxError("Unknown field for the event -> " + eventFieldToken, eventFieldToken);
@@ -54,7 +54,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
     @Override
     public boolean satisfies(TSLContext context, List<TSLToken> tokens) {
         TSLToken fieldNameToken = tokens.get(0);
-        String fieldName = ((TSLString) fieldNameToken).getWord();
+        String fieldName = ((TSLPlainWord) fieldNameToken).getWord();
 
         GoodieObject eventArguments = context.getEventArguments();
         Object eventFieldValue = TSLEvent.extractField(eventArguments, fieldName);
@@ -72,7 +72,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
     }
 
     private void checkFieldValueType(TSLContext context, TSLToken fieldNameToken) {
-        String fieldName = ((TSLString) fieldNameToken).getWord();
+        String fieldName = ((TSLPlainWord) fieldNameToken).getWord();
 
         TSLEvent event = context.getEvent();
         Map<String, Class<?>> acceptedFields = event.getAcceptedFields();
