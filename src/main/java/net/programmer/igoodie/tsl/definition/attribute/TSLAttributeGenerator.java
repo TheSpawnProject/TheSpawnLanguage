@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.definition.attribute;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
+import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLDefinition;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
@@ -18,9 +19,9 @@ public abstract class TSLAttributeGenerator extends TSLDefinition {
         super(plugin, name);
     }
 
-    public final GoodieObject generateAttributesWithNamespace(List<TSLToken> tokens) {
+    public final GoodieObject generateAttributesWithNamespace(TSLContext context, List<TSLToken> tokens) {
         TSLPlugin plugin = getPlugin();
-        GoodieObject generatedAttributes = generateAttributes(tokens);
+        GoodieObject generatedAttributes = generateAttributes(context, tokens);
 
         if (plugin instanceof TSLGrammarCore) {
             return generatedAttributes;
@@ -30,6 +31,6 @@ public abstract class TSLAttributeGenerator extends TSLDefinition {
     }
 
     @NotNull
-    public abstract GoodieObject generateAttributes(List<TSLToken> tokens) throws TSLRuntimeError;
+    public abstract GoodieObject generateAttributes(TSLContext context, List<TSLToken> tokens) throws TSLRuntimeError;
 
 }

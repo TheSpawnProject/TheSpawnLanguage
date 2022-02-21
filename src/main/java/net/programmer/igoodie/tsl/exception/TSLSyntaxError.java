@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.exception;
 
+import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
@@ -10,6 +11,10 @@ public class TSLSyntaxError extends RuntimeException {
     protected String filePath;
     protected int line, character;
     protected @Nullable TSLToken associatedToken;
+
+    public TSLSyntaxError(String reason, TSLSnippet snippet) {
+        this(reason, snippet.getAllTokens().get(0));
+    }
 
     public TSLSyntaxError(String reason, TSLSnippetBuffer snippetBuffer) {
         this(reason, snippetBuffer.getTokens().get(0));

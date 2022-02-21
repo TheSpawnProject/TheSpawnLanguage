@@ -1,0 +1,3 @@
+#! IMPORT ExampleLib FROM exampleplugin
+#! IMPORT exampleplugin
+#! IMPORT %./import.test.tsl%

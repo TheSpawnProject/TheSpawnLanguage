@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.runtime;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
@@ -27,6 +28,7 @@ public class TSLRuleset implements Attributable {
     protected List<TSLRule> rules;
     protected Map<Integer, TSLDocSnippet> tslDocs;
     protected Map<String, TSLCaptureSnippet> captures;
+    protected Map<String, String> imports;
 
     protected HookList hookList;
 
@@ -41,6 +43,7 @@ public class TSLRuleset implements Attributable {
         this.rules = new LinkedList<>();
         this.tslDocs = new HashMap<>();
         this.captures = new HashMap<>();
+        this.imports = new HashMap<>();
         this.attributeList = new TSLAttributeList();
         this.hookList = new HookList();
     }
@@ -93,6 +96,10 @@ public class TSLRuleset implements Attributable {
         return Collections.unmodifiableList(rules);
     }
 
+    public Map<String, String> getImports() {
+        return imports;
+    }
+
     @Override
     public GoodieObject getAttributes() {
         return attributeList.getSquashedAttributes();
@@ -105,11 +112,13 @@ public class TSLRuleset implements Attributable {
         tslDocs.put(tslDocSnippet.getBeginningLine(), tslDocSnippet);
     }
 
-    public void addTag(TSLTagSnippet tagSnippet) {
+    public void addTag(TSLTagSnippet tagSnippet, TheSpawnLanguage language) {
         snippets.add(tagSnippet);
-        this.attributeList.addTag(tagSnippet.getTagDefinition(),
+        this.attributeList.loadTag(new TSLContext(language),
+                tagSnippet.getTagDefinition(),
                 tagSnippet.getTagNameToken(),
-                tagSnippet.getTagArgTokens());
+                tagSnippet.getTagArgTokens()
+        );
     }
 
     public void addCapture(TSLCaptureSnippet captureSnippet) {
@@ -121,6 +130,10 @@ public class TSLRuleset implements Attributable {
         snippets.add(rule.getSnippet());
         rule.setAssociatedRuleset(this);
         this.rules.add(rule);
+    }
+
+    public void addImport(String alias, String target) {
+        imports.put(alias, target);
     }
 
     /* ----------------------------------------- */

@@ -2,23 +2,38 @@ package automated;
 
 import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.goodies.util.Couple;
-import net.programmer.igoodie.legacy.parser.TSLLexerOld;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.snippet.TSLActionSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public class ParserTests {
+
+    @Test
+    public void shouldParseImports() throws IOException, URISyntaxException {
+        TheSpawnLanguage tsl = new TheSpawnLanguage();
+
+        tsl.getPluginManager().loadPlugin(new ExamplePlugin());
+
+        TSLParser parser = new TSLParser(tsl);
+        TSLRuleset ruleset = parser.parse(TestUtils.scriptPath("parser.test.tsl"));
+
+        Assertions.assertNotNull(ruleset.getImports().get("ExampleLib"));
+        Assertions.assertNotNull(ruleset.getImports().get("exampleplugin"));
+    }
 
     @Test
     public void foo() {
@@ -50,7 +65,7 @@ public class ParserTests {
 //
 //        TSLRule rule = ruleset.getRules().get(0);
 
-        TSLLexerOld lex = new TSLLexerOld(TestUtils.loadTSLScript("coconutorange.rule.tsl")).lex();
+        TSLLexer lex = new TSLLexer(TestUtils.loadTSLScript("coconutorange.rule.tsl")).lex();
         for (TSLSnippetBuffer snippet : lex.getSnippets()) {
             System.out.println(snippet.getType());
             for (TSLToken token : snippet.getTokens()) {

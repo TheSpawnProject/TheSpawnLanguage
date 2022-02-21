@@ -1,7 +1,6 @@
 package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.goodies.util.Couple;
-import net.programmer.igoodie.legacy.parser.TSLLexerOld;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
@@ -10,19 +9,25 @@ import net.programmer.igoodie.tsl.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.snippet.*;
 import net.programmer.igoodie.tsl.parser.token.*;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
+import net.programmer.igoodie.tsl.util.IOUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class TSLParser {
 
     private final TheSpawnLanguage tsl;
+    private TSLRuleset ruleset;
 
     public TSLParser(TSLContext context) {
         this(context.getLanguage());
@@ -30,17 +35,30 @@ public class TSLParser {
 
     public TSLParser(TheSpawnLanguage tsl) {
         this.tsl = tsl;
+        this.ruleset = new TSLRuleset();
+    }
+
+    public TheSpawnLanguage getLanguage() {
+        return tsl;
+    }
+
+    public TSLRuleset parse(URL url) throws TSLSyntaxError, URISyntaxException {
+        return parse(new File(url.toURI()));
+    }
+
+    public TSLRuleset parse(File file) throws TSLSyntaxError {
+        ruleset = new TSLRuleset(file.getName(), file);
+        return parse(IOUtils.readString(file));
     }
 
     public TSLRuleset parse(String script) throws TSLSyntaxError {
-        TSLRuleset ruleset = new TSLRuleset();
-
-        TSLLexerOld lexer = new TSLLexerOld(script);
-        lexer.lex();
+        TSLLexer lexer = new TSLLexer(script).lex();
 
         for (TSLSnippetBuffer buffer : lexer.getSnippets()) {
             if (buffer.getType() == TSLSnippetBuffer.Type.TAG) {
-                ruleset.addTag(parseTag(ruleset, buffer));
+                TSLTagSnippet tagSnippet = parseTag(ruleset, buffer);
+                tagSnippet.getTagDefinition().onRulesetBind(this, ruleset, tagSnippet);
+                ruleset.addTag(tagSnippet, tsl);
 
             } else if (buffer.getType() == TSLSnippetBuffer.Type.CAPTURE) {
                 ruleset.addCapture(parseCapture(ruleset, buffer));
@@ -106,21 +124,13 @@ public class TSLParser {
             throw new TSLSyntaxError("Tag names MUST be plain strings.", tagNameToken);
         }
 
-        List<TSLToken> argTokens = tokens.subList(1, tokens.size());
-
-        for (TSLToken argToken : argTokens) {
-            if (!(argToken instanceof TSLPlainWord)) {
-                throw new TSLSyntaxError("Tag arguments MUST be plain strings.", argToken);
-            }
-        }
+        List<TSLToken> argTokens = tokens.subList(2, tokens.size());
 
         return new TSLTagSnippet(ruleset,
                 tagDefinition,
                 ((TSLSymbol) tokens.get(0)),
                 ((TSLPlainWord) tagNameToken),
-                tokens.subList(2, tokens.size()).stream()
-                        .map(token -> ((TSLPlainWord) token))
-                        .collect(Collectors.toList()));
+                argTokens);
     }
 
     public TSLCaptureSnippet parseCapture(TSLRuleset ruleset, TSLSnippetBuffer buffer) throws TSLSyntaxError {
@@ -309,7 +319,7 @@ public class TSLParser {
 
         for (TSLDecoratorCall decoratorToken : decoratorTokens) {
             TSLDecorator decorator = parseDecorator(decoratorToken);
-            rule.addDecorator(decorator, decoratorToken);
+            rule.decorate(new TSLContext(tsl), decorator, decoratorToken);
         }
 
         return decoratorTokens;
@@ -384,6 +394,31 @@ public class TSLParser {
         }
 
         return eventTokensAsString;
+    }
+
+    public static List<TSLToken> trimComments(List<TSLToken> tokens) {
+        List<TSLToken> trimmedTokens = new LinkedList<>();
+        boolean inComment = false;
+        for (TSLToken token : tokens) {
+            if (TSLSymbol.equals(token, TSLSymbol.Type.MULTI_LINE_COMMENT_BEGIN)
+                    || TSLSymbol.equals(token, TSLSymbol.Type.TSLDOC_BEGIN)) {
+                inComment = true;
+                continue;
+            }
+
+            if (TSLSymbol.equals(token, TSLSymbol.Type.MULTI_LINE_COMMENT_END)) {
+                inComment = false;
+                continue;
+            }
+
+            if (inComment) {
+                continue;
+            }
+
+            trimmedTokens.add(token);
+        }
+
+        return trimmedTokens;
     }
 
     /* --------------------------- */

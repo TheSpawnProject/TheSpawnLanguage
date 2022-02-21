@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.definition.attribute;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
@@ -25,7 +26,7 @@ public abstract class TSLDecorator extends TSLAttributeGenerator implements TSLR
 
     @NotNull
     @Override
-    public final GoodieObject generateAttributes(List<TSLToken> tokens) throws TSLRuntimeError {
+    public final GoodieObject generateAttributes(TSLContext context, List<TSLToken> tokens) throws TSLRuntimeError {
         if (tokens.isEmpty()) {
             throw new TSLInternalError("Need at least one token");
         }

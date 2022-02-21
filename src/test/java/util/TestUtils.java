@@ -31,6 +31,11 @@ public class TestUtils {
     }
 
     @SuppressWarnings("UnstableApiUsage")
+    public static URL scriptPath(String scriptName) {
+        return Resources.getResource("tsl/" + scriptName);
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
     private static String loadFile(String path) throws IOException {
         URL resourceURL = Resources.getResource(path);
         List<String> lines = Resources.readLines(resourceURL, StandardCharsets.UTF_8);

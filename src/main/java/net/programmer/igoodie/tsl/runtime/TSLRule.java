@@ -85,8 +85,8 @@ public class TSLRule implements Attributable {
 
     /* ----------------------------------- */
 
-    public void addDecorator(TSLDecorator decoratorDefinition, TSLDecoratorCall decoratorCall) {
-        this.attributeList.addDecorator(decoratorDefinition, decoratorCall);
+    public void decorate(TSLContext context, TSLDecorator decoratorDefinition, TSLDecoratorCall decoratorCall) {
+        this.attributeList.loadDecorator(context, decoratorDefinition, decoratorCall);
     }
 
     public boolean perform(TSLContext context) {

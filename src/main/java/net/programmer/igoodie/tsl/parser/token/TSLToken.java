@@ -3,6 +3,9 @@ package net.programmer.igoodie.tsl.parser.token;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public abstract class TSLToken {
 
     protected int line, character;
@@ -42,6 +45,14 @@ public abstract class TSLToken {
     @Override
     public String toString() {
         return String.format("%s(%s)", getClass().getSimpleName(), getRaw());
+    }
+
+    /* ---------------------------- */
+
+    public static List<String> evaluateAll(TSLContext context, List<TSLToken> tokens) {
+        return tokens.stream()
+                .map(token -> token.evaluate(context))
+                .collect(Collectors.toList());
     }
 
 }

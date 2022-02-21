@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.parser.snippet;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLSymbol;
+import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 
 import java.util.List;
@@ -12,11 +13,11 @@ public class TSLTagSnippet extends TSLSnippet {
 
     protected TSLSymbol tagSymbol;
     protected TSLPlainWord tagName;
-    protected List<TSLPlainWord> tagArguments;
+    protected List<TSLToken> tagArguments;
 
     protected TSLTag tagDefinition;
 
-    public TSLTagSnippet(TSLRuleset ruleset, TSLTag tagDefinition, TSLSymbol tagSymbol, TSLPlainWord tagName, List<TSLPlainWord> tagArguments) {
+    public TSLTagSnippet(TSLRuleset ruleset, TSLTag tagDefinition, TSLSymbol tagSymbol, TSLPlainWord tagName, List<TSLToken> tagArguments) {
         super(ruleset, flatTokens(tagSymbol, tagName, tagArguments));
         this.tagSymbol = tagSymbol;
         this.tagName = tagName;
@@ -32,7 +33,7 @@ public class TSLTagSnippet extends TSLSnippet {
         return tagName;
     }
 
-    public List<TSLPlainWord> getTagArgTokens() {
+    public List<TSLToken> getTagArgTokens() {
         return tagArguments;
     }
 

@@ -1,15 +1,18 @@
 package net.programmer.igoodie.tsl.definition.attribute;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
+import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.parser.snippet.TSLTagSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistrable;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedList;
 import java.util.List;
 
 // #! TAG_NAME ARG1 ARG2
@@ -26,7 +29,7 @@ public abstract class TSLTag extends TSLAttributeGenerator implements TSLRegistr
 
     @NotNull
     @Override
-    public final GoodieObject generateAttributes(List<TSLToken> tokens) throws TSLRuntimeError {
+    public final GoodieObject generateAttributes(TSLContext context, List<TSLToken> tokens) throws TSLRuntimeError {
         if (tokens.isEmpty()) {
             throw new TSLInternalError("Need at least one token");
         }
@@ -38,19 +41,13 @@ public abstract class TSLTag extends TSLAttributeGenerator implements TSLRegistr
         }
 
         List<TSLToken> arguments = tokens.subList(1, tokens.size());
-        List<TSLPlainWord> stringArguments = new LinkedList<>();
 
-        for (TSLToken argument : arguments) {
-            if (!(argument instanceof TSLPlainWord)) {
-                throw new TSLInternalError("Expected argument to be a TSL String", argument);
-            }
-            stringArguments.add(((TSLPlainWord) argument));
-        }
-
-        return generateTagAttributes(((TSLPlainWord) tagName), stringArguments);
+        return generateTagAttributes(context, ((TSLPlainWord) tagName), arguments);
     }
 
     @NotNull
-    public abstract GoodieObject generateTagAttributes(TSLPlainWord tagName, List<TSLPlainWord> arguments) throws TSLRuntimeError;
+    public abstract GoodieObject generateTagAttributes(TSLContext context, TSLPlainWord tagName, List<TSLToken> arguments) throws TSLRuntimeError;
+
+    public void onRulesetBind(TSLParser parser, @NotNull TSLRuleset ruleset, TSLTagSnippet snippet) {}
 
 }

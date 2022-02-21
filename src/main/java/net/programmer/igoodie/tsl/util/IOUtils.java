@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.stream.Stream;
 
 public final class IOUtils {
@@ -25,6 +26,23 @@ public final class IOUtils {
         }
 
         return builder.toString();
+    }
+
+    public static Path resolvePath(String a, String b) {
+        return resolvePath(
+                new File(a).toPath(),
+                new File(b).toPath()
+        );
+    }
+
+    public static Path resolvePath(Path a, Path b) {
+        try {
+            if (b.isAbsolute()) return b;
+            return a.resolve(b).toRealPath();
+
+        } catch (IOException e) {
+            return null;
+        }
     }
 
 }

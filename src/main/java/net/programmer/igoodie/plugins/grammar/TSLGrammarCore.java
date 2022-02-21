@@ -6,7 +6,9 @@ import net.programmer.igoodie.plugins.grammar.events.ManualTriggerEvent;
 import net.programmer.igoodie.plugins.grammar.functions.RunScriptFunction;
 import net.programmer.igoodie.plugins.grammar.predicates.BinaryOperationPredicate;
 import net.programmer.igoodie.plugins.grammar.predicates.BooleanPredicate;
+import net.programmer.igoodie.plugins.grammar.tags.ImportTag;
 import net.programmer.igoodie.tsl.definition.*;
+import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
@@ -26,6 +28,11 @@ public class TSLGrammarCore extends TSLPlugin {
                 VERSION,
                 "iGoodie"
         ));
+    }
+
+    @Override
+    public void registerTags(TSLRegistry<TSLTag> registry) {
+        registry.register(ImportTag.INSTANCE);
     }
 
     @Override
