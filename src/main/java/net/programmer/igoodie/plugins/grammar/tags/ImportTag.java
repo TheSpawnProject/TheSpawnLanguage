@@ -33,12 +33,12 @@ public class ImportTag extends TSLTag {
     }
 
     @Override
-    public void onRulesetBind(TSLParser parser, @NotNull TSLRuleset ruleset, TSLTagSnippet snippet) {
+    public void onLoaded(TheSpawnLanguage language, @NotNull TSLRuleset ruleset, TSLTagSnippet snippet) {
         List<TSLToken> arguments = snippet.getTagArgTokens();
 
         if (arguments.size() == 1) {
             TSLToken target = arguments.get(0);
-            loadTarget(parser.getLanguage(), ruleset, null, target);
+            loadTarget(language, ruleset, null, target);
 
         } else if (arguments.size() == 3) {
             TSLToken alias = arguments.get(0);
@@ -53,7 +53,7 @@ public class ImportTag extends TSLTag {
                 throw new TSLSyntaxError("Unexpected token", keywordFrom);
             }
 
-            loadTarget(parser.getLanguage(), ruleset, ((TSLPlainWord) alias), target);
+            loadTarget(language, ruleset, ((TSLPlainWord) alias), target);
 
         } else {
             throw new TSLSyntaxError("Unexpected amount of tokens", snippet);
@@ -72,13 +72,14 @@ public class ImportTag extends TSLTag {
             if (path == null) {
                 throw new TSLSyntaxError("Ruleset cannot be found", targetToken);
             }
+            TSLRuleset otherRuleset = new TSLParser(language).parse(path.toFile());
+            ruleset.importRuleset(otherRuleset, language);
 
         } else if (language.getPluginManager().LOADED_PLUGIN_IDS.contains(target)) {
             // It is a plugin, load it in
-            ruleset.addImport(alias == null ? target : alias, target);
+            ruleset.getImportedPlugins().put(alias == null ? target : alias, target);
 
         } else {
-            System.out.println(target);
             throw new TSLSyntaxError("Invalid import format", targetToken);
         }
     }

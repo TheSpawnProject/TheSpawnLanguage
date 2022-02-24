@@ -23,7 +23,7 @@ import java.util.List;
 public class ParserTests {
 
     @Test
-    public void shouldParseImports() throws IOException, URISyntaxException {
+    public void shouldParseImports() throws URISyntaxException {
         TheSpawnLanguage tsl = new TheSpawnLanguage();
 
         tsl.getPluginManager().loadPlugin(new ExamplePlugin());
@@ -31,8 +31,18 @@ public class ParserTests {
         TSLParser parser = new TSLParser(tsl);
         TSLRuleset ruleset = parser.parse(TestUtils.scriptPath("parser.test.tsl"));
 
-        Assertions.assertNotNull(ruleset.getImports().get("ExampleLib"));
-        Assertions.assertNotNull(ruleset.getImports().get("exampleplugin"));
+        Assertions.assertNotNull(ruleset.getImportedPlugins().get("ExampleLib"));
+        Assertions.assertNotNull(ruleset.getImportedPlugins().get("exampleplugin"));
+        Assertions.assertEquals(1, ruleset.getImportedRulesets().size());
+        Assertions.assertEquals(2, ruleset.getRules().size());
+
+        ruleset.getCaptures().forEach((name, captureSnippet) -> {
+            System.out.println(captureSnippet);
+        });
+
+        for (TSLRule rule : ruleset.getRules()) {
+            System.out.println(rule.getSnippet().getLoadedPath());
+        }
     }
 
     @Test

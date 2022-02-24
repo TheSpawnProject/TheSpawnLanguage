@@ -1,3 +1,6 @@
 $dev = iGoodie
 
+PRINT Hey there from external space!
+ ON Manual Trigger
+
 $helloWorld = Hello World!

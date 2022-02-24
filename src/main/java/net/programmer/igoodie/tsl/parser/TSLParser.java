@@ -56,9 +56,7 @@ public class TSLParser {
 
         for (TSLSnippetBuffer buffer : lexer.getSnippets()) {
             if (buffer.getType() == TSLSnippetBuffer.Type.TAG) {
-                TSLTagSnippet tagSnippet = parseTag(ruleset, buffer);
-                tagSnippet.getTagDefinition().onRulesetBind(this, ruleset, tagSnippet);
-                ruleset.addTag(tagSnippet, tsl);
+                ruleset.addTag(parseTag(ruleset, buffer), tsl);
 
             } else if (buffer.getType() == TSLSnippetBuffer.Type.CAPTURE) {
                 ruleset.addCapture(parseCapture(ruleset, buffer));

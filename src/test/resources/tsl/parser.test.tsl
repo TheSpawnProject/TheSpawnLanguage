@@ -1,3 +1,6 @@
 #! IMPORT ExampleLib FROM exampleplugin
 #! IMPORT exampleplugin
 #! IMPORT %./import.test.tsl%
+
+PRINT $dev
+ ON Manual Trigger

@@ -5,11 +5,14 @@ import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLDocSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLTagSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
+import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
+import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.attribute.Attributable;
 import net.programmer.igoodie.tsl.runtime.attribute.TSLAttributeList;
 import net.programmer.igoodie.tsl.runtime.hook.HookList;
@@ -28,7 +31,9 @@ public class TSLRuleset implements Attributable {
     protected List<TSLRule> rules;
     protected Map<Integer, TSLDocSnippet> tslDocs;
     protected Map<String, TSLCaptureSnippet> captures;
-    protected Map<String, String> imports;
+
+    protected Map<String, String> importedPlugins;
+    protected List<String> importedRulesets;
 
     protected HookList hookList;
 
@@ -43,7 +48,8 @@ public class TSLRuleset implements Attributable {
         this.rules = new LinkedList<>();
         this.tslDocs = new HashMap<>();
         this.captures = new HashMap<>();
-        this.imports = new HashMap<>();
+        this.importedPlugins = new HashMap<>();
+        this.importedRulesets = new LinkedList<>();
         this.attributeList = new TSLAttributeList();
         this.hookList = new HookList();
     }
@@ -96,8 +102,12 @@ public class TSLRuleset implements Attributable {
         return Collections.unmodifiableList(rules);
     }
 
-    public Map<String, String> getImports() {
-        return imports;
+    public Map<String, String> getImportedPlugins() {
+        return importedPlugins;
+    }
+
+    public List<String> getImportedRulesets() {
+        return importedRulesets;
     }
 
     @Override
@@ -108,32 +118,77 @@ public class TSLRuleset implements Attributable {
     /* ----------------------------------------- */
 
     public void addTSLDoc(TSLDocSnippet tslDocSnippet) {
-        snippets.add(tslDocSnippet);
+        addTSLDoc(tslDocSnippet, false);
+    }
+
+    public void addTSLDoc(TSLDocSnippet tslDocSnippet, boolean outsource) {
+        if (!outsource) snippets.add(tslDocSnippet);
         tslDocs.put(tslDocSnippet.getBeginningLine(), tslDocSnippet);
     }
 
     public void addTag(TSLTagSnippet tagSnippet, TheSpawnLanguage language) {
-        snippets.add(tagSnippet);
+        addTag(tagSnippet, language, false);
+    }
+
+    public void addTag(TSLTagSnippet tagSnippet, TheSpawnLanguage language, boolean outsource) {
+        TSLTag tagDefinition = tagSnippet.getTagDefinition();
+        TSLPlainWord nameToken = tagSnippet.getTagNameToken();
+        List<TSLToken> arguments = tagSnippet.getTagArgTokens();
+
+        if (!outsource) snippets.add(tagSnippet);
+
         this.attributeList.loadTag(new TSLContext(language),
-                tagSnippet.getTagDefinition(),
-                tagSnippet.getTagNameToken(),
-                tagSnippet.getTagArgTokens()
+                tagDefinition,
+                nameToken,
+                arguments
         );
+
+        tagDefinition.onLoaded(language, this, tagSnippet);
     }
 
     public void addCapture(TSLCaptureSnippet captureSnippet) {
-        snippets.add(captureSnippet);
+        addCapture(captureSnippet, false);
+    }
+
+    public void addCapture(TSLCaptureSnippet captureSnippet, boolean outsource) {
+        if (!outsource) snippets.add(captureSnippet);
+
+        if (captures.containsKey(captureSnippet.getName())) {
+            throw new TSLSyntaxError("$" + captureSnippet.getName() + " is already defined", captureSnippet);
+        }
+
         captures.put(captureSnippet.getName(), captureSnippet);
     }
 
     public void addRule(TSLRule rule) {
-        snippets.add(rule.getSnippet());
+        addRule(rule, false);
+    }
+
+    public void addRule(TSLRule rule, boolean outsource) {
+        if (!outsource) snippets.add(rule.getSnippet());
         rule.setAssociatedRuleset(this);
         this.rules.add(rule);
     }
 
-    public void addImport(String alias, String target) {
-        imports.put(alias, target);
+    public void importRuleset(TSLRuleset otherRuleset, TheSpawnLanguage language) {
+        for (TSLSnippet snippet : otherRuleset.getSnippets()) {
+            if (snippet instanceof TSLDocSnippet) {
+                addTSLDoc(((TSLDocSnippet) snippet), true);
+
+            } else if (snippet instanceof TSLTagSnippet) {
+                addTag(((TSLTagSnippet) snippet), language, true);
+
+            } else if (snippet instanceof TSLCaptureSnippet) {
+                addCapture(((TSLCaptureSnippet) snippet), true);
+
+            }
+        }
+
+        for (TSLRule rule : otherRuleset.rules) {
+            addRule(rule, true);
+        }
+
+        importedRulesets.add(otherRuleset.getFile().getAbsolutePath());
     }
 
     /* ----------------------------------------- */

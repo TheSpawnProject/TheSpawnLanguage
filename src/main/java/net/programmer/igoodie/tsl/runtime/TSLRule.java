@@ -43,7 +43,6 @@ public class TSLRule implements Attributable {
         this(ruleset);
         this.setSnippet(snippet);
     }
-
     public TSLAttributeList getAttributeList() {
         return attributeList;
     }
@@ -52,9 +51,7 @@ public class TSLRule implements Attributable {
         return associatedRuleset;
     }
 
-    public void setAssociatedRuleset(TSLRuleset associatedRuleset) {
-        if (this.associatedRuleset != null)
-            throw new IllegalStateException("Ruleset MUST not be re-initialized");
+    protected void setAssociatedRuleset(TSLRuleset associatedRuleset) {
         this.associatedRuleset = associatedRuleset;
     }
 

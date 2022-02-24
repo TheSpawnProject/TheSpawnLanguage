@@ -12,6 +12,7 @@ import java.util.List;
 
 public abstract class TSLSnippet implements Collection<TSLToken> {
 
+    protected String loadedPath;
     protected TSLRuleset ruleset;
     protected List<TSLToken> allTokens;
 
@@ -20,8 +21,16 @@ public abstract class TSLSnippet implements Collection<TSLToken> {
             throw new TSLInternalError("A Snippet MUST have at least one token.");
         }
 
+        this.loadedPath = ruleset.getFile() != null
+                ? ruleset.getFile().getAbsolutePath()
+                : null;
+
         this.ruleset = ruleset;
         this.allTokens = allTokens;
+    }
+
+    public String getLoadedPath() {
+        return loadedPath;
     }
 
     public TSLRuleset getAssociatedRuleset() {

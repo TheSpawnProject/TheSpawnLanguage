@@ -1,10 +1,10 @@
 package net.programmer.igoodie.tsl.definition.attribute;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
-import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.snippet.TSLTagSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
@@ -48,6 +48,6 @@ public abstract class TSLTag extends TSLAttributeGenerator implements TSLRegistr
     @NotNull
     public abstract GoodieObject generateTagAttributes(TSLContext context, TSLPlainWord tagName, List<TSLToken> arguments) throws TSLRuntimeError;
 
-    public void onRulesetBind(TSLParser parser, @NotNull TSLRuleset ruleset, TSLTagSnippet snippet) {}
+    public void onLoaded(TheSpawnLanguage language, @NotNull TSLRuleset ruleset, TSLTagSnippet snippet) {}
 
 }
