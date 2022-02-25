@@ -49,6 +49,40 @@ public abstract class TSLToken {
 
     /* ---------------------------- */
 
+    public boolean isCaptureCall() {
+        return this instanceof TSLCaptureCall;
+    }
+
+    public boolean isCaptureParameter() {
+        return this instanceof TSLCaptureParameter;
+    }
+
+    public boolean isDecoratorCall() {
+        return this instanceof TSLDecoratorCall;
+    }
+
+    public boolean isExpression() {
+        return this instanceof TSLExpression;
+    }
+
+    public boolean isGroup() {
+        return this instanceof TSLGroup;
+    }
+
+    public boolean isNest() {
+        return this instanceof TSLNest;
+    }
+
+    public boolean isPlainWord() {
+        return this instanceof TSLPlainWord;
+    }
+
+    public boolean isSymbol() {
+        return this instanceof TSLSymbol;
+    }
+
+    /* ---------------------------- */
+
     public static List<String> evaluateAll(TSLContext context, List<TSLToken> tokens) {
         return tokens.stream()
                 .map(token -> token.evaluate(context))

@@ -33,12 +33,12 @@ public class ImportTag extends TSLTag {
     }
 
     @Override
-    public void onLoaded(TheSpawnLanguage language, @NotNull TSLRuleset ruleset, TSLTagSnippet snippet) {
+    public void onLoaded(@NotNull TSLRuleset ruleset, TSLTagSnippet snippet) {
         List<TSLToken> arguments = snippet.getTagArgTokens();
 
         if (arguments.size() == 1) {
             TSLToken target = arguments.get(0);
-            loadTarget(language, ruleset, null, target);
+            loadTarget(ruleset.getTsl(), ruleset, null, target);
 
         } else if (arguments.size() == 3) {
             TSLToken alias = arguments.get(0);
@@ -53,15 +53,15 @@ public class ImportTag extends TSLTag {
                 throw new TSLSyntaxError("Unexpected token", keywordFrom);
             }
 
-            loadTarget(language, ruleset, ((TSLPlainWord) alias), target);
+            loadTarget(ruleset.getTsl(), ruleset, ((TSLPlainWord) alias), target);
 
         } else {
             throw new TSLSyntaxError("Unexpected amount of tokens", snippet);
         }
     }
 
-    private void loadTarget(TheSpawnLanguage language, TSLRuleset ruleset, @Nullable TSLPlainWord aliasToken, TSLToken targetToken) {
-        TSLContext context = new TSLContext(language);
+    private void loadTarget(TheSpawnLanguage tsl, TSLRuleset ruleset, @Nullable TSLPlainWord aliasToken, TSLToken targetToken) {
+        TSLContext context = new TSLContext(tsl);
         String alias = aliasToken == null ? null : aliasToken.evaluate(context);
         String target = targetToken.evaluate(context);
 
@@ -72,10 +72,10 @@ public class ImportTag extends TSLTag {
             if (path == null) {
                 throw new TSLSyntaxError("Ruleset cannot be found", targetToken);
             }
-            TSLRuleset otherRuleset = new TSLParser(language).parse(path.toFile());
-            ruleset.importRuleset(otherRuleset, language);
+            TSLRuleset otherRuleset = new TSLParser(tsl).parse(path.toFile());
+            ruleset.importRuleset(otherRuleset);
 
-        } else if (language.getPluginManager().LOADED_PLUGIN_IDS.contains(target)) {
+        } else if (tsl.getPluginManager().LOADED_PLUGIN_IDS.contains(target)) {
             // It is a plugin, load it in
             ruleset.getImportedPlugins().put(alias == null ? target : alias, target);
 

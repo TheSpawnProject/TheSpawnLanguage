@@ -1,7 +1,6 @@
 package net.programmer.igoodie.tsl.definition.attribute;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
-import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
@@ -48,6 +47,6 @@ public abstract class TSLTag extends TSLAttributeGenerator implements TSLRegistr
     @NotNull
     public abstract GoodieObject generateTagAttributes(TSLContext context, TSLPlainWord tagName, List<TSLToken> arguments) throws TSLRuntimeError;
 
-    public void onLoaded(TheSpawnLanguage language, @NotNull TSLRuleset ruleset, TSLTagSnippet snippet) {}
+    public void onLoaded(@NotNull TSLRuleset ruleset, TSLTagSnippet snippet) {}
 
 }

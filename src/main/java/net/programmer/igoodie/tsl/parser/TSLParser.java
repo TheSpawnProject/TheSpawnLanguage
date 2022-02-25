@@ -30,15 +30,15 @@ public class TSLParser {
     private TSLRuleset ruleset;
 
     public TSLParser(TSLContext context) {
-        this(context.getLanguage());
+        this(context.getTsl());
     }
 
     public TSLParser(TheSpawnLanguage tsl) {
         this.tsl = tsl;
-        this.ruleset = new TSLRuleset();
+        this.ruleset = new TSLRuleset(tsl);
     }
 
-    public TheSpawnLanguage getLanguage() {
+    public TheSpawnLanguage getTsl() {
         return tsl;
     }
 
@@ -47,7 +47,7 @@ public class TSLParser {
     }
 
     public TSLRuleset parse(File file) throws TSLSyntaxError {
-        ruleset = new TSLRuleset(file.getName(), file);
+        ruleset = new TSLRuleset(tsl, file.getName(), file);
         return parse(IOUtils.readString(file));
     }
 
@@ -56,7 +56,7 @@ public class TSLParser {
 
         for (TSLSnippetBuffer buffer : lexer.getSnippets()) {
             if (buffer.getType() == TSLSnippetBuffer.Type.TAG) {
-                ruleset.addTag(parseTag(ruleset, buffer), tsl);
+                ruleset.addTag(parseTag(ruleset, buffer));
 
             } else if (buffer.getType() == TSLSnippetBuffer.Type.CAPTURE) {
                 ruleset.addCapture(parseCapture(ruleset, buffer));

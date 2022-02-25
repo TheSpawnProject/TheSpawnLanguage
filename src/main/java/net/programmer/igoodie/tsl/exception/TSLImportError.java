@@ -6,38 +6,38 @@ import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import org.jetbrains.annotations.Nullable;
 
-public class TSLInternalError extends TSLException {
+public class TSLImportError extends TSLException {
 
     @Override
     public String headerString() {
-        return "Internal Error";
+        return "Import Error";
     }
 
-    public TSLInternalError(String reason) {
+    public TSLImportError(String reason) {
         super(reason);
     }
 
-    public TSLInternalError(String reason, TSLRule rule) {
+    public TSLImportError(String reason, TSLRule rule) {
         super(reason, rule);
     }
 
-    public TSLInternalError(String reason, TSLSnippet snippet) {
+    public TSLImportError(String reason, TSLSnippet snippet) {
         super(reason, snippet);
     }
 
-    public TSLInternalError(String reason, TSLSnippetBuffer snippet) {
+    public TSLImportError(String reason, TSLSnippetBuffer snippet) {
         super(reason, snippet);
     }
 
-    public TSLInternalError(String reason, TSLToken token) {
+    public TSLImportError(String reason, TSLToken token) {
         super(reason, token);
     }
 
-    public TSLInternalError(String reason, int line, int character) {
+    public TSLImportError(String reason, int line, int character) {
         super(reason, line, character);
     }
 
-    public TSLInternalError(String reason, @Nullable String filePath, int line, int character) {
+    public TSLImportError(String reason, @Nullable String filePath, int line, int character) {
         super(reason, filePath, line, character);
     }
 

@@ -4,7 +4,7 @@ PRINT DROP diamond ${Math.floor(donation / 10)}
 PRINT ${Math.sin(donation * 123)}
  ON Dummy Event
 
-PRINT ${_.randomOne(_.union(["a"], ["b"], ["c"])}
+PRINT ${_.randomOne(_.union(["a"], ["b"], ["c"]))}
  ON Dummy Event
 
 PRINT ${_.randomOne("a", "b", "c")}

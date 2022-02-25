@@ -6,7 +6,7 @@ import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.function.binding.JSFunctionBinding;
 import net.programmer.igoodie.tsl.function.binding.JSLibraryBinding;
-import net.programmer.igoodie.tsl.function.binding.TSLContextProxy;
+import net.programmer.igoodie.tsl.function.binding.TSLContextGetter;
 import org.mozilla.javascript.*;
 
 import java.util.*;
@@ -77,7 +77,7 @@ public class JSEngine {
 
     public void loadTSLContext(ScriptableObject scope, TSLContext tslContext) {
         if (tslContext != null) {
-            scope.putConst("__context", scope, new TSLContextProxy(tslContext));
+            scope.putConst("__context", scope, new TSLContextGetter(tslContext));
 
             GoodieObject eventArguments = tslContext.getEventArguments();
             if (eventArguments != null) {
@@ -92,8 +92,15 @@ public class JSEngine {
     /* ------------------------------------ */
 
     public String evaluate(String script, TSLContext tslContext) throws EcmaError {
-        Scriptable scope = tslContext.getRuleScope();
-        return evaluate(script, scope == null ? getGlobalScope() : scope);
+        ScriptableObject scope = tslContext.getRuleScope() == null
+                ? createChildScope()
+                : tslContext.getRuleScope();
+
+        if (!scope.has("__context", scope)) {
+            loadTSLContext(scope, tslContext);
+        }
+
+        return evaluate(script, scope);
     }
 
     public String evaluate(String script) throws EcmaError {

@@ -1,55 +1,44 @@
 package net.programmer.igoodie.tsl.exception;
 
+import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
 import org.jetbrains.annotations.Nullable;
 
-public class TSLRuntimeError extends RuntimeException {
+public class TSLRuntimeError extends TSLException {
 
-    protected String filePath;
-    protected int line, character;
-    protected @Nullable TSLToken associatedToken;
+    @Override
+    public String headerString() {
+        return "Runtime Error";
+    }
+
+    public TSLRuntimeError(String reason) {
+        super(reason);
+    }
+
+    public TSLRuntimeError(String reason, TSLRule rule) {
+        super(reason, rule);
+    }
+
+    public TSLRuntimeError(String reason, TSLSnippet snippet) {
+        super(reason, snippet);
+    }
 
     public TSLRuntimeError(String reason, TSLSnippetBuffer snippet) {
-        this(reason, snippet.getTokens().get(0));
+        super(reason, snippet);
     }
 
     public TSLRuntimeError(String reason, TSLToken token) {
-        this(reason, null, token.getLine(), token.getCharacter());
-        associatedToken = token;
+        super(reason, token);
     }
 
     public TSLRuntimeError(String reason, int line, int character) {
-        this(reason, null, line + 1, character + 1);
+        super(reason, line, character);
     }
 
-    public TSLRuntimeError(String reason, String filePath, int line, int character) {
-        super(reason);
-        this.line = line;
-        this.character = character;
-        this.filePath = filePath;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public int getLine() {
-        return line;
-    }
-
-    public int getCharacter() {
-        return character;
-    }
-
-    public @Nullable TSLToken getAssociatedToken() {
-        return associatedToken;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Runtime Error: %s @ (line:%d, char:%d) %s",
-                getMessage(), line, character, filePath == null ? "" : filePath);
+    public TSLRuntimeError(String reason, @Nullable String filePath, int line, int character) {
+        super(reason, filePath, line, character);
     }
 
 }

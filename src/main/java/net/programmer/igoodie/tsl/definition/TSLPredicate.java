@@ -20,7 +20,7 @@ public abstract class TSLPredicate extends TSLDefinition implements TSLRegistrab
         return getName();
     }
 
-    public abstract boolean formatMatches(TheSpawnLanguage language, TSLEvent event, List<TSLToken> tokens) throws TSLSyntaxError;
+    public abstract boolean formatMatches(TheSpawnLanguage tsl, TSLEvent event, List<TSLToken> tokens) throws TSLSyntaxError;
 
     public abstract boolean satisfies(TSLContext context, List<TSLToken> tokens);
 

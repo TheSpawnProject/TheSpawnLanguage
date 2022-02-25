@@ -30,7 +30,7 @@ public class TSLExpression extends TSLToken {
     @Override
     public String evaluate(TSLContext context) {
         try {
-            return context.getLanguage().getJsEngine().evaluate(expression, context);
+            return context.getTsl().getJsEngine().evaluate(expression, context);
         } catch (EcmaError | TSLExpressionException error) {
             return "#!ERROR!#";
         }

@@ -27,7 +27,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
     }
 
     @Override
-    public boolean formatMatches(TheSpawnLanguage language, TSLEvent event, List<TSLToken> tokens) throws TSLSyntaxError {
+    public boolean formatMatches(TheSpawnLanguage tsl, TSLEvent event, List<TSLToken> tokens) throws TSLSyntaxError {
         if (tokens.size() < 3) {
             return false;
         }
@@ -44,7 +44,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
             throw new TSLSyntaxError("Unknown field for the event -> " + eventFieldToken, eventFieldToken);
         }
 
-        Couple<TSLComparator, Integer> couple = longestMatchingComparator(language, tokens);
+        Couple<TSLComparator, Integer> couple = longestMatchingComparator(tsl, tokens);
         TSLComparator comparator = couple.getFirst();
         Integer argsTokenIndex = couple.getSecond();
 
@@ -61,7 +61,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
 
         checkFieldValueType(context, fieldNameToken);
 
-        Couple<TSLComparator, Integer> couple = longestMatchingComparator(context.getLanguage(), tokens);
+        Couple<TSLComparator, Integer> couple = longestMatchingComparator(context.getTsl(), tokens);
         TSLComparator comparator = couple.getFirst();
         Integer argsTokenIndex = couple.getSecond();
 
@@ -89,7 +89,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
         }
     }
 
-    private Couple<TSLComparator, Integer> longestMatchingComparator(TheSpawnLanguage language, List<TSLToken> tokens) {
+    private Couple<TSLComparator, Integer> longestMatchingComparator(TheSpawnLanguage tsl, List<TSLToken> tokens) {
         StringBuilder comparatorId = new StringBuilder();
         TSLComparator longestMatch = null;
         int argsTokenIndex = -1;
@@ -100,7 +100,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
             if (comparatorId.length() != 0) comparatorId.append(" ");
             comparatorId.append(StringUtilities.allUpper(token.getRaw()));
 
-            TSLComparator comparator = language.COMPARATOR_REGISTRY.get(comparatorId.toString());
+            TSLComparator comparator = tsl.COMPARATOR_REGISTRY.get(comparatorId.toString());
             if (comparator != null) {
                 longestMatch = comparator;
                 argsTokenIndex = i + 1;

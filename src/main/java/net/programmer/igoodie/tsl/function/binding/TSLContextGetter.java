@@ -6,11 +6,11 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.Undefined;
 
-public final class TSLContextProxy extends BaseFunction {
+public final class TSLContextGetter extends BaseFunction {
 
     private final TSLContext tslContext;
 
-    public TSLContextProxy(TSLContext tslContext) {
+    public TSLContextGetter(TSLContext tslContext) {
         this.tslContext = tslContext;
     }
 

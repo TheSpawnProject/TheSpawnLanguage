@@ -9,14 +9,14 @@ import org.mozilla.javascript.ScriptableObject;
 
 public class TSLContext {
 
-    protected TheSpawnLanguage language;
+    protected TheSpawnLanguage tsl;
 
-    public TSLContext(TheSpawnLanguage language) {
-        this.language = language;
+    public TSLContext(TheSpawnLanguage tsl) {
+        this.tsl = tsl;
     }
 
-    public TheSpawnLanguage getLanguage() {
-        return language;
+    public TheSpawnLanguage getTsl() {
+        return tsl;
     }
 
     /* ----------------------------------- */

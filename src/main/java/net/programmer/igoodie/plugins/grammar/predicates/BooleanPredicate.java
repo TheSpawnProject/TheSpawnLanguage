@@ -18,7 +18,7 @@ public class BooleanPredicate extends TSLPredicate {
     }
 
     @Override
-    public boolean formatMatches(TheSpawnLanguage language, TSLEvent event, List<TSLToken> tokens) {
+    public boolean formatMatches(TheSpawnLanguage tsl, TSLEvent event, List<TSLToken> tokens) {
         return tokens.size() == 1;
     }
 

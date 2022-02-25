@@ -58,10 +58,12 @@ public class RunScriptFunction extends TSLFunction {
             return Undefined.instance;
         }
 
-        JSEngine jsEngine = tslContext.getLanguage().getJsEngine();
+        JSEngine jsEngine = tslContext.getTsl().getJsEngine();
 
-        String wrappedScript = String.format("(function(){%s})()",
-                readScript.replace("tslReturn", "return"));
+//        String wrappedScript = String.format("(function(){%s})()",
+//                readScript.replace("tslReturn", "return"));
+
+        String wrappedScript = readScript;
 
         return jsEngine.evaluate(wrappedScript, scope);
     }

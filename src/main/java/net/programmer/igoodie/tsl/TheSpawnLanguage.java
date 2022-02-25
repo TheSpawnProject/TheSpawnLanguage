@@ -1,16 +1,22 @@
 package net.programmer.igoodie.tsl;
 
 import com.vdurmont.semver4j.Semver;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.plugins.events.common.CommonEvents;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.plugins.library.TSLUtilitiesLibrary;
+import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.function.JSEngine;
+import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManager;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
+
+import java.io.File;
 
 public class TheSpawnLanguage {
 
@@ -57,6 +63,18 @@ public class TheSpawnLanguage {
 
     public TSLPluginManager getPluginManager() {
         return pluginManager;
+    }
+
+    public TSLRuleset loadRuleset(File file) {
+        TSLParser parser = new TSLParser(this);
+        return parser.parse(file);
+    }
+
+    public boolean perform(TSLRuleset ruleset, TSLEvent event, GoodieObject eventArguments) {
+        TSLContext context = new TSLContext(this);
+        context.setEvent(event);
+        context.setEventArguments(eventArguments);
+        return ruleset.perform(context);
     }
 
 }

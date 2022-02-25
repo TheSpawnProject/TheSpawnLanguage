@@ -29,7 +29,7 @@ public class TSLGroup extends TSLToken {
     @Override
     public String evaluate(TSLContext context) {
         return ExpressionUtils.replaceExpressions(group, (expression) ->
-                context.getLanguage().getJsEngine().evaluate(expression, context));
+                context.getTsl().getJsEngine().evaluate(expression, context));
     }
 
 }

@@ -16,15 +16,18 @@ import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.attribute.Attributable;
 import net.programmer.igoodie.tsl.runtime.attribute.TSLAttributeList;
 import net.programmer.igoodie.tsl.runtime.hook.HookList;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
 
 public class TSLRuleset implements Attributable {
 
-    protected String name;
-    protected File file;
+    protected @Nullable String name;
+    protected @Nullable File file;
     protected List<TSLSnippet> snippets;
+
+    protected TheSpawnLanguage tsl;
 
     protected TSLAttributeList attributeList;
 
@@ -37,14 +40,15 @@ public class TSLRuleset implements Attributable {
 
     protected HookList hookList;
 
-    public TSLRuleset() {
-        this(null, null);
+    public TSLRuleset(TheSpawnLanguage tsl) {
+        this(tsl, null, null);
     }
 
-    public TSLRuleset(String name, File file) {
+    public TSLRuleset(TheSpawnLanguage tsl, @Nullable String name, @Nullable File file) {
         this.name = name;
         this.file = file;
         this.snippets = new LinkedList<>();
+        this.tsl = tsl;
         this.rules = new LinkedList<>();
         this.tslDocs = new HashMap<>();
         this.captures = new HashMap<>();
@@ -54,16 +58,20 @@ public class TSLRuleset implements Attributable {
         this.hookList = new HookList();
     }
 
-    public String getName() {
+    public @Nullable String getName() {
         return name;
     }
 
-    public File getFile() {
+    public @Nullable File getFile() {
         return file;
     }
 
     public List<TSLSnippet> getSnippets() {
         return Collections.unmodifiableList(snippets);
+    }
+
+    public TheSpawnLanguage getTsl() {
+        return tsl;
     }
 
     public HookList getHookList() {
@@ -126,24 +134,24 @@ public class TSLRuleset implements Attributable {
         tslDocs.put(tslDocSnippet.getBeginningLine(), tslDocSnippet);
     }
 
-    public void addTag(TSLTagSnippet tagSnippet, TheSpawnLanguage language) {
-        addTag(tagSnippet, language, false);
+    public void addTag(TSLTagSnippet tagSnippet) {
+        addTag(tagSnippet, false);
     }
 
-    public void addTag(TSLTagSnippet tagSnippet, TheSpawnLanguage language, boolean outsource) {
+    public void addTag(TSLTagSnippet tagSnippet, boolean outsource) {
         TSLTag tagDefinition = tagSnippet.getTagDefinition();
         TSLPlainWord nameToken = tagSnippet.getTagNameToken();
         List<TSLToken> arguments = tagSnippet.getTagArgTokens();
 
         if (!outsource) snippets.add(tagSnippet);
 
-        this.attributeList.loadTag(new TSLContext(language),
+        this.attributeList.loadTag(new TSLContext(tsl),
                 tagDefinition,
                 nameToken,
                 arguments
         );
 
-        tagDefinition.onLoaded(language, this, tagSnippet);
+        tagDefinition.onLoaded(this, tagSnippet);
     }
 
     public void addCapture(TSLCaptureSnippet captureSnippet) {
@@ -170,13 +178,13 @@ public class TSLRuleset implements Attributable {
         this.rules.add(rule);
     }
 
-    public void importRuleset(TSLRuleset otherRuleset, TheSpawnLanguage language) {
+    public void importRuleset(TSLRuleset otherRuleset) {
         for (TSLSnippet snippet : otherRuleset.getSnippets()) {
             if (snippet instanceof TSLDocSnippet) {
                 addTSLDoc(((TSLDocSnippet) snippet), true);
 
             } else if (snippet instanceof TSLTagSnippet) {
-                addTag(((TSLTagSnippet) snippet), language, true);
+                addTag(((TSLTagSnippet) snippet), true);
 
             } else if (snippet instanceof TSLCaptureSnippet) {
                 addCapture(((TSLCaptureSnippet) snippet), true);
@@ -194,11 +202,14 @@ public class TSLRuleset implements Attributable {
     /* ----------------------------------------- */
 
     public boolean perform(TSLContext context) {
+        if (context.getTsl() != this.tsl) {
+            throw new TSLRuntimeError("Cannot perform() within different container");
+        }
+
         context.setMessageToken(null);
 
         boolean performed = false;
         for (TSLRule rule : rules) {
-            context.setRule(rule);
             performed |= rule.perform(context);
         }
         return performed;

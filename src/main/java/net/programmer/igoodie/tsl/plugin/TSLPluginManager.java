@@ -18,13 +18,13 @@ public class TSLPluginManager {
 
     public static final Map<String, TSLPlugin> LOADED_PATHS = new HashMap<>();
 
-    private final TheSpawnLanguage language;
+    private final TheSpawnLanguage tsl;
 
     public final Set<TSLPlugin> LOADED_PLUGINS;
     public final Set<String> LOADED_PLUGIN_IDS;
 
-    public TSLPluginManager(TheSpawnLanguage language) {
-        this.language = language;
+    public TSLPluginManager(TheSpawnLanguage tsl) {
+        this.tsl = tsl;
         LOADED_PLUGIN_IDS = new HashSet<>();
         LOADED_PLUGINS = new HashSet<>();
     }
@@ -72,13 +72,13 @@ public class TSLPluginManager {
 
         assignAnnotatedFields(plugin);
 
-        plugin.registerTags(language.TAG_REGISTRY);
-        plugin.registerDecorators(language.DECORATOR_REGISTRY);
-        plugin.registerEvents(language.EVENT_REGISTRY);
-        plugin.registerActions(language.ACTION_REGISTRY);
-        plugin.registerPredicates(language.PREDICATE_REGISTRY);
-        plugin.registerComparators(language.COMPARATOR_REGISTRY);
-        plugin.registerFunctions(language.FUNCTION_REGISTRY);
+        plugin.registerTags(tsl.TAG_REGISTRY);
+        plugin.registerDecorators(tsl.DECORATOR_REGISTRY);
+        plugin.registerEvents(tsl.EVENT_REGISTRY);
+        plugin.registerActions(tsl.ACTION_REGISTRY);
+        plugin.registerPredicates(tsl.PREDICATE_REGISTRY);
+        plugin.registerComparators(tsl.COMPARATOR_REGISTRY);
+        plugin.registerFunctions(tsl.FUNCTION_REGISTRY);
         LOADED_PLUGIN_IDS.add(pluginId);
         LOADED_PLUGINS.add(plugin);
     }

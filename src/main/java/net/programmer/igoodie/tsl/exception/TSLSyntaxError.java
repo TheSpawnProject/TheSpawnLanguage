@@ -6,60 +6,39 @@ import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import org.jetbrains.annotations.Nullable;
 
-public class TSLSyntaxError extends RuntimeException {
+public class TSLSyntaxError extends TSLException {
 
-    protected String filePath;
-    protected int line, character;
-    protected @Nullable TSLToken associatedToken;
-
-    public TSLSyntaxError(String reason, TSLSnippet snippet) {
-        this(reason, snippet.getAllTokens().get(0));
+    @Override
+    public String headerString() {
+        return "Syntax Error";
     }
 
-    public TSLSyntaxError(String reason, TSLSnippetBuffer snippetBuffer) {
-        this(reason, snippetBuffer.getTokens().get(0));
+    public TSLSyntaxError(String reason) {
+        super(reason);
     }
 
     public TSLSyntaxError(String reason, TSLRule rule) {
-        this(reason, rule.getSnippet().getAllTokens().get(0));
+        super(reason, rule);
+    }
+
+    public TSLSyntaxError(String reason, TSLSnippet snippet) {
+        super(reason, snippet);
+    }
+
+    public TSLSyntaxError(String reason, TSLSnippetBuffer snippet) {
+        super(reason, snippet);
     }
 
     public TSLSyntaxError(String reason, TSLToken token) {
-        this(reason, null, token.getLine(), token.getCharacter());
-        associatedToken = token;
+        super(reason, token);
     }
 
     public TSLSyntaxError(String reason, int line, int character) {
-        this(reason, null, line + 1, character + 1);
+        super(reason, line, character);
     }
 
-    public TSLSyntaxError(String reason, String filePath, int line, int character) {
-        super(reason);
-        this.line = line;
-        this.character = character;
-        this.filePath = filePath;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public int getLine() {
-        return line;
-    }
-
-    public int getCharacter() {
-        return character;
-    }
-
-    public @Nullable TSLToken getAssociatedToken() {
-        return associatedToken;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Syntax Error: %s @ (line:%d, char:%d) %s",
-                getMessage(), line, character, filePath == null ? "" : filePath);
+    public TSLSyntaxError(String reason, @Nullable String filePath, int line, int character) {
+        super(reason, filePath, line, character);
     }
 
 }

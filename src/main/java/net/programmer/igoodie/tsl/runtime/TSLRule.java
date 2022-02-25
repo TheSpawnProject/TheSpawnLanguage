@@ -93,7 +93,7 @@ public class TSLRule implements Attributable {
 
         context.setAttributes(getOverriddenAttributes());
 
-        JSEngine jsEngine = context.getLanguage().getJsEngine();
+        JSEngine jsEngine = context.getTsl().getJsEngine();
         ScriptableObject scope = jsEngine.createChildScope();
         jsEngine.loadTSLContext(scope, context);
         context.setRuleScope(scope);
