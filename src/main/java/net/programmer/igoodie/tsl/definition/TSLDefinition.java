@@ -1,17 +1,15 @@
 package net.programmer.igoodie.tsl.definition;
 
-import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
-import org.jetbrains.annotations.Nullable;
+import net.programmer.igoodie.tsl.registry.TSLRegistrable;
+import net.programmer.igoodie.tsl.util.LSPFeatures;
 
-import java.util.List;
-
-public abstract class TSLDefinition {
+public abstract class TSLDefinition implements TSLRegistrable, LSPFeatures {
 
     protected TSLPlugin plugin;
     protected String name;
@@ -29,9 +27,9 @@ public abstract class TSLDefinition {
         return name;
     }
 
-    @Nullable
-    public List<Couple<String, String>> getCompletionSnippets() {
-        return null;
+    @Override
+    public String getRegistryId() {
+        return getName();
     }
 
     @Override

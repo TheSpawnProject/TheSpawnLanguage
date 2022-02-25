@@ -4,7 +4,6 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
-import net.programmer.igoodie.tsl.registry.TSLRegistrable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,15 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class TSLEvent extends TSLDefinition implements TSLRegistrable {
+public abstract class TSLEvent extends TSLDefinition {
 
     public TSLEvent(TSLPlugin plugin, String name) {
         super(plugin, StringUtilities.upperFirstLetters(name));
-    }
-
-    @Override
-    public String getRegistryId() {
-        return getName();
     }
 
     @Override

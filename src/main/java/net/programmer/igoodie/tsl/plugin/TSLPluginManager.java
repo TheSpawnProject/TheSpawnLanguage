@@ -78,7 +78,7 @@ public class TSLPluginManager {
         plugin.registerActions(tsl.ACTION_REGISTRY);
         plugin.registerPredicates(tsl.PREDICATE_REGISTRY);
         plugin.registerComparators(tsl.COMPARATOR_REGISTRY);
-        plugin.registerFunctions(tsl.FUNCTION_REGISTRY);
+        plugin.registerFunctionLibraries(tsl.FUNC_LIBRARY_REGISTRY);
         LOADED_PLUGIN_IDS.add(pluginId);
         LOADED_PLUGINS.add(plugin);
     }

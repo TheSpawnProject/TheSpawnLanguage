@@ -7,21 +7,15 @@ import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
-import net.programmer.igoodie.tsl.registry.TSLRegistrable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 // @decorator(arg1,arg2)
-public abstract class TSLDecorator extends TSLAttributeGenerator implements TSLRegistrable {
+public abstract class TSLDecorator extends TSLAttributeGenerator {
 
     public TSLDecorator(TSLPlugin plugin, String name) {
         super(plugin, name);
-    }
-
-    @Override
-    public String getRegistryId() {
-        return getName();
     }
 
     @NotNull

@@ -1,44 +1,37 @@
-package net.programmer.igoodie.tsl.definition;
+package net.programmer.igoodie.tsl.function;
 
 import net.programmer.igoodie.goodies.util.TypeUtilities;
 import net.programmer.igoodie.goodies.util.accessor.ArrayAccessor;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
-import net.programmer.igoodie.tsl.function.binding.JSFunctionBinding;
-import net.programmer.igoodie.tsl.plugin.TSLPlugin;
-import net.programmer.igoodie.tsl.registry.TSLRegistrable;
+import net.programmer.igoodie.tsl.function.binding.TSLContextGetter;
+import net.programmer.igoodie.tsl.util.LSPFeatures;
+import org.mozilla.javascript.BaseFunction;
+import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
 import java.util.Optional;
 
-public abstract class TSLFunction extends TSLDefinition implements TSLRegistrable {
-
-    public TSLFunction(TSLPlugin plugin, String name) {
-        super(plugin, name);
-    }
+public abstract class TSLFunction extends BaseFunction implements LSPFeatures {
 
     @Override
-    public final String getRegistryId() {
+    public final String getFunctionName() {
         return getName();
     }
 
-    public abstract Object calculate(TSLContext tslContext, Scriptable scope, Object... arguments) throws TSLExpressionException;
-
-    public final JSFunctionBinding getBinding() {
-        return new JSFunctionBinding() {
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public Calculator getCalculator() {
-                return TSLFunction.this::calculate;
-            }
-        };
+    @Override
+    public final Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
+        Object result = scope.get("__context", scope);
+        TSLContextGetter contextGetter = (TSLContextGetter) result;
+        TSLContext tslContext = (TSLContext) contextGetter.call(cx, scope, thisObj, args);
+        return call(tslContext, scope, args);
     }
 
-    /* ----------------------------------- */
+    public abstract String getName();
+
+    public abstract Object call(TSLContext context, Scriptable scope, Object... arguments) throws TSLExpressionException;
+
+    /* --------------------------------- */
 
     protected String stringArgument(Object[] args, int index) {
         return stringArgumentOpt(args, index).orElseThrow(

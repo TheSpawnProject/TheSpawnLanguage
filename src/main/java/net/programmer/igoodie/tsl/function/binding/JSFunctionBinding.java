@@ -26,7 +26,7 @@ public abstract class JSFunctionBinding extends BaseFunction {
 
     @FunctionalInterface
     public interface Calculator {
-        Object calculate(TSLContext tslContext, Scriptable scope, Object... arguments) throws TSLExpressionException;
+        Object calculate(TSLContext context, Scriptable scope, Object... arguments) throws TSLExpressionException;
     }
 
 }

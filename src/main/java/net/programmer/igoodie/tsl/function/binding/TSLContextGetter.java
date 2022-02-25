@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.function.binding;
 
 import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.function.TSLFunction;
 import org.mozilla.javascript.BaseFunction;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -27,7 +28,7 @@ public final class TSLContextGetter extends BaseFunction {
      */
     private boolean canAccess() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        String targetClass = JSFunctionBinding.class.getCanonicalName();
+        String targetClass = TSLFunction.class.getCanonicalName();
         for (StackTraceElement traceElement : stackTrace) {
             if (traceElement.getClassName().equalsIgnoreCase(targetClass)) {
                 return true;

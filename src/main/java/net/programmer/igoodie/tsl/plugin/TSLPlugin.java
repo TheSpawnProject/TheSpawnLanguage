@@ -44,6 +44,6 @@ public abstract class TSLPlugin {
 
     public void registerPredicates(TSLRegistry<TSLPredicate> registry) {}
 
-    public void registerFunctions(TSLRegistry<TSLFunction> registry) {}
+    public void registerFunctionLibraries(TSLRegistry<TSLFunctionLibrary> registry) {}
 
 }

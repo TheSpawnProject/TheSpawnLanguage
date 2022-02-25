@@ -1,23 +1,22 @@
-package example.plugin.functions;
+package net.programmer.igoodie.plugins.spawnjs.corelib.functions;
 
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.TSLFunction;
 import org.mozilla.javascript.Scriptable;
 
-public class MultFunction extends TSLFunction {
+public class RequireFunction extends TSLFunction {
 
-    public static final MultFunction INSTANCE = new MultFunction();
+    public static final RequireFunction INSTANCE = new RequireFunction();
 
     @Override
     public String getName() {
-        return "_mult";
+        return "require";
     }
 
     @Override
     public Object call(TSLContext context, Scriptable scope, Object... arguments) throws TSLExpressionException {
-        Number a = numberArgument(arguments, 0);
-        Number b = numberArgument(arguments, 1);
-        return a.doubleValue() * b.doubleValue();
+        return null; // TODO
     }
+
 }

@@ -5,18 +5,20 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.plugins.events.common.CommonEvents;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
-import net.programmer.igoodie.plugins.library.TSLUtilitiesLibrary;
+import net.programmer.igoodie.plugins.spawnjs.SpawnJS;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
 import net.programmer.igoodie.tsl.function.JSEngine;
+import net.programmer.igoodie.tsl.function.TSLFunctionsCorelib;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManager;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 
 import java.io.File;
+import java.util.Map;
 
 public class TheSpawnLanguage {
 
@@ -29,7 +31,8 @@ public class TheSpawnLanguage {
     public final TSLRegistry<TSLAction> ACTION_REGISTRY;
     public final TSLRegistry<TSLPredicate> PREDICATE_REGISTRY;
     public final TSLRegistry<TSLComparator> COMPARATOR_REGISTRY;
-    public final TSLRegistry<TSLFunction> FUNCTION_REGISTRY;
+    public final TSLRegistry<TSLFunctionLibrary> FUNC_LIBRARY_REGISTRY;
+    private final TSLRegistry<TSLFunctionsCorelib> FUNC_CORELIB_REGISTRY;
 
     protected final JSEngine jsEngine;
     protected final TSLPluginManager pluginManager;
@@ -41,20 +44,28 @@ public class TheSpawnLanguage {
         ACTION_REGISTRY = new TSLRegistry<>(StringUtilities::allUpper);
         PREDICATE_REGISTRY = TSLRegistry.createWithCapacity(2);
         COMPARATOR_REGISTRY = new TSLRegistry<>(StringUtilities::allUpper);
-        FUNCTION_REGISTRY = new TSLRegistry<TSLFunction>() {
+        FUNC_CORELIB_REGISTRY = new TSLRegistry<>();
+        FUNC_LIBRARY_REGISTRY = new TSLRegistry<TSLFunctionLibrary>() {
             @Override
-            public void postRegister(TSLFunction function) {
-                jsEngine.loadFunction(function);
+            public void postRegister(TSLFunctionLibrary entry) {
+                if (entry instanceof TSLFunctionsCorelib) {
+                    TSLFunctionsCorelib corelib = (TSLFunctionsCorelib) entry;
+                    FUNC_CORELIB_REGISTRY.register(corelib);
+                }
             }
         };
 
         jsEngine = new JSEngine();
         jsEngine.defineConst("$TSL_VERSION", TSL_VERSION);
-        jsEngine.loadLibrary(new TSLUtilitiesLibrary());
 
         pluginManager = new TSLPluginManager(this);
         pluginManager.loadPlugin(new TSLGrammarCore());
+        pluginManager.loadPlugin(new SpawnJS());
         pluginManager.loadPlugin(new CommonEvents());
+
+        for (Map.Entry<String, TSLFunctionsCorelib> corelibEntry : FUNC_CORELIB_REGISTRY) {
+            jsEngine.loadCoreLibrary(corelibEntry.getValue());
+        }
     }
 
     public JSEngine getJsEngine() {

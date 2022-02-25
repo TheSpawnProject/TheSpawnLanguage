@@ -1,15 +1,19 @@
 package net.programmer.igoodie.tsl.function;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
-import net.programmer.igoodie.tsl.definition.TSLFunction;
-import net.programmer.igoodie.tsl.function.binding.JSFunctionBinding;
-import net.programmer.igoodie.tsl.function.binding.JSLibraryBinding;
+import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
+import net.programmer.igoodie.tsl.exception.TSLImportError;
 import net.programmer.igoodie.tsl.function.binding.TSLContextGetter;
+import net.programmer.igoodie.tsl.util.AccessUtils;
 import org.mozilla.javascript.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.WeakHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,8 +23,6 @@ public class JSEngine {
     private static final Map<Context, ScriptableObject> GLOBALS = new WeakHashMap<>();
 
     private final Map<String, Object> definedConsts = new HashMap<>();
-    private final List<JSLibraryBinding> loadedLibraries = new LinkedList<>();
-    private final List<TSLFunction> loadedFunctions = new LinkedList<>();
 
     public JSEngine() {}
 
@@ -48,21 +50,29 @@ public class JSEngine {
         definedConsts.put(name, value);
     }
 
-    public void loadLibrary(JSLibraryBinding library) {
-        ScriptableObject globalScope = getGlobalScope();
-        if (globalScope.has(library.getName(), globalScope)) return;
-        globalScope.put(library.getName(), globalScope, library);
-        loadedLibraries.add(library);
+    public void loadLibrary(ScriptableObject scope, String namespace, TSLFunctionLibrary library) {
+        NativeObject libraryObject = scope.has(namespace, scope)
+                ? ((NativeObject) scope.get(namespace))
+                : new NativeObject();
+        library.composeLibrary(libraryObject);
+        scope.put(namespace, scope, libraryObject);
     }
 
-    public void loadFunction(TSLFunction function) {
+    public void loadCoreLibrary(TSLFunctionLibrary coreLibrary) {
+        Class<?> accessedFromClass = AccessUtils.accessedFromClass(JSEngine.class);
+
+        if (accessedFromClass != TheSpawnLanguage.class) {
+            throw new TSLImportError("Core JS libraries cannot be loaded externally");
+        }
+
         ScriptableObject globalScope = getGlobalScope();
-        JSFunctionBinding binding = function.getBinding();
-        int attributes = ScriptableObject.PERMANENT
-                | ScriptableObject.DONTENUM
-                | ScriptableObject.READONLY;
-        globalScope.defineProperty(function.getName(), binding, attributes);
-        loadedFunctions.add(function);
+        NativeObject libraryObject = new NativeObject();
+        coreLibrary.composeLibrary(libraryObject);
+
+        for (Object key : libraryObject.keySet()) {
+            Object value = libraryObject.get(key);
+            globalScope.put(key.toString(), globalScope, value);
+        }
     }
 
     public ScriptableObject createChildScope() {

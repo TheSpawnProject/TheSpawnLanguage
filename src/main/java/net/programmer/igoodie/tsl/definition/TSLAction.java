@@ -8,7 +8,6 @@ import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
-import net.programmer.igoodie.tsl.registry.TSLRegistrable;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -16,15 +15,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public abstract class TSLAction extends TSLDefinition implements TSLRegistrable {
+public abstract class TSLAction extends TSLDefinition {
 
     public TSLAction(TSLPlugin plugin, String name) {
         super(plugin, StringUtilities.upperSnake(name));
-    }
-
-    @Override
-    public String getRegistryId() {
-        return getName();
     }
 
     public abstract String getUsage();

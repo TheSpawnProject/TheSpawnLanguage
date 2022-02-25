@@ -2,7 +2,6 @@ package old.automated;
 
 import example.plugin.ExamplePlugin;
 import example.plugin.event.DummyEvent;
-import example.plugin.functions.MaximumOfFunction;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
@@ -48,7 +47,7 @@ public class JSEngineTests {
 
         JSEngine jsEngine = language.getJsEngine();
         jsEngine.defineConst("PI", 3.14);
-        jsEngine.loadFunction(MaximumOfFunction.INSTANCE);
+//        jsEngine.loadFunction(MaximumOfFunction.INSTANCE);
 
         String script = "runScript('./src/test/resources/rhino/module.test.js')";
 

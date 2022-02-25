@@ -21,11 +21,6 @@ public abstract class TSLTag extends TSLAttributeGenerator implements TSLRegistr
         super(plugin, name);
     }
 
-    @Override
-    public String getRegistryId() {
-        return getName();
-    }
-
     @NotNull
     @Override
     public final GoodieObject generateAttributes(TSLContext context, List<TSLToken> tokens) throws TSLRuntimeError {

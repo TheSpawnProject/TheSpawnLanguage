@@ -1,11 +1,10 @@
-package net.programmer.igoodie.plugins.grammar.functions;
+package net.programmer.igoodie.plugins.spawnjs.corelib.functions;
 
 import net.programmer.igoodie.goodies.util.Couple;
-import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.context.TSLContext;
-import net.programmer.igoodie.tsl.definition.TSLFunction;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.JSEngine;
+import net.programmer.igoodie.tsl.function.TSLFunction;
 import net.programmer.igoodie.tsl.util.IOUtils;
 import org.jetbrains.annotations.Nullable;
 import org.mozilla.javascript.Scriptable;
@@ -24,8 +23,12 @@ public class RunScriptFunction extends TSLFunction {
     private boolean rootFolderSet;
 
     private RunScriptFunction(String relativeFolder) {
-        super(TSLGrammarCore.PLUGIN_INSTANCE, "runScript");
         this.rootFolder = relativeFolder;
+    }
+
+    @Override
+    public String getName() {
+        return "runScript";
     }
 
     /**
@@ -48,7 +51,7 @@ public class RunScriptFunction extends TSLFunction {
     }
 
     @Override
-    public Object calculate(TSLContext tslContext, Scriptable scope, Object... arguments) throws TSLExpressionException {
+    public Object call(TSLContext context, Scriptable scope, Object... arguments) throws TSLExpressionException {
         String scriptPath = stringArgument(arguments, 0);
 
         String readScript = IOUtils.readString(isAbsolutePath(scriptPath)
@@ -58,7 +61,7 @@ public class RunScriptFunction extends TSLFunction {
             return Undefined.instance;
         }
 
-        JSEngine jsEngine = tslContext.getTsl().getJsEngine();
+        JSEngine jsEngine = context.getTsl().getJsEngine();
 
 //        String wrappedScript = String.format("(function(){%s})()",
 //                readScript.replace("tslReturn", "return"));
