@@ -1,7 +1,7 @@
 package old.automated;
 
 import net.programmer.igoodie.legacy.parser.TSLLexerOld;
-import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
+import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
 
@@ -18,7 +18,7 @@ public class LexerRefactorTests {
 
         System.out.println("Snippet count = " + lexer.getSnippets().size());
 
-        for (TSLSnippetBuffer snippet : lexer.getSnippets()) {
+        for (TSLTokenBuffer snippet : lexer.getSnippets()) {
             System.out.println(snippet);
         }
     }

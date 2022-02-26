@@ -2,54 +2,35 @@ package automated;
 
 import example.plugin.ExamplePlugin;
 import example.plugin.event.DummyEvent;
-import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.plugins.grammar.events.ManualTriggerEvent;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
 
-import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class RulesetTests {
 
-    private static TheSpawnLanguage TSL;
-
-    @BeforeAll
-    public static void init() {
-        TSL = new TheSpawnLanguage();
-        TSL.getPluginManager().loadPlugin(new ExamplePlugin());
-    }
-
     @Test
-    public void ruleset1() throws IOException {
-        String script = TestUtils.loadTSLScript("ruleset.test.tsl");
+    public void importsShouldNotCrash() throws URISyntaxException {
+        TheSpawnLanguage tsl = new TheSpawnLanguage();
+        tsl.getPluginManager().loadPlugin(new ExamplePlugin());
 
-        TSLParser parser = new TSLParser(TSL);
-        TSLRuleset ruleset = parser.parse(script);
+        TSLParser parser = new TSLParser(tsl);
+        TSLRuleset ruleset = parser.parse(TestUtils.scriptPath("test.import.tsl"));
 
-        System.out.println("Snippet Length: " + ruleset.getSnippets().size());
+        TSLContext context;
 
-        for (TSLSnippet snippet : ruleset.getSnippets()) {
-            System.out.println(snippet);
-        }
-
-        GoodieObject eventArguments = new GoodieObject();
-        eventArguments.put("time", 5);
-
-        TSLContext context = new TSLContext(TSL);
-        context.setEvent(DummyEvent.INSTANCE);
-        context.setEventArguments(eventArguments);
-
-        System.out.println("Event: " + context.getEvent());
-        System.out.println("Args: " + eventArguments);
-
+        context = new TSLContext(tsl);
+        context.setEvent(ManualTriggerEvent.INSTANCE);
         ruleset.perform(context);
 
-        System.out.println("DISPLAY: " + context.getMessageToken());
+        context = new TSLContext(tsl);
+        context.setEvent(DummyEvent.INSTANCE);
+        ruleset.perform(context);
     }
 
 }

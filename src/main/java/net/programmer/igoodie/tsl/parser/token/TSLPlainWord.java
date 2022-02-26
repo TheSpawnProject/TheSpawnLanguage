@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.context.TSLContext;
+import org.jetbrains.annotations.Nullable;
 
 public class TSLPlainWord extends TSLToken {
 
@@ -27,10 +28,16 @@ public class TSLPlainWord extends TSLToken {
                 || word.equals("0");
     }
 
-//    @Override
-//    public @Nullable String getNamespace() {
-//        return word.get
-//    }
+    @Nullable
+    public String getNamespace() {
+        if (!word.contains(".")) return null;
+        return word.split("\\.")[0];
+    }
+
+    public String getValue() {
+        if (!word.contains(".")) return word;
+        return word.split("\\.")[1];
+    }
 
     @Override
     public String getTypeName() {

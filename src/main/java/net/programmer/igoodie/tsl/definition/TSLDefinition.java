@@ -29,7 +29,7 @@ public abstract class TSLDefinition implements TSLRegistrable, LSPFeatures {
 
     @Override
     public String getRegistryId() {
-        return getName();
+        return plugin.getManifest().getPluginId() + ":" + getName();
     }
 
     @Override

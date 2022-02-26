@@ -2,7 +2,7 @@ package net.programmer.igoodie.tsl.parser.lexer;
 
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLTokenizer;
-import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
+import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
 import net.programmer.igoodie.tsl.parser.token.*;
 import net.programmer.igoodie.tsl.util.StringUtils;
 
@@ -15,7 +15,7 @@ public class TSLLexer {
 
     private final List<String> lines;
     private final TSLTokenizer tokenizer;
-    private final List<TSLSnippetBuffer> snippets;
+    private final List<TSLTokenBuffer> snippets;
 
     private int lineOffset;
     private int charOffset;
@@ -27,7 +27,7 @@ public class TSLLexer {
     private char[] chars;
     private int tokenBeginLine = -1, tokenBeginChar = -1;
     private StringBuilder characterBuffer = new StringBuilder();
-    private TSLSnippetBuffer snippetBuffer = new TSLSnippetBuffer();
+    private TSLTokenBuffer tokenBuffer = new TSLTokenBuffer();
 
     public TSLLexer(String script) {
         this(Arrays.asList(script.split("\\r?\\n")));
@@ -57,7 +57,7 @@ public class TSLLexer {
         for (lineNo = 0; lineNo < lines.size(); lineNo++) {
             line = lines.get(lineNo);
             chars = line.toCharArray();
-            List<TSLToken> tokens = snippetBuffer.getTokens();
+            List<TSLToken> tokens = tokenBuffer.getTokens();
 
             if (tokens.size() != 0 && TSLSymbol.equals(tokens.get(0), TSLSymbol.Type.RULESET_TAG_BEGIN)) {
                 pushSnippet();
@@ -122,11 +122,11 @@ public class TSLLexer {
         return characterBuffer.length();
     }
 
-    protected TSLSnippetBuffer getSnippetBuffer() {
-        return snippetBuffer;
+    protected TSLTokenBuffer getTokenBuffer() {
+        return tokenBuffer;
     }
 
-    public List<TSLSnippetBuffer> getSnippets() {
+    public List<TSLTokenBuffer> getSnippets() {
         return snippets;
     }
 
@@ -161,30 +161,30 @@ public class TSLLexer {
                 throw new TSLSyntaxError("Cannot have multiple namespacing delimiters", token);
             }
 
-            if (snippetBuffer.getTokens().size() == 0) { // Inserting the very first token
+            if (tokenBuffer.getTokens().size() == 0) { // Inserting the very first token
                 if (TSLSymbol.equals(token, TSLSymbol.Type.RULESET_TAG_BEGIN)) {
-                    snippetBuffer.setType(TSLSnippetBuffer.Type.TAG);
+                    tokenBuffer.setType(TSLTokenBuffer.Type.TAG);
                 } else if (TSLSymbol.equals(token, TSLSymbol.Type.MULTI_LINE_COMMENT_BEGIN)) {
-                    snippetBuffer.setType(TSLSnippetBuffer.Type.COMMENT);
+                    tokenBuffer.setType(TSLTokenBuffer.Type.COMMENT);
                 } else if (TSLSymbol.equals(token, TSLSymbol.Type.TSLDOC_BEGIN)) {
-                    snippetBuffer.setType(TSLSnippetBuffer.Type.TSLDOC);
+                    tokenBuffer.setType(TSLTokenBuffer.Type.TSLDOC);
                 }
             }
 
-            if (snippetBuffer.getTokens().size() == 1) { // Inserting the second token
-                TSLToken firstToken = snippetBuffer.getTokens().get(0);
+            if (tokenBuffer.getTokens().size() == 1) { // Inserting the second token
+                TSLToken firstToken = tokenBuffer.getTokens().get(0);
 
                 if (firstToken instanceof TSLCaptureCall) {
                     if (TSLSymbol.equals(token, TSLSymbol.Type.CAPTURE_DECLARATION)) {
-                        snippetBuffer.setType(TSLSnippetBuffer.Type.CAPTURE);
+                        tokenBuffer.setType(TSLTokenBuffer.Type.CAPTURE);
                     }
                 }
             }
 
-            if (snippetBuffer.getTokens().size() == 3) { // Inserting the fourth token
-                TSLToken firstToken = snippetBuffer.getTokens().get(0);
-                TSLToken secondToken = snippetBuffer.getTokens().get(1);
-                TSLToken thirdToken = snippetBuffer.getTokens().get(2);
+            if (tokenBuffer.getTokens().size() == 3) { // Inserting the fourth token
+                TSLToken firstToken = tokenBuffer.getTokens().get(0);
+                TSLToken secondToken = tokenBuffer.getTokens().get(1);
+                TSLToken thirdToken = tokenBuffer.getTokens().get(2);
 
                 if (firstToken instanceof TSLDecoratorCall
                         && secondToken instanceof TSLCaptureCall
@@ -196,7 +196,7 @@ public class TSLLexer {
                 }
             }
 
-            snippetBuffer.pushToken(token);
+            tokenBuffer.pushToken(token);
             characterBuffer = new StringBuilder();
         }
 
@@ -209,15 +209,15 @@ public class TSLLexer {
             pushToken();
         }
 
-        if (snippetBuffer.getType() == null) {
-            snippetBuffer.setType(TSLSnippetBuffer.Type.RULE);
+        if (tokenBuffer.getType() == null) {
+            tokenBuffer.setType(TSLTokenBuffer.Type.RULE);
         }
 
-        if (snippetBuffer.getTokens().size() != 0) {
-            snippets.add(snippetBuffer);
+        if (tokenBuffer.getTokens().size() != 0) {
+            snippets.add(tokenBuffer);
         }
 
-        snippetBuffer = new TSLSnippetBuffer();
+        tokenBuffer = new TSLTokenBuffer();
     }
 
     /* ---------------------------------------- */
@@ -225,7 +225,7 @@ public class TSLLexer {
     public static List<TSLToken> lexArgumentTokens(String text) {
         List<TSLToken> args = new LinkedList<>();
         TSLLexer lexer = new TSLLexer(text).useCommaDelimiter().lex();
-        TSLSnippetBuffer snippet = lexer.getSnippets().get(0);
+        TSLTokenBuffer snippet = lexer.getSnippets().get(0);
         if (snippet != null) {
             args.addAll(snippet.getTokens());
         }

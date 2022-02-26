@@ -54,17 +54,17 @@ public class TSLParser {
     public TSLRuleset parse(String script) throws TSLSyntaxError {
         TSLLexer lexer = new TSLLexer(script).lex();
 
-        for (TSLSnippetBuffer buffer : lexer.getSnippets()) {
-            if (buffer.getType() == TSLSnippetBuffer.Type.TAG) {
+        for (TSLTokenBuffer buffer : lexer.getSnippets()) {
+            if (buffer.getType() == TSLTokenBuffer.Type.TAG) {
                 ruleset.addTag(parseTag(ruleset, buffer));
 
-            } else if (buffer.getType() == TSLSnippetBuffer.Type.CAPTURE) {
+            } else if (buffer.getType() == TSLTokenBuffer.Type.CAPTURE) {
                 ruleset.addCapture(parseCapture(ruleset, buffer));
 
-            } else if (buffer.getType() == TSLSnippetBuffer.Type.RULE) {
+            } else if (buffer.getType() == TSLTokenBuffer.Type.RULE) {
                 ruleset.addRule(parseRule(ruleset, buffer));
 
-            } else if (buffer.getType() == TSLSnippetBuffer.Type.TSLDOC) {
+            } else if (buffer.getType() == TSLTokenBuffer.Type.TSLDOC) {
                 ruleset.addTSLDoc(parseTSLDoc(ruleset, buffer));
             }
         }
@@ -74,7 +74,7 @@ public class TSLParser {
 
     /* --------------------------- */
 
-    public TSLDocSnippet parseTSLDoc(TSLRuleset ruleset, TSLSnippetBuffer buffer) {
+    public TSLDocSnippet parseTSLDoc(TSLRuleset ruleset, TSLTokenBuffer buffer) {
         List<TSLToken> tokens = buffer.getTokens();
 
         TSLSymbol begin = (TSLSymbol) tokens.get(0);
@@ -104,34 +104,36 @@ public class TSLParser {
         return new TSLDocSnippet(ruleset, begin, trimmedDocTokens, end);
     }
 
-    public TSLTagSnippet parseTag(TSLRuleset ruleset, TSLSnippetBuffer buffer) throws TSLSyntaxError {
+    public TSLTagSnippet parseTag(TSLRuleset ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
         List<TSLToken> tokens = buffer.getTokens();
 
         if (tokens.size() < 2) {
             throw new TSLSyntaxError("Tag snippet missing a tag name", buffer);
         }
 
-        TSLToken tagNameToken = tokens.get(1);
-        TSLTag tagDefinition = tsl.TAG_REGISTRY.get(tagNameToken.getRaw());
+        if (!(tokens.get(1) instanceof TSLPlainWord)) {
+            throw new TSLSyntaxError("Tag names MUST be plain strings.", tokens.get(1));
+        }
+
+        TSLPlainWord tagNameToken = ((TSLPlainWord) tokens.get(1));
+        TSLSymbol tagSymbolToken = (TSLSymbol) tokens.get(0);
+
+        TSLTag tagDefinition = tsl.getTag(ruleset, tagNameToken);
 
         if (tagDefinition == null) {
             throw new TSLSyntaxError(String.format("Unknown tag name -> %s", tagNameToken.getRaw()), tagNameToken);
-        }
-
-        if (!(tagNameToken instanceof TSLPlainWord)) {
-            throw new TSLSyntaxError("Tag names MUST be plain strings.", tagNameToken);
         }
 
         List<TSLToken> argTokens = tokens.subList(2, tokens.size());
 
         return new TSLTagSnippet(ruleset,
                 tagDefinition,
-                ((TSLSymbol) tokens.get(0)),
-                ((TSLPlainWord) tagNameToken),
+                tagSymbolToken,
+                tagNameToken,
                 argTokens);
     }
 
-    public TSLCaptureSnippet parseCapture(TSLRuleset ruleset, TSLSnippetBuffer buffer) throws TSLSyntaxError {
+    public TSLCaptureSnippet parseCapture(TSLRuleset ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
         List<TSLToken> tokens = buffer.getTokens();
 
         if (tokens.size() < 3) {
@@ -164,7 +166,7 @@ public class TSLParser {
                 capturedTokens);
     }
 
-    public TSLRule parseRule(TSLRuleset ruleset, TSLSnippetBuffer buffer) throws TSLSyntaxError {
+    public TSLRule parseRule(TSLRuleset ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
         TSLRule rule = new TSLRule();
         List<TSLToken> tokens = buffer.getTokens();
 
@@ -218,7 +220,16 @@ public class TSLParser {
 
     public TSLEventSnippet parseEvent(TSLRuleset ruleset, List<TSLToken> tokens, int indexOn, int indexWith) {
         List<TSLPlainWord> eventTokens = getEventNameTokens(tokens, indexOn, indexWith);
-        TSLEvent eventDefinition = getEvent(eventTokens);
+
+        String eventName = eventTokens.stream()
+                .map(TSLPlainWord::getRaw)
+                .collect(Collectors.joining(" "));
+
+        TSLEvent eventDefinition = tsl.getEvent(ruleset, eventTokens);
+
+        if (eventDefinition == null) {
+            throw new TSLSyntaxError("Unknown event name -> " + eventName, eventTokens.get(0));
+        }
 
         return new TSLEventSnippet(ruleset, eventDefinition,
                 ((TSLPlainWord) tokens.get(indexOn)),
@@ -243,7 +254,11 @@ public class TSLParser {
             throw new TSLSyntaxError("Action name MUST be a String Word.", actionName);
         }
 
-        TSLAction actionDefinition = getAction(((TSLPlainWord) actionName));
+        TSLAction actionDefinition = tsl.getAction(ruleset, ((TSLPlainWord) actionName));
+
+        if (actionDefinition == null) {
+            throw new TSLSyntaxError("Unknown action -> " + actionName.getRaw(), actionName);
+        }
 
         Couple<List<TSLToken>, TSLToken> couple = actionDefinition.splitByDisplaying(actionTokens);
         List<TSLToken> actionTokensSplitted = couple.getFirst();
@@ -324,7 +339,7 @@ public class TSLParser {
     }
 
     public TSLDecorator parseDecorator(TSLDecoratorCall decoratorCall) {
-        TSLDecorator decorator = tsl.DECORATOR_REGISTRY.get(decoratorCall.getName());
+        TSLDecorator decorator = tsl.getDecorator(ruleset, decoratorCall);
 
         if (decorator == null) {
             throw new TSLSyntaxError("Unknown decorator name -> " + decoratorCall.getName(), decoratorCall);
@@ -361,40 +376,7 @@ public class TSLParser {
 
     /* --------------------------- */
 
-    private TSLEvent getEvent(List<TSLPlainWord> eventTokens) {
-        String eventName = eventTokens.stream()
-                .map(TSLPlainWord::getRaw)
-                .collect(Collectors.joining(" "));
-        TSLEvent tslEvent = tsl.EVENT_REGISTRY.get(eventName);
-
-        if (tslEvent == null) {
-            throw new TSLSyntaxError("Unknown event name -> " + eventName, eventTokens.get(0));
-        }
-
-        return tslEvent;
-    }
-
-    public static List<TSLPlainWord> getEventNameTokens(List<TSLToken> tokens, int indexOn, int indexWith) {
-        List<TSLToken> eventTokens = tokens.subList(indexOn + 1,
-                indexWith == -1 ? tokens.size() : indexWith);
-
-        if (eventTokens.size() == 0) {
-            TSLToken keywordOn = tokens.get(indexOn);
-            throw new TSLSyntaxError("Missing event name.", keywordOn);
-        }
-
-        List<TSLPlainWord> eventTokensAsString = new LinkedList<>();
-        for (TSLToken token : eventTokens) {
-            if (!(token instanceof TSLPlainWord)) {
-                throw new TSLSyntaxError("Event statements MUST contain only String Words. Instead found -> " + token.getTypeName() + " " + token.getRaw(), token);
-            }
-            eventTokensAsString.add(((TSLPlainWord) token));
-        }
-
-        return eventTokensAsString;
-    }
-
-    public static List<TSLToken> trimComments(List<TSLToken> tokens) {
+    public static List<TSLToken> trimBlockComments(List<TSLToken> tokens) {
         List<TSLToken> trimmedTokens = new LinkedList<>();
         boolean inComment = false;
         for (TSLToken token : tokens) {
@@ -419,16 +401,24 @@ public class TSLParser {
         return trimmedTokens;
     }
 
-    /* --------------------------- */
+    public static List<TSLPlainWord> getEventNameTokens(List<TSLToken> tokens, int indexOn, int indexWith) {
+        List<TSLToken> eventTokens = tokens.subList(indexOn + 1,
+                indexWith == -1 ? tokens.size() : indexWith);
 
-    private TSLAction getAction(TSLPlainWord actionName) {
-        TSLAction tslAction = tsl.ACTION_REGISTRY.get(actionName.getRaw());
-
-        if (tslAction == null) {
-            throw new TSLSyntaxError("Unknown action -> " + actionName.getRaw(), actionName);
+        if (eventTokens.size() == 0) {
+            TSLToken keywordOn = tokens.get(indexOn);
+            throw new TSLSyntaxError("Missing event name.", keywordOn);
         }
 
-        return tslAction;
+        List<TSLPlainWord> eventTokensAsString = new LinkedList<>();
+        for (TSLToken token : eventTokens) {
+            if (!(token instanceof TSLPlainWord)) {
+                throw new TSLSyntaxError("Event statements MUST contain only String Words. Instead found -> " + token.getTypeName() + " " + token.getRaw(), token);
+            }
+            eventTokensAsString.add(((TSLPlainWord) token));
+        }
+
+        return eventTokensAsString;
     }
 
 }

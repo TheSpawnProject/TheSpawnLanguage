@@ -1,11 +1,11 @@
-package net.programmer.igoodie.tsl.parser.snippet;
+package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public final class TSLSnippetBuffer {
+public final class TSLTokenBuffer {
 
     public enum Type {
         TAG,
@@ -18,7 +18,7 @@ public final class TSLSnippetBuffer {
     private Type type;
     private final List<TSLToken> tokens;
 
-    public TSLSnippetBuffer() {
+    public TSLTokenBuffer() {
         this.tokens = new LinkedList<>();
     }
 

@@ -9,7 +9,7 @@ import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
+import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
@@ -59,7 +59,7 @@ public class RulesetTests {
 
         TSLLexerOld lexer = new TSLLexerOld(script).lex();
 
-        for (TSLSnippetBuffer snippet : lexer.getSnippets()) {
+        for (TSLTokenBuffer snippet : lexer.getSnippets()) {
             System.out.println(snippet);
         }
 

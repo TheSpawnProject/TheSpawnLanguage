@@ -16,8 +16,8 @@ public class SpawnJS extends TSLPlugin {
 
     public SpawnJS() {
         super(new TSLPluginManifest(
-                "tsljs",
-                "TSLJS",
+                "spawnjs",
+                "SpawnJS",
                 VERSION,
                 "iGoodie"
         ));

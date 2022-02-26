@@ -1,7 +1,7 @@
 package net.programmer.igoodie.tsl.exception;
 
+import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
-import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import org.jetbrains.annotations.Nullable;
@@ -25,8 +25,8 @@ public class TSLRuntimeError extends TSLException {
         super(reason, snippet);
     }
 
-    public TSLRuntimeError(String reason, TSLSnippetBuffer snippet) {
-        super(reason, snippet);
+    public TSLRuntimeError(String reason, TSLTokenBuffer tokenBuffer) {
+        super(reason, tokenBuffer);
     }
 
     public TSLRuntimeError(String reason, TSLToken token) {

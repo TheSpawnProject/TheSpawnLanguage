@@ -179,6 +179,8 @@ public class TSLRuleset implements Attributable {
     }
 
     public void importRuleset(TSLRuleset otherRuleset) {
+        importedPlugins.putAll(otherRuleset.importedPlugins);
+
         for (TSLSnippet snippet : otherRuleset.getSnippets()) {
             if (snippet instanceof TSLDocSnippet) {
                 addTSLDoc(((TSLDocSnippet) snippet), true);

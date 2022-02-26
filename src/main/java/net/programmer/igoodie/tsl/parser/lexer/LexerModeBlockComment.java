@@ -16,7 +16,7 @@ public class LexerModeBlockComment extends LexerMode {
             lexer.pushToken();
             lexer.pushCharacters("*#");
 
-            if (TSLSymbol.equals(lexer.getSnippetBuffer().getTokens().get(0), TSLSymbol.Type.MULTI_LINE_COMMENT_BEGIN)) {
+            if (TSLSymbol.equals(lexer.getTokenBuffer().getTokens().get(0), TSLSymbol.Type.MULTI_LINE_COMMENT_BEGIN)) {
                 lexer.pushSnippet();
             } else {
                 lexer.pushToken();

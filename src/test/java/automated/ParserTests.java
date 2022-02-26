@@ -7,7 +7,7 @@ import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.snippet.TSLActionSnippet;
-import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
+import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
@@ -76,7 +76,7 @@ public class ParserTests {
 //        TSLRule rule = ruleset.getRules().get(0);
 
         TSLLexer lex = new TSLLexer(TestUtils.loadTSLScript("coconutorange.rule.tsl")).lex();
-        for (TSLSnippetBuffer snippet : lex.getSnippets()) {
+        for (TSLTokenBuffer snippet : lex.getSnippets()) {
             System.out.println(snippet.getType());
             for (TSLToken token : snippet.getTokens()) {
                 System.out.println(token);

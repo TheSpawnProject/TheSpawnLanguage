@@ -1,0 +1,7 @@
+#! IMPORT EP FROM exampleplugin
+
+$dev = iGoodie
+
+@EP.suppressNotifications
+EP.PRINT Helloooo!
+ ON Manual Trigger

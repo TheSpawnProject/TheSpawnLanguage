@@ -100,7 +100,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
             if (comparatorId.length() != 0) comparatorId.append(" ");
             comparatorId.append(StringUtilities.allUpper(token.getRaw()));
 
-            TSLComparator comparator = tsl.COMPARATOR_REGISTRY.get(comparatorId.toString());
+            TSLComparator comparator = tsl.getComparator(comparatorId.toString());
             if (comparator != null) {
                 longestMatch = comparator;
                 argsTokenIndex = i + 1;

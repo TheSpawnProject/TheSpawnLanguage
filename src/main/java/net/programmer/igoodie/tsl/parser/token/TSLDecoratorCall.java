@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.context.TSLContext;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -15,8 +16,15 @@ public class TSLDecoratorCall extends TSLToken {
         this.args = args;
     }
 
+    @Nullable
+    public String getNamespace() {
+        if (!name.contains(".")) return null;
+        return name.split("\\.")[0];
+    }
+
     public String getName() {
-        return name;
+        if (!name.contains(".")) return name;
+        return name.split("\\.")[1];
     }
 
     public List<String> getArgs() {

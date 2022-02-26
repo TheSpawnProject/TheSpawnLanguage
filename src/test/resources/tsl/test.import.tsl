@@ -1,0 +1,11 @@
+#! IMPORT ExamplePlugin FROM exampleplugin
+#! IMPORT %./test.import2.tsl%
+
+$myAction(msg) = ExamplePlugin.pRinT {{msg}} $dev
+
+@ExamplePlugin.suppressNotifications
+$myAction(%Hello World%)
+ ON Manual Trigger
+
+ExamplePlugin.PRINT #* Message here --> *# Hello World
+ ON Dummy Event FROM ExamplePlugin

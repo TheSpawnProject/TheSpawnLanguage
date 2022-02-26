@@ -1,7 +1,7 @@
 package automated;
 
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
-import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
+import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
 import net.programmer.igoodie.tsl.parser.token.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -42,10 +42,10 @@ public class LexerTests {
 
         TSLLexer lexer = new TSLLexer(script).lex();
 
-        List<TSLSnippetBuffer> lexedSnippets = lexer.getSnippets();
+        List<TSLTokenBuffer> lexedSnippets = lexer.getSnippets();
 
         System.out.println();
-        for (TSLSnippetBuffer snippet : lexedSnippets) {
+        for (TSLTokenBuffer snippet : lexedSnippets) {
             System.out.println(snippet.getType());
             for (TSLToken token : snippet.getTokens()) {
                 System.out.println(token);
@@ -69,13 +69,13 @@ public class LexerTests {
 
         TSLLexer lexer = new TSLLexer(script).useCommaDelimiter().lex();
 
-        List<TSLSnippetBuffer> lexedSnippets = lexer.getSnippets();
+        List<TSLTokenBuffer> lexedSnippets = lexer.getSnippets();
         Assertions.assertEquals(1, lexedSnippets.size());
 
         System.out.println();
         System.out.println(script);
         System.out.println();
-        for (TSLSnippetBuffer snippet : lexedSnippets) {
+        for (TSLTokenBuffer snippet : lexedSnippets) {
             System.out.println(snippet.getType());
             for (TSLToken token : snippet.getTokens()) {
                 System.out.println(token);

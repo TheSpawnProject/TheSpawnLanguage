@@ -3,7 +3,6 @@ package net.programmer.igoodie.tsl.parser;
 import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.legacy.parser.TSLLexerOld;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
-import net.programmer.igoodie.tsl.parser.snippet.TSLSnippetBuffer;
 import net.programmer.igoodie.tsl.parser.token.*;
 
 import java.util.Arrays;
@@ -92,7 +91,7 @@ public class TSLTokenizer {
         TSLLexerOld lexer = new TSLLexerOld(text);
         lexer.lex();
         return lexer.getSnippets().stream()
-                .map(TSLSnippetBuffer::getTokens)
+                .map(TSLTokenBuffer::getTokens)
                 .mapToLong(Collection::size)
                 .sum();
     }
