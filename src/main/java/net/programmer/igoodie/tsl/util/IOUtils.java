@@ -28,11 +28,12 @@ public final class IOUtils {
         return builder.toString();
     }
 
+    public static Path getPath(String path) {
+        return new File(path).toPath();
+    }
+
     public static Path resolvePath(String a, String b) {
-        return resolvePath(
-                new File(a).toPath(),
-                new File(b).toPath()
-        );
+        return resolvePath(getPath(a), getPath(b));
     }
 
     public static Path resolvePath(Path a, Path b) {
@@ -43,6 +44,10 @@ public final class IOUtils {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    public static boolean isAbsolutePath(String path) {
+        return getPath(path).isAbsolute();
     }
 
 }

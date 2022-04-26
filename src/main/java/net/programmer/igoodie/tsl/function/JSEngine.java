@@ -10,10 +10,7 @@ import net.programmer.igoodie.tsl.function.binding.TSLContextGetter;
 import net.programmer.igoodie.tsl.util.AccessUtils;
 import org.mozilla.javascript.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,6 +47,7 @@ public class JSEngine {
         definedConsts.put(name, value);
     }
 
+    // TODO: Shall I yeet this? :thinking:
     public void loadLibrary(ScriptableObject scope, String namespace, TSLFunctionLibrary library) {
         NativeObject libraryObject = scope.has(namespace, scope)
                 ? ((NativeObject) scope.get(namespace))
@@ -96,6 +94,45 @@ public class JSEngine {
                     scope.putConst(argumentName, scope, argument);
                 }
             }
+
+            System.out.println(tslContext.getImportedPlugins());
+
+            TheSpawnLanguage tsl = tslContext.getTsl();
+
+            if (tsl != null) {
+                loadPluginLibraries(scope, tsl, tslContext.getImportedPlugins());
+            }
+        }
+    }
+
+    public void loadPluginLibraries(ScriptableObject scope, TheSpawnLanguage tsl, Map<String, String> importedPlugins) {
+        for (Map.Entry<String, String> importEntry : importedPlugins.entrySet()) {
+            String alias = importEntry.getKey();
+            String pluginId = importEntry.getValue();
+
+            List<TSLFunctionLibrary> associatedModules = tsl.FUNC_LIBRARY_REGISTRY.stream()
+                    .map(Map.Entry::getValue)
+                    .filter(lib -> lib.getPlugin().getManifest().getPluginId().equals(pluginId))
+                    .collect(Collectors.toList());
+
+            if (associatedModules.size() == 0) {
+                continue;
+            }
+
+            NativeObject importedObject = new NativeObject();
+
+            for (TSLFunctionLibrary module : associatedModules) {
+                if (module.getName().equals(TSLFunctionLibrary.ROOT_LIBRARY_NAME)) {
+                    module.composeLibrary(importedObject);
+
+                } else {
+                    NativeObject moduleObject = new NativeObject();
+                    module.composeLibrary(moduleObject);
+                    importedObject.put(module.getName(), scope, moduleObject);
+                }
+            }
+
+            scope.put(alias, scope, importedObject);
         }
     }
 
@@ -123,6 +160,8 @@ public class JSEngine {
         Object evaluation = context.evaluateString(scope, script, sourceName, 0, null);
         return stringify(evaluation);
     }
+
+    /* ------------------------------------ */
 
     private String stringify(Object value) {
         if (value instanceof NativeJavaObject)

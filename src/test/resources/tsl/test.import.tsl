@@ -1,5 +1,6 @@
 #! IMPORT ExamplePlugin FROM exampleplugin
 #! IMPORT %./test.import2.tsl%
+#! ExamplePlugin.COOLDOWN 5000
 
 $myAction(msg) = ExamplePlugin.pRinT {{msg}} $dev
 
@@ -7,5 +8,9 @@ $myAction(msg) = ExamplePlugin.pRinT {{msg}} $dev
 $myAction(%Hello World%)
  ON Manual Trigger
 
-ExamplePlugin.PRINT #* Message here --> *# Hello World
+ExamplePlugin.PRINT #* Message here --> *# Hello World %\${}% ${ExamplePlugin._currentUnix()}
  ON Dummy Event FROM ExamplePlugin
+
+ExamplePlugin.PRINT ${EP._currentUnix()}
+ ON Dummy Event FROM ExamplePlugin
+

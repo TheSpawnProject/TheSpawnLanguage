@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.runtime;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.plugins.grammar.tags.ImportTag;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
@@ -35,8 +36,8 @@ public class TSLRuleset implements Attributable {
     protected Map<Integer, TSLDocSnippet> tslDocs;
     protected Map<String, TSLCaptureSnippet> captures;
 
-    protected Map<String, String> importedPlugins;
-    protected List<String> importedRulesets;
+    protected Map<String, String> importedPlugins; // (alias_name --> plugin_id)
+    protected List<TSLRuleset> importedRulesets;
 
     protected HookList hookList;
 
@@ -91,7 +92,7 @@ public class TSLRuleset implements Attributable {
     }
 
     public Map<String, TSLCaptureSnippet> getCaptures() {
-        return Collections.unmodifiableMap(captures);
+        return Collections.unmodifiableMap(this.captures);
     }
 
     public TSLCaptureSnippet getCaptureSnippet(TSLCaptureCall captureCall) {
@@ -111,11 +112,11 @@ public class TSLRuleset implements Attributable {
     }
 
     public Map<String, String> getImportedPlugins() {
-        return importedPlugins;
+        return Collections.unmodifiableMap(this.importedPlugins);
     }
 
-    public List<String> getImportedRulesets() {
-        return importedRulesets;
+    public List<TSLRuleset> getImportedRulesets() {
+        return Collections.unmodifiableList(this.importedRulesets);
     }
 
     @Override
@@ -178,15 +179,23 @@ public class TSLRuleset implements Attributable {
         this.rules.add(rule);
     }
 
+    public void addPluginAlias(String alias, String pluginId) {
+        importedPlugins.put(alias, pluginId);
+    }
+
     public void importRuleset(TSLRuleset otherRuleset) {
-        importedPlugins.putAll(otherRuleset.importedPlugins);
+        if (otherRuleset.getFile() == null) {
+            throw new TSLRuntimeError("Cannot import ruleset without a file.");
+        }
 
         for (TSLSnippet snippet : otherRuleset.getSnippets()) {
             if (snippet instanceof TSLDocSnippet) {
                 addTSLDoc(((TSLDocSnippet) snippet), true);
 
             } else if (snippet instanceof TSLTagSnippet) {
-                addTag(((TSLTagSnippet) snippet), true);
+                if (!(((TSLTagSnippet) snippet).getTagDefinition() instanceof ImportTag)) {
+                    addTag(((TSLTagSnippet) snippet), true);
+                }
 
             } else if (snippet instanceof TSLCaptureSnippet) {
                 addCapture(((TSLCaptureSnippet) snippet), true);
@@ -198,7 +207,7 @@ public class TSLRuleset implements Attributable {
             addRule(rule, true);
         }
 
-        importedRulesets.add(otherRuleset.getFile().getAbsolutePath());
+        importedRulesets.add(otherRuleset);
     }
 
     /* ----------------------------------------- */
@@ -208,6 +217,7 @@ public class TSLRuleset implements Attributable {
             throw new TSLRuntimeError("Cannot perform() within different container");
         }
 
+        context.setImportedPlugins(getImportedPlugins());
         context.setMessageToken(null);
 
         boolean performed = false;

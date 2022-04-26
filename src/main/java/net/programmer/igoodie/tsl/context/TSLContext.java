@@ -4,8 +4,10 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
-import net.programmer.igoodie.tsl.runtime.TSLRule;
 import org.mozilla.javascript.ScriptableObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TSLContext {
 
@@ -69,17 +71,14 @@ public class TSLContext {
 
     /* ----------------------------------- */
 
-    @Deprecated
-    protected TSLRule rule;
+    public Map<String, String> importedPlugins = new HashMap<>();
 
-    @Deprecated
-    public TSLRule getRule() {
-        return rule;
+    public Map<String, String> getImportedPlugins() {
+        return importedPlugins;
     }
 
-    @Deprecated
-    public void setRule(TSLRule rule) {
-        this.rule = rule;
+    public void setImportedPlugins(Map<String, String> importedPlugins) {
+        this.importedPlugins = importedPlugins;
     }
 
     /* ----------------------------------- */

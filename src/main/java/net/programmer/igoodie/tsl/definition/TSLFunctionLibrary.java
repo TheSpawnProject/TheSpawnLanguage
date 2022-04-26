@@ -7,6 +7,8 @@ import org.mozilla.javascript.ScriptableObject;
 
 public abstract class TSLFunctionLibrary extends TSLDefinition {
 
+    public static String ROOT_LIBRARY_NAME = "default";
+
     public TSLFunctionLibrary(TSLPlugin plugin, String name) {
         super(plugin, name);
     }

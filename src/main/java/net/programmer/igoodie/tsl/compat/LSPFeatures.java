@@ -1,4 +1,4 @@
-package net.programmer.igoodie.tsl.util;
+package net.programmer.igoodie.tsl.compat;
 
 import net.programmer.igoodie.goodies.util.Couple;
 import org.jetbrains.annotations.Nullable;

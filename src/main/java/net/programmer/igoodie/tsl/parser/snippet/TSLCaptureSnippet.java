@@ -64,11 +64,11 @@ public class TSLCaptureSnippet extends TSLSnippet {
 
     /* -------------------------------------------- */
 
-    public List<TSLToken> flattenInline(String... arguments) {
-        return flattenInline(Arrays.asList(arguments));
+    public List<TSLToken> tokenizeAndFlatten(String... arguments) {
+        return tokenizeAndFlatten(Arrays.asList(arguments));
     }
 
-    public List<TSLToken> flattenInline(List<String> arguments) {
+    public List<TSLToken> tokenizeAndFlatten(List<String> arguments) {
         TSLTokenizer tokenizer = new TSLTokenizer();
         List<TSLToken> tokens = tokenizer.tokenizeAll(arguments);
         for (TSLToken token : tokens) {
@@ -98,7 +98,7 @@ public class TSLCaptureSnippet extends TSLSnippet {
                     throw new TSLRuntimeError("Captures MUST not call themselves recursively.", captureCall);
                 }
                 TSLCaptureSnippet captureSnippet = ruleset.getCaptureSnippet(captureCall);
-                List<TSLToken> flattenedCapture = captureSnippet.flattenInline(captureCall.getArgs());
+                List<TSLToken> flattenedCapture = captureSnippet.tokenizeAndFlatten(captureCall.getArgs());
                 replaced.addAll(flattenedCapture);
 
             } else {

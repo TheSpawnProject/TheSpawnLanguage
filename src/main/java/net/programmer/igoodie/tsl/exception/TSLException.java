@@ -11,7 +11,7 @@ import java.util.List;
 
 public abstract class TSLException extends RuntimeException {
 
-    protected int line, character;
+        protected int line, character;
     protected @Nullable String filePath;
     protected @Nullable TSLToken associatedToken;
 

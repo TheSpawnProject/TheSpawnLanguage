@@ -16,6 +16,7 @@ import net.programmer.igoodie.tsl.util.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -62,22 +63,34 @@ public class ImportTag extends TSLTag {
 
     private void loadTarget(TheSpawnLanguage tsl, TSLRuleset ruleset, @Nullable TSLPlainWord aliasToken, TSLToken targetToken) {
         TSLContext context = new TSLContext(tsl);
-        String alias = aliasToken == null ? null : aliasToken.evaluate(context);
         String target = targetToken.evaluate(context);
+        String alias = aliasToken == null ? target : aliasToken.evaluate(context);
 
         if (target.endsWith(".tsl")) {
             // Check if target is absolute or relative path
             // Then include that ruleset
-            Path path = IOUtils.resolvePath(ruleset.getFile().getParentFile().getPath(), target);
-            if (path == null) {
+            Path targetPath;
+
+            if (IOUtils.isAbsolutePath(target)) {
+                targetPath = IOUtils.getPath(target);
+
+            } else {
+                File rulesetFile = ruleset.getFile();
+                if (rulesetFile == null) {
+                    throw new TSLRuntimeError("Ruleset is not loaded from a file. Cannot IMPORT from a relative path.");
+                }
+                targetPath = IOUtils.resolvePath(rulesetFile.getParentFile().getPath(), target);
+            }
+
+            if (targetPath == null) {
                 throw new TSLSyntaxError("Ruleset cannot be found", targetToken);
             }
-            TSLRuleset otherRuleset = new TSLParser(tsl).parse(path.toFile());
+
+            TSLRuleset otherRuleset = new TSLParser(tsl).parse(targetPath.toFile());
             ruleset.importRuleset(otherRuleset);
 
         } else if (tsl.getPluginManager().LOADED_PLUGIN_IDS.contains(target)) {
-            // It is a plugin, load it in
-            ruleset.getImportedPlugins().put(alias == null ? target : alias, target);
+                        ruleset.addPluginAlias(alias, target);
 
         } else {
             throw new TSLSyntaxError("Invalid import format", targetToken);

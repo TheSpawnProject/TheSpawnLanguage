@@ -21,7 +21,7 @@ public class CaptureTests {
         TSLRuleset ruleset = tslParser.parse(script);
         TSLCaptureSnippet capture = ruleset.getCaptureSnippet("dropAxeWithFireAspect");
 
-        List<TSLToken> flattenedCapture = capture.flattenInline("15");
+        List<TSLToken> flattenedCapture = capture.tokenizeAndFlatten("15");
         System.out.println(flattenedCapture);
     }
 

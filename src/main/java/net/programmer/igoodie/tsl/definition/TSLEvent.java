@@ -38,9 +38,11 @@ public abstract class TSLEvent extends TSLDefinition {
     public static Object extractField(GoodieObject eventArguments, String fieldName) {
         if (eventArguments.hasNumber(fieldName))
             return eventArguments.getNumber(fieldName).orElse(-1);
+
         if (eventArguments.hasBoolean(fieldName))
             return eventArguments.getBoolean(fieldName).orElse(false);
-        return eventArguments.getString(fieldName);
+
+        return eventArguments.getString(fieldName).orElse(null);
     }
 
 }
