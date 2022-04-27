@@ -1,12 +1,17 @@
-#! IMPORT ExamplePlugin FROM exampleplugin
+#! IMPORT ExamplePlugin FROM exampleplugin #* Foo *#
 #! IMPORT %./test.import2.tsl%
 #! ExamplePlugin.COOLDOWN 5000
 
 $myAction(msg) = ExamplePlugin.pRinT {{msg}} $dev
 
+#* Foo *#
 @ExamplePlugin.suppressNotifications
+#* Foo *#
 $myAction(%Hello World%)
+ #* Foo *#
  ON Manual Trigger
+ #* Foo *#
+ WITH debug_data = 1
 
 ExamplePlugin.PRINT #* Message here --> *# Hello World %\${}% ${ExamplePlugin._currentUnix()}
  ON Dummy Event FROM ExamplePlugin

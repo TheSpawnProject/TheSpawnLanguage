@@ -2,6 +2,7 @@ package automated;
 
 import example.plugin.ExamplePlugin;
 import example.plugin.event.DummyEvent;
+import net.programmer.igoodie.goodies.format.GsonGoodieFormat;
 import net.programmer.igoodie.plugins.grammar.events.ManualTriggerEvent;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.context.TSLContext;
@@ -30,6 +31,22 @@ public class RulesetTests {
 
         context = new TSLContext(tsl);
         context.setEvent(DummyEvent.INSTANCE);
+        ruleset.perform(context);
+    }
+
+    @Test
+    public void commentsInbetweenShouldNotCrash() throws URISyntaxException {
+        TheSpawnLanguage tsl = new TheSpawnLanguage();
+        tsl.getPluginManager().loadPlugin(new ExamplePlugin());
+
+        TSLParser parser = new TSLParser(tsl);
+        TSLRuleset ruleset = parser.parse(TestUtils.scriptPath("comment-inbetween.tsl"));
+
+        TSLContext context;
+
+        context = new TSLContext(tsl);
+        context.setEvent(ManualTriggerEvent.INSTANCE);
+        context.setEventArguments(new GsonGoodieFormat().readGoodieFromString("{'debug_data': {'value': 1}}"));
         ruleset.perform(context);
     }
 

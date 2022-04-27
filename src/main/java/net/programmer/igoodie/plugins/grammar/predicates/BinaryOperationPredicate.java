@@ -9,6 +9,7 @@ import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLComparator;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLPredicate;
+import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
@@ -65,9 +66,13 @@ public class BinaryOperationPredicate extends TSLPredicate {
         TSLComparator comparator = couple.getFirst();
         Integer argsTokenIndex = couple.getSecond();
 
+        List<String> rightHand = tokens.subList(argsTokenIndex, tokens.size()).stream()
+                .map(t -> t.evaluate(context))
+                .collect(Collectors.toList());
+
         return comparator.satisfies(
                 eventFieldValue,
-                tokens.subList(argsTokenIndex, tokens.size()).stream().map(t -> t.evaluate(context)).collect(Collectors.toList())
+                rightHand
         );
     }
 
@@ -75,10 +80,18 @@ public class BinaryOperationPredicate extends TSLPredicate {
         String fieldName = ((TSLPlainWord) fieldNameToken).getWord();
 
         TSLEvent event = context.getEvent();
+
+        if (event == null) {
+            throw new TSLInternalError("TSLContext lacks the event");
+        }
+
         Map<String, Class<?>> acceptedFields = event.getAcceptedFields();
 
         GoodieObject eventArguments = context.getEventArguments();
         Object eventFieldValue = TSLEvent.extractField(eventArguments, fieldName);
+
+        // Event argument is absent. No checking is needed
+        if (eventFieldValue == null) return;
 
         Class<?> actualType = eventFieldValue.getClass();
         Class<?> expectedType = acceptedFields.get(fieldName);

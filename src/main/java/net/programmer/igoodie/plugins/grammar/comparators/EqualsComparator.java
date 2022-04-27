@@ -5,6 +5,7 @@ import net.programmer.igoodie.tsl.definition.TSLComparator;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -22,7 +23,9 @@ public class EqualsComparator extends TSLComparator {
     }
 
     @Override
-    public boolean satisfies(Object leftHand, List<String> rightHand) throws TSLRuntimeError {
+    public boolean satisfies(@Nullable Object leftHand, List<String> rightHand) throws TSLRuntimeError {
+        if (leftHand == null) return false;
+
         String rightHandValue = rightHand.get(0);
 
         if (leftHand instanceof Number) {

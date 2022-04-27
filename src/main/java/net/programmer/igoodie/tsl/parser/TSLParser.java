@@ -22,6 +22,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class TSLParser {
@@ -105,7 +106,7 @@ public class TSLParser {
     }
 
     public TSLTagSnippet parseTag(TSLRuleset ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
-        List<TSLToken> tokens = buffer.getTokens();
+        List<TSLToken> tokens = trimBlockComments(buffer.getTokens());
 
         if (tokens.size() < 2) {
             throw new TSLSyntaxError("Tag snippet missing a tag name", buffer);
@@ -134,7 +135,7 @@ public class TSLParser {
     }
 
     public TSLCaptureSnippet parseCapture(TSLRuleset ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
-        List<TSLToken> tokens = buffer.getTokens();
+        List<TSLToken> tokens = trimBlockComments(buffer.getTokens());
 
         if (tokens.size() < 3) {
             throw new TSLSyntaxError("Malformed capture snippet", buffer);
@@ -168,7 +169,9 @@ public class TSLParser {
 
     public TSLRule parseRule(TSLRuleset ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
         TSLRule rule = new TSLRule();
-        List<TSLToken> tokens = buffer.getTokens();
+        List<TSLToken> tokens = trimBlockComments(buffer.getTokens());
+
+        System.out.println(tokens);
 
         // Fetch index of last Decorator call
         int indexLastDecorator = indexLastDecorator(tokens);
@@ -376,22 +379,34 @@ public class TSLParser {
 
     /* --------------------------- */
 
+    public static List<TSLToken> trimMultilineComments(List<TSLToken> tokens) {
+        return trimBlock(tokens,
+                token -> TSLSymbol.equals(token, TSLSymbol.Type.MULTI_LINE_COMMENT_BEGIN),
+                token -> TSLSymbol.equals(token, TSLSymbol.Type.MULTI_LINE_COMMENT_END));
+    }
+
     public static List<TSLToken> trimBlockComments(List<TSLToken> tokens) {
+        return trimBlock(tokens,
+                token -> TSLSymbol.equals(token, TSLSymbol.Type.MULTI_LINE_COMMENT_BEGIN) || TSLSymbol.equals(token, TSLSymbol.Type.TSLDOC_BEGIN),
+                token -> TSLSymbol.equals(token, TSLSymbol.Type.MULTI_LINE_COMMENT_END));
+    }
+
+    public static List<TSLToken> trimBlock(List<TSLToken> tokens, Predicate<TSLToken> isBegin, Predicate<TSLToken> isEnd) {
         List<TSLToken> trimmedTokens = new LinkedList<>();
-        boolean inComment = false;
+        boolean inBlock = false;
+
         for (TSLToken token : tokens) {
-            if (TSLSymbol.equals(token, TSLSymbol.Type.MULTI_LINE_COMMENT_BEGIN)
-                    || TSLSymbol.equals(token, TSLSymbol.Type.TSLDOC_BEGIN)) {
-                inComment = true;
+            if (isBegin.test(token)) {
+                inBlock = true;
                 continue;
             }
 
-            if (TSLSymbol.equals(token, TSLSymbol.Type.MULTI_LINE_COMMENT_END)) {
-                inComment = false;
+            if (isEnd.test(token)) {
+                inBlock = false;
                 continue;
             }
 
-            if (inComment) {
+            if (inBlock) {
                 continue;
             }
 
@@ -400,6 +415,8 @@ public class TSLParser {
 
         return trimmedTokens;
     }
+
+    /* --------------------------- */
 
     public static List<TSLPlainWord> getEventNameTokens(List<TSLToken> tokens, int indexOn, int indexWith) {
         List<TSLToken> eventTokens = tokens.subList(indexOn + 1,

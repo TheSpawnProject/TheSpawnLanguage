@@ -1,0 +1,6 @@
+#* Foo *#
+NOTHING
+ #* Foo *#
+ ON Manual Trigger
+ #* Foo *#
+ WITH debug_data = 1

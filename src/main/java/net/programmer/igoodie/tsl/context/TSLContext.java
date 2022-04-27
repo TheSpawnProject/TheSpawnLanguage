@@ -4,6 +4,8 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.mozilla.javascript.ScriptableObject;
 
 import java.util.HashMap;
@@ -11,85 +13,85 @@ import java.util.Map;
 
 public class TSLContext {
 
-    protected TheSpawnLanguage tsl;
+    protected @NotNull TheSpawnLanguage tsl;
 
-    public TSLContext(TheSpawnLanguage tsl) {
+    public TSLContext(@NotNull TheSpawnLanguage tsl) {
         this.tsl = tsl;
     }
 
-    public TheSpawnLanguage getTsl() {
+    public @NotNull TheSpawnLanguage getTsl() {
         return tsl;
     }
 
     /* ----------------------------------- */
 
-    protected ScriptableObject ruleScope;
+    protected @Nullable ScriptableObject ruleScope;
 
-    public ScriptableObject getRuleScope() {
+    public @Nullable ScriptableObject getRuleScope() {
         return ruleScope;
     }
 
-    public void setRuleScope(ScriptableObject ruleScope) {
+    public void setRuleScope(@NotNull ScriptableObject ruleScope) {
         this.ruleScope = ruleScope;
     }
 
     /* ----------------------------------- */
 
-    protected TSLEvent event;
+    protected @Nullable TSLEvent event;
 
-    public TSLEvent getEvent() {
+    public @Nullable TSLEvent getEvent() {
         return event;
     }
 
-    public void setEvent(TSLEvent event) {
+    public void setEvent(@NotNull TSLEvent event) {
         this.event = event;
     }
 
     /* ----------------------------------- */
 
-    protected GoodieObject eventArguments = new GoodieObject();
+    protected @NotNull GoodieObject eventArguments = new GoodieObject();
 
-    public GoodieObject getEventArguments() {
+    public @NotNull GoodieObject getEventArguments() {
         return eventArguments;
     }
 
-    public void setEventArguments(GoodieObject eventArguments) {
+    public void setEventArguments(@NotNull GoodieObject eventArguments) {
         this.eventArguments = eventArguments;
     }
 
     /* ----------------------------------- */
 
-    protected GoodieObject attributes;
+    protected @NotNull GoodieObject attributes = new GoodieObject();
 
-    public GoodieObject getAttributes() {
+    public @NotNull GoodieObject getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(GoodieObject attributes) {
+    public void setAttributes(@NotNull GoodieObject attributes) {
         this.attributes = attributes;
     }
 
     /* ----------------------------------- */
 
-    public Map<String, String> importedPlugins = new HashMap<>();
+    public @NotNull Map<String, String> importedPlugins = new HashMap<>();
 
-    public Map<String, String> getImportedPlugins() {
+    public @NotNull Map<String, String> getImportedPlugins() {
         return importedPlugins;
     }
 
-    public void setImportedPlugins(Map<String, String> importedPlugins) {
+    public void setImportedPlugins(@NotNull Map<String, String> importedPlugins) {
         this.importedPlugins = importedPlugins;
     }
 
     /* ----------------------------------- */
 
-    protected TSLToken messageToken;
+    protected @Nullable TSLToken messageToken;
 
-    public TSLToken getMessageToken() {
+    public @Nullable TSLToken getMessageToken() {
         return messageToken;
     }
 
-    public void setMessageToken(TSLToken messageToken) {
+    public void setMessageToken(@Nullable TSLToken messageToken) {
         this.messageToken = messageToken;
     }
 

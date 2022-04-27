@@ -88,20 +88,13 @@ public class JSEngine {
             scope.putConst("__context", scope, new TSLContextGetter(tslContext));
 
             GoodieObject eventArguments = tslContext.getEventArguments();
-            if (eventArguments != null) {
-                for (String argumentName : eventArguments.keySet()) {
-                    Object argument = TSLEvent.extractField(eventArguments, argumentName);
-                    scope.putConst(argumentName, scope, argument);
-                }
+
+            for (String argumentName : eventArguments.keySet()) {
+                Object argument = TSLEvent.extractField(eventArguments, argumentName);
+                scope.putConst(argumentName, scope, argument);
             }
 
-            System.out.println(tslContext.getImportedPlugins());
-
-            TheSpawnLanguage tsl = tslContext.getTsl();
-
-            if (tsl != null) {
-                loadPluginLibraries(scope, tsl, tslContext.getImportedPlugins());
-            }
+            loadPluginLibraries(scope, tslContext.getTsl(), tslContext.getImportedPlugins());
         }
     }
 
