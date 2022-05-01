@@ -2,12 +2,12 @@ package net.programmer.igoodie.plugins.grammar.tags;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
-import net.programmer.igoodie.tsl.context.TSLContext;
-import net.programmer.igoodie.tsl.definition.attribute.TSLAttribute;
-import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
+import net.programmer.igoodie.tsl.definition.TSLTag;
+import net.programmer.igoodie.tsl.definition.base.TSLAttribute;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class DebugTag extends TSLTag {
     }
 
     @Override
-    public @NotNull GoodieObject generateTagAttributes(TSLContext context, TSLPlainWord tagName, List<TSLToken> arguments) throws TSLRuntimeError {
+    public @NotNull GoodieObject generateAttributes(TSLContext context, TSLPlainWord tagName, List<TSLToken> arguments) throws TSLRuntimeError {
         GoodieObject attributes = new GoodieObject();
         DEBUG_MODE_ATTR.set(attributes, true);
         return attributes;

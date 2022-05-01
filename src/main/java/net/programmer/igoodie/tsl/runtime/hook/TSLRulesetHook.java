@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.hook;
 
-import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 

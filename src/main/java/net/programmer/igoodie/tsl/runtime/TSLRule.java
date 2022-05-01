@@ -1,40 +1,44 @@
 package net.programmer.igoodie.tsl.runtime;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
-import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.tsl.definition.TSLAction;
+import net.programmer.igoodie.tsl.definition.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLPredicate;
-import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.parser.snippet.TSLPredicateSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLRuleSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
-import net.programmer.igoodie.tsl.runtime.attribute.Attributable;
-import net.programmer.igoodie.tsl.runtime.attribute.TSLAttributeList;
+import net.programmer.igoodie.tsl.runtime.attribute.ContextualAttributeGenerator;
 import net.programmer.igoodie.tsl.util.GoodieUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.mozilla.javascript.ScriptableObject;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TSLRule implements Attributable {
+public class TSLRule implements ContextualAttributeGenerator {
 
+    @Nullable
     protected TSLRuleset associatedRuleset;
-    protected TSLAttributeList attributeList;
 
     protected TSLRuleSnippet snippet;
+
+    protected List<Couple<TSLDecoratorCall, TSLDecorator>> decorators;
 
     protected TSLEvent event;
     protected List<TSLPredicate> predicates;
     protected TSLAction action;
 
     public TSLRule() {
-        this.attributeList = new TSLAttributeList();
+        this.decorators = new LinkedList<>();
     }
 
-    public TSLRule(TSLRuleset ruleset) {
+    public TSLRule(@NotNull TSLRuleset ruleset) {
         this();
         this.associatedRuleset = ruleset;
     }
@@ -43,15 +47,12 @@ public class TSLRule implements Attributable {
         this(ruleset);
         this.setSnippet(snippet);
     }
-    public TSLAttributeList getAttributeList() {
-        return attributeList;
-    }
 
-    public TSLRuleset getAssociatedRuleset() {
+    public @Nullable TSLRuleset getAssociatedRuleset() {
         return associatedRuleset;
     }
 
-    protected void setAssociatedRuleset(TSLRuleset associatedRuleset) {
+    protected void setAssociatedRuleset(@NotNull TSLRuleset associatedRuleset) {
         this.associatedRuleset = associatedRuleset;
     }
 
@@ -72,18 +73,23 @@ public class TSLRule implements Attributable {
     /* ----------------------------------- */
 
     @Override
-    public GoodieObject getAttributes() {
-        return attributeList.getSquashedAttributes();
-    }
+    public @NotNull GoodieObject generateAttributes(TSLContext context) {
+        GoodieObject attributes = new GoodieObject();
 
-    public GoodieObject getOverriddenAttributes() {
-        return GoodieUtils.mergeOverriding(associatedRuleset.getAttributes(), this.getAttributes());
+        for (Couple<TSLDecoratorCall, TSLDecorator> couple : decorators) {
+            TSLDecoratorCall decoratorCall = couple.getFirst();
+            TSLDecorator decoratorDefinition = couple.getSecond();
+            GoodieObject generatedAttributes = decoratorDefinition.generateAttributes(context, decoratorCall.getArgs());
+            attributes = GoodieUtils.mergeOverriding(attributes, generatedAttributes);
+        }
+
+        return attributes;
     }
 
     /* ----------------------------------- */
 
-    public void decorate(TSLContext context, TSLDecorator decoratorDefinition, TSLDecoratorCall decoratorCall) {
-        this.attributeList.loadDecorator(context, decoratorDefinition, decoratorCall);
+    public void decorate(TSLDecorator decoratorDefinition, TSLDecoratorCall decoratorCall) {
+        this.decorators.add(new Couple<>(decoratorCall, decoratorDefinition));
     }
 
     public boolean perform(TSLContext context) {
@@ -91,13 +97,18 @@ public class TSLRule implements Attributable {
             return false;
         }
 
-        context.setAttributes(getOverriddenAttributes());
+        // Generate and bind attributes
+        GoodieObject tagAttributes = associatedRuleset == null ? new GoodieObject() : associatedRuleset.generateAttributes();
+        GoodieObject ruleAttributes = generateAttributes(context);
+        context.setAttributes(GoodieUtils.mergeOverriding(tagAttributes, ruleAttributes));
 
+        // Bind JS engine scope and context
         JSEngine jsEngine = context.getTsl().getJsEngine();
         ScriptableObject scope = jsEngine.createChildScope();
         jsEngine.loadTSLContext(scope, context);
         context.setRuleScope(scope);
 
+        // Run through the declared predicates
         for (TSLPredicateSnippet predicateSnippet : snippet.getPredicateSnippets()) {
             TSLPredicate predicate = predicateSnippet.getPredicateDefinition();
             if (!predicate.satisfies(context, predicateSnippet.getPredicateTokens())) {
@@ -105,6 +116,7 @@ public class TSLRule implements Attributable {
             }
         }
 
+        // Perform action
         List<TSLToken> actionTokens = snippet.getActionSnippet().getActionTokens();
         action.performRaw(actionTokens, context);
         return true;

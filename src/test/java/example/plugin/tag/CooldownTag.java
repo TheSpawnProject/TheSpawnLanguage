@@ -1,13 +1,14 @@
 package example.plugin.tag;
 
+import example.plugin.ExampleAttributes;
 import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
-import net.programmer.igoodie.tsl.context.TSLContext;
-import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
+import net.programmer.igoodie.tsl.definition.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -20,17 +21,17 @@ public class CooldownTag extends TSLTag {
         super(ExamplePlugin.PLUGIN_INSTANCE, "COOLDOWN");
     }
 
-    @NotNull
     @Override
-    public GoodieObject generateTagAttributes(TSLContext context, TSLPlainWord tagName, List<TSLToken> arguments) throws TSLRuntimeError {
+    public @NotNull GoodieObject generateAttributes(TSLContext context, TSLPlainWord tagName, List<TSLToken> arguments) throws TSLRuntimeError {
         GoodieObject attributes = new GoodieObject();
 
         if (arguments.size() < 1)
             throw new TSLSyntaxError("Expected cooldown duration.", tagName);
 
-        TSLToken cooldownDuration = arguments.get(0);
+        TSLToken durationToken = arguments.get(0);
+        double duration = parseDouble(durationToken, context);
 
-        attributes.put("cooldown_duration", parseDouble(cooldownDuration, context));
+        ExampleAttributes.COOLDOWN_DURATION.set(attributes, duration);
 
         return attributes;
     }

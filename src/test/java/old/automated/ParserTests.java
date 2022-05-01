@@ -2,7 +2,7 @@ package old.automated;
 
 import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParser;
@@ -65,7 +65,7 @@ public class ParserTests {
         System.out.println("/--------------------------------/");
 
         System.out.println("Tags: " + ruleset.getTags());
-        System.out.println("Attrs: " + ruleset.getAttributes());
+        System.out.println("Attrs: " + ruleset.generateAttributes());
         System.out.println("Rules: " + ruleset.getRules());
     }
 

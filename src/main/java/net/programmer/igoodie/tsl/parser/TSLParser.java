@@ -2,12 +2,12 @@ package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLPredicate;
-import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
-import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
+import net.programmer.igoodie.tsl.definition.TSLDecorator;
+import net.programmer.igoodie.tsl.definition.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.snippet.*;
@@ -329,13 +329,13 @@ public class TSLParser {
     public List<TSLDecoratorCall> parseDecorators(TSLRule rule, List<TSLToken> tokens) {
         int indexLastDecorator = indexLastDecorator(tokens);
         List<TSLDecoratorCall> decoratorTokens = tokens.subList(0,
-                        indexLastDecorator == -1 ? 0 : indexLastDecorator + 1)
+                indexLastDecorator == -1 ? 0 : indexLastDecorator + 1)
                 .stream().map(token -> ((TSLDecoratorCall) token))
                 .collect(Collectors.toList());
 
         for (TSLDecoratorCall decoratorToken : decoratorTokens) {
             TSLDecorator decorator = parseDecorator(decoratorToken);
-            rule.decorate(new TSLContext(tsl), decorator, decoratorToken);
+            rule.decorate(decorator, decoratorToken);
         }
 
         return decoratorTokens;

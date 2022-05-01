@@ -1,16 +1,17 @@
-package net.programmer.igoodie.tsl.definition.attribute;
+package net.programmer.igoodie.tsl.definition.base;
 
 import net.programmer.igoodie.goodies.runtime.GoodieElement;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import org.jetbrains.annotations.NotNull;
 
-public class TSLAttribute {
+public class TSLAttribute<T> {
 
-    public final TSLPlugin plugin;
-    public final String attributeName;
+    private final @NotNull TSLPlugin plugin;
+    private final @NotNull String attributeName;
 
-    public TSLAttribute(TSLPlugin plugin, String attributeName) {
+    public TSLAttribute(@NotNull TSLPlugin plugin, @NotNull String attributeName) {
         this.plugin = plugin;
         this.attributeName = attributeName;
     }
@@ -24,7 +25,7 @@ public class TSLAttribute {
         return attributes.containsKey(getId());
     }
 
-    public void set(GoodieObject attributes, Object value) {
+    public void set(GoodieObject attributes, T value) {
         attributes.put(getId(), GoodieElement.from(value));
     }
 

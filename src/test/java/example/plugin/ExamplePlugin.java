@@ -1,6 +1,7 @@
 package example.plugin;
 
 import example.plugin.action.PrintAction;
+import example.plugin.decorator.CooldownDecorator;
 import example.plugin.decorator.SuppressNotificationsDecorator;
 import example.plugin.event.DummyEvent;
 import example.plugin.functions.RootLibrary;
@@ -8,8 +9,8 @@ import example.plugin.tag.CooldownTag;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
-import net.programmer.igoodie.tsl.definition.attribute.TSLDecorator;
-import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
+import net.programmer.igoodie.tsl.definition.TSLDecorator;
+import net.programmer.igoodie.tsl.definition.TSLTag;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPluginLogger;
@@ -47,6 +48,7 @@ public class ExamplePlugin extends TSLPlugin {
     @Override
     public void registerDecorators(TSLRegistry<TSLDecorator> registry) {
         registry.register(SuppressNotificationsDecorator.INSTANCE);
+        registry.register(CooldownDecorator.INSTANCE);
     }
 
     @Override

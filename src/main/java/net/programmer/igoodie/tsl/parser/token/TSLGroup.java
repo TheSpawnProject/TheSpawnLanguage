@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.parser.token;
 
-import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.ExpressionUtils;
 
 public class TSLGroup extends TSLToken {

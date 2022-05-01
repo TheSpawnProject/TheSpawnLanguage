@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.parser.token;
 
-import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 
 import java.util.List;
 import java.util.stream.Collectors;

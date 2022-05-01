@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.executor;
 
-import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 
 import java.util.concurrent.ExecutorService;

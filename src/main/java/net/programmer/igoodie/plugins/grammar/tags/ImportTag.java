@@ -3,8 +3,8 @@ package net.programmer.igoodie.plugins.grammar.tags;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.context.TSLContext;
-import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
+import net.programmer.igoodie.tsl.definition.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParser;
@@ -29,7 +29,7 @@ public class ImportTag extends TSLTag {
     }
 
     @Override
-    public @NotNull GoodieObject generateTagAttributes(TSLContext context, TSLPlainWord tagName, List<TSLToken> arguments) throws TSLRuntimeError {
+    public @NotNull GoodieObject generateAttributes(TSLContext context, TSLPlainWord tagName, List<TSLToken> arguments) throws TSLRuntimeError {
         return new GoodieObject();
     }
 
@@ -90,7 +90,7 @@ public class ImportTag extends TSLTag {
             ruleset.importRuleset(otherRuleset);
 
         } else if (tsl.getPluginManager().LOADED_PLUGIN_IDS.contains(target)) {
-                        ruleset.addPluginAlias(alias, target);
+            ruleset.addPluginAlias(alias, target);
 
         } else {
             throw new TSLSyntaxError("Invalid import format", targetToken);

@@ -8,7 +8,7 @@ import java.util.function.Function;
 public class GoodieUtils {
 
     public static GoodieObject mergeOverriding(GoodieObject a, GoodieObject b) {
-        GoodieObject merged = (GoodieObject) a.deepCopy();
+        GoodieObject merged = a.deepCopy();
 
         for (String field : b.keySet()) {
             merged.put(field, b.get(field));
@@ -18,7 +18,7 @@ public class GoodieUtils {
     }
 
     public static GoodieObject mapKeys(GoodieObject object, Function<String, String> mapper) {
-        GoodieObject copiedObject = (GoodieObject) object.deepCopy();
+        GoodieObject copiedObject = object.deepCopy();
 
         for (String key : object.keySet()) {
             String mappedKey = mapper.apply(key);

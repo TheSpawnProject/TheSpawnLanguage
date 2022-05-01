@@ -4,18 +4,18 @@
 
 $myAction(msg) = ExamplePlugin.pRinT {{msg}} $dev
 
-#* Foo *#
 @ExamplePlugin.suppressNotifications
-#* Foo *#
 $myAction(%Hello World%)
- #* Foo *#
  ON Manual Trigger
- #* Foo *#
  WITH debug_data = 1
 
+@ExamplePlugin.cooldown(2500)
 ExamplePlugin.PRINT #* Message here --> *# Hello World %\${}% ${ExamplePlugin._currentUnix()}
  ON Dummy Event FROM ExamplePlugin
 
-ExamplePlugin.PRINT ${EP._currentUnix()}
+ExamplePlugin.PRINT %Should Error:% ${EP._currentUnix()}
+ ON Dummy Event FROM ExamplePlugin
+
+ExamplePlugin.PRINT %Should Not Error:% ${ExamplePlugin2._currentUnix()}
  ON Dummy Event FROM ExamplePlugin
 

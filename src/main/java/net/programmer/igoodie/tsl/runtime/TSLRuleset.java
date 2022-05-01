@@ -3,8 +3,7 @@ package net.programmer.igoodie.tsl.runtime;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.plugins.grammar.tags.ImportTag;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.context.TSLContext;
-import net.programmer.igoodie.tsl.definition.attribute.TSLTag;
+import net.programmer.igoodie.tsl.definition.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
@@ -14,15 +13,16 @@ import net.programmer.igoodie.tsl.parser.snippet.TSLTagSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
-import net.programmer.igoodie.tsl.runtime.attribute.Attributable;
-import net.programmer.igoodie.tsl.runtime.attribute.TSLAttributeList;
+import net.programmer.igoodie.tsl.runtime.attribute.ConstantAttributeGenerator;
 import net.programmer.igoodie.tsl.runtime.hook.HookList;
+import net.programmer.igoodie.tsl.util.GoodieUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
 
-public class TSLRuleset implements Attributable {
+public class TSLRuleset implements ConstantAttributeGenerator {
 
     protected @Nullable String name;
     protected @Nullable File file;
@@ -30,11 +30,12 @@ public class TSLRuleset implements Attributable {
 
     protected TheSpawnLanguage tsl;
 
-    protected TSLAttributeList attributeList;
+    protected GoodieObject tagAttributes;
 
     protected List<TSLRule> rules;
-    protected Map<Integer, TSLDocSnippet> tslDocs;
-    protected Map<String, TSLCaptureSnippet> captures;
+    protected List<TSLTagSnippet> tags;
+    protected Map<Integer, TSLDocSnippet> tslDocs; // (begin_line_no --> tsl_doc)
+    protected Map<String, TSLCaptureSnippet> captures; // (capture_name --> capture_snippet);
 
     protected Map<String, String> importedPlugins; // (alias_name --> plugin_id)
     protected List<TSLRuleset> importedRulesets;
@@ -50,12 +51,13 @@ public class TSLRuleset implements Attributable {
         this.file = file;
         this.snippets = new LinkedList<>();
         this.tsl = tsl;
+        this.tagAttributes = new GoodieObject();
+        this.tags = new LinkedList<>();
         this.rules = new LinkedList<>();
         this.tslDocs = new HashMap<>();
         this.captures = new HashMap<>();
         this.importedPlugins = new HashMap<>();
         this.importedRulesets = new LinkedList<>();
-        this.attributeList = new TSLAttributeList();
         this.hookList = new HookList();
     }
 
@@ -79,12 +81,8 @@ public class TSLRuleset implements Attributable {
         return hookList;
     }
 
-    public List<TSLTag> getTags() {
-        return attributeList.getTags();
-    }
-
-    public TSLAttributeList getAttributeList() {
-        return attributeList;
+    public List<TSLTagSnippet> getTags() {
+        return tags;
     }
 
     public TSLDocSnippet getTSLDoc(int beginningLine) {
@@ -119,9 +117,11 @@ public class TSLRuleset implements Attributable {
         return Collections.unmodifiableList(this.importedRulesets);
     }
 
+    /* ----------------------------------------- */
+
     @Override
-    public GoodieObject getAttributes() {
-        return attributeList.getSquashedAttributes();
+    public @NotNull GoodieObject generateAttributes() {
+        return this.tagAttributes;
     }
 
     /* ----------------------------------------- */
@@ -146,11 +146,11 @@ public class TSLRuleset implements Attributable {
 
         if (!outsource) snippets.add(tagSnippet);
 
-        this.attributeList.loadTag(new TSLContext(tsl),
-                tagDefinition,
-                nameToken,
-                arguments
-        );
+        tags.add(tagSnippet);
+
+        // Generate and merge tag attributes
+        GoodieObject tagAttributes = tagDefinition.generateAttributes(new TSLContext(tsl), nameToken, arguments);
+        this.tagAttributes = GoodieUtils.mergeOverriding(this.tagAttributes, tagAttributes);
 
         tagDefinition.onLoaded(this, tagSnippet);
     }

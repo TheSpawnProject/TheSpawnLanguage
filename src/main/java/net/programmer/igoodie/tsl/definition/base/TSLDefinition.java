@@ -1,7 +1,7 @@
-package net.programmer.igoodie.tsl.definition;
+package net.programmer.igoodie.tsl.definition.base;
 
 import net.programmer.igoodie.tsl.compat.LSPFeatures;
-import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
@@ -63,6 +63,15 @@ public abstract class TSLDefinition implements TSLRegistrable, LSPFeatures {
 
         } catch (NumberFormatException e) {
             throw new TSLRuntimeError("Expected integer", token);
+        }
+    }
+
+    protected double parseDouble(String evaluatedValue) {
+        try {
+            return Double.parseDouble(evaluatedValue);
+
+        } catch (NumberFormatException e) {
+            throw new TSLRuntimeError("Expected floating point number");
         }
     }
 

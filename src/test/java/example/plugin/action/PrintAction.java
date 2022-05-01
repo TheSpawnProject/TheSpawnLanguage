@@ -1,13 +1,13 @@
 package example.plugin.action;
 
+import example.plugin.ExampleAttributes;
 import example.plugin.ExamplePlugin;
-import example.plugin.decorator.SuppressNotificationsDecorator;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
-import net.programmer.igoodie.tsl.context.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class PrintAction extends TSLAction {
     public void perform(List<TSLToken> arguments, TSLContext context) {
         GoodieObject attributes = context.getAttributes();
 
-        if(SuppressNotificationsDecorator.ATTR_NOTIFICATION_MUTED.isContained(attributes)) {
+        if (ExampleAttributes.NOTIFICATIONS_SUPPRESSED.isContained(attributes)) {
             ExamplePlugin.LOGGER.info("Suppressed.");
             return;
         }

@@ -1,9 +1,8 @@
-package net.programmer.igoodie.tsl.definition.attribute;
+package net.programmer.igoodie.tsl.definition.base;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
-import net.programmer.igoodie.tsl.context.TSLContext;
-import net.programmer.igoodie.tsl.definition.TSLDefinition;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
@@ -14,8 +13,7 @@ import java.util.List;
 
 public abstract class TSLAttributeGenerator extends TSLDefinition {
 
-    // Default accessor; disallow external usage.
-    TSLAttributeGenerator(TSLPlugin plugin, String name) {
+    public TSLAttributeGenerator(TSLPlugin plugin, String name) {
         super(plugin, name);
     }
 

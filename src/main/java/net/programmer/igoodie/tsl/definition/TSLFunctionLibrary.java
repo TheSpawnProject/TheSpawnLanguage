@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.definition;
 
+import net.programmer.igoodie.tsl.definition.base.TSLDefinition;
 import net.programmer.igoodie.tsl.function.TSLFunction;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import org.mozilla.javascript.NativeObject;

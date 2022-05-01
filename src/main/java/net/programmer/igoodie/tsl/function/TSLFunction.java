@@ -3,7 +3,7 @@ package net.programmer.igoodie.tsl.function;
 import net.programmer.igoodie.goodies.util.TypeUtilities;
 import net.programmer.igoodie.goodies.util.accessor.ArrayAccessor;
 import net.programmer.igoodie.tsl.compat.LSPFeatures;
-import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.binding.TSLContextGetter;
 import org.mozilla.javascript.BaseFunction;

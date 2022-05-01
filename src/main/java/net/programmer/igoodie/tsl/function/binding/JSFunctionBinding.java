@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.function.binding;
 
-import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import org.mozilla.javascript.BaseFunction;
 import org.mozilla.javascript.Context;

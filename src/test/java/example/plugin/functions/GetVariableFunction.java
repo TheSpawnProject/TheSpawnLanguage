@@ -1,7 +1,7 @@
 package example.plugin.functions;
 
 import example.plugin.ExamplePlugin;
-import net.programmer.igoodie.tsl.context.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.TSLFunction;
 import org.mozilla.javascript.Scriptable;
