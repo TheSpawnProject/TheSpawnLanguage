@@ -87,6 +87,7 @@ public class JSEngine {
         if (tslContext != null) {
             scope.putConst("__context", scope, new TSLContextGetter(tslContext));
 
+        // TODO: Start putting event arguments under "event" object. ${actor} --> ${event.actor}
             GoodieObject eventArguments = tslContext.getEventArguments();
 
             for (String argumentName : eventArguments.keySet()) {

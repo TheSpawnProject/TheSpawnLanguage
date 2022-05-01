@@ -1,7 +1,5 @@
 #* tsl-ignore *#
 
-# TODO: Add imports and aliases on Rulesets
-# TODO: Add IMPORT tag definition
 #! IMPORT COU FROM coconutplugin
 #! IMPORT Redux FROM redux
 #! IMPORT Web FROM web
@@ -13,11 +11,10 @@ FOR 5 TIMES
  PRINT ${Math.random()}
  ON Manual Trigger
 
-# TODO: Make decorators evaluate on perform
 @COU.prefix(${Date.now()})
 FOR 5 TIMES
- COU.PRINT ${COU.randomNumber()} # TODO: Make namespaces parse-able
- ON Coconut Feast Event FROM COU # TODO: Parse FROM keyword after ON
+ COU.PRINT ${COU.randomNumber()}
+ ON Coconut Feast Event FROM COU
  WITH coconutsEaten = 10
 
 @Web.setURL(${"http://mywebsite.com/" + block})

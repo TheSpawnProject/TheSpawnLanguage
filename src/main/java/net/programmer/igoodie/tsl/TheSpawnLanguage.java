@@ -21,6 +21,7 @@ import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManager;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
+import net.programmer.igoodie.tsl.runtime.TSLReservedNames;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.StringUtils;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +41,7 @@ public class TheSpawnLanguage {
     public static final Semver TSL_SEMVER = new Semver(TSL_VERSION, Semver.SemverType.NPM);
 
     private final List<TSLPlugin> BUILT_IN_PLUGINS;
+    private final TSLReservedNames RESERVED_NAMES;
 
     public final TSLRegistry<TSLTag> TAG_REGISTRY;
     public final TSLRegistry<TSLDecorator> DECORATOR_REGISTRY;
@@ -70,6 +72,7 @@ public class TheSpawnLanguage {
 
     public TheSpawnLanguage() {
         BUILT_IN_PLUGINS = new LinkedList<>();
+        RESERVED_NAMES = new TSLReservedNames();
         TAG_REGISTRY = new TSLRegistry<>(keyMapper(StringUtilities::upperSnake));
         DECORATOR_REGISTRY = new TSLRegistry<>();
         EVENT_REGISTRY = new TSLRegistry<>(keyMapper(StringUtilities::upperFirstLetters));
@@ -97,7 +100,8 @@ public class TheSpawnLanguage {
         BUILT_IN_PLUGINS.forEach(pluginManager::loadPlugin);
 
         for (Map.Entry<String, TSLFunctionsCorelib> corelibEntry : FUNC_CORELIB_REGISTRY) {
-            jsEngine.loadCoreLibrary(corelibEntry.getValue());
+            TSLFunctionsCorelib corelib = corelibEntry.getValue();
+            jsEngine.loadCoreLibrary(corelib);
         }
     }
 

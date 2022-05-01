@@ -28,6 +28,7 @@ public class TSLGroup extends TSLToken {
 
     @Override
     public String evaluate(TSLContext context) {
+        // TODO: Replace with a lexer logic. Will break for --> %${"${not-an-expression}"}%
         return ExpressionUtils.replaceExpressions(group, (expression) ->
                 context.getTsl().getJsEngine().evaluate(expression, context));
     }
