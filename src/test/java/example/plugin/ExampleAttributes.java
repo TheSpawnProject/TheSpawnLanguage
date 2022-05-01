@@ -1,6 +1,6 @@
 package example.plugin;
 
-import net.programmer.igoodie.tsl.definition.base.TSLAttribute;
+import net.programmer.igoodie.tsl.runtime.attribute.TSLAttribute;
 
 public class ExampleAttributes {
 

@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.definition;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.definition.base.TSLDefinition;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
+import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,6 @@ public abstract class TSLDecorator extends TSLDefinition {
     }
 
     @NotNull
-    // TODO: turn arguments into List<TSLToken>
-    public abstract GoodieObject generateAttributes(TSLContext context, List<String> arguments) throws TSLRuntimeError;
+    public abstract GoodieObject generateAttributes(TSLContext context, List<TSLToken> arguments) throws TSLRuntimeError;
 
 }

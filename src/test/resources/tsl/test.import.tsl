@@ -9,7 +9,7 @@ $myAction(%Hello World%)
  ON Manual Trigger
  WITH debug_data = 1
 
-@ExamplePlugin.cooldown(2500)
+@ExamplePlugin.cooldown(${5000 / 2})
 ExamplePlugin.PRINT #* Message here --> *# Hello World %\${}% ${ExamplePlugin._currentUnix()}
  ON Dummy Event FROM ExamplePlugin
 

@@ -6,6 +6,7 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.definition.TSLDecorator;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,14 +21,14 @@ public class CooldownDecorator extends TSLDecorator {
     }
 
     @Override
-    public @NotNull GoodieObject generateAttributes(TSLContext context, List<String> arguments) throws TSLRuntimeError {
+    public @NotNull GoodieObject generateAttributes(TSLContext context, List<TSLToken> arguments) throws TSLRuntimeError {
         GoodieObject attributes = new GoodieObject();
 
         if (arguments.size() < 1)
             throw new TSLSyntaxError("Expected cooldown duration.");
 
-        String durationString = arguments.get(0);
-        double duration = parseDouble(durationString);
+        TSLToken durationToken = arguments.get(0);
+        double duration = parseDouble(durationToken, context);
 
         ExampleAttributes.COOLDOWN_DURATION.set(attributes, duration);
 

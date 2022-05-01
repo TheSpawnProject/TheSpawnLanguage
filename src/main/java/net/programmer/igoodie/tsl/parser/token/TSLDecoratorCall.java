@@ -4,13 +4,14 @@ import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TSLDecoratorCall extends TSLToken {
 
     protected String name;
-    protected List<String> args;
+    protected List<TSLToken> args;
 
-    public TSLDecoratorCall(int line, int character, String name, List<String> args) {
+    public TSLDecoratorCall(int line, int character, String name, List<TSLToken> args) {
         super(line, character);
         this.name = name;
         this.args = args;
@@ -27,7 +28,7 @@ public class TSLDecoratorCall extends TSLToken {
         return name.split("\\.")[1];
     }
 
-    public List<String> getArgs() {
+    public List<TSLToken> getArgs() {
         return args;
     }
 
@@ -41,7 +42,8 @@ public class TSLDecoratorCall extends TSLToken {
         StringBuilder builder = new StringBuilder("@");
         builder.append(name);
         if (args.size() != 0) {
-            builder.append("(").append(String.join(", ", args)).append(")");
+            String argumentText = args.stream().map(TSLToken::toString).collect(Collectors.joining(", "));
+            builder.append("(").append(argumentText).append(")");
         }
         return builder.toString();
     }

@@ -44,9 +44,9 @@ public class TSLTokenizer {
         if (decoratorMatcher.matches()) {
             String name = decoratorMatcher.group("name");
             String argsGroup = decoratorMatcher.group("args");
-            List<String> args = new LinkedList<>();
+            List<TSLToken> args = new LinkedList<>();
             if (argsGroup != null) {
-                args = TSLLexer.lexArgumentsRaw(StringUtilities.shrink(argsGroup, 1, 1));
+                args = TSLLexer.lexArgumentTokens(StringUtilities.shrink(argsGroup, 1, 1));
             }
             return new TSLDecoratorCall(line, character, name, args);
         }
