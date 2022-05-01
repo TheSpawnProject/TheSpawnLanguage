@@ -93,7 +93,7 @@ public class ImportTag extends TSLTag {
             ruleset.addPluginAlias(alias, target);
 
         } else {
-            throw new TSLSyntaxError("Invalid import format", targetToken);
+            throw new TSLSyntaxError("Unknown plugin id -> " + targetToken.evaluate(context), targetToken);
         }
     }
 

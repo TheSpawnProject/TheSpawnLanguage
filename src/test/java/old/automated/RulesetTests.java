@@ -3,16 +3,16 @@ package old.automated;
 import example.plugin.ExamplePlugin;
 import example.plugin.event.DummyEvent;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
-import net.programmer.igoodie.legacy.parser.TSLLexerOld;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
+import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.BeforeAll;
@@ -57,7 +57,7 @@ public class RulesetTests {
     public void foo() throws IOException {
         String script = TestUtils.loadTSLScript("sample2.tsl");
 
-        TSLLexerOld lexer = new TSLLexerOld(script).lex();
+        TSLLexer lexer = new TSLLexer(script).lex();
 
         for (TSLTokenBuffer snippet : lexer.getSnippets()) {
             System.out.println(snippet);

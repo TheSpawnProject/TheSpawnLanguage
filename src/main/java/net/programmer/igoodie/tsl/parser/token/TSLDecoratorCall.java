@@ -42,7 +42,7 @@ public class TSLDecoratorCall extends TSLToken {
         StringBuilder builder = new StringBuilder("@");
         builder.append(name);
         if (args.size() != 0) {
-            String argumentText = args.stream().map(TSLToken::toString).collect(Collectors.joining(", "));
+            String argumentText = args.stream().map(TSLToken::getRaw).collect(Collectors.joining(", "));
             builder.append("(").append(argumentText).append(")");
         }
         return builder.toString();

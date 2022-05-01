@@ -5,6 +5,7 @@ import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -13,15 +14,18 @@ import java.util.List;
 public abstract class TSLSnippet implements Collection<TSLToken> {
 
     protected String loadedPath;
+
+    @Nullable
     protected TSLRuleset ruleset;
+
     protected List<TSLToken> allTokens;
 
-    public TSLSnippet(TSLRuleset ruleset, List<TSLToken> allTokens) {
+    public TSLSnippet(@Nullable TSLRuleset ruleset, List<TSLToken> allTokens) {
         if (allTokens.size() <= 0) {
             throw new TSLInternalError("A Snippet MUST have at least one token.");
         }
 
-        this.loadedPath = ruleset.getFile() != null
+        this.loadedPath = ruleset != null && ruleset.getFile() != null
                 ? ruleset.getFile().getAbsolutePath()
                 : null;
 
@@ -33,7 +37,7 @@ public abstract class TSLSnippet implements Collection<TSLToken> {
         return loadedPath;
     }
 
-    public TSLRuleset getAssociatedRuleset() {
+    public @Nullable TSLRuleset getAssociatedRuleset() {
         return ruleset;
     }
 

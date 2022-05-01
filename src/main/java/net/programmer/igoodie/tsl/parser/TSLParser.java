@@ -251,7 +251,7 @@ public class TSLParser {
 
     public TSLActionSnippet parseAction(@Nullable TSLRuleset ruleset, List<TSLToken> tokens) {
         TSLToken actionName = tokens.get(0);
-        List<TSLToken> actionTokens = tokens.subList(1, tokens.size());
+        List<TSLToken> actionArguments = tokens.subList(1, tokens.size());
 
         if (!(actionName instanceof TSLPlainWord)) {
             throw new TSLSyntaxError("Action name MUST be a String Word.", actionName);
@@ -263,13 +263,13 @@ public class TSLParser {
             throw new TSLSyntaxError("Unknown action -> " + actionName.getRaw(), actionName);
         }
 
-        Couple<List<TSLToken>, TSLToken> couple = actionDefinition.splitByDisplaying(actionTokens);
-        List<TSLToken> actionTokensSplitted = couple.getFirst();
+        Couple<List<TSLToken>, TSLToken> couple = actionDefinition.splitByDisplaying(actionArguments);
+        List<TSLToken> actionArgumentsSplitted = couple.getFirst();
 
-        actionDefinition.validateTokens(actionName, actionTokensSplitted, null, this);
+        actionDefinition.validateTokens(actionName, actionArgumentsSplitted, null, this);
 
         return new TSLActionSnippet(ruleset, actionDefinition,
-                ((TSLPlainWord) actionName), actionTokens);
+                ((TSLPlainWord) actionName), actionArguments);
     }
 
     public List<TSLPredicateSnippet> parsePredicates(TSLRuleset ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens, int indexWith) {

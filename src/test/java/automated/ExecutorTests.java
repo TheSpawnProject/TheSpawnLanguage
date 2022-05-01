@@ -21,12 +21,12 @@ public class ExecutorTests {
 
         TSLExecutor tslExecutor = new TSLExecutor("tsl-test-executor");
 
-        String script = "#\n" +
-                "WAIT ${Math.random() * 5} seconds ON Dummy Event" +
+        String script = "#! IMPORT exampleplugin\n" +
+                "WAIT ${Math.random() * 5} seconds ON Dummy Event FROM exampleplugin" +
                 "\n\n" +
-                "PRINT ${i = 10} ${i} ON Dummy Event" +
+                "exampleplugin.PRINT ${i = 10} ${i} ON Dummy Event FROM exampleplugin" +
                 "\n\n" +
-                "PRINT ${++i} ${$TSL_VERSION} ON Dummy Event";
+                "exampleplugin.PRINT ${++i} ${$TSL_VERSION} ON Dummy Event FROM exampleplugin";
 
         System.out.println(script);
 

@@ -2,5 +2,5 @@
 #! IMPORT exampleplugin
 #! IMPORT %./import.test.tsl%
 
-PRINT $dev
+exampleplugin.PRINT PRINT $dev
  ON Manual Trigger

@@ -1,7 +1,6 @@
 package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.goodies.util.StringUtilities;
-import net.programmer.igoodie.legacy.parser.TSLLexerOld;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.token.*;
 
@@ -88,7 +87,7 @@ public class TSLTokenizer {
     }
 
     public long tokenCount(String text) {
-        TSLLexerOld lexer = new TSLLexerOld(text);
+        TSLLexer lexer = new TSLLexer(text);
         lexer.lex();
         return lexer.getSnippets().stream()
                 .map(TSLTokenBuffer::getTokens)

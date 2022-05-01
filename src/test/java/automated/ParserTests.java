@@ -51,7 +51,7 @@ public class ParserTests {
         tsl.getPluginManager().loadPlugin(new ExamplePlugin());
 
         TSLParser parser = new TSLParser(tsl);
-        TSLRuleset ruleset = parser.parse("PRINT x DISPLAYING A B C ON Dummy Event");
+        TSLRuleset ruleset = parser.parse("NOTHING DISPLAYING %A B C% ON Manual Trigger");
 
         TSLRule rule = ruleset.getRules().get(0);
         TSLActionSnippet actionSnippet = rule.getSnippet().getActionSnippet();

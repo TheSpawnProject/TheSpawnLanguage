@@ -30,12 +30,18 @@ class LexResult {
 
     /* -------------------- */
 
-    public static LexResult merge(LexResult a, LexResult b) {
-        LexResult result = new LexResult();
-        result.skipLine = a.skipLine || b.skipLine;
-        result.pushToken = a.pushToken || b.pushToken;
-        result.changeMode = a.changeMode != null ? a.changeMode : b.changeMode;
-        return result;
+    public static LexResult merge(LexResult... results) {
+        LexResult mergedResult = new LexResult();
+
+        for (LexResult result : results) {
+            mergedResult.skipLine |= result.skipLine;
+            mergedResult.pushToken |= result.pushToken;
+            if (result.changeMode != null) {
+                mergedResult.changeMode = result.changeMode;
+            }
+        }
+
+        return mergedResult;
     }
 
     public static LexResult nothing() {

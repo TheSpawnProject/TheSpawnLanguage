@@ -1,7 +1,7 @@
 package old.automated;
 
-import net.programmer.igoodie.legacy.parser.TSLLexerOld;
 import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
+import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
@@ -15,7 +15,7 @@ public class LexerTests {
     public void shouldLexeSnippets() throws IOException {
         String script = TestUtils.loadTSLScript("snippets.tsl");
 
-        TSLLexerOld lexer = new TSLLexerOld(script);
+        TSLLexer lexer = new TSLLexer(script);
         lexer.lex();
 
         List<TSLTokenBuffer> buffers = lexer.getSnippets();

@@ -6,6 +6,7 @@ import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
 
@@ -34,7 +35,8 @@ public class PluginLoaderTests {
         // Create a context with the event in it
         TSLContext context = new TSLContext(tsl);
 
-        TSLEvent event = tsl.EVENT_REGISTRY.get("Dummy Event");
+        TSLEvent event = tsl.getDefinition(tsl.EVENT_REGISTRY, "example-plugin:Dummy Event");
+        Assertions.assertNotNull(event);
         context.setEvent(event);
 
         GoodieObject eventArgs = new GoodieObject();

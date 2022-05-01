@@ -1,5 +1,7 @@
 package net.programmer.igoodie.tsl.registry;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -54,6 +56,7 @@ public class TSLRegistry<T extends TSLRegistrable> implements Iterable<Map.Entry
         return registry.get(idMapper.apply(registryId));
     }
 
+    @NotNull
     @Override
     public Iterator<Map.Entry<String, T>> iterator() {
         return registry.entrySet().iterator();
