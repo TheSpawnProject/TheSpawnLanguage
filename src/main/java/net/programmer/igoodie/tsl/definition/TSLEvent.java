@@ -5,8 +5,11 @@ import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.definition.base.TSLDefinition;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mozilla.javascript.NativeObject;
+import org.mozilla.javascript.ScriptableObject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +50,19 @@ public abstract class TSLEvent extends TSLDefinition {
             return eventArguments.getString(fieldName).orElse(null);
 
         return eventArguments.get(fieldName);
+    }
+
+    public static NativeObject generateEventJsObject(TSLContext context) {
+        NativeObject jsObject = new NativeObject();
+        GoodieObject eventArguments = context.getEventArguments();
+        ScriptableObject scope = context.getJsScope();
+
+        for (String argumentName : eventArguments.keySet()) {
+            Object value = extractField(eventArguments, argumentName);
+            jsObject.put(argumentName, scope, value);
+        }
+
+        return jsObject;
     }
 
 }

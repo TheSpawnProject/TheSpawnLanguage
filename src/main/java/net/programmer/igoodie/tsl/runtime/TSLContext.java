@@ -25,14 +25,14 @@ public class TSLContext {
 
     /* ----------------------------------- */
 
-    protected @Nullable ScriptableObject ruleScope;
+    protected @Nullable ScriptableObject jsScope;
 
-    public @Nullable ScriptableObject getRuleScope() {
-        return ruleScope;
+    public @Nullable ScriptableObject getJsScope() {
+        return jsScope;
     }
 
-    public void setRuleScope(@NotNull ScriptableObject ruleScope) {
-        this.ruleScope = ruleScope;
+    public void setJsScope(@NotNull ScriptableObject jsScope) {
+        this.jsScope = jsScope;
     }
 
     /* ----------------------------------- */

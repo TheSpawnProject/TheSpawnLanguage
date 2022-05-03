@@ -3,21 +3,25 @@ package automated;
 import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.goodies.util.accessor.ArrayAccessor;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.function.TSLFunction;
+import net.programmer.igoodie.tsl.registry.TSLRegistry;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.junit.jupiter.api.Test;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class JSLibrariesTest {
 
     public static class MathLibrary extends TSLFunctionLibrary {
 
-        public MathLibrary() {
-            super(ExamplePlugin.PLUGIN_INSTANCE, "tslmath");
+        public MathLibrary(String name) {
+            super(ExamplePlugin.PLUGIN_INSTANCE, name);
         }
 
         @Override
@@ -63,17 +67,33 @@ public class JSLibrariesTest {
     public void shouldLoadLibrariesDuringRuntime() {
         TheSpawnLanguage tsl = new TheSpawnLanguage();
         JSEngine jsEngine = tsl.getJsEngine();
+        TSLContext dummyContext = new TSLContext(tsl);
 
-        ScriptableObject childScope = jsEngine.createChildScope();
+        ExamplePlugin plugin = new ExamplePlugin() {
+            @Override
+            public void registerFunctionLibraries(TSLRegistry<TSLFunctionLibrary> registry) {
+                super.registerFunctionLibraries(registry);
+                registry.register(new MathLibrary("tslmath"));
+                registry.register(new MathLibrary("tslmath2"));
+            }
+        };
+        tsl.getPluginManager().loadPlugin(plugin);
 
-        jsEngine.loadLibrary(childScope, "tslmath", new MathLibrary());
-        jsEngine.loadLibrary(childScope, "tslmath2", new MathLibrary());
+        ScriptableObject scope = jsEngine.createChildScope();
+        dummyContext.setJsScope(scope);
 
-        jsEngine.loadTSLContext(childScope, new TSLContext(tsl));
-        System.out.println(jsEngine.evaluate("({ tslmath: tslmath })", childScope));
-        System.out.println(jsEngine.evaluate("({ tslmath2: tslmath2 })", childScope));
-        System.out.println(jsEngine.evaluate("tslmath2.operations.mult(2, 5)", childScope));
-        System.out.println(jsEngine.evaluate("tslmath2.pi", childScope));
+        Map<String, String> imports = new HashMap<>();
+        imports.put("EP", plugin.getManifest().getPluginId());
+        dummyContext.setImportedPlugins(imports);
+
+        jsEngine.loadTSLContext(scope, dummyContext);
+
+        jsEngine._debugDumpScope(scope, true);
+
+        System.out.println(jsEngine.evaluate("({ tslmath: EP.tslmath })", scope));
+        System.out.println(jsEngine.evaluate("({ tslmath2: EP.tslmath2 })", scope));
+        System.out.println(jsEngine.evaluate("EP.tslmath2.operations.mult(2, 5)", scope));
+        System.out.println(jsEngine.evaluate("EP.tslmath2.pi", scope));
     }
 
 }

@@ -1,16 +1,17 @@
 package net.programmer.igoodie.tsl.function;
 
-import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
 import net.programmer.igoodie.tsl.exception.TSLImportError;
+import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.function.binding.TSLContextGetter;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.AccessUtils;
 import org.mozilla.javascript.*;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,13 +48,23 @@ public class JSEngine {
         definedConsts.put(name, value);
     }
 
-    // TODO: Shall I yeet this? :thinking:
-    public void loadLibrary(ScriptableObject scope, String namespace, TSLFunctionLibrary library) {
-        NativeObject libraryObject = scope.has(namespace, scope)
-                ? ((NativeObject) scope.get(namespace))
-                : new NativeObject();
-        library.composeLibrary(libraryObject);
-        scope.put(namespace, scope, libraryObject);
+    public void touchGlobalObject(ScriptableObject scope, String name, Consumer<NativeObject> toucher) {
+        NativeObject object;
+
+        if (scope.has(name, scope)) {
+            Object globalValue = scope.get(name, scope);
+            if (!(globalValue instanceof NativeObject)) {
+                String foundTypeName = globalValue.getClass().getSimpleName();
+                throw new TSLRuntimeError("Cannot touch '" + name + "'. Because it already exists and its type is not NativeObject. It is " + foundTypeName);
+            }
+            object = ((NativeObject) globalValue);
+
+        } else {
+            object = new NativeObject();
+        }
+
+        toucher.accept(object);
+        scope.put(name, scope, object);
     }
 
     public void loadCoreLibrary(TSLFunctionLibrary coreLibrary) {
@@ -86,15 +97,7 @@ public class JSEngine {
     public void loadTSLContext(ScriptableObject scope, TSLContext tslContext) {
         if (tslContext != null) {
             scope.putConst("__context", scope, new TSLContextGetter(tslContext));
-
-        // TODO: Start putting event arguments under "event" object. ${actor} --> ${event.actor}
-            GoodieObject eventArguments = tslContext.getEventArguments();
-
-            for (String argumentName : eventArguments.keySet()) {
-                Object argument = TSLEvent.extractField(eventArguments, argumentName);
-                scope.putConst(argumentName, scope, argument);
-            }
-
+            scope.putConst("event", scope, TSLEvent.generateEventJsObject(tslContext));
             loadPluginLibraries(scope, tslContext.getTsl(), tslContext.getImportedPlugins());
         }
     }
@@ -113,29 +116,31 @@ public class JSEngine {
                 continue;
             }
 
-            NativeObject importedObject = new NativeObject();
+            touchGlobalObject(scope, alias, funcLibObject -> {
+                for (TSLFunctionLibrary module : associatedModules) {
+                    if (module.getName().equals(TSLFunctionLibrary.ROOT_LIBRARY_NAME)) {
+                        module.composeLibrary(funcLibObject);
 
-            for (TSLFunctionLibrary module : associatedModules) {
-                if (module.getName().equals(TSLFunctionLibrary.ROOT_LIBRARY_NAME)) {
-                    module.composeLibrary(importedObject);
-
-                } else {
-                    NativeObject moduleObject = new NativeObject();
-                    module.composeLibrary(moduleObject);
-                    importedObject.put(module.getName(), scope, moduleObject);
+                    } else {
+                        NativeObject moduleObject = new NativeObject();
+                        module.composeLibrary(moduleObject);
+                        funcLibObject.put(module.getName(), funcLibObject, moduleObject);
+                    }
                 }
-            }
 
-            scope.put(alias, scope, importedObject);
+                touchGlobalObject(scope, "__funclibs", libsMetaObject -> {
+                    libsMetaObject.put(alias, libsMetaObject, funcLibObject);
+                });
+            });
         }
     }
 
     /* ------------------------------------ */
 
     public String evaluate(String script, TSLContext tslContext) throws EcmaError {
-        ScriptableObject scope = tslContext.getRuleScope() == null
+        ScriptableObject scope = tslContext.getJsScope() == null
                 ? createChildScope()
-                : tslContext.getRuleScope();
+                : tslContext.getJsScope();
 
         if (!scope.has("__context", scope)) {
             loadTSLContext(scope, tslContext);
@@ -199,6 +204,14 @@ public class JSEngine {
         return (((Stream<?>) array.stream()))
                 .map(this::stringify)
                 .collect(Collectors.joining(", ", "[", "]"));
+    }
+
+    public void _debugDumpScope(ScriptableObject scope, boolean includeInternal) {
+        System.out.println("Dumping variables in " + scope);
+        for (Map.Entry<Object, Object> entry : ((NativeObject) scope).entrySet()) {
+            if (!includeInternal && entry.getKey().toString().startsWith("__")) continue;
+            System.out.println(entry.getKey() + " = " + stringify(entry.getValue()));
+        }
     }
 
 }

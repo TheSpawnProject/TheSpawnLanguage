@@ -9,7 +9,10 @@ public class TSLReservedNames {
     public static final List<String> PREDEFINED_NAMES = Collections.unmodifiableList(Arrays.asList(
             "TSL", // Reserved by The Spawn Language
             "ON", "FROM", "WITH", // Reserved by the ruleset parts
-            "EVENT" // Reserved by event arguments on JS ${event.actor}
+            "EVENT", // Reserved by event arguments on JS ${event.actor}
+            "__context", // Reserved by inner JS workings to pass TSLContext everywhere
+            "__funclibs" // Reserved by inner JS workings to store loaded function libraries
+
     ));
 
     protected Set<String> reservedNames; // UPPER_SNAKE_CASE
