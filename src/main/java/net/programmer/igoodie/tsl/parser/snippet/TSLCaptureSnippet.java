@@ -1,7 +1,9 @@
 package net.programmer.igoodie.tsl.parser.snippet;
 
+import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.TSLTokenizer;
+import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.token.*;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.ExpressionUtils;
@@ -115,16 +117,16 @@ public class TSLCaptureSnippet extends TSLSnippet {
             TSLCaptureParameter parameterToken = (TSLCaptureParameter) target;
             return argumentMap.get(parameterToken.getParameterName());
 
-        } else if (target instanceof TSLPlainWord) {
-            String filled = fillWithParameters(((TSLPlainWord) target).getWord(), argumentMap);
-            return new TSLPlainWord(target.getLine(), target.getCharacter(), filled);
-
         } else if (target instanceof TSLGroup) {
-            String filled = fillWithParameters(((TSLGroup) target).getGroup(), argumentMap);
-            return new TSLGroup(target.getLine(), target.getCharacter(), filled);
+            TSLGroup groupToken = (TSLGroup) target;
+            String groupExpression = StringUtilities.shrink(groupToken.getRaw(), 1, 1);
+            String filled = fillWithParameters(groupExpression, argumentMap);
+            List<TSLToken> filledGroupTokens = TSLLexer.lexGroupTokens(filled);
+            return new TSLGroup(target.getLine(), target.getCharacter(), filledGroupTokens);
 
         } else if (target instanceof TSLExpression) {
-            String filled = fillWithParameters(((TSLExpression) target).getExpression(), argumentMap);
+            TSLExpression expressionToken = (TSLExpression) target;
+            String filled = fillWithParameters(expressionToken.getExpression(), argumentMap);
             return new TSLExpression(target.getLine(), target.getCharacter(), filled);
         }
 

@@ -54,4 +54,22 @@ public class ExpressionUtils {
         }
     }
 
+    // {{x}} \{{y}} --> x \{{y}}
+    // ${x} \${y} --> x \${y}
+    // ${"${}"} --> ${}
+    public static String replaceX(String text, String begin) {
+        return null; // TODO: Find a way to handle escapes in different contexts. Nuke this class if needed (?)
+    }
+
+    // TSL -> foo{{x}} # Invalid, should remain as plain word
+    // TSL -> \${...} # Should remain plain word
+    // TSL -> \{{x}} # Should remain plain word
+    // TSL -> \% # Should remain plain word
+    // TSL -> \(DROP apple) # Should remain plain words
+    // TSL -> \\ # Should remain plain word
+    // TSL -> \f # Should throw an "Invalid escape sequence" syntax error
+    // TSL -> \\f # Should remain plain word
+    // TSL -> 1\2 # Should throw an "Invalid escape sequence" syntax error
+    // TSL -> 1\\2 # Should remain plain word
+
 }

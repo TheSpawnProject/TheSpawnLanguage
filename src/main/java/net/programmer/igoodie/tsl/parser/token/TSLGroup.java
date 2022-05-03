@@ -1,19 +1,22 @@
 package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.runtime.TSLContext;
-import net.programmer.igoodie.tsl.util.ExpressionUtils;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TSLGroup extends TSLToken {
 
-    protected String group;
+    protected List<TSLToken> groupTokens;
 
-    public TSLGroup(int line, int character, String group) {
+    public TSLGroup(int line, int character, List<TSLToken> innerTokens) {
         super(line, character);
-        this.group = group;
+        this.groupTokens = innerTokens;
     }
 
-    public String getGroup() {
-        return group;
+    public List<TSLToken> getGroupTokens() {
+        return Collections.unmodifiableList(groupTokens);
     }
 
     @Override
@@ -23,14 +26,14 @@ public class TSLGroup extends TSLToken {
 
     @Override
     public String getRaw() {
-        return "%" + group + "%";
+        return "%" + groupTokens.stream().map(TSLToken::toString).collect(Collectors.joining(" ")) + "%";
     }
 
     @Override
     public String evaluate(TSLContext context) {
-        // TODO: Replace with a lexer logic. Will break for --> %${"${not-an-expression}"}%
-        return ExpressionUtils.replaceExpressions(group, (expression) ->
-                context.getTsl().getJsEngine().evaluate(expression, context));
+        return groupTokens.stream()
+                .map(token -> token.evaluate(context))
+                .collect(Collectors.joining(" "));
     }
 
 }

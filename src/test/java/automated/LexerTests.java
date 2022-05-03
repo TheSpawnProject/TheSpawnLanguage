@@ -1,8 +1,10 @@
 package automated;
 
-import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
+import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
+import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.token.*;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
@@ -34,6 +36,13 @@ public class LexerTests {
         TSLLexer lexer = new TSLLexer(text).lex();
         if (lexer.getSnippets().size() == 0) return null;
         return lexer.getSnippets().get(0).getTokens().get(0);
+    }
+
+    private TSLTokenBuffer lexTokens(String text) {
+        TSLLexer lexer = new TSLLexer(text);
+        List<TSLTokenBuffer> snippets = lexer.lex().getSnippets();
+        if (snippets.size() == 0) throw new InternalError();
+        return snippets.get(0);
     }
 
     @Test
@@ -119,6 +128,63 @@ public class LexerTests {
             Assertions.assertEquals(TSLCaptureCall.class, token.getClass());
             Assertions.assertEquals(raw, token.getRaw());
         });
+        Assertions.assertDoesNotThrow(() -> {
+            String raw = "$mergeText(%Lemonades%, \\$5)";
+            TSLToken token = lexSingle(raw);
+            System.out.println(token);
+            Assertions.assertNotNull(token);
+            Assertions.assertEquals(TSLCaptureCall.class, token.getClass());
+            Assertions.assertEquals(raw, token.getRaw());
+        });
+        Assertions.assertDoesNotThrow(() -> {
+            String raw = "\\$fakeCapture";
+            TSLToken token = lexSingle(raw);
+            System.out.println(token);
+            Assertions.assertNotNull(token);
+            Assertions.assertEquals(TSLPlainWord.class, token.getClass());
+            Assertions.assertEquals(raw, token.getRaw());
+        });
+    }
+
+    @Test
+    public void shouldLexEscapedTokens() {
+        Assertions.assertDoesNotThrow(() -> {
+            List<TSLToken> tokens = lexTokens("\\%90 foo bar \\%").getTokens();
+            System.out.println(tokens);
+            Assertions.assertEquals(4, tokens.size());
+            Assertions.assertEquals("%90", tokens.get(0).getRaw());
+            Assertions.assertEquals("foo", tokens.get(1).getRaw());
+            Assertions.assertEquals("bar", tokens.get(2).getRaw());
+            Assertions.assertEquals("%", tokens.get(3).getRaw());
+        });
+        Assertions.assertDoesNotThrow(() -> {
+            List<TSLToken> tokens = lexTokens("\\${How much \\% actual tokens?}").getTokens();
+            System.out.println(tokens);
+            Assertions.assertEquals(5, tokens.size());
+            Assertions.assertEquals("${How", tokens.get(0).getRaw());
+            Assertions.assertEquals("much", tokens.get(1).getRaw());
+            Assertions.assertEquals("%", tokens.get(2).getRaw());
+            Assertions.assertEquals("actual", tokens.get(3).getRaw());
+            Assertions.assertEquals("tokens?}", tokens.get(4).getRaw());
+        });
+        Assertions.assertDoesNotThrow(() -> {
+            TSLTokenBuffer buffer = lexTokens("${'Eval \\{{x}}' + {{x}}}");
+            TSLToken token = lexSingle("");
+            Assertions.assertNotNull(token);
+            TSLContext context = new TSLContext(new TheSpawnLanguage());
+            String evaluation = token.evaluate(context);
+            System.out.println(evaluation);
+        });
+    }
+
+    @Test
+    public void shouldPreserveSpacesInGroup() {
+        String rawText = "%Tons    of   spaces ${'Hereee!'}%";
+        TSLToken token = lexSingle(rawText);
+        System.out.println(token);
+        TSLContext dummyContext = new TSLContext(new TheSpawnLanguage());
+        Assertions.assertNotNull(token);
+        Assertions.assertEquals("Tons    of   spaces Hereee!", token.evaluate(dummyContext));
     }
 
 }

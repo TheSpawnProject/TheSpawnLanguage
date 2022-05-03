@@ -21,10 +21,11 @@ public class TSLLexer {
     private int charOffset;
 
     private boolean usingCommaDelimiter;
+    private boolean parsingExtraSpaces;
     private LexerMode mode = new LexerModePlainWord(this);
     private int lineNo = 0, charNo = 0;
     private String line;
-    private char[] chars;
+    private char[] lineChars;
     private int tokenBeginLine = -1, tokenBeginChar = -1;
     private StringBuilder characterBuffer = new StringBuilder();
     private TSLTokenBuffer tokenBuffer = new TSLTokenBuffer();
@@ -44,6 +45,11 @@ public class TSLLexer {
         return this;
     }
 
+    public TSLLexer parseExtraSpaces() {
+        this.parsingExtraSpaces = true;
+        return this;
+    }
+
     public TSLLexer withOffset(int lineOffset, int charOffset) {
         this.lineOffset = lineOffset;
         this.charOffset = charOffset;
@@ -56,7 +62,7 @@ public class TSLLexer {
         lineLoop:
         for (lineNo = 0; lineNo < lines.size(); lineNo++) {
             line = lines.get(lineNo);
-            chars = line.toCharArray();
+            lineChars = line.toCharArray();
             List<TSLToken> tokens = tokenBuffer.getTokens();
 
             if (tokens.size() != 0 && TSLSymbol.equals(tokens.get(0), TSLSymbol.Type.RULESET_TAG_BEGIN)) {
@@ -72,8 +78,8 @@ public class TSLLexer {
                 pushToken();
             }
 
-            for (charNo = 0; charNo < chars.length; charNo++) {
-                char character = chars[this.charNo];
+            for (charNo = 0; charNo < lineChars.length; charNo++) {
+                char character = lineChars[this.charNo];
                 LexResult result = mode.step(lineNo(), charNo(), character);
                 if (result.shouldPushToken()) pushToken();
                 if (result.getChangeMode() != null) mode = result.getChangeMode();
@@ -104,14 +110,18 @@ public class TSLLexer {
         return usingCommaDelimiter;
     }
 
+    public boolean isParsingExtraSpaces() {
+        return parsingExtraSpaces;
+    }
+
     private boolean inCharacterRange(int index) {
-        if (index <= 0) return false;
-        return index < this.chars.length;
+        if (index < 0) return false;
+        return index < this.lineChars.length;
     }
 
     protected char getCharacter(int offset) {
         int charIndex = charNo + offset;
-        return inCharacterRange(charIndex) ? chars[charIndex] : 0;
+        return inCharacterRange(charIndex) ? lineChars[charIndex] : 0;
     }
 
     protected String accumulatedString() {
@@ -222,14 +232,28 @@ public class TSLLexer {
 
     /* ---------------------------------------- */
 
-    public static List<TSLToken> lexArgumentTokens(String text) {
-        List<TSLToken> args = new LinkedList<>();
-        TSLLexer lexer = new TSLLexer(text).useCommaDelimiter().lex();
-        TSLTokenBuffer snippet = lexer.getSnippets().get(0);
-        if (snippet != null) {
-            args.addAll(snippet.getTokens());
+    public static List<TSLToken> lexIntoTokens(TSLLexer lexer) {
+        List<TSLToken> tokens = new LinkedList<>();
+        lexer.lex();
+        TSLTokenBuffer buffer = lexer.getSnippets().get(0);
+        if (buffer != null) {
+            tokens.addAll(buffer.getTokens());
         }
-        return args;
+        return tokens;
+    }
+
+    public static List<TSLToken> lexGroupTokens(String text) {
+        return lexIntoTokens(new TSLLexer(text).parseExtraSpaces());
+    }
+
+    public static List<String> lexGroupRaw(String text) {
+        return lexGroupTokens(text).stream()
+                .map(TSLToken::getRaw)
+                .collect(Collectors.toList());
+    }
+
+    public static List<TSLToken> lexArgumentTokens(String text) {
+        return lexIntoTokens(new TSLLexer(text).useCommaDelimiter());
     }
 
     public static List<String> lexArgumentsRaw(String text) {

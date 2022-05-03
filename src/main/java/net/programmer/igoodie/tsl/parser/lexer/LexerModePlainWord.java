@@ -1,6 +1,10 @@
 package net.programmer.igoodie.tsl.parser.lexer;
 
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.token.TSLExtraSpaceToken;
+import net.programmer.igoodie.tsl.parser.token.TSLToken;
+
+import java.util.List;
 
 class LexerModePlainWord extends LexerMode {
 
@@ -67,6 +71,23 @@ class LexerModePlainWord extends LexerMode {
 
             } else {
                 throw new TSLSyntaxError("Unexpected parenthesis character", lineNo, characterNo);
+            }
+        }
+
+        if (lexer.isParsingExtraSpaces()) {
+            if (character == ' ' && prevCharacter == ' ' && nextCharacter == ' ') {
+                lexer.pushToken();
+                List<TSLToken> pushedTokens = lexer.getTokenBuffer().getTokens();
+                TSLToken lastToken = pushedTokens.size() == 0 ? null : pushedTokens.get(pushedTokens.size() - 1);
+                if (lastToken instanceof TSLExtraSpaceToken) {
+                    TSLExtraSpaceToken spaceToken = (TSLExtraSpaceToken) lastToken;
+                    pushedTokens.remove(pushedTokens.size() - 1);
+                    lexer.getTokenBuffer().pushToken(new TSLExtraSpaceToken(spaceToken.getLine(), spaceToken.getCharacter(), spaceToken.getAmount() + 1));
+
+                } else {
+                    lexer.getTokenBuffer().pushToken(new TSLExtraSpaceToken(lineNo, characterNo, 1));
+                }
+                return LexResult.nothing();
             }
         }
 

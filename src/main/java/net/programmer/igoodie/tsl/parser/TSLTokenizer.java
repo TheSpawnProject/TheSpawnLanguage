@@ -19,9 +19,10 @@ public class TSLTokenizer {
     public static final Pattern VALID_PARAM = Pattern.compile("[a-zA-Z_]+[0-9a-zA-Z_]*");
 
     public TSLToken tokenize(String text, int line, int character) {
-        if (text.startsWith("%") && text.endsWith("%")) {
+        if (text.startsWith("%") && text.endsWith("%") && text.length() != 1) {
             String groupFragment = StringUtilities.shrink(text, 1, 1);
-            return new TSLGroup(line, character, groupFragment);
+            List<TSLToken> groupTokens = TSLLexer.lexGroupTokens(groupFragment);
+            return new TSLGroup(line, character, groupTokens);
         }
 
         if (text.startsWith("${") && text.endsWith("}")) {

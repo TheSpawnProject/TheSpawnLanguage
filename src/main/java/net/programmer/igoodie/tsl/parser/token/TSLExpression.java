@@ -1,8 +1,8 @@
 package net.programmer.igoodie.tsl.parser.token;
 
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
-import org.mozilla.javascript.EcmaError;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
+import org.mozilla.javascript.RhinoException;
 
 public class TSLExpression extends TSLToken {
 
@@ -31,7 +31,7 @@ public class TSLExpression extends TSLToken {
     public String evaluate(TSLContext context) {
         try {
             return context.getTsl().getJsEngine().evaluate(expression, context);
-        } catch (EcmaError | TSLExpressionException error) {
+        } catch (RhinoException | TSLExpressionException error) {
             return "#!ERROR!#";
         }
     }
