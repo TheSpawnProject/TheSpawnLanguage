@@ -1,33 +1,32 @@
 package net.programmer.igoodie.plugins.grammar.actions;
 
 import net.programmer.igoodie.goodies.util.Couple;
+import net.programmer.igoodie.goodies.util.builder.InlineMapBuilder;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class WaitMetaAction extends TSLAction {
 
     public static final WaitMetaAction INSTANCE = new WaitMetaAction();
 
-    public static final Map<String, Long> UNIT_COEF = Stream.of(
-            new AbstractMap.SimpleEntry<>("milliseconds", 1L),
-            new AbstractMap.SimpleEntry<>("seconds", 1_000L),
-            new AbstractMap.SimpleEntry<>("minutes", 60 * 1_000L)
-    ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    public static final Map<String, Long> UNIT_COEF = InlineMapBuilder.of(HashMap<String, Long>::new)
+            .entry("milliseconds", 1L)
+            .entry("seconds", 1_000L)
+            .entry("minutes", 60_000L)
+            .build();
 
     private WaitMetaAction() {
         super(TSLGrammarCore.PLUGIN_INSTANCE, "WAIT");

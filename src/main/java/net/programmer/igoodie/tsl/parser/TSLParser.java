@@ -13,7 +13,6 @@ import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 import net.programmer.igoodie.tsl.util.IOUtils;
 import net.programmer.igoodie.tsl.util.StringUtils;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -254,7 +253,7 @@ public class TSLParser {
         return parseAction(ruleset, actionTokens);
     }
 
-    public TSLActionSnippet parseAction(@Nullable TSLRuleset ruleset, List<TSLToken> tokens) {
+    public TSLActionSnippet parseAction(TSLRuleset ruleset, List<TSLToken> tokens) {
         checkNamespaceIntegrity(tokens);
 
         TSLToken actionName = tokens.get(0);
