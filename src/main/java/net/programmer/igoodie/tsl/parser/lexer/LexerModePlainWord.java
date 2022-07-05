@@ -21,6 +21,15 @@ class LexerModePlainWord extends LexerMode {
             throw new TSLSyntaxError("Unexpected block comment ending", lineNo, characterNo);
         }
 
+        if (character == '\\') {
+            if(nextCharacter == '%' || nextCharacter == '$' || nextCharacter == '\\') {
+                lexer.pushCharacter('\\');
+                lexer.pushCharacter(nextCharacter);
+                lexer.skipCharacters(1);
+                return LexResult.nothing();
+            }
+        }
+
         if (character == '#') {
             if (nextCharacter == '*') {
                 if (lexer.getCharacter(2) == '*') {
@@ -46,12 +55,12 @@ class LexerModePlainWord extends LexerMode {
             }
         }
 
-        if (character == '%' && prevCharacter != '\\') {
+        if (character == '%') {
             lexer.pushCharacter('%');
             return LexResult.changeMode(new LexerModeGroup(lexer));
         }
 
-        if (character == '$' && nextCharacter == '{' && prevCharacter != '\\') {
+        if (character == '$' && nextCharacter == '{') {
             lexer.pushCharacters("${");
             return LexResult.changeMode(new LexerModeExpression(lexer));
         }
@@ -70,6 +79,7 @@ class LexerModePlainWord extends LexerMode {
                 return LexResult.changeMode(new LexerModeArguments(lexer));
 
             } else {
+                System.out.println("Accumulated:" + lexer.accumulatedString());
                 throw new TSLSyntaxError("Unexpected parenthesis character", lineNo, characterNo);
             }
         }

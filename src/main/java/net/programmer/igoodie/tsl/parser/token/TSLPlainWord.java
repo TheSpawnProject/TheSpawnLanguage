@@ -5,38 +5,38 @@ import org.jetbrains.annotations.Nullable;
 
 public class TSLPlainWord extends TSLToken {
 
-    protected String word;
+    protected String rawWord;
 
-    public TSLPlainWord(int line, int character, String word) {
+    public TSLPlainWord(int line, int character, String rawWord) {
         super(line, character);
-        this.word = word;
+        this.rawWord = rawWord;
     }
 
-    public String getWord() {
-        return word;
+    public String getRawWord() {
+        return rawWord;
     }
 
     public boolean isTrue() {
-        String word = getWord();
+        String word = getRawWord();
         return word.equalsIgnoreCase("TRUE")
                 || word.equals("1");
     }
 
     public boolean isFalse() {
-        String word = getWord();
+        String word = getRawWord();
         return word.equalsIgnoreCase("FALSE")
                 || word.equals("0");
     }
 
     @Nullable
     public String getNamespace() {
-        if (!word.contains(".")) return null;
-        return word.split("\\.")[0];
+        if (!rawWord.contains(".")) return null;
+        return rawWord.split("\\.")[0];
     }
 
     public String getValue() {
-        if (!word.contains(".")) return word;
-        return word.split("\\.")[1];
+        if (!rawWord.contains(".")) return rawWord;
+        return rawWord.split("\\.")[1];
     }
 
     @Override
@@ -46,12 +46,15 @@ public class TSLPlainWord extends TSLToken {
 
     @Override
     public String getRaw() {
-        return getWord();
+        return getRawWord();
     }
 
     @Override
     public String evaluate(TSLContext context) {
-        return getWord();
+        return getRawWord()
+                .replace("\\%", "%")
+                .replace("\\$", "$")
+                .replace("\\\\", "\\");
     }
 
 }

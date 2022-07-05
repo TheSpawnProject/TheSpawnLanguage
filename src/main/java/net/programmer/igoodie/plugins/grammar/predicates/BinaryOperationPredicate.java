@@ -5,7 +5,6 @@ import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLComparator;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLPredicate;
@@ -14,6 +13,7 @@ import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 
 import java.util.List;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
             return false;
         }
 
-        String eventField = ((TSLPlainWord) eventFieldToken).getWord();
+        String eventField = ((TSLPlainWord) eventFieldToken).getRawWord();
 
         if (eventField == null || !event.getAcceptedFields().containsKey(eventField)) {
             throw new TSLSyntaxError("Unknown field for the event -> " + eventFieldToken, eventFieldToken);
@@ -55,7 +55,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
     @Override
     public boolean satisfies(TSLContext context, List<TSLToken> tokens) {
         TSLToken fieldNameToken = tokens.get(0);
-        String fieldName = ((TSLPlainWord) fieldNameToken).getWord();
+        String fieldName = ((TSLPlainWord) fieldNameToken).getRawWord();
 
         GoodieObject eventArguments = context.getEventArguments();
         Object eventFieldValue = TSLEvent.extractField(eventArguments, fieldName);
@@ -77,7 +77,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
     }
 
     private void checkFieldValueType(TSLContext context, TSLToken fieldNameToken) {
-        String fieldName = ((TSLPlainWord) fieldNameToken).getWord();
+        String fieldName = ((TSLPlainWord) fieldNameToken).getRawWord();
 
         TSLEvent event = context.getEvent();
 

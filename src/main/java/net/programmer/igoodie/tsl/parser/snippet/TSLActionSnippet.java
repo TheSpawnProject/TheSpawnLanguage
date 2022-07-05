@@ -49,7 +49,7 @@ public class TSLActionSnippet extends TSLSnippet {
                 try {
                     TSLCaptureCall captureCall = (TSLCaptureCall) token;
                     TSLCaptureSnippet captureSnippet = ruleset.getCaptureSnippet(captureCall);
-                    List<TSLToken> flattenedCapture = captureSnippet.tokenizeAndFlatten(captureCall.getArgs());
+                    List<TSLToken> flattenedCapture = captureSnippet.flatten(captureCall.getArgs());
                     flattened.addAll(flattenedCapture);
                 } catch (IllegalArgumentException e) {
                     throw new TSLSyntaxError("Capture arguments MUST NOT contain multiple tokens at once. " + e.getMessage(), token);

@@ -2,20 +2,17 @@ package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
-import net.programmer.igoodie.tsl.definition.TSLAction;
-import net.programmer.igoodie.tsl.definition.TSLEvent;
-import net.programmer.igoodie.tsl.definition.TSLPredicate;
-import net.programmer.igoodie.tsl.definition.TSLDecorator;
-import net.programmer.igoodie.tsl.definition.TSLTag;
+import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.snippet.*;
 import net.programmer.igoodie.tsl.parser.token.*;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 import net.programmer.igoodie.tsl.util.IOUtils;
+import net.programmer.igoodie.tsl.util.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -77,6 +74,7 @@ public class TSLParser {
 
     public TSLDocSnippet parseTSLDoc(TSLRuleset ruleset, TSLTokenBuffer buffer) {
         List<TSLToken> tokens = buffer.getTokens();
+        checkNamespaceIntegrity(tokens);
 
         TSLSymbol begin = (TSLSymbol) tokens.get(0);
         TSLSymbol end = ((TSLSymbol) tokens.get(tokens.size() - 1));
@@ -107,6 +105,7 @@ public class TSLParser {
 
     public TSLTagSnippet parseTag(TSLRuleset ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
         List<TSLToken> tokens = trimBlockComments(buffer.getTokens());
+        checkNamespaceIntegrity(tokens);
 
         if (tokens.size() < 2) {
             throw new TSLSyntaxError("Tag snippet missing a tag name", buffer);
@@ -136,6 +135,7 @@ public class TSLParser {
 
     public TSLCaptureSnippet parseCapture(TSLRuleset ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
         List<TSLToken> tokens = trimBlockComments(buffer.getTokens());
+        checkNamespaceIntegrity(tokens);
 
         if (tokens.size() < 3) {
             throw new TSLSyntaxError("Malformed capture snippet", buffer);
@@ -148,8 +148,8 @@ public class TSLParser {
         }
 
         TSLCaptureCall captureCallToken = (TSLCaptureCall) captureNameToken;
-        for (String argName : captureCallToken.getArgs()) {
-            if (!TSLTokenizer.VALID_PARAM.matcher(argName).matches()) {
+        for (TSLToken argName : captureCallToken.getArgs()) {
+            if (!TSLTokenizer.VALID_PARAM.matcher(argName.getRaw()).matches()) {
                 throw new TSLSyntaxError(String.format("Illegal capture parameter name -> %s", argName), captureCallToken);
             }
         }
@@ -170,6 +170,7 @@ public class TSLParser {
     public TSLRule parseRule(TSLRuleset ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
         TSLRule rule = new TSLRule();
         List<TSLToken> tokens = trimBlockComments(buffer.getTokens());
+        checkNamespaceIntegrity(tokens);
 
         System.out.println(tokens);
 
@@ -222,6 +223,8 @@ public class TSLParser {
     }
 
     public TSLEventSnippet parseEvent(TSLRuleset ruleset, List<TSLToken> tokens, int indexOn, int indexWith) {
+        checkNamespaceIntegrity(tokens);
+
         List<TSLPlainWord> eventTokens = getEventNameTokens(tokens, indexOn, indexWith);
 
         String eventName = eventTokens.stream()
@@ -240,6 +243,8 @@ public class TSLParser {
     }
 
     public TSLActionSnippet parseAction(TSLRuleset ruleset, List<TSLToken> tokens, int indexLastDecorator, int indexOn) {
+        checkNamespaceIntegrity(tokens);
+
         List<TSLToken> actionTokens = TSLActionSnippet.flatten(ruleset,
                 tokens.subList(indexLastDecorator == -1 ? 0 : indexLastDecorator + 1, indexOn));
 
@@ -250,6 +255,8 @@ public class TSLParser {
     }
 
     public TSLActionSnippet parseAction(@Nullable TSLRuleset ruleset, List<TSLToken> tokens) {
+        checkNamespaceIntegrity(tokens);
+
         TSLToken actionName = tokens.get(0);
         List<TSLToken> actionArguments = tokens.subList(1, tokens.size());
 
@@ -299,13 +306,15 @@ public class TSLParser {
     }
 
     public TSLPredicateSnippet parsePredicate(TSLRuleset ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens) {
+        checkNamespaceIntegrity(tokens);
+
         TSLToken withToken = tokens.get(0);
 
         if (!(withToken instanceof TSLPlainWord)) {
             throw new TSLSyntaxError("Predicates MUST start with WITH keyword.", withToken);
         }
 
-        if (!((TSLPlainWord) withToken).getWord().equalsIgnoreCase("WITH")) {
+        if (!((TSLPlainWord) withToken).getRawWord().equalsIgnoreCase("WITH")) {
             throw new TSLSyntaxError("Predicates MUST start with WITH keyword.", withToken);
         }
 
@@ -327,9 +336,11 @@ public class TSLParser {
     }
 
     public List<TSLDecoratorCall> parseDecorators(TSLRule rule, List<TSLToken> tokens) {
+        checkNamespaceIntegrity(tokens);
+
         int indexLastDecorator = indexLastDecorator(tokens);
         List<TSLDecoratorCall> decoratorTokens = tokens.subList(0,
-                indexLastDecorator == -1 ? 0 : indexLastDecorator + 1)
+                        indexLastDecorator == -1 ? 0 : indexLastDecorator + 1)
                 .stream().map(token -> ((TSLDecoratorCall) token))
                 .collect(Collectors.toList());
 
@@ -375,6 +386,17 @@ public class TSLParser {
         }
 
         return lastIndex;
+    }
+
+    /* --------------------------- */
+
+    public static void checkNamespaceIntegrity(List<TSLToken> tokens) {
+        for (TSLToken token : tokens) {
+            String text = token.getRaw();
+            if (token instanceof TSLPlainWord && StringUtils.occurrenceCount(text, '.') >= 2) {
+                throw new TSLSyntaxError("Cannot have multiple namespacing delimiters", token);
+            }
+        }
     }
 
     /* --------------------------- */

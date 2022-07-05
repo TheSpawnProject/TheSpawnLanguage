@@ -105,8 +105,8 @@ public class TSLRule implements ContextualAttributeGenerator {
         // Bind JS engine scope and context
         JSEngine jsEngine = context.getTsl().getJsEngine();
         ScriptableObject scope = jsEngine.createChildScope();
-        jsEngine.loadTSLContext(scope, context);
         context.setJsScope(scope);
+        jsEngine.loadTSLContext(scope, context);
 
         // Run through the declared predicates
         for (TSLPredicateSnippet predicateSnippet : snippet.getPredicateSnippets()) {

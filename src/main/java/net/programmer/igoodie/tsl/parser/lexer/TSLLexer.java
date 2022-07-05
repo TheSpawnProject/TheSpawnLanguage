@@ -1,10 +1,9 @@
 package net.programmer.igoodie.tsl.parser.lexer;
 
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
+import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.parser.token.*;
-import net.programmer.igoodie.tsl.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -167,10 +166,6 @@ public class TSLLexer {
                     1 + tokenBeginLine + lineOffset,
                     1 + tokenBeginChar + charOffset);
 
-            if (token instanceof TSLPlainWord && StringUtils.occurrenceCount(text, '.') >= 2) {
-                throw new TSLSyntaxError("Cannot have multiple namespacing delimiters", token);
-            }
-
             if (tokenBuffer.getTokens().size() == 0) { // Inserting the very first token
                 if (TSLSymbol.equals(token, TSLSymbol.Type.RULESET_TAG_BEGIN)) {
                     tokenBuffer.setType(TSLTokenBuffer.Type.TAG);
@@ -199,7 +194,7 @@ public class TSLLexer {
                 if (firstToken instanceof TSLDecoratorCall
                         && secondToken instanceof TSLCaptureCall
                         && thirdToken instanceof TSLSymbol
-                        && new TSLTokenizer().tokenizeAll(((TSLCaptureCall) secondToken).getArgs())
+                        && ((TSLCaptureCall) secondToken).getArgs()
                         .stream().allMatch(arg -> arg instanceof TSLPlainWord)
                         && ((TSLSymbol) thirdToken).getType() == TSLSymbol.Type.CAPTURE_DECLARATION) {
                     throw new TSLSyntaxError("Captures CANNOT be decorated.", firstToken);

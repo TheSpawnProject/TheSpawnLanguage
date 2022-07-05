@@ -3,6 +3,7 @@ package old.automated;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
+import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ public class CaptureTests {
         TSLRuleset ruleset = tslParser.parse(script);
         TSLCaptureSnippet capture = ruleset.getCaptureSnippet("dropAxeWithFireAspect");
 
-        List<TSLToken> flattenedCapture = capture.tokenizeAndFlatten("15");
+        List<TSLToken> flattenedCapture = capture.flatten(new TSLPlainWord(0, 0, "15"));
         System.out.println(flattenedCapture);
     }
 

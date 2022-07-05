@@ -26,7 +26,7 @@ public class TSLGroup extends TSLToken {
 
     @Override
     public String getRaw() {
-        return "%" + groupTokens.stream().map(TSLToken::toString).collect(Collectors.joining(" ")) + "%";
+        return "%" + groupTokens.stream().map(TSLToken::getRaw).collect(Collectors.joining(" ")) + "%";
     }
 
     @Override

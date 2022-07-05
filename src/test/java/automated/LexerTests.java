@@ -107,7 +107,6 @@ public class LexerTests {
         Assertions.assertDoesNotThrow(() -> {
             String raw = "%a group containing percent (\\%) sign%";
             TSLToken token = lexSingle(raw);
-            System.out.println(token);
             Assertions.assertNotNull(token);
             Assertions.assertEquals(TSLGroup.class, token.getClass());
             Assertions.assertEquals(raw, token.getRaw());
@@ -152,28 +151,20 @@ public class LexerTests {
             List<TSLToken> tokens = lexTokens("\\%90 foo bar \\%").getTokens();
             System.out.println(tokens);
             Assertions.assertEquals(4, tokens.size());
-            Assertions.assertEquals("%90", tokens.get(0).getRaw());
+            Assertions.assertEquals("\\%90", tokens.get(0).getRaw());
             Assertions.assertEquals("foo", tokens.get(1).getRaw());
             Assertions.assertEquals("bar", tokens.get(2).getRaw());
-            Assertions.assertEquals("%", tokens.get(3).getRaw());
+            Assertions.assertEquals("\\%", tokens.get(3).getRaw());
         });
         Assertions.assertDoesNotThrow(() -> {
             List<TSLToken> tokens = lexTokens("\\${How much \\% actual tokens?}").getTokens();
             System.out.println(tokens);
             Assertions.assertEquals(5, tokens.size());
-            Assertions.assertEquals("${How", tokens.get(0).getRaw());
+            Assertions.assertEquals("\\${How", tokens.get(0).getRaw());
             Assertions.assertEquals("much", tokens.get(1).getRaw());
-            Assertions.assertEquals("%", tokens.get(2).getRaw());
+            Assertions.assertEquals("\\%", tokens.get(2).getRaw());
             Assertions.assertEquals("actual", tokens.get(3).getRaw());
             Assertions.assertEquals("tokens?}", tokens.get(4).getRaw());
-        });
-        Assertions.assertDoesNotThrow(() -> {
-            TSLTokenBuffer buffer = lexTokens("${'Eval \\{{x}}' + {{x}}}");
-            TSLToken token = lexSingle("");
-            Assertions.assertNotNull(token);
-            TSLContext context = new TSLContext(new TheSpawnLanguage());
-            String evaluation = token.evaluate(context);
-            System.out.println(evaluation);
         });
     }
 

@@ -4,9 +4,9 @@ import example.plugin.ExamplePlugin;
 import example.plugin.event.DummyEvent;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
@@ -42,12 +42,13 @@ public class JSEngineTests {
         GoodieObject eventArguments = new GoodieObject();
         eventArguments.put("donation", 100.00d);
 
-        TSLContext tslContext = new TSLContext(language);
-        tslContext.setEventArguments(eventArguments);
-
         JSEngine jsEngine = language.getJsEngine();
         jsEngine.defineConst("PI", 3.14);
 //        jsEngine.loadFunction(MaximumOfFunction.INSTANCE);
+
+        TSLContext tslContext = new TSLContext(language);
+        tslContext.setJsScope(jsEngine.createChildScope());
+        tslContext.setEventArguments(eventArguments);
 
         String script = "runScript('./src/test/resources/rhino/module.test.js')";
 

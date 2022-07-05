@@ -43,14 +43,14 @@ public class TSLCaptureSnippet extends TSLSnippet {
         return header.getCaptureName();
     }
 
-    public List<String> getParameterNames() {
+    public List<TSLToken> getParameterNames() {
         return header.getArgs();
     }
 
     /* -------------------------------------------- */
 
     public Map<String, TSLToken> argumentsToMap(List<TSLToken> arguments) {
-        List<String> parameterNames = getParameterNames();
+        List<TSLToken> parameterNames = getParameterNames();
 
         if (parameterNames.size() > arguments.size()) {
             throw new IllegalArgumentException("Insufficient number of arguments...");
@@ -58,7 +58,7 @@ public class TSLCaptureSnippet extends TSLSnippet {
 
         HashMap<String, TSLToken> argumentMap = new HashMap<>();
         for (int i = 0; i < parameterNames.size(); i++) {
-            argumentMap.put(parameterNames.get(i), arguments.get(i));
+            argumentMap.put(parameterNames.get(i).getRaw(), arguments.get(i));
         }
 
         return argumentMap;
@@ -100,7 +100,7 @@ public class TSLCaptureSnippet extends TSLSnippet {
                     throw new TSLRuntimeError("Captures MUST not call themselves recursively.", captureCall);
                 }
                 TSLCaptureSnippet captureSnippet = ruleset.getCaptureSnippet(captureCall);
-                List<TSLToken> flattenedCapture = captureSnippet.tokenizeAndFlatten(captureCall.getArgs());
+                List<TSLToken> flattenedCapture = captureSnippet.flatten(captureCall.getArgs());
                 replaced.addAll(flattenedCapture);
 
             } else {

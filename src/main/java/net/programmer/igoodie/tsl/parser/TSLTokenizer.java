@@ -33,9 +33,9 @@ public class TSLTokenizer {
         if (captureMatcher.matches()) {
             String name = captureMatcher.group("name");
             String argsGroup = captureMatcher.group("args");
-            List<String> args = new LinkedList<>();
+            List<TSLToken> args = new LinkedList<>();
             if (argsGroup != null) {
-                args = TSLLexer.lexArgumentsRaw(StringUtilities.shrink(argsGroup, 1, 1));
+                args = TSLLexer.lexArgumentTokens(StringUtilities.shrink(argsGroup, 1, 1));
             }
             return new TSLCaptureCall(line, character, name, args);
         }

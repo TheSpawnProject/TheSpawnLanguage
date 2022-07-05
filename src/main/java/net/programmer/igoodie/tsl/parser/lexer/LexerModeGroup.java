@@ -14,7 +14,16 @@ public class LexerModeGroup extends LexerMode {
         char prevCharacter = lexer.getCharacter(-1);
         char nextCharacter = lexer.getCharacter(1);
 
-        if (character == '%' && prevCharacter != '\\') {
+        if (character == '\\') {
+            if(nextCharacter == '%' || nextCharacter == '$' || nextCharacter == '\\') {
+                lexer.pushCharacter('\\');
+                lexer.pushCharacter(nextCharacter);
+                lexer.skipCharacters(1);
+                return LexResult.nothing();
+            }
+        }
+
+        if (character == '%') {
             if (!inExpression) {
                 lexer.pushCharacter('%');
                 return LexResult.merge(LexResult.pushToken(),
@@ -22,7 +31,7 @@ public class LexerModeGroup extends LexerMode {
             }
         }
 
-        if (character == '$' && nextCharacter == '{' && prevCharacter != '\\') {
+        if (character == '$' && nextCharacter == '{') {
             if (!inExpression) {
                 inExpression = true;
                 subMode = new LexerModeExpression(lexer);

@@ -1,13 +1,13 @@
 package net.programmer.igoodie.tsl.definition.base;
 
 import net.programmer.igoodie.tsl.compat.LSPFeatures;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistrable;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 
 public abstract class TSLDefinition implements TSLRegistrable, LSPFeatures {
 
@@ -48,7 +48,7 @@ public abstract class TSLDefinition implements TSLRegistrable, LSPFeatures {
     }
 
     protected boolean parseBoolean(TSLPlainWord argument) throws TSLSyntaxError {
-        String argLowercase = argument.getWord().toLowerCase();
+        String argLowercase = argument.getRawWord().toLowerCase();
 
         if (argLowercase.equals("true"))
             return true;
@@ -89,7 +89,7 @@ public abstract class TSLDefinition implements TSLRegistrable, LSPFeatures {
     }
 
     protected double parseDouble(TSLPlainWord token) {
-        return parseDouble(token, token.getWord());
+        return parseDouble(token, token.getRawWord());
     }
 
 }
