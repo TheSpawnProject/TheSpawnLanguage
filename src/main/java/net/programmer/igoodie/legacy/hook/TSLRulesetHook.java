@@ -1,4 +1,4 @@
-package net.programmer.igoodie.tsl.runtime.hook;
+package net.programmer.igoodie.legacy.hook;
 
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRule;

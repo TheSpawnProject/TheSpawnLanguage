@@ -1,9 +1,9 @@
 package example.plugin;
 
+import net.programmer.igoodie.legacy.hook.TSLRulesetHook;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
-import net.programmer.igoodie.tsl.runtime.hook.TSLRulesetHook;
 
 public class ExampleHooks extends TSLRulesetHook {
 

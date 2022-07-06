@@ -14,6 +14,8 @@ import net.programmer.igoodie.tsl.parser.snippet.TSLRuleSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.attribute.ContextualAttributeGenerator;
+import net.programmer.igoodie.tsl.runtime.listener.TSLEventEmitter;
+import net.programmer.igoodie.tsl.runtime.listener.TSLRuleListener;
 import net.programmer.igoodie.tsl.util.GoodieUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,19 +26,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TSLRule implements ContextualAttributeGenerator {
+public class TSLRule implements ContextualAttributeGenerator, TSLEventEmitter<TSLRuleListener> {
 
     protected @Nullable TSLRuleset associatedRuleset;
+    protected List<TSLRuleListener> listeners;
 
     protected TSLRuleSnippet snippet;
 
-    protected List<Couple<TSLDecoratorCall, TSLDecorator>> decorators = new LinkedList<>();
-
+    protected List<Couple<TSLDecoratorCall, TSLDecorator>> decorators;
     protected TSLAction action;
     protected TSLEvent event;
     protected List<TSLPredicate> predicates;
 
-    public TSLRule() {}
+    public TSLRule() {
+        listeners = new LinkedList<>();
+        decorators = new LinkedList<>();
+    }
 
     public void setAssociatedRuleset(@NotNull TSLRuleset ruleset) {
         this.associatedRuleset = ruleset;
@@ -93,12 +98,25 @@ public class TSLRule implements ContextualAttributeGenerator {
 
     /* ----------------------------------- */
 
+    @Override
+    public void addListener(TSLRuleListener listener) {
+        this.listeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(TSLRuleListener listener) {
+        this.listeners.remove(listener);
+    }
+
+    /* ----------------------------------- */
+
     public boolean perform(TSLContext context) {
         if (event == null || action == null) {
             throw new TSLImplementationError("Rule has not done construction. It has no event or action yet!");
         }
 
         if (context.getEvent() != this.event) {
+            listeners.forEach(listener -> listener.onEventMismatch(this, context, this.event));
             return false; // Does not match the event
         }
 
@@ -118,6 +136,7 @@ public class TSLRule implements ContextualAttributeGenerator {
         for (TSLPredicateSnippet predicateSnippet : snippet.getPredicateSnippets()) {
             TSLPredicate predicate = predicateSnippet.getPredicateDefinition();
             if (!predicate.satisfies(context, predicateSnippet.getPredicateTokens())) {
+                listeners.forEach(listener -> listener.onPredicateMismatch(this, context, predicate));
                 return false;
             }
         }
@@ -125,7 +144,9 @@ public class TSLRule implements ContextualAttributeGenerator {
         // Perform action
         List<TSLToken> actionTokens = snippet.getActionSnippet().getActionTokens();
         List<TSLToken> flattenedActionTokens = TSLActionSnippet.flatten(actionTokens, context.getCaptureSnippets());
+        listeners.forEach(listener -> listener.beforeActionPerform(this, context, flattenedActionTokens));
         action.performRaw(flattenedActionTokens, context);
+        listeners.forEach(listener -> listener.afterActionPerform(this, context, flattenedActionTokens));
         return true;
     }
 
