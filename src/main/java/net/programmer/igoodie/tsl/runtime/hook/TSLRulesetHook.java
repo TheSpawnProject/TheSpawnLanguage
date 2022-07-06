@@ -1,15 +1,15 @@
 package net.programmer.igoodie.tsl.runtime.hook;
 
 import net.programmer.igoodie.tsl.runtime.TSLContext;
-import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
-import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 
 // TODO: Rethink and reimplement
 public abstract class TSLRulesetHook {
 
-    public void onEventOccur(TSLRulesetOld ruleset, TSLContext context) {}
+    public void onEventOccur(TSLRuleset ruleset, TSLContext context) {}
 
-    public void onRuleMatched(TSLRuleOld rule, TSLContext context) {}
+    public void onRuleMatched(TSLRule rule, TSLContext context) {}
 
 //    public void onPredicateReached(TSLRule rule, PredicateNode node, TSLContext context) {}
 //

@@ -1,20 +1,19 @@
-package net.programmer.igoodie.legacy.parser;
+package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.goodies.util.Couple;
-import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
-import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
-import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.snippet.*;
 import net.programmer.igoodie.tsl.parser.token.*;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 import net.programmer.igoodie.tsl.util.IOUtils;
 import net.programmer.igoodie.tsl.util.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -23,59 +22,58 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@Deprecated
-public class TSLParserOld {
+public class TSLParser {
 
     private final TheSpawnLanguage tsl;
-    private TSLRulesetOld ruleset;
+    private TSLRuleset ruleset;
 
-    public TSLParserOld(TSLContext context) {
+    public TSLParser(TSLContext context) {
         this(context.getTsl());
     }
 
-    public TSLParserOld(TheSpawnLanguage tsl) {
+    public TSLParser(TheSpawnLanguage tsl) {
         this.tsl = tsl;
-        this.ruleset = new TSLRulesetOld(tsl);
+        this.ruleset = new TSLRuleset(tsl);
     }
 
     public TheSpawnLanguage getTsl() {
         return tsl;
     }
 
-    public TSLRulesetOld parse(URL url) throws TSLSyntaxError, URISyntaxException {
+    public TSLRuleset parse(URL url) throws TSLSyntaxError, URISyntaxException {
         return parse(new File(url.toURI()));
     }
 
-    public TSLRulesetOld parse(File file) throws TSLSyntaxError {
-        ruleset = new TSLRulesetOld(tsl, file.getName(), file);
+    public TSLRuleset parse(File file) throws TSLSyntaxError {
+        ruleset = new TSLRuleset(tsl, file.getName(), file);
         return parse(IOUtils.readString(file));
     }
 
-    public TSLRulesetOld parse(String script) throws TSLSyntaxError {
+    public TSLRuleset parse(String script) throws TSLSyntaxError {
         TSLLexer lexer = new TSLLexer(script).lex();
 
         for (TSLTokenBuffer buffer : lexer.getSnippets()) {
             if (buffer.getType() == TSLTokenBuffer.Type.TAG) {
-                ruleset.addTag(parseTag(ruleset, buffer));
+                ruleset.addTag(parseTag(ruleset.getImportedPlugins(), buffer));
 
             } else if (buffer.getType() == TSLTokenBuffer.Type.CAPTURE) {
-                ruleset.addCapture(parseCapture(ruleset, buffer));
+                ruleset.addCapture(parseCapture(buffer));
 
             } else if (buffer.getType() == TSLTokenBuffer.Type.RULE) {
-                ruleset.addRule(parseRule(ruleset, buffer));
+                ruleset.addRule(parseRule(ruleset.getImportedPlugins(), ruleset.getCaptureSnippets(), buffer));
 
             } else if (buffer.getType() == TSLTokenBuffer.Type.TSLDOC) {
-                ruleset.addTSLDoc(parseTSLDoc(ruleset, buffer));
+                ruleset.addTSLDoc(parseTSLDoc(buffer));
             }
         }
 
         return ruleset;
     }
 
-    /* --------------------------- */
+    /* ---------------------------------- */
 
-    public TSLDocSnippet parseTSLDoc(TSLRulesetOld ruleset, TSLTokenBuffer buffer) {
-        List<TSLToken> tokens = buffer.getTokens();
+    public TSLDocSnippet parseTSLDoc(TSLTokenBuffer tokenBuffer) {
+        List<TSLToken> tokens = tokenBuffer.getTokens();
         checkNamespaceIntegrity(tokens);
 
         TSLSymbol begin = (TSLSymbol) tokens.get(0);
@@ -102,15 +100,15 @@ public class TSLParserOld {
             }
         }
 
-        return new TSLDocSnippet(ruleset, begin, trimmedDocTokens, end);
+        return new TSLDocSnippet(begin, trimmedDocTokens, end);
     }
 
-    public TSLTagSnippet parseTag(TSLRulesetOld ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
-        List<TSLToken> tokens = trimBlockComments(buffer.getTokens());
+    public TSLTagSnippet parseTag(@Nullable Map<String, String> pluginAliases, TSLTokenBuffer tokenBuffer) {
+        List<TSLToken> tokens = trimBlockComments(tokenBuffer.getTokens());
         checkNamespaceIntegrity(tokens);
 
         if (tokens.size() < 2) {
-            throw new TSLSyntaxError("Tag snippet missing a tag name", buffer);
+            throw new TSLSyntaxError("Tag snippet missing a tag name", tokenBuffer);
         }
 
         if (!(tokens.get(1) instanceof TSLPlainWord)) {
@@ -120,7 +118,9 @@ public class TSLParserOld {
         TSLPlainWord tagNameToken = ((TSLPlainWord) tokens.get(1));
         TSLSymbol tagSymbolToken = (TSLSymbol) tokens.get(0);
 
-        TSLTag tagDefinition = tsl.getTag(ruleset, tagNameToken);
+        TSLTag tagDefinition = pluginAliases == null
+                ? tsl.getTag(tagNameToken)
+                : tsl.getTag(pluginAliases, tagNameToken);
 
         if (tagDefinition == null) {
             throw new TSLSyntaxError(String.format("Unknown tag name -> %s", tagNameToken.getRaw()), tagNameToken);
@@ -128,25 +128,26 @@ public class TSLParserOld {
 
         List<TSLToken> argTokens = tokens.subList(2, tokens.size());
 
-        return new TSLTagSnippet(ruleset,
+        return new TSLTagSnippet(
                 tagDefinition,
                 tagSymbolToken,
                 tagNameToken,
-                argTokens);
+                argTokens
+        );
     }
 
-    public TSLCaptureSnippet parseCapture(TSLRulesetOld ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
-        List<TSLToken> tokens = trimBlockComments(buffer.getTokens());
+    public TSLCaptureSnippet parseCapture(TSLTokenBuffer tokenBuffer) {
+        List<TSLToken> tokens = trimBlockComments(tokenBuffer.getTokens());
         checkNamespaceIntegrity(tokens);
 
         if (tokens.size() < 3) {
-            throw new TSLSyntaxError("Malformed capture snippet", buffer);
+            throw new TSLSyntaxError("Malformed capture snippet", tokenBuffer);
         }
 
         TSLToken captureNameToken = tokens.get(0);
 
         if (!(captureNameToken instanceof TSLCaptureCall)) {
-            throw new TSLSyntaxError(String.format("Invalid capture header -> %s", captureNameToken.getRaw()), buffer);
+            throw new TSLSyntaxError(String.format("Invalid capture header -> %s", captureNameToken.getRaw()), tokenBuffer);
         }
 
         TSLCaptureCall captureCallToken = (TSLCaptureCall) captureNameToken;
@@ -159,28 +160,27 @@ public class TSLParserOld {
         TSLToken equalsSign = tokens.get(1);
 
         if (!(equalsSign instanceof TSLSymbol) || ((TSLSymbol) equalsSign).getType() != TSLSymbol.Type.CAPTURE_DECLARATION) {
-            throw new TSLSyntaxError(String.format("Unexpected token -> %s", equalsSign.getRaw()), buffer);
+            throw new TSLSyntaxError(String.format("Unexpected token -> %s", equalsSign.getRaw()), tokenBuffer);
         }
         List<TSLToken> capturedTokens = tokens.subList(2, tokens.size());
 
-        return new TSLCaptureSnippet(ruleset,
+        return new TSLCaptureSnippet(
                 captureCallToken,
                 ((TSLSymbol) equalsSign),
-                capturedTokens);
+                capturedTokens
+        );
     }
 
-    public TSLRuleOld parseRule(TSLRulesetOld ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
-        TSLRuleOld rule = new TSLRuleOld();
+    public TSLRule parseRule(@Nullable Map<String, String> pluginAliases, @Nullable Map<String, TSLCaptureSnippet> captureSnippets, TSLTokenBuffer buffer) throws TSLSyntaxError {
+        TSLRule rule = new TSLRule();
         List<TSLToken> tokens = trimBlockComments(buffer.getTokens());
         checkNamespaceIntegrity(tokens);
-
-        System.out.println(tokens);
 
         // Fetch index of last Decorator call
         int indexLastDecorator = indexLastDecorator(tokens);
 
         // Parse and bind Decorators to the rule
-        List<TSLDecoratorCall> decoratorCalls = parseDecorators(rule, tokens);
+        List<TSLDecoratorCall> decoratorCalls = parseDecorators(tokens);
 
         // Fetch index of ON keyword
         int indexOn = indexOfKeyword(tokens, "ON");
@@ -197,66 +197,42 @@ public class TSLParserOld {
         }
 
         // Parse 3 fundamental parts
-        TSLEventSnippet eventSnippet = parseEvent(ruleset, tokens, indexOn, indexWith);
-        TSLActionSnippet actionSnippet = parseAction(ruleset, tokens, indexLastDecorator, indexOn);
-        List<TSLPredicateSnippet> predicateSnippets = parsePredicates(ruleset, eventSnippet, tokens, indexWith);
+        TSLEventSnippet eventSnippet = parseEvent(pluginAliases, tokens, indexOn, indexWith);
+        TSLActionSnippet actionSnippet = parseAction(pluginAliases, captureSnippets, tokens, indexLastDecorator, indexOn);
+        List<TSLPredicateSnippet> predicateSnippets = parsePredicates(eventSnippet, tokens, indexWith);
 
         // Compose a rule snippet and bind
-        TSLRuleSnippet ruleSnippet = new TSLRuleSnippet(ruleset,
+        TSLRuleSnippet ruleSnippet = new TSLRuleSnippet(
                 decoratorCalls,
                 actionSnippet,
                 eventSnippet,
-                predicateSnippets);
+                predicateSnippets
+        );
 
-        rule.setSnippet(ruleSnippet);
+        rule.loadSnippet(ruleSnippet);
 
-        // Destruct action tokens
-        TSLPlainWord actionNameToken = actionSnippet.getActionNameToken();
-        TSLAction actionDefinition = actionSnippet.getActionDefinition();
-
-        Couple<List<TSLToken>, TSLToken> couple = actionDefinition.splitByDisplaying(actionSnippet.getActionTokens());
-        List<TSLToken> actionTokens = couple.getFirst();
-        TSLToken messageToken = couple.getSecond();
-
-        // Validate actions arguments
-        actionDefinition.validateTokens(actionNameToken, actionTokens, rule, this);
+        // Decorate rule with decorators
+        for (TSLDecoratorCall decoratorCall : decoratorCalls) {
+            TSLDecorator decorator = parseDecorator(pluginAliases, decoratorCall);
+            rule.decorate(decoratorCall, decorator);
+        }
 
         return rule;
     }
 
-    public TSLEventSnippet parseEvent(TSLRulesetOld ruleset, List<TSLToken> tokens, int indexOn, int indexWith) {
+    public TSLActionSnippet parseAction(@Nullable Map<String, String> pluginAliases, @Nullable Map<String, TSLCaptureSnippet> captureSnippets, List<TSLToken> tokens, int indexLastDecorator, int indexOn) {
         checkNamespaceIntegrity(tokens);
 
-        List<TSLPlainWord> eventTokens = getEventNameTokens(tokens, indexOn, indexWith);
-
-        String eventName = eventTokens.stream()
-                .map(TSLPlainWord::getRaw)
-                .collect(Collectors.joining(" "));
-
-        TSLEvent eventDefinition = tsl.getEvent(ruleset, eventTokens);
-
-        if (eventDefinition == null) {
-            throw new TSLSyntaxError("Unknown event name -> " + eventName, eventTokens.get(0));
-        }
-
-        return new TSLEventSnippet(ruleset, eventDefinition,
-                ((TSLPlainWord) tokens.get(indexOn)),
-                eventTokens);
-    }
-
-    public TSLActionSnippet parseAction(TSLRulesetOld ruleset, List<TSLToken> tokens, int indexLastDecorator, int indexOn) {
-        checkNamespaceIntegrity(tokens);
-
-        List<TSLToken> actionTokens = TSLActionSnippet.flatten(ruleset,
-                tokens.subList(indexLastDecorator == -1 ? 0 : indexLastDecorator + 1, indexOn));
+        List<TSLToken> actionTokens = tokens.subList(indexLastDecorator == -1 ? 0 : indexLastDecorator + 1, indexOn);
 
         if (actionTokens.size() == 0) {
             throw new TSLSyntaxError("Rule missing action tokens.", tokens.get(0));
         }
-        return parseAction(ruleset, actionTokens);
+
+        return parseAction(pluginAliases, captureSnippets, actionTokens);
     }
 
-    public TSLActionSnippet parseAction(TSLRulesetOld ruleset, List<TSLToken> tokens) {
+    public TSLActionSnippet parseAction(@Nullable Map<String, String> pluginAliases, @Nullable Map<String, TSLCaptureSnippet> captureSnippets, List<TSLToken> tokens) {
         checkNamespaceIntegrity(tokens);
 
         TSLToken actionName = tokens.get(0);
@@ -266,22 +242,53 @@ public class TSLParserOld {
             throw new TSLSyntaxError("Action name MUST be a String Word.", actionName);
         }
 
-        TSLAction actionDefinition = tsl.getAction(ruleset, ((TSLPlainWord) actionName));
+        TSLAction actionDefinition = pluginAliases == null
+                ? tsl.getAction(((TSLPlainWord) actionName))
+                : tsl.getAction(pluginAliases, ((TSLPlainWord) actionName));
 
         if (actionDefinition == null) {
             throw new TSLSyntaxError("Unknown action -> " + actionName.getRaw(), actionName);
         }
 
         Couple<List<TSLToken>, TSLToken> couple = actionDefinition.splitByDisplaying(actionArguments);
-        List<TSLToken> actionArgumentsSplitted = couple.getFirst();
+        List<TSLToken> actionArgumentsSplit = couple.getFirst();
 
-        actionDefinition.validateTokens(actionName, actionArgumentsSplitted, null, this);
+        actionDefinition.validateTokens(
+                actionName,
+                TSLActionSnippet.flatten(actionArgumentsSplit, captureSnippets),
+                new TSLParsingContext(this, pluginAliases, captureSnippets));
 
-        return new TSLActionSnippet(ruleset, actionDefinition,
-                ((TSLPlainWord) actionName), actionArguments);
+        return new TSLActionSnippet(
+                actionDefinition,
+                ((TSLPlainWord) actionName),
+                actionArguments
+        );
     }
 
-    public List<TSLPredicateSnippet> parsePredicates(TSLRulesetOld ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens, int indexWith) {
+    public TSLEventSnippet parseEvent(@Nullable Map<String, String> pluginAliases, List<TSLToken> tokens, int indexOn, int indexWith) {
+        checkNamespaceIntegrity(tokens);
+
+        List<TSLPlainWord> eventTokens = getEventNameTokens(tokens, indexOn, indexWith);
+
+        String eventName = eventTokens.stream()
+                .map(TSLPlainWord::getRaw)
+                .collect(Collectors.joining(" "));
+
+        TSLEvent eventDefinition = pluginAliases == null
+                ? tsl.getEvent(eventTokens)
+                : tsl.getEvent(pluginAliases, eventTokens);
+
+        if (eventDefinition == null) {
+            throw new TSLSyntaxError("Unknown event name -> " + eventName, eventTokens.get(0));
+        }
+
+        return new TSLEventSnippet(
+                eventDefinition,
+                ((TSLPlainWord) tokens.get(indexOn)),
+                eventTokens);
+    }
+
+    public List<TSLPredicateSnippet> parsePredicates(TSLEventSnippet eventSnippet, List<TSLToken> tokens, int indexWith) {
         if (indexWith == -1) {
             return Collections.emptyList();
         }
@@ -297,7 +304,7 @@ public class TSLParserOld {
             if (isLastToken || token instanceof TSLPlainWord && token.getRaw().equalsIgnoreCase("WITH")) {
                 if (isLastToken) predicateTokens.add(token);
                 if (!predicateTokens.isEmpty()) {
-                    predicateSnippets.add(parsePredicate(ruleset, eventSnippet, predicateTokens));
+                    predicateSnippets.add(parsePredicate(eventSnippet, predicateTokens));
                     predicateTokens = new LinkedList<>();
                 }
             }
@@ -307,7 +314,7 @@ public class TSLParserOld {
         return predicateSnippets;
     }
 
-    public TSLPredicateSnippet parsePredicate(TSLRulesetOld ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens) {
+    public TSLPredicateSnippet parsePredicate(TSLEventSnippet eventSnippet, List<TSLToken> tokens) {
         checkNamespaceIntegrity(tokens);
 
         TSLToken withToken = tokens.get(0);
@@ -331,31 +338,25 @@ public class TSLParserOld {
             throw new TSLSyntaxError("Unknown Predicate declaration format.", withToken);
         }
 
-        return new TSLPredicateSnippet(ruleset,
+        return new TSLPredicateSnippet(
                 matchingPredicateFormat.get(),
                 ((TSLPlainWord) withToken),
-                predicateTokens);
+                predicateTokens
+        );
     }
 
-    public List<TSLDecoratorCall> parseDecorators(TSLRuleOld rule, List<TSLToken> tokens) {
+    public List<TSLDecoratorCall> parseDecorators(List<TSLToken> tokens) {
         checkNamespaceIntegrity(tokens);
 
         int indexLastDecorator = indexLastDecorator(tokens);
-        List<TSLDecoratorCall> decoratorTokens = tokens.subList(0,
-                        indexLastDecorator == -1 ? 0 : indexLastDecorator + 1)
+
+        return tokens.subList(0, indexLastDecorator == -1 ? 0 : indexLastDecorator + 1)
                 .stream().map(token -> ((TSLDecoratorCall) token))
                 .collect(Collectors.toList());
-
-        for (TSLDecoratorCall decoratorToken : decoratorTokens) {
-            TSLDecorator decorator = parseDecorator(decoratorToken);
-            rule.decorate(decorator, decoratorToken);
-        }
-
-        return decoratorTokens;
     }
 
-    public TSLDecorator parseDecorator(TSLDecoratorCall decoratorCall) {
-        TSLDecorator decorator = tsl.getDecorator(ruleset, decoratorCall);
+    public TSLDecorator parseDecorator(@Nullable Map<String, String> pluginAliases, TSLDecoratorCall decoratorCall) {
+        TSLDecorator decorator = tsl.getDecorator(pluginAliases, decoratorCall);
 
         if (decorator == null) {
             throw new TSLSyntaxError("Unknown decorator name -> " + decoratorCall.getName(), decoratorCall);
@@ -364,33 +365,7 @@ public class TSLParserOld {
         return decorator;
     }
 
-    /* --------------------------- */
-
-    private int indexOfKeyword(List<TSLToken> tokens, String keyword) {
-        return CollectionUtils.indexOfBy(tokens,
-                token -> token.getRaw().equalsIgnoreCase(keyword));
-    }
-
-    private int indexLastDecorator(List<TSLToken> tokens) {
-        int lastIndex = -1;
-        boolean decoratorAllowed = true;
-
-        for (int i = 0; i < tokens.size(); i++) {
-            TSLToken token = tokens.get(i);
-            if (token instanceof TSLDecoratorCall) {
-                lastIndex = i;
-                if (!decoratorAllowed) {
-                    throw new TSLSyntaxError("Decorators MUST be declared on top of the rules.", token);
-                }
-            } else {
-                decoratorAllowed = false;
-            }
-        }
-
-        return lastIndex;
-    }
-
-    /* --------------------------- */
+    /* ---------------------------------- */
 
     public static void checkNamespaceIntegrity(List<TSLToken> tokens) {
         for (TSLToken token : tokens) {
@@ -401,7 +376,7 @@ public class TSLParserOld {
         }
     }
 
-    /* --------------------------- */
+    /* ---------------------------------- */
 
     public static List<TSLToken> trimMultilineComments(List<TSLToken> tokens) {
         return trimBlock(tokens,
@@ -440,7 +415,33 @@ public class TSLParserOld {
         return trimmedTokens;
     }
 
+    /* ---------------------------------- */
+
     /* --------------------------- */
+
+    private static int indexOfKeyword(List<TSLToken> tokens, String keyword) {
+        return CollectionUtils.indexOfBy(tokens,
+                token -> token.getRaw().equalsIgnoreCase(keyword));
+    }
+
+    private static int indexLastDecorator(List<TSLToken> tokens) {
+        int lastIndex = -1;
+        boolean decoratorAllowed = true;
+
+        for (int i = 0; i < tokens.size(); i++) {
+            TSLToken token = tokens.get(i);
+            if (token instanceof TSLDecoratorCall) {
+                lastIndex = i;
+                if (!decoratorAllowed) {
+                    throw new TSLSyntaxError("Decorators MUST be declared on top of the rules.", token);
+                }
+            } else {
+                decoratorAllowed = false;
+            }
+        }
+
+        return lastIndex;
+    }
 
     public static List<TSLPlainWord> getEventNameTokens(List<TSLToken> tokens, int indexOn, int indexWith) {
         List<TSLToken> eventTokens = tokens.subList(indexOn + 1,

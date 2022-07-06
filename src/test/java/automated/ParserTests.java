@@ -2,15 +2,15 @@ package automated;
 
 import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.goodies.util.Couple;
-import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLAction;
-import net.programmer.igoodie.legacy.parser.TSLParserOld;
+import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.snippet.TSLActionSnippet;
-import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
-import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -28,21 +28,17 @@ public class ParserTests {
 
         tsl.getPluginManager().loadPlugin(new ExamplePlugin());
 
-        TSLParserOld parser = new TSLParserOld(tsl);
-        TSLRulesetOld ruleset = parser.parse(TestUtils.scriptPath("parser.test.tsl"));
+        TSLParser parser = new TSLParser(tsl);
+        TSLRuleset ruleset = parser.parse(TestUtils.scriptPath("parser.test.tsl"));
 
         Assertions.assertNotNull(ruleset.getImportedPlugins().get("ExampleLib"));
         Assertions.assertNotNull(ruleset.getImportedPlugins().get("exampleplugin"));
         Assertions.assertEquals(1, ruleset.getImportedRulesets().size());
         Assertions.assertEquals(2, ruleset.getRules().size());
 
-        ruleset.getCaptures().forEach((name, captureSnippet) -> {
+        ruleset.getCaptureSnippets().forEach((name, captureSnippet) -> {
             System.out.println(captureSnippet);
         });
-
-        for (TSLRuleOld rule : ruleset.getRules()) {
-            System.out.println(rule.getSnippet().getLoadedPath());
-        }
     }
 
     @Test
@@ -50,10 +46,10 @@ public class ParserTests {
         TheSpawnLanguage tsl = new TheSpawnLanguage();
         tsl.getPluginManager().loadPlugin(new ExamplePlugin());
 
-        TSLParserOld parser = new TSLParserOld(tsl);
-        TSLRulesetOld ruleset = parser.parse("NOTHING DISPLAYING %A B C% ON Manual Trigger");
+        TSLParser parser = new TSLParser(tsl);
+        TSLRuleset ruleset = parser.parse("NOTHING DISPLAYING %A B C% ON Manual Trigger");
 
-        TSLRuleOld rule = ruleset.getRules().get(0);
+        TSLRule rule = ruleset.getRules().get(0);
         TSLActionSnippet actionSnippet = rule.getSnippet().getActionSnippet();
         TSLAction actionDefinition = actionSnippet.getActionDefinition();
 

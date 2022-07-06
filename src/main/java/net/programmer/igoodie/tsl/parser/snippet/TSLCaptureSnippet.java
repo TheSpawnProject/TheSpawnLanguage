@@ -2,24 +2,22 @@ package net.programmer.igoodie.tsl.parser.snippet;
 
 import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
-import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.token.*;
-import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import net.programmer.igoodie.tsl.util.ExpressionUtils;
 
 import java.util.*;
 
 // [$captureName] [=] [DROP apple]
-// [$captureName(x,y)] [=] [DROP {x} {y}]
+// [$captureName(x,y)] [=] [DROP {{x}} {{y}}]
 public class TSLCaptureSnippet extends TSLSnippet {
 
     protected TSLCaptureCall header;
     protected TSLSymbol equalsSign;
     protected List<TSLToken> capturedTokens;
 
-    public TSLCaptureSnippet(TSLRulesetOld ruleset, TSLCaptureCall header, TSLSymbol equalsSign, List<TSLToken> tokens) {
-        super(ruleset, flatTokens(header, equalsSign, tokens));
+    public TSLCaptureSnippet(TSLCaptureCall header, TSLSymbol equalsSign, List<TSLToken> tokens) {
+        super(flatTokens(header, equalsSign, tokens));
         this.header = header;
         this.equalsSign = equalsSign;
         this.capturedTokens = tokens;
@@ -66,30 +64,15 @@ public class TSLCaptureSnippet extends TSLSnippet {
 
     /* -------------------------------------------- */
 
-    public List<TSLToken> tokenizeAndFlatten(String... arguments) {
-        return tokenizeAndFlatten(Arrays.asList(arguments));
+    public List<TSLToken> fill(Map<String, TSLCaptureSnippet> captureSnippets, TSLToken... arguments) {
+        return fill(captureSnippets, Arrays.asList(arguments));
     }
 
-    public List<TSLToken> tokenizeAndFlatten(List<String> arguments) {
-        TSLTokenizer tokenizer = new TSLTokenizer();
-        List<TSLToken> tokens = tokenizer.tokenizeAll(arguments);
-        for (TSLToken token : tokens) {
-            if (tokenizer.tokenCount(token.getRaw()) != 1) {
-                throw new IllegalArgumentException("Invalid argument passed -> " + token.getRaw());
-            }
-        }
-        return flatten(tokens);
+    public List<TSLToken> fill(Map<String, TSLCaptureSnippet> captureSnippets, List<TSLToken> arguments) {
+        return fill(captureSnippets, argumentsToMap(arguments));
     }
 
-    public List<TSLToken> flatten(TSLToken... arguments) {
-        return flatten(Arrays.asList(arguments));
-    }
-
-    public List<TSLToken> flatten(List<TSLToken> arguments) {
-        return flatten(argumentsToMap(arguments));
-    }
-
-    public List<TSLToken> flatten(Map<String, TSLToken> argumentMap) {
+    public List<TSLToken> fill(Map<String, TSLCaptureSnippet> captureSnippets, Map<String, TSLToken> argumentMap) {
         List<TSLToken> replaced = new LinkedList<>();
 
         for (TSLToken capturedToken : this.capturedTokens) {
@@ -99,12 +82,12 @@ public class TSLCaptureSnippet extends TSLSnippet {
                 if (captureCall.getCaptureName().equals(this.getName())) {
                     throw new TSLRuntimeError("Captures MUST not call themselves recursively.", captureCall);
                 }
-                TSLCaptureSnippet captureSnippet = ruleset.getCaptureSnippet(captureCall);
-                List<TSLToken> flattenedCapture = captureSnippet.flatten(captureCall.getArgs());
+                TSLCaptureSnippet captureSnippet = captureSnippets.get(captureCall.getCaptureName());
+                List<TSLToken> flattenedCapture = captureSnippet.fill(captureSnippets, captureCall.getArgs());
                 replaced.addAll(flattenedCapture);
 
             } else {
-                TSLToken parameterizedToken = fillWithParameters(capturedToken, argumentMap);
+                TSLToken parameterizedToken = fillSingleToken(capturedToken, argumentMap);
                 replaced.add(parameterizedToken);
             }
         }
@@ -112,7 +95,7 @@ public class TSLCaptureSnippet extends TSLSnippet {
         return replaced;
     }
 
-    public static TSLToken fillWithParameters(TSLToken target, Map<String, TSLToken> argumentMap) {
+    public static TSLToken fillSingleToken(TSLToken target, Map<String, TSLToken> argumentMap) {
         if (target instanceof TSLCaptureParameter) {
             TSLCaptureParameter parameterToken = (TSLCaptureParameter) target;
             return argumentMap.get(parameterToken.getParameterName());
@@ -120,20 +103,20 @@ public class TSLCaptureSnippet extends TSLSnippet {
         } else if (target instanceof TSLGroup) {
             TSLGroup groupToken = (TSLGroup) target;
             String groupExpression = StringUtilities.shrink(groupToken.getRaw(), 1, 1);
-            String filled = fillWithParameters(groupExpression, argumentMap);
+            String filled = fillSingleToken(groupExpression, argumentMap);
             List<TSLToken> filledGroupTokens = TSLLexer.lexGroupTokens(filled);
             return new TSLGroup(target.getLine(), target.getCharacter(), filledGroupTokens);
 
         } else if (target instanceof TSLExpression) {
             TSLExpression expressionToken = (TSLExpression) target;
-            String filled = fillWithParameters(expressionToken.getExpression(), argumentMap);
+            String filled = fillSingleToken(expressionToken.getExpression(), argumentMap);
             return new TSLExpression(target.getLine(), target.getCharacter(), filled);
         }
 
         return target;
     }
 
-    public static String fillWithParameters(String target, Map<String, TSLToken> argumentMap) {
+    public static String fillSingleToken(String target, Map<String, TSLToken> argumentMap) {
         return ExpressionUtils.replaceCaptureParams(target, parameterName -> {
             TSLToken argument = argumentMap.get(parameterName);
             if (argument == null) return "{{" + parameterName + "}}";

@@ -2,16 +2,16 @@ package automated;
 
 import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.goodies.util.accessor.ArrayAccessor;
-import net.programmer.igoodie.legacy.parser.TSLParserOld;
 import net.programmer.igoodie.plugins.grammar.events.ManualTriggerEvent;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.function.TSLFunction;
+import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
-import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.Test;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
@@ -112,7 +112,7 @@ public class JSLibrariesTest {
         context.setEvent(ManualTriggerEvent.INSTANCE);
         context.setJsScope(jsEngine.createChildScope());
 
-        TSLRulesetOld ruleset = new TSLParserOld(tsl).parse(TestUtils.loadTSLScript("rhino.tests.tsl"));
+        TSLRuleset ruleset = new TSLParser(tsl).parse(TestUtils.loadTSLScript("rhino.tests.tsl"));
         ruleset.perform(context);
     }
 

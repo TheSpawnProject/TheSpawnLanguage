@@ -2,10 +2,10 @@ package automated;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
-import net.programmer.igoodie.legacy.parser.TSLParserOld;
-import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
+import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
@@ -25,12 +25,12 @@ public class PluginLoaderTests {
         tsl.getPluginManager().loadPlugin(pluginURL.toURI());
 
         // Parse the ruleset
-        TSLParserOld parser = new TSLParserOld(tsl);
+        TSLParser parser = new TSLParser(tsl);
         String script = TestUtils.loadTSLScript("ruleset.test.tsl");
 
         System.out.println(script);
 
-        TSLRulesetOld ruleset = parser.parse(script);
+        TSLRuleset ruleset = parser.parse(script);
 
         // Create a context with the event in it
         TSLContext context = new TSLContext(tsl);

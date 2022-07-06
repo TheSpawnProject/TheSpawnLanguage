@@ -1,15 +1,15 @@
 package net.programmer.igoodie.plugins.grammar.actions;
 
 import net.programmer.igoodie.goodies.util.Couple;
-import net.programmer.igoodie.legacy.parser.TSLParserOld;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.parser.TSLParsingContext;
 import net.programmer.igoodie.tsl.parser.snippet.TSLActionSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
-import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +48,7 @@ public class IfMetaAction extends TSLAction {
     }
 
     @Override
-    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRuleOld rule, TSLParserOld parser) throws TSLSyntaxError {
+    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
         if (arguments.size() < 3) {
             throw new TSLSyntaxError("Expected condition and the action.", nameToken);
         }
@@ -72,7 +72,11 @@ public class IfMetaAction extends TSLAction {
                 if (!thenKeyword.getRaw().equalsIgnoreCase("THEN")) {
                     throw new TSLSyntaxError("IF statement must continue with a condition and THEN keyword.", thenKeyword);
                 }
-                parser.parseAction(null, actionTokens);
+
+                parsingContext.getParser().parseAction(
+                        parsingContext.getPluginAliases(),
+                        parsingContext.getCaptureSnippets(),
+                        actionTokens);
 
             } else if (i != parts.size() - 1) { // ELSEIF part
                 if (part.size() < 4) {
@@ -88,11 +92,18 @@ public class IfMetaAction extends TSLAction {
                 if (!thenKeyword.getRaw().equalsIgnoreCase("THEN")) {
                     throw new TSLSyntaxError("ELSEIF statement must continue with a condition and THEN keyword.", thenKeyword);
                 }
-                parser.parseAction(null, actionTokens);
+
+                parsingContext.getParser().parseAction(
+                        parsingContext.getPluginAliases(),
+                        parsingContext.getCaptureSnippets(),
+                        actionTokens);
 
             } else if (part.get(0).getRaw().equalsIgnoreCase("ELSE")) { // ELSE part
                 List<TSLToken> actionTokens = part.subList(1, part.size());
-                parser.parseAction(null, actionTokens);
+                parsingContext.getParser().parseAction(
+                        parsingContext.getPluginAliases(),
+                        parsingContext.getCaptureSnippets(),
+                        actionTokens);
             }
         }
     }
@@ -108,16 +119,23 @@ public class IfMetaAction extends TSLAction {
             if (statement.size() == 2) {
                 TSLToken condition = statement.get(0).get(0);
                 if (condition.isTrue(context)) {
-                    TSLParserOld parser = new TSLParserOld(context);
-                    TSLActionSnippet actionSnippet = parser.parseAction(null, statement.get(1));
+                    TSLParser parser = new TSLParser(context);
+
+                    TSLActionSnippet actionSnippet = parser.parseAction(context.getImportedPlugins(),
+                            context.getCaptureSnippets(),
+                            statement.get(1));
+
                     TSLAction actionDefinition = actionSnippet.getActionDefinition();
                     actionDefinition.performRaw(actionSnippet.getActionTokens(), context);
                     break;
                 }
 
             } else {
-                TSLParserOld parser = new TSLParserOld(context);
-                TSLActionSnippet actionSnippet = parser.parseAction(null, part);
+                TSLParser parser = new TSLParser(context);
+
+                TSLActionSnippet actionSnippet = parser.parseAction(context.getImportedPlugins(),
+                        context.getCaptureSnippets(),
+                        part);
                 TSLAction actionDefinition = actionSnippet.getActionDefinition();
                 actionDefinition.performRaw(actionSnippet.getActionTokens(), context);
                 break;

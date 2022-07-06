@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.runtime;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
+import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,6 +82,18 @@ public class TSLContext {
 
     public void setImportedPlugins(@NotNull Map<String, String> importedPlugins) {
         this.importedPlugins = importedPlugins;
+    }
+
+    /* ----------------------------------- */
+
+    public @NotNull Map<String, TSLCaptureSnippet> captureSnippets = new HashMap<>();
+
+    public @NotNull Map<String, TSLCaptureSnippet> getCaptureSnippets() {
+        return captureSnippets;
+    }
+
+    public void setCaptureSnippets(@NotNull Map<String, TSLCaptureSnippet> captureSnippets) {
+        this.captureSnippets = captureSnippets;
     }
 
     /* ----------------------------------- */

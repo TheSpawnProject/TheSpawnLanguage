@@ -6,15 +6,16 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.legacy.parser.TSLParserOld;
+import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.parser.TSLParsingContext;
 import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
-import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
-import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
@@ -33,7 +34,8 @@ public class RulesetTests {
         TSL.getPluginManager().loadPlugin(new ExamplePlugin());
 
 
-        TSL.getPluginManager().loadPlugin(new TSLPlugin() {
+        TSL.getPluginManager().loadPlugin(new TSLPlugin(new TSLPluginManifest("sample", "Sample", "0.0.0", "iGoodie")) {
+
             @Override
             public void registerActions(TSLRegistry<TSLAction> registry) {
                 TSLAction dummyEitherAction = new TSLAction(this, "EITHER") {
@@ -43,7 +45,7 @@ public class RulesetTests {
                     }
 
                     @Override
-                    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRuleOld rule, TSLParserOld parser) throws TSLSyntaxError {}
+                    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {}
 
                     @Override
                     public void perform(List<TSLToken> arguments, TSLContext context) {}
@@ -65,8 +67,8 @@ public class RulesetTests {
 
         System.out.println("\n--------------------\n");
 
-        TSLParserOld parser = new TSLParserOld(TSL);
-        TSLRulesetOld ruleset = parser.parse(script);
+        TSLParser parser = new TSLParser(TSL);
+        TSLRuleset ruleset = parser.parse(script);
 
         System.out.println("Rule count: " + ruleset.getRules().size());
 

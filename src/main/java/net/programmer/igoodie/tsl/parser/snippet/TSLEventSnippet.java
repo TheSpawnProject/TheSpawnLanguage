@@ -2,7 +2,6 @@ package net.programmer.igoodie.tsl.parser.snippet;
 
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
-import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,8 +14,8 @@ public class TSLEventSnippet extends TSLSnippet {
 
     protected TSLEvent eventDefinition;
 
-    public TSLEventSnippet(TSLRulesetOld ruleset, TSLEvent eventDefinition, TSLPlainWord keywordOn, List<TSLPlainWord> eventName) {
-        super(ruleset, flatTokens(keywordOn, eventName));
+    public TSLEventSnippet(TSLEvent eventDefinition, TSLPlainWord keywordOn, List<TSLPlainWord> eventName) {
+        super(flatTokens(keywordOn, eventName));
         this.keywordOn = keywordOn;
         this.eventName = eventName;
         this.eventDefinition = eventDefinition;

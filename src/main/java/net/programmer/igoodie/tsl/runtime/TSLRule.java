@@ -8,6 +8,7 @@ import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.exception.TSLImplementationError;
 import net.programmer.igoodie.tsl.function.JSEngine;
+import net.programmer.igoodie.tsl.parser.snippet.TSLActionSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLPredicateSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLRuleSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
@@ -35,7 +36,7 @@ public class TSLRule implements ContextualAttributeGenerator {
     protected TSLEvent event;
     protected List<TSLPredicate> predicates;
 
-    private TSLRule() {} // Disallow construction
+    public TSLRule() {}
 
     public void setAssociatedRuleset(@NotNull TSLRuleset ruleset) {
         this.associatedRuleset = ruleset;
@@ -123,7 +124,8 @@ public class TSLRule implements ContextualAttributeGenerator {
 
         // Perform action
         List<TSLToken> actionTokens = snippet.getActionSnippet().getActionTokens();
-        action.performRaw(actionTokens, context);
+        List<TSLToken> flattenedActionTokens = TSLActionSnippet.flatten(actionTokens, context.getCaptureSnippets());
+        action.performRaw(flattenedActionTokens, context);
         return true;
     }
 

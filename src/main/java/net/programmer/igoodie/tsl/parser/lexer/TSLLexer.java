@@ -6,6 +6,7 @@ import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.parser.token.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -228,13 +229,13 @@ public class TSLLexer {
     /* ---------------------------------------- */
 
     public static List<TSLToken> lexIntoTokens(TSLLexer lexer) {
-        List<TSLToken> tokens = new LinkedList<>();
         lexer.lex();
-        TSLTokenBuffer buffer = lexer.getSnippets().get(0);
-        if (buffer != null) {
-            tokens.addAll(buffer.getTokens());
-        }
-        return tokens;
+        List<TSLTokenBuffer> snippets = lexer.getSnippets();
+
+        if (snippets.isEmpty()) return Collections.emptyList();
+
+        TSLTokenBuffer buffer = snippets.get(0);
+        return new LinkedList<>(buffer.getTokens());
     }
 
     public static List<TSLToken> lexGroupTokens(String text) {

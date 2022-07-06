@@ -1,7 +1,7 @@
 package net.programmer.igoodie.tsl.executor;
 
-import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,7 +16,7 @@ public class TSLExecutor {
         this.executorService = Executors.newSingleThreadExecutor(runnable -> new Thread(threadGroup, runnable));
     }
 
-    public void execute(TSLRulesetOld ruleset, TSLContext context) {
+    public void execute(TSLRuleset ruleset, TSLContext context) {
         executorService.execute(() -> ruleset.perform(context));
     }
 

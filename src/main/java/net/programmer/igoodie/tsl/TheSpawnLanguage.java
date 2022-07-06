@@ -3,7 +3,6 @@ package net.programmer.igoodie.tsl;
 import com.vdurmont.semver4j.Semver;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.StringUtilities;
-import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import net.programmer.igoodie.plugins.events.common.CommonEvents;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.plugins.spawnjs.SpawnJS;
@@ -13,7 +12,7 @@ import net.programmer.igoodie.tsl.exception.TSLImplementationError;
 import net.programmer.igoodie.tsl.exception.TSLImportError;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.function.TSLFunctionsCorelib;
-import net.programmer.igoodie.legacy.parser.TSLParserOld;
+import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
@@ -21,10 +20,12 @@ import net.programmer.igoodie.tsl.plugin.TSLPluginManager;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLReservedNames;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -111,12 +112,12 @@ public class TheSpawnLanguage {
         return pluginManager;
     }
 
-    public TSLRulesetOld loadRuleset(File file) {
-        TSLParserOld parser = new TSLParserOld(this);
+    public TSLRuleset loadRuleset(File file) {
+        TSLParser parser = new TSLParser(this);
         return parser.parse(file);
     }
 
-    public boolean perform(TSLRulesetOld ruleset, TSLEvent event, GoodieObject eventArguments) {
+    public boolean perform(TSLRuleset ruleset, TSLEvent event, GoodieObject eventArguments) {
         TSLContext context = new TSLContext(this);
         context.setEvent(event);
         context.setEventArguments(eventArguments);
@@ -126,7 +127,17 @@ public class TheSpawnLanguage {
     /* ------------------------ */
 
     @Nullable
-    public TSLTag getTag(TSLRulesetOld ruleset, TSLPlainWord tagNameToken) {
+    public TSLTag getTag(TSLPlainWord tagNameToken) {
+        return getTag(Collections.emptyMap(), tagNameToken);
+    }
+
+    @Nullable
+    public TSLTag getTag(TSLRuleset ruleset, TSLPlainWord tagNameToken) {
+        return getTag(ruleset.getImportedPlugins(), tagNameToken);
+    }
+
+    @Nullable
+    public TSLTag getTag(Map<String, String> pluginAliases, TSLPlainWord tagNameToken) {
         String namespace = tagNameToken.getNamespace();
         String value = tagNameToken.getValue();
 
@@ -134,7 +145,7 @@ public class TheSpawnLanguage {
             return getDefinition(TAG_REGISTRY, value);
         }
 
-        String pluginId = ruleset.getImportedPlugins().get(namespace);
+        String pluginId = pluginAliases.get(namespace);
 
         if (pluginId == null) {
             throw new TSLImportError("Could not resolve " + namespace, tagNameToken);
@@ -143,8 +154,20 @@ public class TheSpawnLanguage {
         return getDefinition(TAG_REGISTRY, pluginId + ":" + value);
     }
 
+    /* ------------------------ */
+
     @Nullable
-    public TSLDecorator getDecorator(TSLRulesetOld ruleset, TSLDecoratorCall decoratorCallToken) {
+    public TSLDecorator getDecorator(TSLDecoratorCall decoratorCallToken) {
+        return getDecorator(Collections.emptyMap(), decoratorCallToken);
+    }
+
+    @Nullable
+    public TSLDecorator getDecorator(TSLRuleset ruleset, TSLDecoratorCall decoratorCallToken) {
+        return getDecorator(ruleset.getImportedPlugins(), decoratorCallToken);
+    }
+
+    @Nullable
+    public TSLDecorator getDecorator(Map<String, String> pluginAliases, TSLDecoratorCall decoratorCallToken) {
         String namespace = decoratorCallToken.getNamespace();
         String value = decoratorCallToken.getName();
 
@@ -152,7 +175,7 @@ public class TheSpawnLanguage {
             return getDefinition(DECORATOR_REGISTRY, value);
         }
 
-        String pluginId = ruleset.getImportedPlugins().get(namespace);
+        String pluginId = pluginAliases.get(namespace);
 
         if (pluginId == null) {
             throw new TSLImportError("Could not resolve " + namespace, decoratorCallToken);
@@ -161,8 +184,20 @@ public class TheSpawnLanguage {
         return getDefinition(DECORATOR_REGISTRY, pluginId + ":" + value);
     }
 
+    /* ------------------------ */
+
     @Nullable
-    public TSLEvent getEvent(TSLRulesetOld ruleset, List<TSLPlainWord> eventTokens) {
+    public TSLEvent getEvent(List<TSLPlainWord> eventTokens) {
+        return getEvent(Collections.emptyMap(), eventTokens);
+    }
+
+    @Nullable
+    public TSLEvent getEvent(TSLRuleset ruleset, List<TSLPlainWord> eventTokens) {
+        return getEvent(ruleset.getImportedPlugins(), eventTokens);
+    }
+
+    @Nullable
+    public TSLEvent getEvent(Map<String, String> pluginAliases, List<TSLPlainWord> eventTokens) {
         String eventExpression = eventTokens.stream()
                 .map(TSLPlainWord::getRaw)
                 .collect(Collectors.joining(" "));
@@ -174,7 +209,7 @@ public class TheSpawnLanguage {
             String eventName = matcher.group(1);
             String namespace = matcher.group(2);
 
-            String pluginId = ruleset.getImportedPlugins().get(namespace);
+            String pluginId = pluginAliases.get(namespace);
 
             if (pluginId == null) {
                 TSLPlainWord namespaceToken = eventTokens.get(eventTokens.size() - 1);
@@ -191,8 +226,20 @@ public class TheSpawnLanguage {
         return getDefinition(EVENT_REGISTRY, eventExpression);
     }
 
+    /* ------------------------ */
+
     @Nullable
-    public TSLAction getAction(TSLRulesetOld ruleset, TSLPlainWord actionName) {
+    public TSLAction getAction(TSLPlainWord actionName) {
+        return getAction(Collections.emptyMap(), actionName);
+    }
+
+    @Nullable
+    public TSLAction getAction(TSLRuleset ruleset, TSLPlainWord actionName) {
+        return getAction(ruleset.getImportedPlugins(), actionName);
+    }
+
+    @Nullable
+    public TSLAction getAction(Map<String, String> pluginAliases, TSLPlainWord actionName) {
         String namespace = actionName.getNamespace();
         String value = actionName.getValue();
 
@@ -200,30 +247,37 @@ public class TheSpawnLanguage {
             return getDefinition(ACTION_REGISTRY, value);
         }
 
-        String pluginId = ruleset.getImportedPlugins().get(namespace);
+        String pluginId = pluginAliases.get(namespace);
 
         if (pluginId == null) {
             throw new TSLImportError("Could not resolve " + namespace, actionName);
         }
 
         return getDefinition(ACTION_REGISTRY, pluginId + ":" + value);
-
     }
+
+    /* ------------------------ */
 
     @Nullable
     public TSLPredicate getPredicate(String id) {
         return getDefinition(PREDICATE_REGISTRY, id);
     }
 
+    /* ------------------------ */
+
     @Nullable
     public TSLComparator getComparator(String id) {
         return getDefinition(COMPARATOR_REGISTRY, id);
     }
 
+    /* ------------------------ */
+
     @Nullable
     public TSLFunctionLibrary getFunctionLibrary(String id) {
         return getDefinition(FUNC_LIBRARY_REGISTRY, id);
     }
+
+    /* ------------------------ */
 
     @Nullable
     public <T extends TSLDefinition> T getDefinition(TSLRegistry<T> registry, String id) {

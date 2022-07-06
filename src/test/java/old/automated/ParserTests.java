@@ -1,17 +1,17 @@
 package old.automated;
 
 import example.plugin.ExamplePlugin;
-import net.programmer.igoodie.legacy.parser.TSLParserOld;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.parser.TSLParsingContext;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
-import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
-import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
@@ -38,7 +38,7 @@ public class ParserTests {
                     }
 
                     @Override
-                    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRuleOld rule, TSLParserOld parser) throws TSLSyntaxError {}
+                    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {}
 
                     @Override
                     public void perform(List<TSLToken> arguments, TSLContext context) {}
@@ -52,8 +52,8 @@ public class ParserTests {
     public void shouldParseScripts() throws IOException {
         String script = TestUtils.loadTSLScript("sample2.tsl");
 
-        TSLParserOld parser = new TSLParserOld(TSL);
-        TSLRulesetOld ruleset = parser.parse(script);
+        TSLParser parser = new TSLParser(TSL);
+        TSLRuleset ruleset = parser.parse(script);
 
         System.out.println("/--------------------------------/");
 
@@ -64,7 +64,7 @@ public class ParserTests {
 
         System.out.println("/--------------------------------/");
 
-        System.out.println("Tags: " + ruleset.getTags());
+        System.out.println("Tags: " + ruleset.getTagSnippets());
         System.out.println("Attrs: " + ruleset.generateAttributes());
         System.out.println("Rules: " + ruleset.getRules());
     }

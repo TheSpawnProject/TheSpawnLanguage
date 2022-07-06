@@ -1,13 +1,12 @@
 package net.programmer.igoodie.plugins.grammar.tags;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
-import net.programmer.igoodie.legacy.parser.TSLParserOld;
-import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.snippet.TSLTagSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
@@ -87,7 +86,7 @@ public class ImportTag extends TSLTag {
                 throw new TSLSyntaxError("Ruleset cannot be found", targetToken);
             }
 
-            TSLRulesetOld otherRuleset = new TSLParserOld(tsl).parse(targetPath.toFile());
+            TSLRuleset otherRuleset = new TSLParser(tsl).parse(targetPath.toFile());
             ruleset.importRuleset(otherRuleset);
 
         } else if (tsl.getPluginManager().LOADED_PLUGIN_IDS.contains(target)) {

@@ -37,11 +37,17 @@ public class TSLRuleset implements ConstantAttributeGenerator {
     protected Map<String, String> importedPlugins; // (alias_name --> plugin_id)
     protected List<TSLRuleset> importedRulesets;
 
+    public TSLRuleset(@NotNull TheSpawnLanguage tsl) {
+        this(tsl, null, null);
+    }
+
     public TSLRuleset(@NotNull TheSpawnLanguage tsl, @Nullable String name, @Nullable File file) {
         this.name = name;
         this.file = file;
         this.tsl = tsl;
         this.snippets = new LinkedList<>();
+
+        this.tagAttributes = new GoodieObject();
 
         this.rules = new LinkedList<>();
         this.tagSnippets = new LinkedList<>();
@@ -86,6 +92,12 @@ public class TSLRuleset implements ConstantAttributeGenerator {
 
     public TSLDocSnippet getTSLDocSnippet(int beginningLine) {
         return tslDocSnippets.get(beginningLine);
+    }
+
+    /* ------------------------ */
+
+    public List<TSLTagSnippet> getTagSnippets() {
+        return Collections.unmodifiableList(tagSnippets);
     }
 
     /* ------------------------ */
@@ -170,12 +182,21 @@ public class TSLRuleset implements ConstantAttributeGenerator {
 
     public void addCapture(TSLCaptureSnippet captureSnippet) {
         String captureName = captureSnippet.getName();
+        Map<String, TSLCaptureSnippet> captureSnippets = getCaptureSnippets();
 
-        if (getCaptureSnippets().containsKey(captureName)) {
-            throw new TSLSyntaxError("$" + captureSnippet.getName() + " is already defined", captureSnippet);
+        if (captureSnippets.containsKey(captureName)) {
+            throw new TSLSyntaxError(captureSnippet.getHeaderToken() + " is already defined", captureSnippet);
         }
 
-        captureSnippets.put(captureName, captureSnippet);
+        for (TSLToken capturedToken : captureSnippet.getCapturedTokens()) {
+            if (capturedToken instanceof TSLCaptureCall) {
+                if (!captureSnippets.containsKey(((TSLCaptureCall) capturedToken).getCaptureName())) {
+                    throw new TSLSyntaxError(captureSnippet.getHeaderToken() + " is not defined.", capturedToken);
+                }
+            }
+        }
+
+        this.captureSnippets.put(captureName, captureSnippet);
         this.snippets.add(captureSnippet);
     }
 
@@ -206,12 +227,21 @@ public class TSLRuleset implements ConstantAttributeGenerator {
         }
 
         context.setImportedPlugins(getImportedPlugins());
+        context.setCaptureSnippets(getCaptureSnippets());
         context.setMessageToken(null); // Reset Message token
 
         boolean performed = false;
+
+        // Perform on imported rulesets first
+        for (TSLRuleset importedRuleset : importedRulesets) {
+            performed |= importedRuleset.perform(context);
+        }
+
+        // Perform on rules on this ruleset
         for (TSLRule rule : rules) {
             performed |= rule.perform(context);
         }
+
         return performed;
     }
 

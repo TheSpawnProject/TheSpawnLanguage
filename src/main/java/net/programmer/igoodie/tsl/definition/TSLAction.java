@@ -2,17 +2,15 @@ package net.programmer.igoodie.tsl.definition;
 
 import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.goodies.util.StringUtilities;
-import net.programmer.igoodie.legacy.parser.TSLParserOld;
-import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
 import net.programmer.igoodie.tsl.definition.base.TSLDefinition;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.TSLParsingContext;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -24,7 +22,7 @@ public abstract class TSLAction extends TSLDefinition {
 
     public abstract String getUsage();
 
-    public abstract void validateTokens(TSLToken nameToken, List<TSLToken> arguments, @Nullable TSLRuleOld rule, TSLParserOld parser) throws TSLSyntaxError;
+    public abstract void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError;
 
     public @NotNull Couple<List<TSLToken>, TSLToken> splitByDisplaying(List<TSLToken> tokens) {
         int displayingIndex = CollectionUtils.lastIndexOfBy(tokens,

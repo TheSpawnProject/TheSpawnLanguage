@@ -1,10 +1,10 @@
 package automated;
 
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLExpression;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ public class UtilityTests {
                         return null;
                     }
                 },
-                new TSLSnippet(null, Arrays.asList(
+                new TSLSnippet(Arrays.asList(
                         new TSLPlainWord(0, 0, "HelloSnippet"),
                         new TSLPlainWord(0, 0, "WorldSnippet!"))) {},
                 Arrays.asList(

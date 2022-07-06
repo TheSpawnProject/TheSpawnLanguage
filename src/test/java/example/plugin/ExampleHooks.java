@@ -1,19 +1,19 @@
 package example.plugin;
 
-import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
-import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.hook.TSLRulesetHook;
 
 public class ExampleHooks extends TSLRulesetHook {
 
     @Override
-    public void onEventOccur(TSLRulesetOld ruleset, TSLContext context) {
+    public void onEventOccur(TSLRuleset ruleset, TSLContext context) {
         System.out.println("Event occurred!");
     }
 
     @Override
-    public void onRuleMatched(TSLRuleOld rule, TSLContext context) {
+    public void onRuleMatched(TSLRule rule, TSLContext context) {
         System.out.println("Rule matched!");
     }
 

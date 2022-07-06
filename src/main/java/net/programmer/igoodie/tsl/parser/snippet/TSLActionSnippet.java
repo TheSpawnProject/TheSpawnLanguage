@@ -5,10 +5,10 @@ import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
-import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 // [DROP] [apple 2]
 public class TSLActionSnippet extends TSLSnippet {
@@ -18,8 +18,8 @@ public class TSLActionSnippet extends TSLSnippet {
 
     protected TSLAction actionDefinition;
 
-    public TSLActionSnippet(TSLRulesetOld ruleset, TSLAction actionDefinition, TSLPlainWord actionName, List<TSLToken> actionTokens) {
-        super(ruleset, flatTokens(actionName, actionTokens));
+    public TSLActionSnippet(TSLAction actionDefinition, TSLPlainWord actionName, List<TSLToken> actionTokens) {
+        super(flatTokens(actionName, actionTokens));
         this.actionName = actionName;
         this.actionTokens = actionTokens;
         this.actionDefinition = actionDefinition;
@@ -41,17 +41,22 @@ public class TSLActionSnippet extends TSLSnippet {
 
     /* -------------------------- */
 
-    public static List<TSLToken> flatten(TSLRulesetOld ruleset, List<TSLToken> tokens) {
+    public static List<TSLToken> flatten(List<TSLToken> tokens, Map<String, TSLCaptureSnippet> captureSnippets) {
         List<TSLToken> flattened = new LinkedList<>();
 
         for (TSLToken token : tokens) {
             if (token instanceof TSLCaptureCall) {
                 try {
                     TSLCaptureCall captureCall = (TSLCaptureCall) token;
-                    TSLCaptureSnippet captureSnippet = ruleset.getCaptureSnippet(captureCall);
-                    List<TSLToken> flattenedCapture = captureSnippet.flatten(captureCall.getArgs());
+                    TSLCaptureSnippet captureSnippet = captureSnippets.get(captureCall.getCaptureName());
+                    if (captureSnippet == null) {
+                        throw new TSLSyntaxError("Capture not defined with name -> " + captureCall.getCaptureName(), captureCall);
+                    }
+                    List<TSLToken> flattenedCapture = captureSnippet.fill(captureSnippets, captureCall.getArgs());
                     flattened.addAll(flattenedCapture);
+
                 } catch (IllegalArgumentException e) {
+                    // TODO: Fix that non-sense message
                     throw new TSLSyntaxError("Capture arguments MUST NOT contain multiple tokens at once. " + e.getMessage(), token);
                 }
 

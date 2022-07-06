@@ -1,9 +1,9 @@
 package net.programmer.igoodie.tsl.exception;
 
-import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
 import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
 import org.jetbrains.annotations.Nullable;
 
 public class TSLImplementationError extends TSLException {
@@ -17,7 +17,7 @@ public class TSLImplementationError extends TSLException {
         super(reason);
     }
 
-    public TSLImplementationError(String reason, TSLRuleOld rule) {
+    public TSLImplementationError(String reason, TSLRule rule) {
         super(reason, rule);
     }
 
