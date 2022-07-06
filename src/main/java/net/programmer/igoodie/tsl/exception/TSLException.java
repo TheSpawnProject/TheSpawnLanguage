@@ -56,6 +56,11 @@ public abstract class TSLException extends RuntimeException {
         return this;
     }
 
+    public TSLException causedBy(Throwable e) {
+        this.initCause(e);
+        return this;
+    }
+
     public @Nullable String getFilePath() {
         return filePath;
     }

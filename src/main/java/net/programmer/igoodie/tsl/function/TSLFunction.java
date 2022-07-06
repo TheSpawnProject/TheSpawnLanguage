@@ -3,9 +3,10 @@ package net.programmer.igoodie.tsl.function;
 import net.programmer.igoodie.goodies.util.TypeUtilities;
 import net.programmer.igoodie.goodies.util.accessor.ArrayAccessor;
 import net.programmer.igoodie.tsl.compat.LSPFeatures;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
+import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.function.binding.TSLContextGetter;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.mozilla.javascript.BaseFunction;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -22,6 +23,11 @@ public abstract class TSLFunction extends BaseFunction implements LSPFeatures {
     @Override
     public final Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
         Object result = scope.get("__context", scope);
+
+        if (!(result instanceof TSLContextGetter)) {
+            throw new TSLInternalError("Scope MUST have a context getter meta function available in order to use a TSLFunction");
+        }
+
         TSLContextGetter contextGetter = (TSLContextGetter) result;
         TSLContext tslContext = (TSLContext) contextGetter.call(cx, scope, thisObj, args);
         return call(tslContext, scope, args);

@@ -1,9 +1,9 @@
 package net.programmer.igoodie.tsl.plugin;
 
 import net.programmer.igoodie.goodies.util.ReflectionUtilities;
+import net.programmer.igoodie.legacy.logging.TSLLogger;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.exception.TSLPluginLoadingException;
-import net.programmer.igoodie.tsl.logging.TSLLogger;
 
 import java.io.File;
 import java.lang.reflect.Field;
