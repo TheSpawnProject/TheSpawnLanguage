@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl;
 import com.vdurmont.semver4j.Semver;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.StringUtilities;
+import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import net.programmer.igoodie.plugins.events.common.CommonEvents;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.plugins.spawnjs.SpawnJS;
@@ -12,7 +13,7 @@ import net.programmer.igoodie.tsl.exception.TSLImplementationError;
 import net.programmer.igoodie.tsl.exception.TSLImportError;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.function.TSLFunctionsCorelib;
-import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.legacy.parser.TSLParserOld;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
@@ -20,7 +21,6 @@ import net.programmer.igoodie.tsl.plugin.TSLPluginManager;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLReservedNames;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -111,12 +111,12 @@ public class TheSpawnLanguage {
         return pluginManager;
     }
 
-    public TSLRuleset loadRuleset(File file) {
-        TSLParser parser = new TSLParser(this);
+    public TSLRulesetOld loadRuleset(File file) {
+        TSLParserOld parser = new TSLParserOld(this);
         return parser.parse(file);
     }
 
-    public boolean perform(TSLRuleset ruleset, TSLEvent event, GoodieObject eventArguments) {
+    public boolean perform(TSLRulesetOld ruleset, TSLEvent event, GoodieObject eventArguments) {
         TSLContext context = new TSLContext(this);
         context.setEvent(event);
         context.setEventArguments(eventArguments);
@@ -126,7 +126,7 @@ public class TheSpawnLanguage {
     /* ------------------------ */
 
     @Nullable
-    public TSLTag getTag(TSLRuleset ruleset, TSLPlainWord tagNameToken) {
+    public TSLTag getTag(TSLRulesetOld ruleset, TSLPlainWord tagNameToken) {
         String namespace = tagNameToken.getNamespace();
         String value = tagNameToken.getValue();
 
@@ -144,7 +144,7 @@ public class TheSpawnLanguage {
     }
 
     @Nullable
-    public TSLDecorator getDecorator(TSLRuleset ruleset, TSLDecoratorCall decoratorCallToken) {
+    public TSLDecorator getDecorator(TSLRulesetOld ruleset, TSLDecoratorCall decoratorCallToken) {
         String namespace = decoratorCallToken.getNamespace();
         String value = decoratorCallToken.getName();
 
@@ -162,7 +162,7 @@ public class TheSpawnLanguage {
     }
 
     @Nullable
-    public TSLEvent getEvent(TSLRuleset ruleset, List<TSLPlainWord> eventTokens) {
+    public TSLEvent getEvent(TSLRulesetOld ruleset, List<TSLPlainWord> eventTokens) {
         String eventExpression = eventTokens.stream()
                 .map(TSLPlainWord::getRaw)
                 .collect(Collectors.joining(" "));
@@ -192,7 +192,7 @@ public class TheSpawnLanguage {
     }
 
     @Nullable
-    public TSLAction getAction(TSLRuleset ruleset, TSLPlainWord actionName) {
+    public TSLAction getAction(TSLRulesetOld ruleset, TSLPlainWord actionName) {
         String namespace = actionName.getNamespace();
         String value = actionName.getValue();
 

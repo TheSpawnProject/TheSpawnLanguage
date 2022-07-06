@@ -1,15 +1,17 @@
-package net.programmer.igoodie.tsl.parser;
+package net.programmer.igoodie.legacy.parser;
 
 import net.programmer.igoodie.goodies.util.Couple;
+import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
+import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
+import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.snippet.*;
 import net.programmer.igoodie.tsl.parser.token.*;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
-import net.programmer.igoodie.tsl.runtime.TSLRule;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 import net.programmer.igoodie.tsl.util.IOUtils;
 import net.programmer.igoodie.tsl.util.StringUtils;
@@ -21,34 +23,35 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class TSLParser {
+@Deprecated
+public class TSLParserOld {
 
     private final TheSpawnLanguage tsl;
-    private TSLRuleset ruleset;
+    private TSLRulesetOld ruleset;
 
-    public TSLParser(TSLContext context) {
+    public TSLParserOld(TSLContext context) {
         this(context.getTsl());
     }
 
-    public TSLParser(TheSpawnLanguage tsl) {
+    public TSLParserOld(TheSpawnLanguage tsl) {
         this.tsl = tsl;
-        this.ruleset = new TSLRuleset(tsl);
+        this.ruleset = new TSLRulesetOld(tsl);
     }
 
     public TheSpawnLanguage getTsl() {
         return tsl;
     }
 
-    public TSLRuleset parse(URL url) throws TSLSyntaxError, URISyntaxException {
+    public TSLRulesetOld parse(URL url) throws TSLSyntaxError, URISyntaxException {
         return parse(new File(url.toURI()));
     }
 
-    public TSLRuleset parse(File file) throws TSLSyntaxError {
-        ruleset = new TSLRuleset(tsl, file.getName(), file);
+    public TSLRulesetOld parse(File file) throws TSLSyntaxError {
+        ruleset = new TSLRulesetOld(tsl, file.getName(), file);
         return parse(IOUtils.readString(file));
     }
 
-    public TSLRuleset parse(String script) throws TSLSyntaxError {
+    public TSLRulesetOld parse(String script) throws TSLSyntaxError {
         TSLLexer lexer = new TSLLexer(script).lex();
 
         for (TSLTokenBuffer buffer : lexer.getSnippets()) {
@@ -71,7 +74,7 @@ public class TSLParser {
 
     /* --------------------------- */
 
-    public TSLDocSnippet parseTSLDoc(TSLRuleset ruleset, TSLTokenBuffer buffer) {
+    public TSLDocSnippet parseTSLDoc(TSLRulesetOld ruleset, TSLTokenBuffer buffer) {
         List<TSLToken> tokens = buffer.getTokens();
         checkNamespaceIntegrity(tokens);
 
@@ -102,7 +105,7 @@ public class TSLParser {
         return new TSLDocSnippet(ruleset, begin, trimmedDocTokens, end);
     }
 
-    public TSLTagSnippet parseTag(TSLRuleset ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
+    public TSLTagSnippet parseTag(TSLRulesetOld ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
         List<TSLToken> tokens = trimBlockComments(buffer.getTokens());
         checkNamespaceIntegrity(tokens);
 
@@ -132,7 +135,7 @@ public class TSLParser {
                 argTokens);
     }
 
-    public TSLCaptureSnippet parseCapture(TSLRuleset ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
+    public TSLCaptureSnippet parseCapture(TSLRulesetOld ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
         List<TSLToken> tokens = trimBlockComments(buffer.getTokens());
         checkNamespaceIntegrity(tokens);
 
@@ -166,8 +169,8 @@ public class TSLParser {
                 capturedTokens);
     }
 
-    public TSLRule parseRule(TSLRuleset ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
-        TSLRule rule = new TSLRule();
+    public TSLRuleOld parseRule(TSLRulesetOld ruleset, TSLTokenBuffer buffer) throws TSLSyntaxError {
+        TSLRuleOld rule = new TSLRuleOld();
         List<TSLToken> tokens = trimBlockComments(buffer.getTokens());
         checkNamespaceIntegrity(tokens);
 
@@ -221,7 +224,7 @@ public class TSLParser {
         return rule;
     }
 
-    public TSLEventSnippet parseEvent(TSLRuleset ruleset, List<TSLToken> tokens, int indexOn, int indexWith) {
+    public TSLEventSnippet parseEvent(TSLRulesetOld ruleset, List<TSLToken> tokens, int indexOn, int indexWith) {
         checkNamespaceIntegrity(tokens);
 
         List<TSLPlainWord> eventTokens = getEventNameTokens(tokens, indexOn, indexWith);
@@ -241,7 +244,7 @@ public class TSLParser {
                 eventTokens);
     }
 
-    public TSLActionSnippet parseAction(TSLRuleset ruleset, List<TSLToken> tokens, int indexLastDecorator, int indexOn) {
+    public TSLActionSnippet parseAction(TSLRulesetOld ruleset, List<TSLToken> tokens, int indexLastDecorator, int indexOn) {
         checkNamespaceIntegrity(tokens);
 
         List<TSLToken> actionTokens = TSLActionSnippet.flatten(ruleset,
@@ -253,7 +256,7 @@ public class TSLParser {
         return parseAction(ruleset, actionTokens);
     }
 
-    public TSLActionSnippet parseAction(TSLRuleset ruleset, List<TSLToken> tokens) {
+    public TSLActionSnippet parseAction(TSLRulesetOld ruleset, List<TSLToken> tokens) {
         checkNamespaceIntegrity(tokens);
 
         TSLToken actionName = tokens.get(0);
@@ -278,7 +281,7 @@ public class TSLParser {
                 ((TSLPlainWord) actionName), actionArguments);
     }
 
-    public List<TSLPredicateSnippet> parsePredicates(TSLRuleset ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens, int indexWith) {
+    public List<TSLPredicateSnippet> parsePredicates(TSLRulesetOld ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens, int indexWith) {
         if (indexWith == -1) {
             return Collections.emptyList();
         }
@@ -304,7 +307,7 @@ public class TSLParser {
         return predicateSnippets;
     }
 
-    public TSLPredicateSnippet parsePredicate(TSLRuleset ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens) {
+    public TSLPredicateSnippet parsePredicate(TSLRulesetOld ruleset, TSLEventSnippet eventSnippet, List<TSLToken> tokens) {
         checkNamespaceIntegrity(tokens);
 
         TSLToken withToken = tokens.get(0);
@@ -334,7 +337,7 @@ public class TSLParser {
                 predicateTokens);
     }
 
-    public List<TSLDecoratorCall> parseDecorators(TSLRule rule, List<TSLToken> tokens) {
+    public List<TSLDecoratorCall> parseDecorators(TSLRuleOld rule, List<TSLToken> tokens) {
         checkNamespaceIntegrity(tokens);
 
         int indexLastDecorator = indexLastDecorator(tokens);

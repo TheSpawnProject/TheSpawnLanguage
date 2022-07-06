@@ -4,7 +4,7 @@ import net.programmer.igoodie.tsl.definition.TSLTag;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLSymbol;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
+import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class TSLTagSnippet extends TSLSnippet {
 
     protected TSLTag tagDefinition;
 
-    public TSLTagSnippet(TSLRuleset ruleset, TSLTag tagDefinition, TSLSymbol tagSymbol, TSLPlainWord tagName, List<TSLToken> tagArguments) {
+    public TSLTagSnippet(TSLRulesetOld ruleset, TSLTag tagDefinition, TSLSymbol tagSymbol, TSLPlainWord tagName, List<TSLToken> tagArguments) {
         super(ruleset, flatTokens(tagSymbol, tagName, tagArguments));
         this.tagSymbol = tagSymbol;
         this.tagName = tagName;

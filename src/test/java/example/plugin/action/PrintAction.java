@@ -5,10 +5,10 @@ import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.legacy.parser.TSLParserOld;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
-import net.programmer.igoodie.tsl.runtime.TSLRule;
+import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +27,7 @@ public class PrintAction extends TSLAction {
     }
 
     @Override
-    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {
+    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRuleOld rule, TSLParserOld parser) throws TSLSyntaxError {
         // Should always be valid.
     }
 

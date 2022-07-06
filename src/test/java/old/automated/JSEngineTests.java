@@ -5,9 +5,9 @@ import example.plugin.event.DummyEvent;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.function.JSEngine;
-import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.legacy.parser.TSLParserOld;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
+import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
 
@@ -22,8 +22,8 @@ public class JSEngineTests {
 
         String tslScript = TestUtils.loadTSLScript("sample.expr.tsl");
 
-        TSLParser parser = new TSLParser(language);
-        TSLRuleset ruleset = parser.parse(tslScript);
+        TSLParserOld parser = new TSLParserOld(language);
+        TSLRulesetOld ruleset = parser.parse(tslScript);
 
         GoodieObject eventArguments = new GoodieObject();
         eventArguments.put("donation", 105);

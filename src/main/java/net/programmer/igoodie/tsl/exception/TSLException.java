@@ -1,9 +1,10 @@
 package net.programmer.igoodie.tsl.exception;
 
+import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
+import net.programmer.igoodie.tsl.exception.reason.ExceptionReason;
 import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
-import net.programmer.igoodie.tsl.runtime.TSLRule;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
@@ -15,11 +16,13 @@ public abstract class TSLException extends RuntimeException {
     protected @Nullable String filePath;
     protected @Nullable TSLToken associatedToken;
 
+    protected List<ExceptionReason> reasons = new LinkedList<>();
+
     public TSLException(String reason) {
         super(reason);
     }
 
-    public TSLException(String reason, TSLRule rule) {
+    public TSLException(String reason, TSLRuleOld rule) {
         this(reason, rule.getSnippet());
     }
 
@@ -45,6 +48,12 @@ public abstract class TSLException extends RuntimeException {
         this.line = line;
         this.character = character;
         this.filePath = filePath;
+    }
+
+    // TODO: Keep implementing dis
+    public TSLException withReason(ExceptionReason reason) {
+        this.reasons.add(reason);
+        return this;
     }
 
     public @Nullable String getFilePath() {

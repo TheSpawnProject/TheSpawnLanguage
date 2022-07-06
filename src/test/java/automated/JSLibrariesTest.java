@@ -2,6 +2,8 @@ package automated;
 
 import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.goodies.util.accessor.ArrayAccessor;
+import net.programmer.igoodie.legacy.parser.TSLParserOld;
+import net.programmer.igoodie.plugins.grammar.events.ManualTriggerEvent;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
@@ -9,10 +11,13 @@ import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.function.TSLFunction;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
+import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import org.junit.jupiter.api.Test;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
+import util.TestUtils;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -94,6 +99,21 @@ public class JSLibrariesTest {
         System.out.println(jsEngine.evaluate("({ tslmath2: EP.tslmath2 })", scope));
         System.out.println(jsEngine.evaluate("EP.tslmath2.operations.mult(2, 5)", scope));
         System.out.println(jsEngine.evaluate("EP.tslmath2.pi", scope));
+    }
+
+    @Test
+    public void shouldSupportLet() throws IOException {
+        TheSpawnLanguage tsl = new TheSpawnLanguage();
+        JSEngine jsEngine = tsl.getJsEngine();
+        TSLContext context = new TSLContext(tsl);
+
+        tsl.getPluginManager().loadPlugin(new ExamplePlugin());
+
+        context.setEvent(ManualTriggerEvent.INSTANCE);
+        context.setJsScope(jsEngine.createChildScope());
+
+        TSLRulesetOld ruleset = new TSLParserOld(tsl).parse(TestUtils.loadTSLScript("rhino.tests.tsl"));
+        ruleset.perform(context);
     }
 
 }

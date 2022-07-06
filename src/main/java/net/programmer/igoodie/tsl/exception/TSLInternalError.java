@@ -3,7 +3,7 @@ package net.programmer.igoodie.tsl.exception;
 import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
 import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
-import net.programmer.igoodie.tsl.runtime.TSLRule;
+import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
 import org.jetbrains.annotations.Nullable;
 
 public class TSLInternalError extends TSLException {
@@ -17,7 +17,7 @@ public class TSLInternalError extends TSLException {
         super(reason);
     }
 
-    public TSLInternalError(String reason, TSLRule rule) {
+    public TSLInternalError(String reason, TSLRuleOld rule) {
         super(reason, rule);
     }
 

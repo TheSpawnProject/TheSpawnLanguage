@@ -1,9 +1,9 @@
 package old.automated;
 
 import example.plugin.ExamplePlugin;
+import net.programmer.igoodie.legacy.parser.TSLParserOld;
+import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
@@ -24,8 +24,8 @@ public class PredicateTests {
     public void shallParseTokensCorrectly() throws IOException {
         String script = TestUtils.loadTSLScript("predicates.tsl");
 
-        TSLParser parser = new TSLParser(TSL);
-        TSLRuleset ruleset = parser.parse(script);
+        TSLParserOld parser = new TSLParserOld(TSL);
+        TSLRulesetOld ruleset = parser.parse(script);
     }
 
 }

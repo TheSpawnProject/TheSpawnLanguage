@@ -64,7 +64,7 @@ The Spawn Language (TSL) is a ruleset format which helps users to tell a system 
 # 1. File Format
 
 - TSL files MUST use the extension `.tsl`
-- TSL files MUST UTF-8 encoded.
+- TSL files MUST be UTF-8 encoded.
 
 # 2. Tokens
 

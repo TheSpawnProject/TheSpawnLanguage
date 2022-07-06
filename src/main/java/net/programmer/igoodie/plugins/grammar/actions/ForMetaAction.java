@@ -1,15 +1,15 @@
 package net.programmer.igoodie.plugins.grammar.actions;
 
 import net.programmer.igoodie.goodies.util.Couple;
+import net.programmer.igoodie.legacy.parser.TSLParserOld;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.snippet.TSLActionSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
-import net.programmer.igoodie.tsl.runtime.TSLRule;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
+import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +42,7 @@ public class ForMetaAction extends TSLAction {
     }
 
     @Override
-    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {
+    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRuleOld rule, TSLParserOld parser) throws TSLSyntaxError {
         if (arguments.size() < 3) {
             throw new TSLSyntaxError("Expected loop count and the action", nameToken);
         }
@@ -56,7 +56,7 @@ public class ForMetaAction extends TSLAction {
         if (!timesKeyword.getRaw().equalsIgnoreCase("TIMES")) {
             throw new TSLSyntaxError("FOR statement must continue with a loop count and TIMES keyword.", timesKeyword);
         }
-        parser.parseAction(null, actionTokens);
+        parser.parseAction(rule.getAssociatedRuleset(), actionTokens);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ForMetaAction extends TSLAction {
         int count = (int) parseDouble(countToken, context);
 
         for (int i = 0; i < count; i++) {
-            TSLParser parser = new TSLParser(context);
+            TSLParserOld parser = new TSLParserOld(context);
             TSLActionSnippet actionSnippet = parser.parseAction(null, actionTokens);
             TSLAction actionDefinition = actionSnippet.getActionDefinition();
             actionDefinition.perform(actionSnippet.getActionTokens(), context);

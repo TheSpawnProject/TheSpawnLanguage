@@ -3,11 +3,11 @@ package automated;
 import example.plugin.ExamplePlugin;
 import example.plugin.event.DummyEvent;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.legacy.parser.TSLParserOld;
+import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.executor.TSLExecutor;
-import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.Test;
 
 public class ExecutorTests {
@@ -17,7 +17,7 @@ public class ExecutorTests {
         TheSpawnLanguage tsl = new TheSpawnLanguage();
         tsl.getPluginManager().loadPlugin(new ExamplePlugin());
 
-        TSLParser parser = new TSLParser(tsl);
+        TSLParserOld parser = new TSLParserOld(tsl);
 
         TSLExecutor tslExecutor = new TSLExecutor("tsl-test-executor");
 
@@ -30,7 +30,7 @@ public class ExecutorTests {
 
         System.out.println(script);
 
-        TSLRuleset ruleset = parser.parse(script);
+        TSLRulesetOld ruleset = parser.parse(script);
 
         for (int i = 0; i < 10; i++) {
             TSLContext context = new TSLContext(tsl);

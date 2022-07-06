@@ -1,0 +1,5 @@
+#! IMPORT EP FROM exampleplugin
+
+FOR ${let i = 0; 10} TIMES
+    EP.PRINT ${i++}
+ON Manual Trigger

@@ -6,15 +6,15 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.legacy.parser.TSLParserOld;
 import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
-import net.programmer.igoodie.tsl.runtime.TSLRule;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
+import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
+import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;
@@ -43,7 +43,7 @@ public class RulesetTests {
                     }
 
                     @Override
-                    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {}
+                    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRuleOld rule, TSLParserOld parser) throws TSLSyntaxError {}
 
                     @Override
                     public void perform(List<TSLToken> arguments, TSLContext context) {}
@@ -65,8 +65,8 @@ public class RulesetTests {
 
         System.out.println("\n--------------------\n");
 
-        TSLParser parser = new TSLParser(TSL);
-        TSLRuleset ruleset = parser.parse(script);
+        TSLParserOld parser = new TSLParserOld(TSL);
+        TSLRulesetOld ruleset = parser.parse(script);
 
         System.out.println("Rule count: " + ruleset.getRules().size());
 

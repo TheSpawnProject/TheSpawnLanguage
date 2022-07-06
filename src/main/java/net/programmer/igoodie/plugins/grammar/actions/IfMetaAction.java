@@ -1,15 +1,15 @@
 package net.programmer.igoodie.plugins.grammar.actions;
 
 import net.programmer.igoodie.goodies.util.Couple;
+import net.programmer.igoodie.legacy.parser.TSLParserOld;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.snippet.TSLActionSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
-import net.programmer.igoodie.tsl.runtime.TSLRule;
+import net.programmer.igoodie.legacy.runtime.TSLRuleOld;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +48,7 @@ public class IfMetaAction extends TSLAction {
     }
 
     @Override
-    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRule rule, TSLParser parser) throws TSLSyntaxError {
+    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLRuleOld rule, TSLParserOld parser) throws TSLSyntaxError {
         if (arguments.size() < 3) {
             throw new TSLSyntaxError("Expected condition and the action.", nameToken);
         }
@@ -108,7 +108,7 @@ public class IfMetaAction extends TSLAction {
             if (statement.size() == 2) {
                 TSLToken condition = statement.get(0).get(0);
                 if (condition.isTrue(context)) {
-                    TSLParser parser = new TSLParser(context);
+                    TSLParserOld parser = new TSLParserOld(context);
                     TSLActionSnippet actionSnippet = parser.parseAction(null, statement.get(1));
                     TSLAction actionDefinition = actionSnippet.getActionDefinition();
                     actionDefinition.performRaw(actionSnippet.getActionTokens(), context);
@@ -116,7 +116,7 @@ public class IfMetaAction extends TSLAction {
                 }
 
             } else {
-                TSLParser parser = new TSLParser(context);
+                TSLParserOld parser = new TSLParserOld(context);
                 TSLActionSnippet actionSnippet = parser.parseAction(null, part);
                 TSLAction actionDefinition = actionSnippet.getActionDefinition();
                 actionDefinition.performRaw(actionSnippet.getActionTokens(), context);

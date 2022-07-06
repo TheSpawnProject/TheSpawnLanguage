@@ -1,7 +1,7 @@
 package net.programmer.igoodie.tsl.parser.snippet;
 
+import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class TSLRuleSnippet extends TSLSnippet {
     protected TSLEventSnippet eventSnippet;
     protected List<TSLPredicateSnippet> predicateSnippets;
 
-    public TSLRuleSnippet(TSLRuleset ruleset, List<TSLDecoratorCall> decorators, TSLActionSnippet actionSnippet, TSLEventSnippet eventSnippet, List<TSLPredicateSnippet> predicateSnippets) {
+    public TSLRuleSnippet(TSLRulesetOld ruleset, List<TSLDecoratorCall> decorators, TSLActionSnippet actionSnippet, TSLEventSnippet eventSnippet, List<TSLPredicateSnippet> predicateSnippets) {
         super(ruleset, flatTokens(
                 decorators,
                 actionSnippet.getAllTokens(),

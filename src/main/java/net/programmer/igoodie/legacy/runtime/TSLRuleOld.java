@@ -1,4 +1,4 @@
-package net.programmer.igoodie.tsl.runtime;
+package net.programmer.igoodie.legacy.runtime;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.Couple;
@@ -6,62 +6,70 @@ import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.definition.TSLDecorator;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLPredicate;
-import net.programmer.igoodie.tsl.exception.TSLImplementationError;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.parser.snippet.TSLPredicateSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLRuleSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.attribute.ContextualAttributeGenerator;
 import net.programmer.igoodie.tsl.util.GoodieUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mozilla.javascript.ScriptableObject;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TSLRule implements ContextualAttributeGenerator {
+@Deprecated
+public class TSLRuleOld implements ContextualAttributeGenerator {
 
-    protected @Nullable TSLRuleset associatedRuleset;
+    @Nullable
+    protected TSLRulesetOld associatedRuleset;
 
     protected TSLRuleSnippet snippet;
 
-    protected List<Couple<TSLDecoratorCall, TSLDecorator>> decorators = new LinkedList<>();
+    protected List<Couple<TSLDecoratorCall, TSLDecorator>> decorators;
 
-    protected TSLAction action;
     protected TSLEvent event;
     protected List<TSLPredicate> predicates;
+    protected TSLAction action;
 
-    private TSLRule() {} // Disallow construction
+    public TSLRuleOld() {
+        this.decorators = new LinkedList<>();
+    }
 
-    public void setAssociatedRuleset(@NotNull TSLRuleset ruleset) {
+    public TSLRuleOld(@NotNull TSLRulesetOld ruleset) {
+        this();
         this.associatedRuleset = ruleset;
     }
 
-    public void loadSnippet(TSLRuleSnippet ruleSnippet) {
-        if (this.snippet != null) {
-            throw new IllegalStateException("Snippet MUST not be re-initialized");
-        }
-
-        this.snippet = ruleSnippet;
-        this.action = snippet.getActionSnippet().getActionDefinition();
-        this.event = snippet.getEventSnippet().getEventDefinition();
-        this.predicates = snippet.getPredicateSnippets().stream()
-                .map(TSLPredicateSnippet::getPredicateDefinition)
-                .collect(Collectors.toList());
+    public TSLRuleOld(TSLRulesetOld ruleset, TSLRuleSnippet snippet) {
+        this(ruleset);
+        this.setSnippet(snippet);
     }
 
-    /* ----------------------------------- */
+    public @Nullable TSLRulesetOld getAssociatedRuleset() {
+        return associatedRuleset;
+    }
+
+    protected void setAssociatedRuleset(@NotNull TSLRulesetOld associatedRuleset) {
+        this.associatedRuleset = associatedRuleset;
+    }
 
     public TSLRuleSnippet getSnippet() {
         return snippet;
     }
 
-    public @Nullable TSLRuleset getAssociatedRuleset() {
-        return associatedRuleset;
+    public void setSnippet(TSLRuleSnippet snippet) {
+        if (this.snippet != null)
+            throw new IllegalStateException("Snippet MUST not be re-initialized");
+        this.snippet = snippet;
+        this.event = snippet.getEventSnippet().getEventDefinition();
+        this.predicates = snippet.getPredicateSnippets().stream()
+                .map(TSLPredicateSnippet::getPredicateDefinition).collect(Collectors.toList());
+        this.action = snippet.getActionSnippet().getActionDefinition();
     }
 
     /* ----------------------------------- */
@@ -82,36 +90,25 @@ public class TSLRule implements ContextualAttributeGenerator {
 
     /* ----------------------------------- */
 
-    public List<Couple<TSLDecoratorCall, TSLDecorator>> getDecorators() {
-        return Collections.unmodifiableList(decorators);
-    }
-
-    public void decorate(TSLDecoratorCall decoratorCall, TSLDecorator decoratorDefinition) {
+    public void decorate(TSLDecorator decoratorDefinition, TSLDecoratorCall decoratorCall) {
         this.decorators.add(new Couple<>(decoratorCall, decoratorDefinition));
     }
 
-    /* ----------------------------------- */
-
     public boolean perform(TSLContext context) {
-        if (event == null || action == null) {
-            throw new TSLImplementationError("Rule has not done construction. It has no event or action yet!");
-        }
-
         if (context.getEvent() != this.event) {
-            return false; // Does not match the event
+            return false;
         }
 
-        // Generate Attributes
+        // Generate and bind attributes
         GoodieObject tagAttributes = associatedRuleset == null ? new GoodieObject() : associatedRuleset.generateAttributes();
         GoodieObject ruleAttributes = generateAttributes(context);
+        context.setAttributes(GoodieUtils.mergeOverriding(tagAttributes, ruleAttributes));
 
-        // Create new JS scope
+        // Bind JS engine scope and context
         JSEngine jsEngine = context.getTsl().getJsEngine();
         ScriptableObject scope = jsEngine.createChildScope();
-
-        // Prepare Context
-        context.setAttributes(GoodieUtils.mergeOverriding(tagAttributes, ruleAttributes));
         context.setJsScope(scope);
+        jsEngine.loadTSLContext(scope, context);
 
         // Run through the declared predicates
         for (TSLPredicateSnippet predicateSnippet : snippet.getPredicateSnippets()) {

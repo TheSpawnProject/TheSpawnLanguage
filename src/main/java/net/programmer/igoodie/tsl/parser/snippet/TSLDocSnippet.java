@@ -2,7 +2,7 @@ package net.programmer.igoodie.tsl.parser.snippet;
 
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLSymbol;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
+import net.programmer.igoodie.legacy.runtime.TSLRulesetOld;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class TSLDocSnippet extends TSLSnippet {
     TSLSymbol begin, end;
     List<TSLPlainWord> docTokens;
 
-    public TSLDocSnippet(TSLRuleset ruleset, TSLSymbol begin, List<TSLPlainWord> docTokens, TSLSymbol end) {
+    public TSLDocSnippet(TSLRulesetOld ruleset, TSLSymbol begin, List<TSLPlainWord> docTokens, TSLSymbol end) {
         super(ruleset, flatTokens(begin, docTokens, end));
         this.begin = begin;
         this.docTokens = docTokens;
