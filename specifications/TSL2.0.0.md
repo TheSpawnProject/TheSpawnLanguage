@@ -1,12 +1,11 @@
 <!-- Logo -->
-<p align="center">
-  <a href="https://jitpack.io/#TheSpawnProject/TheSpawnLanguage">
-    <img src="https://raw.githubusercontent.com/TheSpawnProject/TheSpawnLanguage/master/.github/assets/logo.png" height="150" alt="TSL Logo" aria-label="TheSpawnLanguage Logo" />
-  </a>
-  <a href="https://jitpack.io/#TheSpawnProject/TheSpawnLanguage">
-    <img src="https://raw.githubusercontent.com/TheSpawnProject/TheSpawnLanguage/master/.github/assets/specifications.png" height="150" />
-  </a>
-</p>
+<a href="https://jitpack.io/#TheSpawnProject/TheSpawnLanguage">
+  <p align="center">
+    <img align="center" src="https://raw.githubusercontent.com/TheSpawnProject/TheSpawnLanguage/master/.github/assets/specifications.png" height="75" />
+    <img align="center" src="https://raw.githubusercontent.com/TheSpawnProject/TheSpawnLanguage/master/.github/assets/logo.png" height="150" alt="TSL Logo" aria-label="TheSpawnLanguage Logo" />
+    <img align="center" src="https://raw.githubusercontent.com/TheSpawnProject/TheSpawnLanguage/master/.github/assets/specifications.png" height="75" />
+  </p>
+</a>
 
 <!-- Slogan -->
 <p align="center">
@@ -121,6 +120,8 @@ Multi-line comments start with a hash followed by an asterisk character (`#*`) a
 content up until the next asterisk character followed by a hash character (`*#`).
 
 # Yet to be continued...
+
+- TODO: IMPORT inherits captures
 
 ## License
 
