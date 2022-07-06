@@ -10,6 +10,11 @@ public class ExpressionUtils {
     public static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{(.+?)}");
     public static final Pattern CAPTURE_PARAMETER_PATTERN = Pattern.compile("\\{\\{(.+?)}}");
 
+    @FunctionalInterface
+    public interface ExpressionTransformer {
+        String transform(String expression, Matcher matcher);
+    }
+
     public static String replaceExpressions(String input, Function<String, String> evaluator) {
         return replacePattern(input, EXPRESSION_PATTERN, evaluator);
     }
@@ -18,7 +23,12 @@ public class ExpressionUtils {
         return replacePattern(input, CAPTURE_PARAMETER_PATTERN, evaluator);
     }
 
+    @Deprecated
     public static String replacePattern(String input, Pattern expressionPattern, Function<String, String> evaluator) {
+        return replacePattern(input, expressionPattern, (exp, matcher) -> evaluator.apply(exp));
+    }
+
+    public static String replacePattern(String input, Pattern expressionPattern, ExpressionTransformer transformer) {
         Matcher matcher = expressionPattern.matcher(input);
         StringBuilder builder = new StringBuilder();
 
@@ -34,7 +44,7 @@ public class ExpressionUtils {
                 start = matcher.end();
 
                 // Evaluate and append new value
-                builder.append(evaluator.apply(expression));
+                builder.append(transformer.transform(expression, matcher));
             }
 
         } catch (IndexOutOfBoundsException e) {

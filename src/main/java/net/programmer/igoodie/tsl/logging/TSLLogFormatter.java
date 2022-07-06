@@ -14,11 +14,11 @@ public class TSLLogFormatter extends Formatter {
 
     @Override
     public String format(LogRecord record) {
-        return String.format("[%s] [%d] [%s] %s",
-                record.getLevel(),
-                Instant.now().getEpochSecond(),
-                this.name,
-                record.getMessage());
+        String level = record.getLevel().getName();
+        long unixSeconds = Instant.now().getEpochSecond();
+        String message = record.getMessage();
+
+        return String.format("[%d] [%s] [%s] %s", unixSeconds, this.name, level, message);
     }
 
 }
