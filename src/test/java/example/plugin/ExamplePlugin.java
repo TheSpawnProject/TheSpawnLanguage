@@ -6,11 +6,8 @@ import example.plugin.decorator.SuppressNotificationsDecorator;
 import example.plugin.event.DummyEvent;
 import example.plugin.functions.RootLibrary;
 import example.plugin.tag.CooldownTag;
-import net.programmer.igoodie.tsl.definition.TSLAction;
-import net.programmer.igoodie.tsl.definition.TSLEvent;
-import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
-import net.programmer.igoodie.tsl.definition.TSLDecorator;
-import net.programmer.igoodie.tsl.definition.TSLTag;
+import net.programmer.igoodie.tsl.definition.*;
+import net.programmer.igoodie.tsl.logging.TSLLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPluginLogger;
@@ -19,7 +16,6 @@ import net.programmer.igoodie.tsl.registry.TSLRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class ExamplePlugin extends TSLPlugin {
 
@@ -27,7 +23,7 @@ public class ExamplePlugin extends TSLPlugin {
     public static ExamplePlugin PLUGIN_INSTANCE;
 
     @TSLPluginLogger
-    public static Logger LOGGER;
+    public static TSLLogger LOGGER;
 
     public static final Map<String, Object> VARIABLE_CACHE = new HashMap<>();
 

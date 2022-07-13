@@ -14,29 +14,34 @@ public class TestUtils {
     }
 
     public static String loadTSLScript(String filename) throws IOException {
-        return loadFile("tsl/" + filename);
+        return loadResource("tsl/" + filename);
     }
 
     public static String loadFragment(String filename) throws IOException {
-        return loadFile("fragments/" + filename);
+        return loadResource("fragments/" + filename);
     }
 
     public static String loadJS(String filename) throws IOException {
-        return loadFile("rhino/" + filename);
+        return loadResource("rhino/" + filename);
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static URL pluginPath(String pluginName) {
+    public static URL pluginURL(String pluginName) {
         return Resources.getResource("plugins/" + pluginName);
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static URL scriptPath(String scriptName) {
+    public static URL scriptURL(String scriptName) {
         return Resources.getResource("tsl/" + scriptName);
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    private static String loadFile(String path) throws IOException {
+    public static URL resourceURL(String resourceName) {
+        return Resources.getResource(resourceName);
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    public static String loadResource(String path) throws IOException {
         URL resourceURL = Resources.getResource(path);
         List<String> lines = Resources.readLines(resourceURL, StandardCharsets.UTF_8);
         return String.join("\n", lines);

@@ -23,7 +23,7 @@ public class RulesetTests {
         System.out.println(tsl.getPluginManager().LOADED_PLUGIN_IDS);
 
         TSLParser parser = new TSLParser(tsl);
-        TSLRuleset ruleset = parser.parse(TestUtils.scriptPath("test.import.tsl"));
+        TSLRuleset ruleset = parser.parse(TestUtils.scriptURL("test.import.tsl"));
 
         TSLContext context;
 
@@ -42,7 +42,7 @@ public class RulesetTests {
         tsl.getPluginManager().loadPlugin(new ExamplePlugin());
 
         TSLParser parser = new TSLParser(tsl);
-        TSLRuleset ruleset = parser.parse(TestUtils.scriptPath("comment-inbetween.tsl"));
+        TSLRuleset ruleset = parser.parse(TestUtils.scriptURL("comment-inbetween.tsl"));
 
         TSLContext context;
 

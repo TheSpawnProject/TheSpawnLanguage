@@ -29,7 +29,7 @@ public class ParserTests {
         tsl.getPluginManager().loadPlugin(new ExamplePlugin());
 
         TSLParser parser = new TSLParser(tsl);
-        TSLRuleset ruleset = parser.parse(TestUtils.scriptPath("parser.test.tsl"));
+        TSLRuleset ruleset = parser.parse(TestUtils.scriptURL("parser.test.tsl"));
 
         Assertions.assertNotNull(ruleset.getImportedPlugins().get("ExampleLib"));
         Assertions.assertNotNull(ruleset.getImportedPlugins().get("exampleplugin"));

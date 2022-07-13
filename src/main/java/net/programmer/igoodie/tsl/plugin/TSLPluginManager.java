@@ -1,9 +1,10 @@
 package net.programmer.igoodie.tsl.plugin;
 
 import net.programmer.igoodie.goodies.util.ReflectionUtilities;
-import net.programmer.igoodie.legacy.logging.TSLLogger;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.exception.TSLPluginLoadingException;
+import net.programmer.igoodie.tsl.logging.TSLLogHandler;
+import net.programmer.igoodie.tsl.logging.TSLLogger;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -12,7 +13,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 public class TSLPluginManager {
 
@@ -89,7 +89,10 @@ public class TSLPluginManager {
                 ReflectionUtilities.setValue(null, field, plugin);
 
             } else if (field.isAnnotationPresent(TSLPluginLogger.class)) {
-                Logger logger = TSLLogger.createLogger(new File("logs"), plugin, true);
+                TSLLogHandler logHandler = new TSLLogHandler(new File("logs/plugins"), plugin.getManifest().getPluginId())
+                        .historyLimit(5)
+                        .hookConsoleLog();
+                TSLLogger logger = TSLLogger.createLogger(plugin, logHandler);
                 ReflectionUtilities.setValue(null, field, logger);
             }
         }

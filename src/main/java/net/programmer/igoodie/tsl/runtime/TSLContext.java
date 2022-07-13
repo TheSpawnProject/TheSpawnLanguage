@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mozilla.javascript.ScriptableObject;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,6 +71,18 @@ public class TSLContext {
 
     public void setAttributes(@NotNull GoodieObject attributes) {
         this.attributes = attributes;
+    }
+
+    /* ----------------------------------- */
+
+    protected @Nullable File baseDir;
+
+    public @Nullable File getBaseDir() {
+        return baseDir;
+    }
+
+    public void setBaseDir(@NotNull File baseDir) {
+        this.baseDir = baseDir;
     }
 
     /* ----------------------------------- */

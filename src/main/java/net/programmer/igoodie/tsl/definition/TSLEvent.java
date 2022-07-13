@@ -55,11 +55,10 @@ public abstract class TSLEvent extends TSLDefinition {
     public static NativeObject generateEventJsObject(TSLContext context) {
         NativeObject jsObject = new NativeObject();
         GoodieObject eventArguments = context.getEventArguments();
-        ScriptableObject scope = context.getJsScope();
 
         for (String argumentName : eventArguments.keySet()) {
             Object value = extractField(eventArguments, argumentName);
-            jsObject.put(argumentName, scope, value);
+            jsObject.defineProperty(argumentName, value, ScriptableObject.CONST);
         }
 
         return jsObject;

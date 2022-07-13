@@ -1,6 +1,7 @@
 package net.programmer.igoodie.plugins.spawnjs;
 
 import net.programmer.igoodie.plugins.spawnjs.corelib.SpawnJSCorelib;
+import net.programmer.igoodie.plugins.spawnjs.funclib.SpawnJSFuncLib;
 import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
@@ -26,6 +27,7 @@ public class SpawnJS extends TSLPlugin {
     @Override
     public void registerFunctionLibraries(TSLRegistry<TSLFunctionLibrary> registry) {
         registry.register(SpawnJSCorelib.INSTANCE);
+        registry.register(SpawnJSFuncLib.INSTANCE);
     }
 
 }

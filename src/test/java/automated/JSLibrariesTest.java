@@ -1,6 +1,7 @@
 package automated;
 
 import example.plugin.ExamplePlugin;
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.accessor.ArrayAccessor;
 import net.programmer.igoodie.plugins.grammar.events.ManualTriggerEvent;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
@@ -17,7 +18,9 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import util.TestUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -93,7 +96,7 @@ public class JSLibrariesTest {
 
         jsEngine.loadTSLContext(scope, dummyContext);
 
-        jsEngine._debugDumpScope(scope, true);
+        jsEngine._debugDumpScope(scope);
 
         System.out.println(jsEngine.evaluate("({ tslmath: EP.tslmath })", scope));
         System.out.println(jsEngine.evaluate("({ tslmath2: EP.tslmath2 })", scope));
@@ -113,6 +116,27 @@ public class JSLibrariesTest {
         context.setJsScope(jsEngine.createChildScope());
 
         TSLRuleset ruleset = new TSLParser(tsl).parse(TestUtils.loadTSLScript("rhino.tests.tsl"));
+        ruleset.perform(context);
+    }
+
+    @Test
+    public void typescriptStuff() throws IOException, URISyntaxException {
+        TheSpawnLanguage tsl = new TheSpawnLanguage();
+        File rulesetFile = new File(TestUtils.resourceURL("typescript/myRuleset.tsl").toURI());
+
+        tsl.getPluginManager().loadPlugin(new ExamplePlugin()); // for the PRINT action
+
+        TSLContext context = new TSLContext(tsl);
+        context.setEvent(ManualTriggerEvent.INSTANCE);
+        GoodieObject eventArgument = new GoodieObject();
+        GoodieObject debugData = new GoodieObject();
+        debugData.put("Foo", 123);
+        debugData.put("Bar", 456);
+        eventArgument.put("debug_data", debugData);
+        context.setEventArguments(eventArgument);
+
+        TSLRuleset ruleset = new TSLParser(tsl).parse(rulesetFile);
+
         ruleset.perform(context);
     }
 

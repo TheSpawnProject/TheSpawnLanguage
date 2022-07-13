@@ -4,7 +4,7 @@ import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 
-// TODO: Rethink and reimplement
+@Deprecated
 public abstract class TSLRulesetHook {
 
     public void onEventOccur(TSLRuleset ruleset, TSLContext context) {}

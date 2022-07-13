@@ -235,6 +235,9 @@ public class TSLParser {
     public TSLActionSnippet parseAction(@Nullable Map<String, String> pluginAliases, @Nullable Map<String, TSLCaptureSnippet> captureSnippets, List<TSLToken> tokens) {
         checkNamespaceIntegrity(tokens);
 
+        // TODO: Fix where action name can be included in a capture call
+        // E.g $myAction ON Manual Trigger
+
         TSLToken actionName = tokens.get(0);
         List<TSLToken> actionArguments = tokens.subList(1, tokens.size());
 

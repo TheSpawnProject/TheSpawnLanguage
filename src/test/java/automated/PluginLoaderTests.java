@@ -21,7 +21,7 @@ public class PluginLoaderTests {
         TheSpawnLanguage tsl = new TheSpawnLanguage();
 
         // Loads the plugin from JAR
-        URL pluginURL = TestUtils.pluginPath("example-0.0.1.jar");
+        URL pluginURL = TestUtils.pluginURL("example-0.0.1.jar");
         tsl.getPluginManager().loadPlugin(pluginURL.toURI());
 
         // Parse the ruleset

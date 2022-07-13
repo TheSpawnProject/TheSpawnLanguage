@@ -131,6 +131,9 @@ public class TSLRule implements ContextualAttributeGenerator, TSLEventEmitter<TS
         // Prepare Context
         context.setAttributes(GoodieUtils.mergeOverriding(tagAttributes, ruleAttributes));
         context.setJsScope(scope);
+        if (this.associatedRuleset != null && this.associatedRuleset.file != null) {
+            context.setBaseDir(this.associatedRuleset.file.getParentFile());
+        }
 
         // Run through the declared predicates
         for (TSLPredicateSnippet predicateSnippet : snippet.getPredicateSnippets()) {

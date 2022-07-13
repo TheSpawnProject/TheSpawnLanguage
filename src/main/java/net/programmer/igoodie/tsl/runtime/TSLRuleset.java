@@ -23,6 +23,7 @@ import java.util.*;
 public class TSLRuleset implements ConstantAttributeGenerator {
 
     protected @Nullable String name;
+    // TODO: Turn Into Optional<File>
     protected @Nullable File file;
     protected @NotNull final TheSpawnLanguage tsl;
     protected List<TSLSnippet> snippets;
@@ -229,6 +230,10 @@ public class TSLRuleset implements ConstantAttributeGenerator {
         context.setImportedPlugins(getImportedPlugins());
         context.setCaptureSnippets(getCaptureSnippets());
         context.setMessageToken(null); // Reset Message token
+
+        if (this.file != null) {
+            context.setBaseDir(this.file.getParentFile());
+        }
 
         boolean performed = false;
 

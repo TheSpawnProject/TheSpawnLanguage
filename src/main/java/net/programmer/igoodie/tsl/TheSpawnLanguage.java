@@ -60,11 +60,11 @@ public class TheSpawnLanguage {
             if (colonCount > 1) {
                 throw new TSLImplementationError("Registry keys MUST not have multiple colon characters");
             }
-            System.out.print(key + " -> ");
+//            System.out.print(key + " -> ");
             String[] parts = key.split(":");
             String namespace = parts[0];
             String value = parts[1];
-            System.out.println(namespace + ":" + mapper.apply(value));
+//            System.out.println(namespace + ":" + mapper.apply(value));
             return namespace + ":" + mapper.apply(value);
         };
     }
@@ -281,7 +281,8 @@ public class TheSpawnLanguage {
 
     @Nullable
     public <T extends TSLDefinition> T getDefinition(TSLRegistry<T> registry, String id) {
-        System.out.println("\nGet Definition; " + id);
+//        System.out.println(registry.stream().map(Map.Entry::getKey).collect(Collectors.toList()));
+//        System.out.println("Get Definition; " + id);
         if (!id.contains(":")) {
             for (TSLPlugin builtInPlugin : BUILT_IN_PLUGINS) {
                 String pluginId = builtInPlugin.getManifest().getPluginId();

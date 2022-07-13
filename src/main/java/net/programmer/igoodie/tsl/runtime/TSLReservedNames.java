@@ -11,7 +11,7 @@ public class TSLReservedNames {
             "ON", "FROM", "WITH", // Reserved by the ruleset parts
             "EVENT", // Reserved by event arguments on JS ${event.actor}
             "__context", // Reserved by inner JS workings to pass TSLContext everywhere
-            "__funclibs" // Reserved by inner JS workings to store loaded function libraries
+            "__importedLibs" // Reserved by inner JS workings to store loaded function libraries
 
     ));
 

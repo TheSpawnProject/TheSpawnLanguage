@@ -84,12 +84,25 @@ public class JSEngine {
         }
     }
 
+    /* ------------------------------------ */
+
+    public ScriptableObject cloneScope(ScriptableObject scope) {
+        ScriptableObject newScope = (ScriptableObject) getJsContext().newObject(scope);
+        newScope.setPrototype(scope);
+        newScope.setParentScope(null);
+        newScope.defineProperty("exports", new NativeObject(), ScriptableObject.PERMANENT);
+        newScope.defineProperty("__dumpscope", new BaseFunction() {
+            @Override
+            public Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
+                _debugDumpScope(((NativeObject) scope));
+                return Undefined.instance;
+            }
+        }, ScriptableObject.READONLY);
+        return newScope;
+    }
+
     public ScriptableObject createChildScope() {
-        ScriptableObject globalScope = getGlobalScope();
-        ScriptableObject scope = (ScriptableObject) getJsContext().newObject(globalScope);
-        scope.setPrototype(globalScope);
-        scope.setParentScope(null);
-        return scope;
+        return cloneScope(getGlobalScope());
     }
 
     /* ------------------------------------ */
@@ -97,6 +110,7 @@ public class JSEngine {
     public void loadTSLContext(ScriptableObject scope, TSLContext tslContext) {
         if (tslContext != null) {
             scope.putConst("__context", scope, new TSLContextGetter(tslContext));
+            if (tslContext.getEvent() != null) scope.putConst("eventName", scope, tslContext.getEvent().getName());
             scope.putConst("event", scope, TSLEvent.generateEventJsObject(tslContext));
             loadPluginLibraries(scope, tslContext.getTsl(), tslContext.getImportedPlugins());
         }
@@ -128,7 +142,7 @@ public class JSEngine {
                     }
                 }
 
-                touchGlobalObject(scope, "__funclibs", libsMetaObject -> {
+                touchGlobalObject(scope, "__importedLibs", libsMetaObject -> {
                     libsMetaObject.put(alias, libsMetaObject, funcLibObject);
                 });
             });
@@ -206,12 +220,19 @@ public class JSEngine {
                 .collect(Collectors.joining(", ", "[", "]"));
     }
 
-    public void _debugDumpScope(ScriptableObject scope, boolean includeInternal) {
-        System.out.println("Dumping variables in " + scope);
-        for (Map.Entry<Object, Object> entry : ((NativeObject) scope).entrySet()) {
-            if (!includeInternal && entry.getKey().toString().startsWith("__")) continue;
-            System.out.println(entry.getKey() + " = " + stringify(entry.getValue()));
-        }
+    public void _debugDumpScope(ScriptableObject scope) {
+        System.out.println("============================");
+        Object target = scope.get("__scriptfilename") == null ? scope.hashCode() : scope.get("__scriptfilename");
+        System.out.println("Dumping scope in " + target);
+
+        Arrays.stream(scope.getIds()).sorted().forEach(id -> {
+            System.out.println(id + " = " + stringify(scope.get(id))
+                    .replace("\t", "\\t")
+                    .replace("\n", "\\n")
+                    .replace("\r", "\\r"));
+        });
+
+        System.out.println("============================\n");
     }
 
 }

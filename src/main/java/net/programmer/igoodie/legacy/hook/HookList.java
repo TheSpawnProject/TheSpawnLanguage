@@ -7,6 +7,7 @@ import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import java.util.LinkedList;
 import java.util.List;
 
+@Deprecated
 public final class HookList extends TSLRulesetHook {
 
     private final List<TSLRulesetHook> hookList;
