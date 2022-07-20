@@ -31,7 +31,6 @@ gradle-app.setting
 .mtj.tmp/
 
 # Package Files #
-*.jar
 !**/resources/plugins/*.jar
 *.war
 *.nar
