@@ -25,10 +25,7 @@ import net.programmer.igoodie.tsl.util.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,7 +66,7 @@ public class TheSpawnLanguage {
         };
     }
 
-    public TheSpawnLanguage() {
+    public TheSpawnLanguage(TSLPlugin... corePlugins) {
         BUILT_IN_PLUGINS = new LinkedList<>();
         RESERVED_NAMES = new TSLReservedNames();
         TAG_REGISTRY = new TSLRegistry<>(keyMapper(StringUtilities::upperSnake));
@@ -83,7 +80,9 @@ public class TheSpawnLanguage {
             @Override
             public void postRegister(TSLFunctionLibrary entry) {
                 if (entry instanceof TSLFunctionsCorelib) {
-                    TheSpawnLanguage.this.onFuncCorelibRegistered(entry);
+                    if (BUILT_IN_PLUGINS.contains(entry.getPlugin())) {
+                        TheSpawnLanguage.this.registerCorelib(entry);
+                    }
                 }
             }
         };
@@ -95,6 +94,7 @@ public class TheSpawnLanguage {
         BUILT_IN_PLUGINS.add(new TSLGrammarCore());
         BUILT_IN_PLUGINS.add(new SpawnJS());
         BUILT_IN_PLUGINS.add(new CommonEvents());
+        BUILT_IN_PLUGINS.addAll(Arrays.asList(corePlugins));
         BUILT_IN_PLUGINS.forEach(pluginManager::loadPlugin);
     }
 
@@ -120,10 +120,10 @@ public class TheSpawnLanguage {
 
     /* ------------------------ */
 
-    private void onFuncCorelibRegistered(TSLFunctionLibrary entry) {
+    private void registerCorelib(TSLFunctionLibrary entry) {
         TSLFunctionsCorelib corelib = (TSLFunctionsCorelib) entry;
         FUNC_CORELIB_REGISTRY.register(corelib);
-//        jsEngine.loadCoreLibrary(corelib);
+        jsEngine.loadCoreLibrary(corelib);
     }
 
     @Nullable

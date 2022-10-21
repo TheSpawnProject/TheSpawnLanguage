@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.function;
 
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
+import net.programmer.igoodie.tsl.exception.TSLImportError;
 import net.programmer.igoodie.tsl.function.scope.JSScope;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.AccessUtils;
@@ -20,7 +21,7 @@ public class JSEngine {
     protected TheSpawnLanguage tsl;
     protected JSScope globalScope;
 
-    public JSEngine(TheSpawnLanguage tsl, TSLFunctionsCorelib... coreLibraries) {
+    public JSEngine(TheSpawnLanguage tsl) {
         this.tsl = tsl;
         this.globalScope = JSContextManager.createGlobalScope(this);
     }
@@ -39,9 +40,9 @@ public class JSEngine {
     public void loadCoreLibrary(TSLFunctionLibrary coreLibrary) {
         Class<?> accessedFromClass = AccessUtils.accessedFromClass(JSEngine.class);
 
-//        if (accessedFromClass != TheSpawnLanguage.class) {
-//            throw new TSLImportError("Core JS libraries cannot be loaded externally");
-//        }
+        if (accessedFromClass != TheSpawnLanguage.class) {
+            throw new TSLImportError("Core JS libraries cannot be loaded externally");
+        }
 
         NativeObject libraryObject = new NativeObject();
         coreLibrary.composeLibrary(libraryObject);
