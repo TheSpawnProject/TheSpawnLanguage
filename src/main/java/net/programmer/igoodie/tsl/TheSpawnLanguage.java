@@ -83,8 +83,7 @@ public class TheSpawnLanguage {
             @Override
             public void postRegister(TSLFunctionLibrary entry) {
                 if (entry instanceof TSLFunctionsCorelib) {
-                    TSLFunctionsCorelib corelib = (TSLFunctionsCorelib) entry;
-                    FUNC_CORELIB_REGISTRY.register(corelib);
+                    TheSpawnLanguage.this.onFuncCorelibRegistered(entry);
                 }
             }
         };
@@ -97,11 +96,6 @@ public class TheSpawnLanguage {
         BUILT_IN_PLUGINS.add(new SpawnJS());
         BUILT_IN_PLUGINS.add(new CommonEvents());
         BUILT_IN_PLUGINS.forEach(pluginManager::loadPlugin);
-
-        for (Map.Entry<String, TSLFunctionsCorelib> corelibEntry : FUNC_CORELIB_REGISTRY) {
-            TSLFunctionsCorelib corelib = corelibEntry.getValue();
-            jsEngine.loadCoreLibrary(corelib);
-        }
     }
 
     public JSEngine getJsEngine() {
@@ -125,6 +119,12 @@ public class TheSpawnLanguage {
     }
 
     /* ------------------------ */
+
+    private void onFuncCorelibRegistered(TSLFunctionLibrary entry) {
+        TSLFunctionsCorelib corelib = (TSLFunctionsCorelib) entry;
+        FUNC_CORELIB_REGISTRY.register(corelib);
+        jsEngine.loadCoreLibrary(corelib);
+    }
 
     @Nullable
     public TSLTag getTag(TSLPlainWord tagNameToken) {

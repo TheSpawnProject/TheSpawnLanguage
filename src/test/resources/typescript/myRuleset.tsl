@@ -1,4 +1,4 @@
-#!IMPORT EP FROM exampleplugin
+#! IMPORT EP FROM exampleplugin
 
 EP.PRINT ${require("./build/myScript.js").default} ${99}
  ON Manual Trigger
