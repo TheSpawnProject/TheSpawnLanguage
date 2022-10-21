@@ -2,8 +2,8 @@ package net.programmer.igoodie.plugins.spawnjs.corelib.functions;
 
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.TSLFunction;
+import net.programmer.igoodie.tsl.function.scope.JSScope;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
-import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.Undefined;
 
 import java.util.Arrays;
@@ -19,7 +19,7 @@ public class PrintFunction extends TSLFunction {
     }
 
     @Override
-    public Object call(TSLContext context, Scriptable scope, Object... arguments) throws TSLExpressionException {
+    public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException {
         String message = Arrays.stream(arguments)
                 .map(Object::toString)
                 .collect(Collectors.joining(" "));

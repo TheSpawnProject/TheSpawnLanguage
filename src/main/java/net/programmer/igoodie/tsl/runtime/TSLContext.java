@@ -3,11 +3,11 @@ package net.programmer.igoodie.tsl.runtime;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
+import net.programmer.igoodie.tsl.function.scope.JSScope;
 import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mozilla.javascript.ScriptableObject;
 
 import java.io.File;
 import java.util.HashMap;
@@ -27,13 +27,13 @@ public class TSLContext {
 
     /* ----------------------------------- */
 
-    protected @Nullable ScriptableObject jsScope;
+    protected @Nullable JSScope jsScope;
 
-    public @Nullable ScriptableObject getJsScope() {
+    public @Nullable JSScope getJsScope() {
         return jsScope;
     }
 
-    public void setJsScope(@NotNull ScriptableObject jsScope) {
+    public void setJsScope(@NotNull JSScope jsScope) {
         this.jsScope = jsScope;
     }
 

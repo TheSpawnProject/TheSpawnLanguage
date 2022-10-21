@@ -1,10 +1,10 @@
 package example.plugin.functions;
 
 import example.plugin.ExamplePlugin;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.TSLFunction;
-import org.mozilla.javascript.Scriptable;
+import net.programmer.igoodie.tsl.function.scope.JSScope;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 
 public class GetVariableFunction extends TSLFunction {
 
@@ -16,7 +16,7 @@ public class GetVariableFunction extends TSLFunction {
     }
 
     @Override
-    public Object call(TSLContext tslContext, Scriptable scope, Object... arguments) throws TSLExpressionException {
+    public Object call(TSLContext tslContext, JSScope scope, Object... arguments) throws TSLExpressionException {
         String variableName = stringArgument(arguments, 0);
         return ExamplePlugin.VARIABLE_CACHE.get(variableName);
     }

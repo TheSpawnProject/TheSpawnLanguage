@@ -8,6 +8,7 @@ import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.exception.TSLImplementationError;
 import net.programmer.igoodie.tsl.function.JSEngine;
+import net.programmer.igoodie.tsl.function.scope.JSScope;
 import net.programmer.igoodie.tsl.parser.snippet.TSLActionSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLPredicateSnippet;
 import net.programmer.igoodie.tsl.parser.snippet.TSLRuleSnippet;
@@ -19,7 +20,6 @@ import net.programmer.igoodie.tsl.runtime.listener.TSLRuleListener;
 import net.programmer.igoodie.tsl.util.GoodieUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mozilla.javascript.ScriptableObject;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -124,13 +124,13 @@ public class TSLRule implements ContextualAttributeGenerator, TSLEventEmitter<TS
         GoodieObject tagAttributes = associatedRuleset == null ? new GoodieObject() : associatedRuleset.generateAttributes();
         GoodieObject ruleAttributes = generateAttributes(context);
 
-        // Create new JS scope
+        // Create new JS ruleScope
         JSEngine jsEngine = context.getTsl().getJsEngine();
-        ScriptableObject scope = jsEngine.createChildScope();
+        JSScope ruleScope = jsEngine.getGlobalScope().fork();
 
         // Prepare Context
         context.setAttributes(GoodieUtils.mergeOverriding(tagAttributes, ruleAttributes));
-        context.setJsScope(scope);
+        context.setJsScope(ruleScope);
         if (this.associatedRuleset != null && this.associatedRuleset.file != null) {
             context.setBaseDir(this.associatedRuleset.file.getParentFile());
         }

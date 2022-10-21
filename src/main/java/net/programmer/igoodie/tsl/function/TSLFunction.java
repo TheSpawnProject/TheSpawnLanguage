@@ -6,6 +6,7 @@ import net.programmer.igoodie.tsl.compat.LSPFeatures;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.function.binding.TSLContextGetter;
+import net.programmer.igoodie.tsl.function.scope.JSScope;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.mozilla.javascript.BaseFunction;
 import org.mozilla.javascript.Context;
@@ -22,22 +23,27 @@ public abstract class TSLFunction extends BaseFunction implements LSPFeatures {
 
     @Override
     public final Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
-        Object result = scope.get("__context", scope);
+        if (!(scope instanceof JSScope))
+            return "#!USAGE_OUTSIDE_TSL!#"; // <- Usage outside JSScope is not allowed
 
-        if (!(result instanceof TSLContextGetter)) {
+        JSScope jsScope = (JSScope) scope;
+        TSLContextGetter tslContextGetter = jsScope.meta().tslContextGetter.get().orElse(null);
+
+        if (tslContextGetter == null) {
             throw new TSLInternalError("Scope MUST have a context getter meta function available in order to use a TSLFunction");
         }
 
-        TSLContextGetter contextGetter = (TSLContextGetter) result;
-        TSLContext tslContext = (TSLContext) contextGetter.call(cx, scope, thisObj, args);
-        return call(tslContext, scope, args);
+        TSLContext tslContext = (TSLContext) tslContextGetter.call(cx, scope, thisObj, args);
+        return call(tslContext, jsScope, args);
     }
 
     public abstract String getName();
 
-    public abstract Object call(TSLContext context, Scriptable scope, Object... arguments) throws TSLExpressionException;
+    public abstract Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException;
 
     /* --------------------------------- */
+
+    // TODO: Extract argument reading logic to a more fitting place
 
     protected String stringArgument(Object[] args, int index) {
         return stringArgumentOpt(args, index).orElseThrow(

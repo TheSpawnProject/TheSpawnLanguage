@@ -1,8 +1,6 @@
 package net.programmer.igoodie.tsl.plugin;
 
 import net.programmer.igoodie.tsl.definition.*;
-import net.programmer.igoodie.tsl.definition.TSLDecorator;
-import net.programmer.igoodie.tsl.definition.TSLTag;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
 import org.jetbrains.annotations.Nullable;
 

@@ -88,7 +88,7 @@ public class TheSpawnLanguage {
             }
         };
 
-        jsEngine = new JSEngine();
+        jsEngine = new JSEngine(this);
         jsEngine.defineConst("$TSL_VERSION", TSL_VERSION);
 
         pluginManager = new TSLPluginManager(this);
@@ -123,7 +123,7 @@ public class TheSpawnLanguage {
     private void onFuncCorelibRegistered(TSLFunctionLibrary entry) {
         TSLFunctionsCorelib corelib = (TSLFunctionsCorelib) entry;
         FUNC_CORELIB_REGISTRY.register(corelib);
-        jsEngine.loadCoreLibrary(corelib);
+//        jsEngine.loadCoreLibrary(corelib);
     }
 
     @Nullable

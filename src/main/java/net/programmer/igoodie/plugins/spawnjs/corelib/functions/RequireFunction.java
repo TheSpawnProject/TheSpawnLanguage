@@ -5,11 +5,10 @@ import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.function.TSLFunction;
+import net.programmer.igoodie.tsl.function.scope.JSScope;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.IOUtils;
 import org.mozilla.javascript.NativeObject;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.Undefined;
 
 import java.io.File;
@@ -26,7 +25,7 @@ public class RequireFunction extends TSLFunction {
     }
 
     @Override
-    public Object call(TSLContext context, Scriptable scope, Object... arguments) throws TSLExpressionException {
+    public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException {
         String moduleArgument = stringArgument(arguments, 0);
 
         Object resolvedLibrary = tryResolvingLibrary(context, moduleArgument);
@@ -74,7 +73,7 @@ public class RequireFunction extends TSLFunction {
         return importModule;
     }
 
-    private Object tryResolvingFile(TSLContext context, Scriptable scope, String moduleArgument) {
+    private Object tryResolvingFile(TSLContext context, JSScope scope, String moduleArgument) {
         JSEngine jsEngine = context.getTsl().getJsEngine();
 
         String scriptPath = isAbsolutePath(moduleArgument)
@@ -92,10 +91,10 @@ public class RequireFunction extends TSLFunction {
         if (!scriptFile.exists()) return null;
 
         String script = IOUtils.readString(scriptFile);
-        ScriptableObject moduleScope = jsEngine.createChildScope();
+        JSScope moduleScope = jsEngine.getGlobalScope().fork();
 
-        moduleScope.put("__scriptdir", moduleScope, scriptFile.getParent());
-        moduleScope.put("__scriptfilename", moduleScope, scriptFile.getName());
+        moduleScope.meta().scriptDirectory.define(scriptFile.getParent());
+        moduleScope.meta().scriptFilename.define(scriptFile.getName());
         jsEngine.loadTSLContext(moduleScope, context);
 
         try {
@@ -112,10 +111,10 @@ public class RequireFunction extends TSLFunction {
         return new File(path).isAbsolute();
     }
 
-    private String resolveRelativePath(TSLContext context, Scriptable scope, String expr) {
+    private String resolveRelativePath(TSLContext context, JSScope scope, String expr) {
         try {
-            File parentFile = Optional.ofNullable(((ScriptableObject) scope).get("__scriptdir"))
-                    .map(scriptDir -> new File(scriptDir.toString()))
+            File parentFile = scope.meta().scriptDirectory.get()
+                    .map(File::new)
                     .orElse(context.getBaseDir() != null
                             ? context.getBaseDir()
                             : new File(System.getProperty("user.dir")));

@@ -1,80 +1,48 @@
 package net.programmer.igoodie.tsl.function;
 
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
-import net.programmer.igoodie.tsl.exception.TSLImportError;
-import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
-import net.programmer.igoodie.tsl.function.binding.TSLContextGetter;
+import net.programmer.igoodie.tsl.function.scope.JSScope;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.AccessUtils;
-import org.mozilla.javascript.*;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.EcmaError;
+import org.mozilla.javascript.NativeObject;
 
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 // Rhino syntax compatibility: https://mozilla.github.io/rhino/compat/engines.html
 public class JSEngine {
 
-    private static final Map<Context, ScriptableObject> GLOBALS = new WeakHashMap<>();
+    protected TheSpawnLanguage tsl;
+    protected JSScope globalScope;
 
-    private final Map<String, Object> definedConsts = new HashMap<>();
-
-    public JSEngine() {}
-
-    public Context getJsContext() {
-        return Optional.ofNullable(Context.getCurrentContext()).orElseGet(() -> {
-            Context context = Context.enter();
-            context.setOptimizationLevel(-1);
-            context.setMaximumInterpreterStackDepth(255);
-            context.setLanguageVersion(Context.VERSION_ES6);
-            return context;
-        });
+    public JSEngine(TheSpawnLanguage tsl, TSLFunctionsCorelib... coreLibraries) {
+        this.tsl = tsl;
+        this.globalScope = JSContextManager.createGlobalScope(this);
     }
 
-    public ScriptableObject getGlobalScope() {
-        Context context = getJsContext();
-        return GLOBALS.computeIfAbsent(context, ctx -> ctx.initSafeStandardObjects(null, true));
+    public JSScope getGlobalScope() {
+        return globalScope;
     }
 
     /* ------------------------ */
 
     public void defineConst(String name, Object value) {
-        ScriptableObject globalScope = getGlobalScope();
         if (globalScope.has(name, globalScope)) return;
         globalScope.putConst(name, globalScope, value);
-        definedConsts.put(name, value);
-    }
-
-    public void touchGlobalObject(ScriptableObject scope, String name, Consumer<NativeObject> toucher) {
-        NativeObject object;
-
-        if (scope.has(name, scope)) {
-            Object globalValue = scope.get(name, scope);
-            if (!(globalValue instanceof NativeObject)) {
-                String foundTypeName = globalValue.getClass().getSimpleName();
-                throw new TSLRuntimeError("Cannot touch '" + name + "'. Because it already exists and its type is not NativeObject. It is " + foundTypeName);
-            }
-            object = ((NativeObject) globalValue);
-
-        } else {
-            object = new NativeObject();
-        }
-
-        toucher.accept(object);
-        scope.put(name, scope, object);
     }
 
     public void loadCoreLibrary(TSLFunctionLibrary coreLibrary) {
         Class<?> accessedFromClass = AccessUtils.accessedFromClass(JSEngine.class);
 
-        if (accessedFromClass != TheSpawnLanguage.class) {
-            throw new TSLImportError("Core JS libraries cannot be loaded externally");
-        }
+//        if (accessedFromClass != TheSpawnLanguage.class) {
+//            throw new TSLImportError("Core JS libraries cannot be loaded externally");
+//        }
 
-        ScriptableObject globalScope = getGlobalScope();
         NativeObject libraryObject = new NativeObject();
         coreLibrary.composeLibrary(libraryObject);
 
@@ -86,51 +54,27 @@ public class JSEngine {
 
     /* ------------------------------------ */
 
-    public ScriptableObject cloneScope(ScriptableObject scope) {
-        ScriptableObject newScope = (ScriptableObject) getJsContext().newObject(scope);
-        newScope.setPrototype(scope);
-        newScope.setParentScope(null);
-        newScope.defineProperty("exports", new NativeObject(), ScriptableObject.PERMANENT);
-        newScope.defineProperty("__dumpscope", new BaseFunction() {
-            @Override
-            public Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
-                _debugDumpScope(((NativeObject) scope));
-                return Undefined.instance;
-            }
-        }, ScriptableObject.READONLY);
-        return newScope;
-    }
-
-    public ScriptableObject createChildScope() {
-        return cloneScope(getGlobalScope());
-    }
-
-    /* ------------------------------------ */
-
-    public void loadTSLContext(ScriptableObject scope, TSLContext tslContext) {
+    public void loadTSLContext(JSScope scope, TSLContext tslContext) {
         if (tslContext != null) {
-            scope.putConst("__context", scope, new TSLContextGetter(tslContext));
-            if (tslContext.getEvent() != null) scope.putConst("eventName", scope, tslContext.getEvent().getName());
-            scope.putConst("event", scope, TSLEvent.generateEventJsObject(tslContext));
+            scope.meta().tslContextGetter.define(tslContext);
+            scope.meta().eventName.define(tslContext.getEvent());
+            scope.meta().eventArguments.define(tslContext.getEventArguments());
             loadPluginLibraries(scope, tslContext.getTsl(), tslContext.getImportedPlugins());
         }
     }
 
-    public void loadPluginLibraries(ScriptableObject scope, TheSpawnLanguage tsl, Map<String, String> importedPlugins) {
-        for (Map.Entry<String, String> importEntry : importedPlugins.entrySet()) {
-            String alias = importEntry.getKey();
-            String pluginId = importEntry.getValue();
-
+    public void loadPluginLibraries(JSScope scope, TheSpawnLanguage tsl, Map<String, String> importedPlugins) {
+        importedPlugins.forEach((alias, pluginId) -> {
             List<TSLFunctionLibrary> associatedModules = tsl.FUNC_LIBRARY_REGISTRY.stream()
                     .map(Map.Entry::getValue)
                     .filter(lib -> lib.getPlugin().getManifest().getPluginId().equals(pluginId))
                     .collect(Collectors.toList());
 
             if (associatedModules.size() == 0) {
-                continue;
+                return;
             }
 
-            touchGlobalObject(scope, alias, funcLibObject -> {
+            scope.touchGlobalObject(alias, funcLibObject -> {
                 for (TSLFunctionLibrary module : associatedModules) {
                     if (module.getName().equals(TSLFunctionLibrary.ROOT_LIBRARY_NAME)) {
                         module.composeLibrary(funcLibObject);
@@ -142,97 +86,35 @@ public class JSEngine {
                     }
                 }
 
-                touchGlobalObject(scope, "__importedLibs", libsMetaObject -> {
-                    libsMetaObject.put(alias, libsMetaObject, funcLibObject);
-                });
+                NativeObject libsMetaObject = scope.meta().importedLibraries.defineIfAbsent(NativeObject::new);
+                libsMetaObject.put(alias, libsMetaObject, funcLibObject);
             });
-        }
+        });
     }
 
     /* ------------------------------------ */
 
-    public String evaluate(String script, TSLContext tslContext) throws EcmaError {
-        ScriptableObject scope = tslContext.getJsScope() == null
-                ? createChildScope()
-                : tslContext.getJsScope();
+    public String evaluate(String script) throws EcmaError {
+        return evaluate(script, new TSLContext(tsl));
+    }
 
-        if (!scope.has("__context", scope)) {
+    public String evaluate(String script, TSLContext tslContext) throws EcmaError {
+        JSScope scope = Optional
+                .ofNullable(tslContext.getJsScope())
+                .orElse(globalScope.fork());
+
+        if (!scope.meta().tslContextGetter.get().isPresent()) {
             loadTSLContext(scope, tslContext);
         }
 
         return evaluate(script, scope);
     }
 
-    public String evaluate(String script) throws EcmaError {
-        return evaluate(script, createChildScope());
-    }
-
-    public String evaluate(String script, Scriptable scope) throws EcmaError {
+    public String evaluate(String script, JSScope scope) throws EcmaError {
         String sourceName = "immediate_evaluator";
-        Context context = getJsContext();
+        Context context = JSContextManager.getThreadContext();
         Object evaluation = context.evaluateString(scope, script, sourceName, 0, null);
-        return stringify(evaluation);
-    }
-
-    /* ------------------------------------ */
-
-    private String stringify(Object value) {
-        if (value instanceof NativeJavaObject)
-            return ((NativeJavaObject) value).unwrap().toString();
-        if (value instanceof NativeObject)
-            return stringifyObject((NativeObject) value);
-        if (value instanceof NativeArray)
-            return stringifyArray((NativeArray) value);
-        if (value instanceof BaseFunction)
-            return "[Func:" + ((BaseFunction) value).getFunctionName() + "]";
-        if (value instanceof Undefined)
-            return "undefined";
-        if (value == null)
-            return "null";
-
-        return value.toString();
-    }
-
-    private String stringifyObject(NativeObject object) {
-        String delimiter = "";
-        StringBuilder builder = new StringBuilder("{ ");
-
-        for (Map.Entry<Object, Object> field : object.entrySet()) {
-            Object key = field.getKey();
-            Object value = field.getValue();
-
-            builder.append(delimiter)
-                    .append(key)
-                    .append(": ")
-                    .append(stringify(value));
-
-            delimiter = ", ";
-        }
-
-        builder.append(" }");
-
-        return builder.toString();
-    }
-
-    private String stringifyArray(NativeArray array) {
-        return (((Stream<?>) array.stream()))
-                .map(this::stringify)
-                .collect(Collectors.joining(", ", "[", "]"));
-    }
-
-    public void _debugDumpScope(ScriptableObject scope) {
-        System.out.println("============================");
-        Object target = scope.get("__scriptfilename") == null ? scope.hashCode() : scope.get("__scriptfilename");
-        System.out.println("Dumping scope in " + target);
-
-        Arrays.stream(scope.getIds()).sorted().forEach(id -> {
-            System.out.println(id + " = " + stringify(scope.get(id))
-                    .replace("\t", "\\t")
-                    .replace("\n", "\\n")
-                    .replace("\r", "\\r"));
-        });
-
-        System.out.println("============================\n");
+        return scope.stringify(evaluation);
     }
 
 }

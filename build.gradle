@@ -11,13 +11,13 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:16.0.2'
+    implementation 'org.jetbrains:annotations:23.0.0'
 
     // RuntimeGoodies Core
     implementation 'com.github.iGoodie.RuntimeGoodies:core:1.2.0'
 
     // Rhino - Used in JS Engine
-    implementation 'org.mozilla:rhino:1.7.13'
+    implementation 'org.mozilla:rhino:1.7.14'
 
     // Semver4j - SemVer parser
     implementation 'com.vdurmont:semver4j:3.1.0'
@@ -31,4 +31,18 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : "tsl",
+                "Specification-Vendor"    : project.getGroup(),
+                "Specification-Version"   : "1.0",
+                "Implementation-Title"    : project.getName(),
+                "Implementation-Version"  : project.getVersion(),
+                "Implementation-Vendor"   : project.getGroup(),
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
 }

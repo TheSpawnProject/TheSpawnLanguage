@@ -9,12 +9,12 @@ import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.function.TSLFunction;
+import net.programmer.igoodie.tsl.function.scope.JSScope;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.Test;
-import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import util.TestUtils;
 
@@ -55,7 +55,7 @@ public class JSLibrariesTest {
                 }
 
                 @Override
-                public Object call(TSLContext context, Scriptable scope, Object... arguments) throws TSLExpressionException {
+                public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException {
                     try {
                         ArrayAccessor<Object> accessor = ArrayAccessor.of(arguments);
                         double number1 = (double) accessor.get(0);
@@ -87,7 +87,7 @@ public class JSLibrariesTest {
         };
         tsl.getPluginManager().loadPlugin(plugin);
 
-        ScriptableObject scope = jsEngine.createChildScope();
+        JSScope scope = jsEngine.getGlobalScope().fork();
         dummyContext.setJsScope(scope);
 
         Map<String, String> imports = new HashMap<>();
@@ -96,7 +96,7 @@ public class JSLibrariesTest {
 
         jsEngine.loadTSLContext(scope, dummyContext);
 
-        jsEngine._debugDumpScope(scope);
+        System.out.println(scope.debugDumpScope());
 
         System.out.println(jsEngine.evaluate("({ tslmath: EP.tslmath })", scope));
         System.out.println(jsEngine.evaluate("({ tslmath2: EP.tslmath2 })", scope));
@@ -113,7 +113,7 @@ public class JSLibrariesTest {
         tsl.getPluginManager().loadPlugin(new ExamplePlugin());
 
         context.setEvent(ManualTriggerEvent.INSTANCE);
-        context.setJsScope(jsEngine.createChildScope());
+        context.setJsScope(jsEngine.getGlobalScope().fork());
 
         TSLRuleset ruleset = new TSLParser(tsl).parse(TestUtils.loadTSLScript("rhino.tests.tsl"));
         ruleset.perform(context);

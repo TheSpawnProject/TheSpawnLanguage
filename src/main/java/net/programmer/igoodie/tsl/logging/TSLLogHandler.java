@@ -42,10 +42,10 @@ public class TSLLogHandler extends Handler {
     }
 
     public TSLLogHandler hookConsoleLog() {
-        return hookConsumer(System.out::println);
+        return hookListener(System.out::println);
     }
 
-    public TSLLogHandler hookConsumer(Consumer<String> messageConsumer) {
+    public TSLLogHandler hookListener(Consumer<String> messageConsumer) {
         this.hooks.add(messageConsumer);
         return this;
     }

@@ -1,9 +1,9 @@
 package example.plugin.functions;
 
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.TSLFunction;
-import org.mozilla.javascript.Scriptable;
+import net.programmer.igoodie.tsl.function.scope.JSScope;
+import net.programmer.igoodie.tsl.runtime.TSLContext;
 
 import java.time.Instant;
 
@@ -17,7 +17,7 @@ public class CurrentUnixFunction extends TSLFunction {
     }
 
     @Override
-    public Object call(TSLContext context, Scriptable scope, Object... arguments) throws TSLExpressionException {
+    public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException {
         return Instant.now().getEpochSecond();
     }
 

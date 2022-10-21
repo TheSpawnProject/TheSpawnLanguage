@@ -4,8 +4,8 @@ import net.programmer.igoodie.plugins.spawnjs.SpawnJS;
 import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.TSLFunction;
+import net.programmer.igoodie.tsl.function.scope.JSScope;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
-import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
 import java.nio.ByteOrder;
@@ -55,7 +55,7 @@ public class OsModule extends TSLFunctionLibrary {
             }
 
             @Override
-            public Object call(TSLContext context, Scriptable scope, Object... arguments) throws TSLExpressionException {
+            public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException {
                 return getOsName();
             }
         });
@@ -68,7 +68,7 @@ public class OsModule extends TSLFunctionLibrary {
             }
 
             @Override
-            public Object call(TSLContext context, Scriptable scope, Object... arguments) throws TSLExpressionException {
+            public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException {
                 return getEndianness();
             }
         });
@@ -81,7 +81,7 @@ public class OsModule extends TSLFunctionLibrary {
             }
 
             @Override
-            public Object call(TSLContext context, Scriptable scope, Object... arguments) throws TSLExpressionException {
+            public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException {
                 return System.getProperty("user.home");
             }
         });
