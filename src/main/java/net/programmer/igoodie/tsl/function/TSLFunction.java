@@ -6,6 +6,7 @@ import net.programmer.igoodie.tsl.compat.LSPFeatures;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.function.binding.TSLContextGetter;
+import net.programmer.igoodie.tsl.function.binding.TSLFunctionBinding;
 import net.programmer.igoodie.tsl.function.scope.JSScope;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.mozilla.javascript.BaseFunction;
@@ -14,7 +15,7 @@ import org.mozilla.javascript.Scriptable;
 
 import java.util.Optional;
 
-public abstract class TSLFunction extends BaseFunction implements LSPFeatures {
+public abstract class TSLFunction extends BaseFunction implements TSLFunctionBinding, LSPFeatures {
 
     @Override
     public final String getFunctionName() {

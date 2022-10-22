@@ -14,18 +14,18 @@ import java.util.stream.Stream;
 public class JSScope extends NativeObject {
 
     protected final JSEngine jsEngine;
-    protected final TSLScopeMetaVariables metaVariables;
+    protected final JSScopeMetaVariables metaVariables;
 
     public JSScope(JSEngine jsEngine) {
         this.jsEngine = jsEngine;
-        this.metaVariables = new TSLScopeMetaVariables(this);
+        this.metaVariables = new JSScopeMetaVariables(this);
     }
 
     public JSEngine getJsEngine() {
         return jsEngine;
     }
 
-    public TSLScopeMetaVariables meta() {
+    public JSScopeMetaVariables meta() {
         return metaVariables;
     }
 

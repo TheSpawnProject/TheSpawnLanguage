@@ -11,7 +11,7 @@ import org.mozilla.javascript.NativeObject;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public final class TSLScopeMetaVariables {
+public final class JSScopeMetaVariables {
 
     private final JSScope scope;
     private final Registry<String, Variable<?, ?>> variables = new Registry<>();
@@ -52,7 +52,7 @@ public final class TSLScopeMetaVariables {
                     .filter(result -> result instanceof NativeObject)
                     .map(result -> ((NativeObject) result))));
 
-    public TSLScopeMetaVariables(JSScope scope) {
+    public JSScopeMetaVariables(JSScope scope) {
         this.scope = scope;
     }
 

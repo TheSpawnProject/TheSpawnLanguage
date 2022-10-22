@@ -2,10 +2,6 @@ package net.programmer.igoodie.plugins.spawnjs.funclib.os;
 
 import net.programmer.igoodie.plugins.spawnjs.SpawnJS;
 import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
-import net.programmer.igoodie.tsl.exception.TSLExpressionException;
-import net.programmer.igoodie.tsl.function.TSLFunction;
-import net.programmer.igoodie.tsl.function.scope.JSScope;
-import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.mozilla.javascript.ScriptableObject;
 
 import java.nio.ByteOrder;
@@ -47,44 +43,11 @@ public class OsModule extends TSLFunctionLibrary {
         registerConst(object, "EOL", getOsName().equals("windows") ? "\r\n" : "\n");
         registerConst(object, "devNull", getOsName().equals("windows") ? "\\\\.\\nul" : "/dev/null");
 
-        // platform()
-        registerFunction(object, new TSLFunction() {
-            @Override
-            public String getName() {
-                return "platform";
-            }
+        registerFunction(object, "platform", (context, scope, arguments) -> getOsName());
 
-            @Override
-            public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException {
-                return getOsName();
-            }
-        });
+        registerFunction(object, "endianness", (context, scope, arguments) -> getEndianness());
 
-        // endianness()
-        registerFunction(object, new TSLFunction() {
-            @Override
-            public String getName() {
-                return "endianness";
-            }
-
-            @Override
-            public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException {
-                return getEndianness();
-            }
-        });
-
-        // homedir
-        registerFunction(object, new TSLFunction() {
-            @Override
-            public String getName() {
-                return "homedir";
-            }
-
-            @Override
-            public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException {
-                return System.getProperty("user.home");
-            }
-        });
+        registerFunction(object, "homedir", (context, scope, arguments) -> System.getProperty("user.home"));
     }
 
 }
