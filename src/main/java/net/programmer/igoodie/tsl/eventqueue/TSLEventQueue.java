@@ -5,22 +5,24 @@ import java.util.LinkedList;
 
 public class TSLEventQueue {
 
-    protected final Thread thread;
+    protected final Thread executorThread;
     protected volatile State state;
     protected final Deque<EventQueueTask> tasks;
 
     public TSLEventQueue(String queueName) {
-        this.thread = new Thread(() -> {
+        this.executorThread = new Thread(() -> {
             while (!Thread.interrupted()) stepThread();
         }, queueName);
         this.state = State.PAUSED;
         this.tasks = new LinkedList<>();
 
-        this.thread.start();
+        this.executorThread.start();
     }
 
-    public synchronized State getState() {
-        return state;
+    public State getState() {
+        synchronized (executorThread) {
+            return state;
+        }
     }
 
     protected void stepThread() {
@@ -38,17 +40,17 @@ public class TSLEventQueue {
     }
 
     protected void unpause() {
-        synchronized (thread) {
+        synchronized (executorThread) {
             this.state = State.IDLE;
-            this.thread.notifyAll();
+            this.executorThread.notifyAll();
         }
     }
 
     protected void pause() {
-        synchronized (thread) {
+        synchronized (executorThread) {
             try {
                 this.state = State.PAUSED;
-                this.thread.wait();
+                this.executorThread.wait();
             } catch (InterruptedException e) {
                 throw new InternalError(e);
             }
@@ -56,23 +58,27 @@ public class TSLEventQueue {
     }
 
     public void kill() {
-        thread.interrupt();
+        executorThread.interrupt();
     }
 
     /* ---------------------------- */
 
-    public synchronized void queueEvent(Runnable task) {
-        queueEvent(new EventQueueTask() {
-            @Override
-            public void run() {
-                task.run();
-            }
-        });
+    public void queueEvent(Runnable task) {
+        synchronized (executorThread) {
+            queueEvent(new EventQueueTask() {
+                @Override
+                public void run() {
+                    task.run();
+                }
+            });
+        }
     }
 
-    public synchronized void queueEvent(EventQueueTask task) {
-        this.tasks.add(task);
-        unpause();
+    public void queueEvent(EventQueueTask task) {
+        synchronized (executorThread) {
+            this.tasks.add(task);
+            unpause();
+        }
     }
 
     public void onTaskSucceed() {}
