@@ -1,9 +1,10 @@
-package net.programmer.igoodie.tsl.runtime.eventqueue;
+package net.programmer.igoodie.legacy.eventqueue;
 
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
+@Deprecated
 public class EventQueue {
 
     enum State {

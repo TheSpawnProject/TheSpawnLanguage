@@ -1,8 +1,9 @@
-package net.programmer.igoodie.tsl.runtime.eventqueue;
+package net.programmer.igoodie.legacy.eventqueue;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
+@Deprecated
 public class EventQueueTask {
 
     private String name;
