@@ -34,7 +34,13 @@ public class TSLEventQueue {
         state = State.EXECUTING;
 
         EventQueueTask task = tasks.removeFirst();
-        task.run();
+
+        try {
+            task.run();
+            onTaskSucceed(task);
+        } catch (Throwable e) {
+            onTaskFailed(task);
+        }
 
         state = State.IDLE;
     }
@@ -81,9 +87,9 @@ public class TSLEventQueue {
         }
     }
 
-    public void onTaskSucceed() {}
+    public void onTaskSucceed(EventQueueTask task) {}
 
-    public void onTaskFailed() {}
+    public void onTaskFailed(EventQueueTask task) {}
 
     enum State {
         IDLE,
