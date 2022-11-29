@@ -60,7 +60,7 @@ public class TSLLogger {
                     ? cursorArgumentIndex.getAndIncrement()
                     : Integer.parseInt(indexGroup);
 
-            return argumentAccessor.getOrDefault(argumentIndex, "{" + placeholder + "}").toString();
+            return argumentAccessor.get(argumentIndex).orElse("{" + placeholder + "}").toString();
         });
     }
 

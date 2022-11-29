@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.listener;
 
-public interface TSLEventEmitter<L extends TSLEventListener> {
+public interface TSLEmitter<L extends TSLListener> {
 
     void addListener(L listener);
 

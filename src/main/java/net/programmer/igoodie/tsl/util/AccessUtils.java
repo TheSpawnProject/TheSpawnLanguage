@@ -12,11 +12,11 @@ public class AccessUtils {
                     ArrayAccessor.of(Thread.currentThread().getStackTrace());
 
             for (int i = 0; ; i++) {
-                StackTraceElement traceElement = stackTrace.get(i);
+                StackTraceElement traceElement = stackTrace.get(i).orElse(null);
                 if (traceElement == null) return null;
 
                 if (traceElement.getClassName().equals(target.getCanonicalName())) {
-                    StackTraceElement nextElement = stackTrace.get(i + 1);
+                    StackTraceElement nextElement = stackTrace.get(i + 1).orElse(null);
                     if (nextElement == null) return null;
                     return Class.forName(nextElement.getClassName());
                 }

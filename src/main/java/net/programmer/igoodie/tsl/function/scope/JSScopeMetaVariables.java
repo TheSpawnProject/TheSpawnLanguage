@@ -84,7 +84,7 @@ public final class JSScopeMetaVariables {
 
         @Override
         public String getId() {
-            return null;
+            return name;
         }
 
         public void define(S input) {

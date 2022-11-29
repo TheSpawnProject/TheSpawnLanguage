@@ -15,7 +15,7 @@ import net.programmer.igoodie.tsl.parser.snippet.TSLRuleSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.attribute.ContextualAttributeGenerator;
-import net.programmer.igoodie.tsl.runtime.listener.TSLEventEmitter;
+import net.programmer.igoodie.tsl.runtime.listener.TSLEmitter;
 import net.programmer.igoodie.tsl.runtime.listener.TSLRuleListener;
 import net.programmer.igoodie.tsl.util.GoodieUtils;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TSLRule implements ContextualAttributeGenerator, TSLEventEmitter<TSLRuleListener> {
+public class TSLRule implements ContextualAttributeGenerator, TSLEmitter<TSLRuleListener> {
 
     protected @Nullable TSLRuleset associatedRuleset;
     protected List<TSLRuleListener> listeners;

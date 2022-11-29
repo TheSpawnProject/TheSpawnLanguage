@@ -87,6 +87,10 @@ public class TSLContext {
 
     /* ----------------------------------- */
 
+    // TODO: Consider turning importedPlugins and captureSnippets into associatedRuleset?
+    // Maybe tsl performs without a ruleset should be discouraged?
+    // A dummy ruleset can be used for extreme cases anyways
+
     public @NotNull Map<String, String> importedPlugins = new HashMap<>();
 
     public @NotNull Map<String, String> getImportedPlugins() {

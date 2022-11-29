@@ -3,11 +3,11 @@ package net.programmer.igoodie.plugins.grammar.tags;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.definition.TSLTag;
-import net.programmer.igoodie.tsl.runtime.attribute.TSLAttribute;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
+import net.programmer.igoodie.tsl.runtime.attribute.TSLAttribute;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -16,8 +16,8 @@ public class DebugTag extends TSLTag {
 
     public static final DebugTag INSTANCE = new DebugTag();
 
-    public static final TSLAttribute DEBUG_MODE_ATTR
-            = new TSLAttribute(INSTANCE.getPlugin(), "debug_mode");
+    public static final TSLAttribute<Boolean> DEBUG_MODE_ATTR
+            = new TSLAttribute<>(INSTANCE.getPlugin(), "debug_mode");
 
     private DebugTag() {
         super(TSLGrammarCore.PLUGIN_INSTANCE, "DEBUG");

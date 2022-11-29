@@ -1,7 +1,3 @@
 package net.programmer.igoodie.tsl.runtime.listener;
 
-public interface TSLEventListener {
-
-
-
-}
+public interface TSLListener {}

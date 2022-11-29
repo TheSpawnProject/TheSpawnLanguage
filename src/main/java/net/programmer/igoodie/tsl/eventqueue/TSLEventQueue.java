@@ -69,9 +69,9 @@ public class TSLEventQueue {
 
     /* ---------------------------- */
 
-    public void queueEvent(Runnable task) {
+    public void queueTask(Runnable task) {
         synchronized (executorThread) {
-            queueEvent(new EventQueueTask() {
+            queueTask(new EventQueueTask() {
                 @Override
                 public void run() {
                     task.run();
@@ -80,7 +80,7 @@ public class TSLEventQueue {
         }
     }
 
-    public void queueEvent(EventQueueTask task) {
+    public void queueTask(EventQueueTask task) {
         synchronized (executorThread) {
             this.tasks.add(task);
             unpause();

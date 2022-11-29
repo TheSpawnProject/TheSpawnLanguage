@@ -58,8 +58,8 @@ public class JSLibrariesTest {
                 public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException {
                     try {
                         ArrayAccessor<Object> accessor = ArrayAccessor.of(arguments);
-                        double number1 = (double) accessor.get(0);
-                        double number2 = (double) accessor.get(1);
+                        double number1 = (double) accessor.get(0).orElse(0);
+                        double number2 = (double) accessor.get(1).orElse(0);
                         return number1 * number2;
 
                     } catch (ClassCastException e) {
