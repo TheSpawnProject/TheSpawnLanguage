@@ -4,6 +4,7 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.definition.base.TSLDefinition;
+import net.programmer.igoodie.tsl.function.format.NativeJsObjectGoodieFormat;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class TSLEvent extends TSLDefinition {
+
+    private static final NativeJsObjectGoodieFormat NATIVE_JS_OBJECT_GOODIE_FORMAT = new NativeJsObjectGoodieFormat();
 
     public TSLEvent(TSLPlugin plugin, String name) {
         super(plugin, StringUtilities.upperFirstLetters(name));
@@ -61,6 +64,10 @@ public abstract class TSLEvent extends TSLDefinition {
 
         for (String argumentName : eventArguments.keySet()) {
             Object value = extractField(eventArguments, argumentName);
+
+            if (value instanceof GoodieObject)
+                value = NATIVE_JS_OBJECT_GOODIE_FORMAT.readFromGoodie(((GoodieObject) value));
+
             jsObject.defineProperty(argumentName, value, ScriptableObject.CONST);
         }
 

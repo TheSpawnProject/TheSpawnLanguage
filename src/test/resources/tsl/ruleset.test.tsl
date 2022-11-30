@@ -1,3 +1,5 @@
+#! IMPORT EP FROM exampleplugin
+
 #**
  * This capture holds multiplication of given numbers
  * @param a First number to be used
@@ -9,21 +11,21 @@ $multiplyNumbers(num1, num2)
 $myAction =
 FOR 5 TIMES
   IF true THEN
-    WAIT 10 minutes
+    EP.PRINT %Hey! ${event}%
   ELSE
     NOTHING
 
-FOR 10 TIMES
+#* FOR 10 TIMES
   IF true THEN
     WAIT $multiplyNumbers(10, 20) minutes
   ELSE
     WAIT 10 seconds
 ON Manual Trigger
-WITH debug_data = 1
+WITH ${event.debug_data.meta == 1} *#
 
 $myAction
+DISPLAYING 1
 ON Manual Trigger
-WITH debug_data = 2
 
 # PRINT ${runScript(new String(__context()))}
 #  ON Dummy Event
