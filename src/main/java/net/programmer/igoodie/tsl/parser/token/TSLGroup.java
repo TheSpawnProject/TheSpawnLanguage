@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.parser.token;
 
+import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 
 import java.util.Collections;
@@ -31,9 +32,14 @@ public class TSLGroup extends TSLToken {
 
     @Override
     public String evaluate(TSLContext context) {
-        return groupTokens.stream()
-                .map(token -> token.evaluate(context))
-                .collect(Collectors.joining(" "));
+        try {
+            return groupTokens.stream()
+                    .map(token -> token.evaluate(context))
+                    .collect(Collectors.joining(" "));
+
+        } catch (Exception e) {
+            throw new TSLRuntimeError("Unable to evaluate group", this).causedBy(e);
+        }
     }
 
 }

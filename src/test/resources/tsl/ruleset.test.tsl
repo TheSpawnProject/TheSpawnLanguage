@@ -15,17 +15,21 @@ FOR 5 TIMES
   ELSE
     NOTHING
 
-#* FOR 10 TIMES
+FOR 10 TIMES
   IF true THEN
-    WAIT $multiplyNumbers(10, 20) minutes
+    WAIT $multiplyNumbers(10, 20) milliseconds DISPLAYING %Waiting%
   ELSE
-    WAIT 10 seconds
+    WAIT 10 seconds DISPLAYING %Waiting%
 ON Manual Trigger
-WITH ${event.debug_data.meta == 1} *#
+WITH ${event.debug_data.meta == 1}
 
 $myAction
-DISPLAYING 1
 ON Manual Trigger
+
+$printAction = EP.PRINT
+
+$printAction %Hey dood!% DISPLAYING %$multiplyNumbers2(5, 10) Printing%
+ ON Manual Trigger
 
 # PRINT ${runScript(new String(__context()))}
 #  ON Dummy Event

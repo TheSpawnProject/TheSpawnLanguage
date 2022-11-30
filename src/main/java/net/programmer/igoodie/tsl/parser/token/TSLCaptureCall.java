@@ -1,9 +1,12 @@
 package net.programmer.igoodie.tsl.parser.token;
 
+import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
+import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TSLCaptureCall extends TSLToken {
@@ -47,7 +50,15 @@ public class TSLCaptureCall extends TSLToken {
 
     @Override
     public String evaluate(TSLContext context) {
-        throw new UnsupportedOperationException();
+        Map<String, TSLCaptureSnippet> captureSnippets = context.getCaptureSnippets();
+
+        TSLCaptureSnippet associatedCaptureSnippet = captureSnippets.get(getCaptureName());
+        if (associatedCaptureSnippet == null) {
+            throw new TSLRuntimeError("Unknown capture -> " + getCaptureName(), this);
+        }
+
+        List<TSLToken> tokens = associatedCaptureSnippet.fill(captureSnippets, getArgs());
+        return tokens.stream().map(token -> token.evaluate(context)).collect(Collectors.joining(" "));
     }
 
 }
