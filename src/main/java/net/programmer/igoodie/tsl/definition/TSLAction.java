@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.definition;
 
 import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.goodies.util.StringUtilities;
+import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.definition.base.TSLDefinition;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParsingContext;
@@ -22,7 +23,7 @@ public abstract class TSLAction extends TSLDefinition {
 
     public abstract String getUsage();
 
-    public abstract void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError;
+    public abstract void validateTokens(TSLToken nameToken, ListAccessor<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError;
 
     public @NotNull Couple<List<TSLToken>, TSLToken> splitByDisplaying(List<TSLToken> tokens) {
         int displayingIndex = CollectionUtils.lastIndexOfBy(tokens,
@@ -37,7 +38,7 @@ public abstract class TSLAction extends TSLDefinition {
         return new Couple<>(tokens, null);
     }
 
-    public abstract void perform(List<TSLToken> arguments, TSLContext context);
+    public abstract void perform(ListAccessor<TSLToken> arguments, TSLContext context);
 
     public final void performRaw(List<TSLToken> tokens, TSLContext context) {
         Couple<List<TSLToken>, TSLToken> couple = splitByDisplaying(tokens);
@@ -48,7 +49,7 @@ public abstract class TSLAction extends TSLDefinition {
             context.setMessageToken(messageToken);
         }
 
-        perform(actionArgs, context);
+        perform(ListAccessor.of(actionArgs), context);
     }
 
 }

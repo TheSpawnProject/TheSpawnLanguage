@@ -7,11 +7,7 @@ import net.programmer.igoodie.plugins.grammar.predicates.BinaryOperationPredicat
 import net.programmer.igoodie.plugins.grammar.predicates.BooleanPredicate;
 import net.programmer.igoodie.plugins.grammar.tags.DebugTag;
 import net.programmer.igoodie.plugins.grammar.tags.ImportTag;
-import net.programmer.igoodie.tsl.definition.TSLAction;
-import net.programmer.igoodie.tsl.definition.TSLComparator;
-import net.programmer.igoodie.tsl.definition.TSLEvent;
-import net.programmer.igoodie.tsl.definition.TSLPredicate;
-import net.programmer.igoodie.tsl.definition.TSLTag;
+import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
@@ -45,6 +41,9 @@ public class TSLGrammarCore extends TSLPlugin {
         registry.register(ForMetaAction.INSTANCE);
         registry.register(WaitMetaAction.INSTANCE);
         registry.register(NothingMetaAction.INSTANCE);
+        registry.register(DoMetaAction.INSTANCE);
+        // TODO: BOTH Meta-action
+        // TODO: EITHER Meta-action
         registry.register(VariableAction.INSTANCE);
     }
 

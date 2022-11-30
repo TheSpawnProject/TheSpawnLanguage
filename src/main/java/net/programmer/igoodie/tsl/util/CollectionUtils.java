@@ -1,5 +1,7 @@
 package net.programmer.igoodie.tsl.util;
 
+import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -65,10 +67,15 @@ public final class CollectionUtils {
     }
 
     public static <T> List<List<T>> splitBy(List<T> list, boolean includeDelimiter, Predicate<T> predicate) {
+        return splitBy(ListAccessor.of(list), includeDelimiter, predicate);
+    }
+
+    public static <T> List<List<T>> splitBy(ListAccessor<T> list, boolean includeDelimiter, Predicate<T> predicate) {
         List<List<T>> split = new LinkedList<>();
         List<T> buffer = new LinkedList<>();
 
-        for (T current : list) {
+        for (int i = 0; i < list.size(); i++) {
+            T current = list.get(i).orElseThrow(InternalError::new);
             if (predicate.test(current)) {
                 split.add(buffer);
                 buffer = new LinkedList<>();

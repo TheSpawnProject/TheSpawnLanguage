@@ -1,8 +1,10 @@
 package net.programmer.igoodie.plugins.grammar.actions;
 
 import net.programmer.igoodie.goodies.util.Couple;
+import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.definition.TSLAction;
+import net.programmer.igoodie.tsl.definition.base.TSLArguments;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.TSLParsingContext;
@@ -42,12 +44,12 @@ public class ForMetaAction extends TSLAction {
     }
 
     @Override
-    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
+    public void validateTokens(TSLToken nameToken, ListAccessor<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
         if (arguments.size() < 3) {
             throw new TSLSyntaxError("Expected loop count and the action", nameToken);
         }
 
-        TSLToken timesKeyword = arguments.get(1);
+        TSLToken timesKeyword = arguments.get(1).orElse(null);
         List<TSLToken> actionTokens = arguments.subList(2, arguments.size());
 
         if (!(timesKeyword instanceof TSLPlainWord)) {
@@ -65,11 +67,12 @@ public class ForMetaAction extends TSLAction {
     }
 
     @Override
-    public void perform(List<TSLToken> arguments, TSLContext context) {
-        TSLToken countToken = arguments.get(0);
+    public void perform(ListAccessor<TSLToken> arguments, TSLContext context) {
+        TSLToken countToken = arguments.get(0).orElse(null);
         List<TSLToken> actionTokens = arguments.subList(2, arguments.size());
 
-        int count = (int) parseDouble(countToken, context);
+        int count = TSLArguments.parseInt(countToken, context)
+                .orElseThrow(() -> new TSLSyntaxError("Expected a number for count", countToken));
 
         for (int i = 0; i < count; i++) {
             TSLParser parser = new TSLParser(context);
@@ -80,7 +83,7 @@ public class ForMetaAction extends TSLAction {
                     actionTokens);
 
             TSLAction actionDefinition = actionSnippet.getActionDefinition();
-            actionDefinition.perform(actionSnippet.getActionTokens(), context);
+            actionDefinition.perform(ListAccessor.of(actionSnippet.getActionTokens()), context);
         }
     }
 

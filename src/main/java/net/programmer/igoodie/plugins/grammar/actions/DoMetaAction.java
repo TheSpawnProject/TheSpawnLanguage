@@ -8,29 +8,28 @@ import net.programmer.igoodie.tsl.parser.TSLParsingContext;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 
-public class NothingMetaAction extends TSLAction {
+public class DoMetaAction extends TSLAction {
 
-    public static final NothingMetaAction INSTANCE = new NothingMetaAction();
+    public static final DoMetaAction INSTANCE = new DoMetaAction();
 
-    private NothingMetaAction() {
-        super(TSLGrammarCore.PLUGIN_INSTANCE, "NOTHING");
+    private DoMetaAction() {
+        super(TSLGrammarCore.PLUGIN_INSTANCE, "DO");
     }
 
     @Override
     public String getUsage() {
-        return getName();
+        return getName() + " <${actionToken}>";
     }
 
     @Override
     public void validateTokens(TSLToken nameToken, ListAccessor<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
-        if (arguments.size() != 0) {
-            throw new TSLSyntaxError("NOTHING action does not accept any arguments", nameToken);
-        }
+        // TODO: Should have exactly 1 token
+        // TODO: Should be an expression token
     }
 
     @Override
     public void perform(ListAccessor<TSLToken> arguments, TSLContext context) {
-        // NOTHING action does nothing. Literally. What else did you expect? :P
+        arguments.get(0).ifPresent(token -> token.evaluate(context));
     }
 
 }

@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.goodies.util.Couple;
+import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
@@ -258,7 +259,7 @@ public class TSLParser {
 
         actionDefinition.validateTokens(
                 actionName,
-                TSLActionSnippet.flatten(actionArgumentsSplit, captureSnippets),
+                ListAccessor.of(TSLActionSnippet.flatten(actionArgumentsSplit, captureSnippets)),
                 new TSLParsingContext(this, pluginAliases, captureSnippets));
 
         return new TSLActionSnippet(

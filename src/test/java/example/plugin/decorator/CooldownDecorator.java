@@ -4,6 +4,7 @@ import example.plugin.ExampleAttributes;
 import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.definition.TSLDecorator;
+import net.programmer.igoodie.tsl.definition.base.TSLArguments;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
@@ -28,7 +29,8 @@ public class CooldownDecorator extends TSLDecorator {
             throw new TSLSyntaxError("Expected cooldown duration.");
 
         TSLToken durationToken = arguments.get(0);
-        double duration = parseDouble(durationToken, context);
+        double duration = TSLArguments.parseDouble(durationToken, context)
+                .orElseThrow(() -> new TSLRuntimeError("Expected a number for duration", durationToken));
 
         ExampleAttributes.COOLDOWN_DURATION.set(attributes, duration);
 

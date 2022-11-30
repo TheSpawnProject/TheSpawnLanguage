@@ -4,6 +4,7 @@ import example.plugin.ExampleAttributes;
 import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.definition.TSLTag;
+import net.programmer.igoodie.tsl.definition.base.TSLArguments;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
@@ -29,7 +30,8 @@ public class CooldownTag extends TSLTag {
             throw new TSLSyntaxError("Expected cooldown duration.", tagName);
 
         TSLToken durationToken = arguments.get(0);
-        double duration = parseDouble(durationToken, context);
+        double duration = TSLArguments.parseDouble(durationToken, context)
+                .orElseThrow(() -> new TSLRuntimeError("Expected a number for duration", durationToken));
 
         ExampleAttributes.COOLDOWN_DURATION.set(attributes, duration);
 

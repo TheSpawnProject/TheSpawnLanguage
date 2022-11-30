@@ -3,13 +3,13 @@ package example.plugin.action;
 import example.plugin.ExampleAttributes;
 import example.plugin.ExamplePlugin;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParsingContext;
 import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class PrintAction extends TSLAction {
@@ -26,12 +26,12 @@ public class PrintAction extends TSLAction {
     }
 
     @Override
-    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
+    public void validateTokens(TSLToken nameToken, ListAccessor<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
         // Should always be valid.
     }
 
     @Override
-    public void perform(List<TSLToken> arguments, TSLContext context) {
+    public void perform(ListAccessor<TSLToken> arguments, TSLContext context) {
         GoodieObject attributes = context.getAttributes();
 
         if (ExampleAttributes.NOTIFICATIONS_SUPPRESSED.isContained(attributes)) {

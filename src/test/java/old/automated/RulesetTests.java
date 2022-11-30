@@ -3,6 +3,7 @@ package old.automated;
 import example.plugin.ExamplePlugin;
 import example.plugin.event.DummyEvent;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
@@ -45,10 +46,10 @@ public class RulesetTests {
                     }
 
                     @Override
-                    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {}
+                    public void validateTokens(TSLToken nameToken, ListAccessor<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {}
 
                     @Override
-                    public void perform(List<TSLToken> arguments, TSLContext context) {}
+                    public void perform(ListAccessor<TSLToken> arguments, TSLContext context) {}
                 };
                 registry.register(dummyEitherAction);
             }

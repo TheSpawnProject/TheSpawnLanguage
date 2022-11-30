@@ -1,9 +1,11 @@
 package net.programmer.igoodie.plugins.grammar.actions;
 
 import net.programmer.igoodie.goodies.util.Couple;
+import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.goodies.util.builder.InlineMapBuilder;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.definition.TSLAction;
+import net.programmer.igoodie.tsl.definition.base.TSLArguments;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLParsingContext;
@@ -33,7 +35,7 @@ public class WaitMetaAction extends TSLAction {
 
     @Override
     public String getUsage() {
-        return getName() + " <time> (minutes|seconds|milliseconds)";
+        return getName() + " <time> (" + String.join("|", UNIT_COEF.keySet()) + ")";
     }
 
     @Override
@@ -49,7 +51,7 @@ public class WaitMetaAction extends TSLAction {
     }
 
     @Override
-    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
+    public void validateTokens(TSLToken nameToken, ListAccessor<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
         if (arguments.size() < 2) {
             throw new TSLSyntaxError("Expected amount and a time unit", nameToken);
         }
@@ -57,7 +59,7 @@ public class WaitMetaAction extends TSLAction {
             throw new TSLSyntaxError("Expected 2 tokens, found " + arguments.size() + " instead", nameToken);
         }
 
-        TSLToken unitToken = arguments.get(1);
+        TSLToken unitToken = arguments.get(1).orElseThrow(InternalError::new);
         if (unitToken instanceof TSLPlainWord) {
             Long timeCoef = UNIT_COEF.get(unitToken.getRaw().toLowerCase());
             if (timeCoef == null) {
@@ -67,20 +69,20 @@ public class WaitMetaAction extends TSLAction {
     }
 
     @Override
-    public void perform(List<TSLToken> arguments, TSLContext context) {
-        TSLToken timeToken = arguments.get(0);
-        TSLToken unitToken = arguments.get(1);
+    public void perform(ListAccessor<TSLToken> arguments, TSLContext context) {
+        TSLToken timeToken = arguments.get(0).orElseThrow(InternalError::new);
+        TSLToken unitToken = arguments.get(1).orElseThrow(InternalError::new);
 
-        double time = parseDouble(timeToken, context);
+        double time = TSLArguments.parseDouble(timeToken, context)
+                .orElseThrow(() -> new TSLSyntaxError("Expected number", timeToken));
+
         String unit = unitToken.evaluate(context);
-
-        Long timeCoef = UNIT_COEF.get(unit.toLowerCase());
-
-        if (timeCoef == null) {
+        Long timeCoefficient = UNIT_COEF.get(unit.toLowerCase());
+        if (timeCoefficient == null) {
             throw new TSLRuntimeError("Unknown time unit", unitToken);
         }
 
-        sleepThread((long) (time * timeCoef));
+        sleepThread((long) (time * timeCoefficient));
     }
 
     private void sleepThread(long millis) {

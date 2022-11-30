@@ -1,6 +1,7 @@
 package net.programmer.igoodie.plugins.grammar.actions;
 
 import net.programmer.igoodie.goodies.util.Couple;
+import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
@@ -48,7 +49,7 @@ public class IfMetaAction extends TSLAction {
     }
 
     @Override
-    public void validateTokens(TSLToken nameToken, List<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
+    public void validateTokens(TSLToken nameToken, ListAccessor<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
         if (arguments.size() < 3) {
             throw new TSLSyntaxError("Expected condition and the action.", nameToken);
         }
@@ -109,7 +110,7 @@ public class IfMetaAction extends TSLAction {
     }
 
     @Override
-    public void perform(List<TSLToken> arguments, TSLContext context) {
+    public void perform(ListAccessor<TSLToken> arguments, TSLContext context) {
         List<List<TSLToken>> parts = splitParts(arguments, false);
 
         for (List<TSLToken> part : parts) {
@@ -143,7 +144,7 @@ public class IfMetaAction extends TSLAction {
         }
     }
 
-    private List<List<TSLToken>> splitParts(List<TSLToken> arguments, boolean includeDelimiter) {
+    private List<List<TSLToken>> splitParts(ListAccessor<TSLToken> arguments, boolean includeDelimiter) {
         return CollectionUtils.splitBy(arguments, includeDelimiter, token -> {
             if (!(token instanceof TSLPlainWord)) return false;
             return token.getRaw().equalsIgnoreCase("ELSEIF")

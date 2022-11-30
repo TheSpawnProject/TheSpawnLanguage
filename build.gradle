@@ -24,7 +24,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
 
     // RuntimeGoodies Core
-    implementation 'com.github.iGoodie.RuntimeGoodies:core:1.3.1'
+    implementation 'com.github.iGoodie.RuntimeGoodies:core:1.3.3'
 
     // Rhino - Used in JS Engine
     implementation 'org.mozilla:rhino:1.7.14'
