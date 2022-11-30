@@ -236,13 +236,46 @@ public class TSLParser {
     public TSLActionSnippet parseAction(@Nullable Map<String, String> pluginAliases, @Nullable Map<String, TSLCaptureSnippet> captureSnippets, List<TSLToken> tokens) {
         checkNamespaceIntegrity(tokens);
 
-        // TODO: Fix where action name can be included in a capture call
-        // E.g $myAction ON Manual Trigger
-
         TSLToken actionName = tokens.get(0);
         List<TSLToken> actionArguments = tokens.subList(1, tokens.size());
 
-        if (!(actionName instanceof TSLPlainWord)) {
+        if (actionName.isCaptureCall()) {
+            TSLCaptureCall actionCaptureCall = (TSLCaptureCall) actionName;
+
+            ListAccessor<TSLToken> flattenedTokens = ListAccessor.of(TSLActionSnippet.flatten(tokens, captureSnippets));
+
+            TSLPlainWord flattenedActionName = (TSLPlainWord) flattenedTokens.get(0).filter(TSLToken::isPlainWord)
+                    .orElseThrow(() -> new TSLSyntaxError("Expected Action name to be a String Word.",
+                            flattenedTokens.get(0).orElseThrow(InternalError::new)));
+
+            List<TSLToken> flattenedArguments = flattenedTokens.subList(1, flattenedTokens.size());
+
+            TSLAction actionDefinition = pluginAliases == null
+                    ? tsl.getAction(flattenedActionName)
+                    : tsl.getAction(pluginAliases, flattenedActionName);
+
+            if (actionDefinition == null) {
+                throw new TSLSyntaxError("Unknown action -> " + flattenedActionName.getRaw(), flattenedActionName);
+            }
+
+            Couple<List<TSLToken>, TSLToken> couple = actionDefinition.splitByDisplaying(flattenedArguments);
+            List<TSLToken> actionArgumentsSplit = couple.getFirst();
+
+            actionDefinition.validateTokens(
+                    actionName,
+                    ListAccessor.of(TSLActionSnippet.flatten(actionArgumentsSplit, captureSnippets)),
+                    new TSLParsingContext(this, pluginAliases, captureSnippets));
+
+            return new TSLActionSnippet(
+                    actionDefinition,
+                    actionCaptureCall,
+                    actionArguments,
+                    flattenedActionName,
+                    flattenedArguments
+            );
+        }
+
+        if (!actionName.isPlainWord()) {
             throw new TSLSyntaxError("Action name MUST be a String Word.", actionName);
         }
 

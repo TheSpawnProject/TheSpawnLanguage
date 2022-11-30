@@ -18,6 +18,14 @@ public class TSLActionSnippet extends TSLSnippet {
 
     protected TSLAction actionDefinition;
 
+    public TSLActionSnippet(TSLAction actionDefinition, TSLCaptureCall captureCall, List<TSLToken> leadingTokens,
+                            TSLPlainWord actionName, List<TSLToken> actionTokens) {
+        super(flatTokens(captureCall, leadingTokens));
+        this.actionName = actionName;
+        this.actionTokens = actionTokens;
+        this.actionDefinition = actionDefinition;
+    }
+
     public TSLActionSnippet(TSLAction actionDefinition, TSLPlainWord actionName, List<TSLToken> actionTokens) {
         super(flatTokens(actionName, actionTokens));
         this.actionName = actionName;

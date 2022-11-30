@@ -5,7 +5,7 @@ import net.programmer.igoodie.tsl.runtime.TSLContext;
 // Intended for internal usage in TSLGroup tokens
 public class TSLExtraSpaceToken extends TSLToken {
 
-    private int amount;
+    private final int amount;
 
     public TSLExtraSpaceToken(int line, int character, int amount) {
         super(line, character);
