@@ -11,7 +11,7 @@ buildscript {
 apply plugin: 'java'
 
 group 'net.programmer.igoodie'
-version '0.0.2'
+version '0.0.3'
 
 sourceCompatibility = 1.8
 
