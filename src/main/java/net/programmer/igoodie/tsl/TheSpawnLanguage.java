@@ -8,11 +8,11 @@ import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.plugins.spawnjs.SpawnJS;
 import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.definition.base.TSLDefinition;
+import net.programmer.igoodie.tsl.eventqueue.TSLEventBuffer;
 import net.programmer.igoodie.tsl.exception.TSLImplementationError;
 import net.programmer.igoodie.tsl.exception.TSLImportError;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.function.TSLFunctionsCorelib;
-import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
@@ -24,7 +24,6 @@ import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -50,6 +49,8 @@ public class TheSpawnLanguage {
 
     protected final JSEngine jsEngine;
     protected final TSLPluginManager pluginManager;
+
+    protected final TSLEventBuffer eventBuffer;
 
     private Function<String, String> keyMapper(Function<String, String> mapper) {
         return (key) -> {
@@ -96,6 +97,8 @@ public class TheSpawnLanguage {
         BUILT_IN_PLUGINS.add(new CommonEvents());
         BUILT_IN_PLUGINS.addAll(Arrays.asList(corePlugins));
         BUILT_IN_PLUGINS.forEach(pluginManager::loadPlugin);
+
+        eventBuffer = new TSLEventBuffer();
     }
 
     public JSEngine getJsEngine() {
@@ -106,9 +109,8 @@ public class TheSpawnLanguage {
         return pluginManager;
     }
 
-    public TSLRuleset loadRuleset(File file) {
-        TSLParser parser = new TSLParser(this);
-        return parser.parse(file);
+    public TSLEventBuffer getEventBuffer() {
+        return eventBuffer;
     }
 
     public boolean perform(TSLRuleset ruleset, TSLEvent event, GoodieObject eventArguments) {

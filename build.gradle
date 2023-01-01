@@ -32,6 +32,7 @@ dependencies {
 
     // Rhino - Used in JS Engine
     shadow 'org.mozilla:rhino:1.7.14'
+    testImplementation 'org.mozilla:rhino:1.7.14'
 
     // Semver4j - SemVer parser
     implementation 'com.vdurmont:semver4j:3.1.0'
