@@ -73,14 +73,14 @@ public class WaitMetaAction extends TSLAction {
         TSLToken timeToken = arguments.get(0).orElseThrow(InternalError::new);
         TSLToken unitToken = arguments.get(1).orElseThrow(InternalError::new);
 
-        double time = TSLArguments.parseDouble(timeToken, context)
-                .orElseThrow(() -> new TSLSyntaxError("Expected number", timeToken));
+        double time = arguments.get(0)
+                .flatMap(token -> TSLArguments.DOUBLE.parse(token, context))
+                .orElse(0.0);
 
-        String unit = unitToken.evaluate(context);
-        Long timeCoefficient = UNIT_COEF.get(unit.toLowerCase());
-        if (timeCoefficient == null) {
-            throw new TSLRuntimeError("Unknown time unit", unitToken);
-        }
+        long timeCoefficient = arguments.get(1)
+                .map(token -> token.evaluate(context))
+                .map(value -> UNIT_COEF.get(value.toLowerCase()))
+                .orElseThrow(() -> new TSLRuntimeError("Unknown time unit", unitToken));
 
         sleepThread((long) (time * timeCoefficient));
     }

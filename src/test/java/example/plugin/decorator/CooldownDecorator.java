@@ -28,8 +28,9 @@ public class CooldownDecorator extends TSLDecorator {
         if (arguments.size() < 1)
             throw new TSLSyntaxError("Expected cooldown duration.");
 
+
         TSLToken durationToken = arguments.get(0);
-        double duration = TSLArguments.parseDouble(durationToken, context)
+        double duration = TSLArguments.DOUBLE.parse(durationToken, context)
                 .orElseThrow(() -> new TSLRuntimeError("Expected a number for duration", durationToken));
 
         ExampleAttributes.COOLDOWN_DURATION.set(attributes, duration);

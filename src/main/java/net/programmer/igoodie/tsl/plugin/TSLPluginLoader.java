@@ -162,7 +162,7 @@ public class TSLPluginLoader {
         try {
             URL[] urls = new URL[]{new URL("jar:file:" + uri.toString() + "!/")};
             ClassLoader currentClassLoader = this.getClass().getClassLoader();
-            return URLClassLoader.newInstance(urls, currentClassLoader);
+            return URLClassLoader.newInstance(urls);
 
         } catch (MalformedURLException e) {
             throw new TSLPluginLoadingException("Malformed URL", e).withFilePath(uri.getPath());

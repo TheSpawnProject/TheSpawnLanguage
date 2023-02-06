@@ -9,24 +9,29 @@ import net.programmer.igoodie.tsl.logging.TSLLogger;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class TSLPluginManager {
 
     public static final Map<String, TSLPlugin> LOADED_PATHS = new HashMap<>();
 
-    private final TheSpawnLanguage tsl;
+    protected final TheSpawnLanguage tsl;
 
-    public final Set<TSLPlugin> LOADED_PLUGINS;
-    public final Set<String> LOADED_PLUGIN_IDS;
+    protected final Set<TSLPlugin> LOADED_PLUGINS;
+    protected final Set<String> LOADED_PLUGIN_IDS;
 
     public TSLPluginManager(TheSpawnLanguage tsl) {
         this.tsl = tsl;
         LOADED_PLUGIN_IDS = new HashSet<>();
         LOADED_PLUGINS = new HashSet<>();
+    }
+
+    public Set<TSLPlugin> getLoadedPlugins() {
+        return Collections.unmodifiableSet(LOADED_PLUGINS);
+    }
+
+    public Set<String> getLoadedPluginsIds() {
+        return Collections.unmodifiableSet(LOADED_PLUGIN_IDS);
     }
 
     public void loadPlugin(URI uri) {

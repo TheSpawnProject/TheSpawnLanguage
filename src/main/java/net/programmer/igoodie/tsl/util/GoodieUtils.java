@@ -11,7 +11,7 @@ public class GoodieUtils {
         GoodieObject merged = a.deepCopy();
 
         for (String field : b.keySet()) {
-            merged.put(field, b.get(field));
+            merged.put(field, b.get(field).deepCopy());
         }
 
         return merged;

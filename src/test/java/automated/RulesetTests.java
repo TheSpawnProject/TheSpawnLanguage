@@ -20,7 +20,7 @@ public class RulesetTests {
         TheSpawnLanguage tsl = new TheSpawnLanguage();
         tsl.getPluginManager().loadPlugin(new ExamplePlugin());
 
-        System.out.println(tsl.getPluginManager().LOADED_PLUGIN_IDS);
+        System.out.println(tsl.getPluginManager().getLoadedPluginsIds());
 
         TSLParser parser = new TSLParser(tsl);
         TSLRuleset ruleset = parser.parse(TestUtils.scriptURL("test.import.tsl"));

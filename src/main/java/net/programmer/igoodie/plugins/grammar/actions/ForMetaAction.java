@@ -68,11 +68,11 @@ public class ForMetaAction extends TSLAction {
 
     @Override
     public void perform(ListAccessor<TSLToken> arguments, TSLContext context) {
-        TSLToken countToken = arguments.get(0).orElse(null);
         List<TSLToken> actionTokens = arguments.subList(2, arguments.size());
 
-        int count = TSLArguments.parseInt(countToken, context)
-                .orElseThrow(() -> new TSLSyntaxError("Expected a number for count", countToken));
+        int count = arguments.get(0)
+                .flatMap(token -> TSLArguments.INTEGER.parse(token, context))
+                .orElse(1);
 
         for (int i = 0; i < count; i++) {
             TSLParser parser = new TSLParser(context);

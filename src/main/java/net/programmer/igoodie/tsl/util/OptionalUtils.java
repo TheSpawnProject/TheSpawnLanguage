@@ -18,5 +18,5 @@ public class OptionalUtils {
             return Optional.empty();
         }
     }
-    
+
 }
