@@ -1,12 +1,8 @@
 package net.programmer.igoodie.plugins.spawnjs;
 
-import net.programmer.igoodie.plugins.spawnjs.corelib.SpawnJSCorelib;
-import net.programmer.igoodie.plugins.spawnjs.funclib.SpawnJSFuncLib;
-import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
+import net.programmer.igoodie.legacy.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
-import net.programmer.igoodie.tsl.plugin.TSLPluginInstance;
-import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
-import net.programmer.igoodie.tsl.registry.TSLRegistry;
+import net.programmer.igoodie.tsl.plugin.manager.TSLPluginContext;
 
 public class SpawnJS extends TSLPlugin {
 
@@ -15,19 +11,23 @@ public class SpawnJS extends TSLPlugin {
     @TSLPluginInstance
     public static SpawnJS PLUGIN_INSTANCE;
 
-    public SpawnJS() {
-        super(new TSLPluginManifest(
-                "spawnjs",
-                "SpawnJS",
-                VERSION,
-                "iGoodie"
-        ));
+    protected SpawnJS(TSLPluginContext pluginContext) {
+        super(pluginContext);
     }
 
-    @Override
-    public void registerFunctionLibraries(TSLRegistry<TSLFunctionLibrary> registry) {
-        registry.register(SpawnJSCorelib.INSTANCE);
-        registry.register(SpawnJSFuncLib.INSTANCE);
-    }
+//    public SpawnJS() {
+//        super(new TSLPluginManifest(
+//                "spawnjs",
+//                "SpawnJS",
+//                VERSION,
+//                "iGoodie"
+//        ));
+//    }
+
+//    @Override
+//    public void registerFunctionLibraries(TSLRegistry<TSLFunctionLibrary> registry) {
+//        registry.register(SpawnJSCorelib.INSTANCE);
+//        registry.register(SpawnJSFuncLib.INSTANCE);
+//    }
 
 }

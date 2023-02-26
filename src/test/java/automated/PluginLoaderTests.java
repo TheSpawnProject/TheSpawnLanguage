@@ -23,7 +23,7 @@ public class PluginLoaderTests {
         // Loads the plugin from JAR
         URL pluginURL = TestUtils.pluginURL("example-0.0.1.jar");
         System.out.println(pluginURL);
-        tsl.getPluginManager().loadPlugin(pluginURL.toURI());
+        tsl.getPluginManagerOld().loadPlugin(pluginURL.toURI());
 
         // Parse the ruleset
         TSLParser parser = new TSLParser(tsl);

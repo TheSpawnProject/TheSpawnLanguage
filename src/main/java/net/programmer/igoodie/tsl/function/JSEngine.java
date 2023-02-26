@@ -68,7 +68,7 @@ public class JSEngine {
         importedPlugins.forEach((alias, pluginId) -> {
             List<TSLFunctionLibrary> associatedModules = tsl.FUNC_LIBRARY_REGISTRY.stream()
                     .map(Map.Entry::getValue)
-                    .filter(lib -> lib.getPlugin().getManifest().getPluginId().equals(pluginId))
+                    .filter(lib -> lib.getPlugin().getDescriptor().getPluginId().equals(pluginId))
                     .collect(Collectors.toList());
 
             if (associatedModules.size() == 0) {

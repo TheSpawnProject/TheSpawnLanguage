@@ -37,6 +37,9 @@ dependencies {
     // Semver4j - SemVer parser
     implementation 'com.vdurmont:semver4j:3.1.0'
 
+    // PF4J - Plugin Management Framework
+    implementation 'org.pf4j:pf4j:3.9.0'
+
     // JUnit
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.0'

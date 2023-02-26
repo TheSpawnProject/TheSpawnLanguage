@@ -1,4 +1,4 @@
-package net.programmer.igoodie.tsl.plugin;
+package net.programmer.igoodie.legacy.plugin;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

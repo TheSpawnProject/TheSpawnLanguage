@@ -19,7 +19,7 @@ public class TSLAttribute<T> {
     public String getId() {
         // TODO: Why, is this legacy?
         return plugin instanceof TSLGrammarCore
-                ? attributeName : plugin.prependNamespace(attributeName);
+                ? attributeName : plugin.getDescriptor().getPluginId() + ":" + attributeName;
     }
 
     public boolean isContained(GoodieObject attributes) {

@@ -2,10 +2,11 @@ package net.programmer.igoodie.tsl;
 
 import com.vdurmont.semver4j.Semver;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.goodies.util.StringUtilities;
-import net.programmer.igoodie.plugins.events.common.CommonEvents;
+import net.programmer.igoodie.legacy.plugin.OldTSLPluginManager;
+import net.programmer.igoodie.legacy.plugin.TSLPlugin;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
-import net.programmer.igoodie.plugins.spawnjs.SpawnJS;
 import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.definition.base.TSLDefinition;
 import net.programmer.igoodie.tsl.eventqueue.TSLEventBuffer;
@@ -15,8 +16,8 @@ import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.function.TSLFunctionsCorelib;
 import net.programmer.igoodie.tsl.parser.token.TSLDecoratorCall;
 import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
-import net.programmer.igoodie.tsl.plugin.TSLPlugin;
-import net.programmer.igoodie.tsl.plugin.TSLPluginManager;
+import net.programmer.igoodie.tsl.plugin.TSLCorePlugin;
+import net.programmer.igoodie.tsl.plugin.manager.TSLPluginManager;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLReservedNames;
@@ -67,7 +68,7 @@ public class TheSpawnLanguage {
         };
     }
 
-    public TheSpawnLanguage(TSLPlugin... corePlugins) {
+    public TheSpawnLanguage(TSLCorePlugin... corePlugins) {
         BUILT_IN_PLUGINS = new LinkedList<>();
         RESERVED_NAMES = new TSLReservedNames();
         TAG_REGISTRY = new TSLRegistry<>(keyMapper(StringUtilities::upperSnake));
@@ -91,18 +92,26 @@ public class TheSpawnLanguage {
         jsEngine = new JSEngine(this);
         jsEngine.defineConst("$TSL_VERSION", TSL_VERSION);
 
-        pluginManager = new TSLPluginManager(this);
-        BUILT_IN_PLUGINS.add(new TSLGrammarCore());
-        BUILT_IN_PLUGINS.add(new SpawnJS());
-        BUILT_IN_PLUGINS.add(new CommonEvents());
-        BUILT_IN_PLUGINS.addAll(Arrays.asList(corePlugins));
-        BUILT_IN_PLUGINS.forEach(pluginManager::loadPlugin);
+        pluginManager = new TSLPluginManager(this, Arrays.asList(
+                new Couple<>(TSLGrammarCore.DESCRIPTOR, TSLGrammarCore.class)
+        ));
+//        BUILT_IN_PLUGINS.add(new TSLGrammarCore());
+//        BUILT_IN_PLUGINS.add(new SpawnJS());
+//        BUILT_IN_PLUGINS.add(new CommonEvents());
+//        BUILT_IN_PLUGINS.addAll(Arrays.asList(corePlugins));
+//        BUILT_IN_PLUGINS.forEach(pluginManager::loadPlugin);
+        pluginManager.loadPlugins();
+        pluginManager.startPlugins();
 
         eventBuffer = new TSLEventBuffer();
     }
 
     public JSEngine getJsEngine() {
         return jsEngine;
+    }
+
+    public OldTSLPluginManager getPluginManagerOld() {
+        return null;
     }
 
     public TSLPluginManager getPluginManager() {

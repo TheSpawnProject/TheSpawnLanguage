@@ -1,7 +1,7 @@
 package net.programmer.igoodie.legacy.logging;
 
 import net.programmer.igoodie.tsl.logging.TSLLogFormatter;
-import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import net.programmer.igoodie.legacy.plugin.TSLPlugin;
 
 import java.io.File;
 import java.io.IOException;

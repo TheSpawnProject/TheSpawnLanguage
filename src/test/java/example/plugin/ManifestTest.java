@@ -1,7 +1,7 @@
 package example.plugin;
 
+import net.programmer.igoodie.legacy.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -24,13 +24,13 @@ public class ManifestTest {
             Object plugin = pluginClass.getDeclaredConstructor().newInstance();
 
             if (plugin instanceof TSLPlugin) {
-                TSL.getPluginManager().loadPlugin((TSLPlugin) plugin);
+                TSL.getPluginManagerOld().loadPlugin((TSLPlugin) plugin);
 
             } else {
                 throw new IllegalArgumentException("example.setup.ExamplePlugin is not a TSL plugin.");
             }
 
-            System.out.println(TSL.getPluginManager().getLoadedPluginsIds());
+            System.out.println(TSL.getPluginManagerOld().getLoadedPluginsIds());
 
         } catch (ClassNotFoundException e) {
             System.out.println("Unknown class name");

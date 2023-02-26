@@ -1,4 +1,4 @@
-package net.programmer.igoodie.tsl.plugin;
+package net.programmer.igoodie.legacy.plugin;
 
 import com.vdurmont.semver4j.Semver;
 import com.vdurmont.semver4j.SemverException;

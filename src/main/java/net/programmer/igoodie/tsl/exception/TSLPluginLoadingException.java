@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.exception;
 
-import net.programmer.igoodie.tsl.plugin.TSLPluginManifest;
+import net.programmer.igoodie.legacy.plugin.TSLPluginManifest;
 
 public class TSLPluginLoadingException extends RuntimeException {
 

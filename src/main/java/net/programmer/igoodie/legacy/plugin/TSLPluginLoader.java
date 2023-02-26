@@ -1,4 +1,4 @@
-package net.programmer.igoodie.tsl.plugin;
+package net.programmer.igoodie.legacy.plugin;
 
 import com.vdurmont.semver4j.SemverException;
 import net.programmer.igoodie.goodies.util.ReflectionUtilities;
@@ -19,6 +19,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+@Deprecated
 public class TSLPluginLoader {
 
     private static final Map<String, Class<?>> ALL_LOADED_CLASSES = new HashMap<>();

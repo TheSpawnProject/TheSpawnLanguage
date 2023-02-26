@@ -42,6 +42,10 @@ public class TSLRegistry<T extends TSLRegistrable> implements Iterable<Map.Entry
         return entry;
     }
 
+    public void unregister(T entry) {
+        registry.remove(entry.getRegistryId());
+    }
+
     public void postRegister(T entry) {}
 
     public boolean has(T entry) {

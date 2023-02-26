@@ -1,4 +1,4 @@
-package net.programmer.igoodie.tsl.plugin;
+package net.programmer.igoodie.legacy.plugin;
 
 import net.programmer.igoodie.goodies.util.ReflectionUtilities;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
@@ -11,7 +11,8 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.*;
 
-public class TSLPluginManager {
+@Deprecated
+public class OldTSLPluginManager {
 
     public static final Map<String, TSLPlugin> LOADED_PATHS = new HashMap<>();
 
@@ -20,7 +21,7 @@ public class TSLPluginManager {
     protected final Set<TSLPlugin> LOADED_PLUGINS;
     protected final Set<String> LOADED_PLUGIN_IDS;
 
-    public TSLPluginManager(TheSpawnLanguage tsl) {
+    public OldTSLPluginManager(TheSpawnLanguage tsl) {
         this.tsl = tsl;
         LOADED_PLUGIN_IDS = new HashSet<>();
         LOADED_PLUGINS = new HashSet<>();
