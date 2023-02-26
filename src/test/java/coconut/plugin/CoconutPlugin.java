@@ -1,7 +1,7 @@
 package coconut.plugin;
 
-import net.programmer.igoodie.legacy.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import net.programmer.igoodie.tsl.plugin.annotation.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.manager.TSLPluginContext;
 
 public class CoconutPlugin extends TSLPlugin {

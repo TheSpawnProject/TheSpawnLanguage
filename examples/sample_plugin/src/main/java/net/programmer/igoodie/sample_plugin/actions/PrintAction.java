@@ -37,7 +37,7 @@ public class PrintAction extends TSLAction {
                 .map(token -> token.evaluate(context))
                 .collect(Collectors.joining(" "));
 
-        System.out.println("PRINT -> " + printText + " @ " + attributes);
+        SamplePlugin.LOGGER.info("PRINT -> {} @ {}", printText, attributes);
     }
 
 }

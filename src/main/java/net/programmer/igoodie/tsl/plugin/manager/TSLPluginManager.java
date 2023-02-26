@@ -1,10 +1,13 @@
 package net.programmer.igoodie.tsl.plugin.manager;
 
 import net.programmer.igoodie.goodies.util.ReflectionUtilities;
-import net.programmer.igoodie.legacy.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
+import net.programmer.igoodie.tsl.logging.TSLLogHandler;
+import net.programmer.igoodie.tsl.logging.TSLLogger;
 import net.programmer.igoodie.tsl.plugin.TSLCorePlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import net.programmer.igoodie.tsl.plugin.annotation.TSLPluginInstance;
+import net.programmer.igoodie.tsl.plugin.annotation.TSLPluginLogger;
 import org.pf4j.*;
 
 import java.io.File;
@@ -23,8 +26,6 @@ public class TSLPluginManager extends DefaultPluginManager {
 
     public TSLPluginManager(TheSpawnLanguage tsl, List<Path> rootPaths, List<Class<? extends TSLCorePlugin>> corePluginClasses) {
         super(rootPaths);
-
-        setSystemVersion(TheSpawnLanguage.TSL_VERSION);
 
         this.tsl = tsl;
         this.corePluginIds = new HashSet<>();
@@ -163,15 +164,14 @@ public class TSLPluginManager extends DefaultPluginManager {
             if (field.isAnnotationPresent(TSLPluginInstance.class)) {
                 ReflectionUtilities.setValue(null, field, plugin);
 
+            } else if (field.isAnnotationPresent(TSLPluginLogger.class)) {
+                TSLLogHandler logHandler = new TSLLogHandler
+                        (tsl.getLogsPath().resolve("plugins").toFile(), plugin.getDescriptor().getPluginId())
+                        .historyLimit(5)
+                        .hookConsoleLog();
+                TSLLogger logger = TSLLogger.createLogger(plugin, logHandler);
+                ReflectionUtilities.setValue(null, field, logger);
             }
-//            else if (field.isAnnotationPresent(TSLPluginLogger.class)) {
-//                TSLLogHandler logHandler = new TSLLogHandler
-//                        (new File("logs/plugins"), plugin.getManifest().getPluginId())
-//                        .historyLimit(5)
-//                        .hookConsoleLog();
-//                TSLLogger logger = TSLLogger.createLogger(plugin, logHandler);
-//                ReflectionUtilities.setValue(null, field, logger);
-//            }
         }
     }
 
@@ -206,7 +206,9 @@ public class TSLPluginManager extends DefaultPluginManager {
         }
 
         public TSLPluginManager build() {
-            return new TSLPluginManager(tsl, pluginPaths, corePluginClasses);
+            TSLPluginManager manager = new TSLPluginManager(tsl, pluginPaths, corePluginClasses);
+            manager.setSystemVersion(TheSpawnLanguage.TSL_VERSION);
+            return manager;
         }
 
         public static Builder forTSL(TheSpawnLanguage tsl) {

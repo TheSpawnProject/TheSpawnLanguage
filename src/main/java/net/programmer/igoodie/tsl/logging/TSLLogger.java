@@ -1,7 +1,7 @@
 package net.programmer.igoodie.tsl.logging;
 
 import net.programmer.igoodie.goodies.util.accessor.ArrayAccessor;
-import net.programmer.igoodie.legacy.plugin.TSLPlugin;
+import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.util.ExpressionUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,7 +67,7 @@ public class TSLLogger {
     /* ------------------------------------- */
 
     public static TSLLogger createLogger(TSLPlugin plugin, TSLLogHandler handler) {
-        return createLogger(plugin.getManifest().getPluginId(), handler);
+        return createLogger(plugin.getDescriptor().getPluginId(), handler);
     }
 
     public static TSLLogger createLogger(String namespace, TSLLogHandler handler) {

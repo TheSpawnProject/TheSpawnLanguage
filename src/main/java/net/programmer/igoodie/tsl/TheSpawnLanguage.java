@@ -3,7 +3,6 @@ package net.programmer.igoodie.tsl;
 import com.vdurmont.semver4j.Semver;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.StringUtilities;
-import net.programmer.igoodie.legacy.plugin.OldTSLPluginManager;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.plugins.spawnjs.SpawnJS;
 import net.programmer.igoodie.tsl.definition.*;
@@ -25,6 +24,7 @@ import net.programmer.igoodie.tsl.util.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +40,8 @@ public class TheSpawnLanguage {
     public static final Semver TSL_SEMVER = new Semver(TSL_VERSION, Semver.SemverType.NPM);
 
     private final TSLReservedNames RESERVED_NAMES;
+
+    protected final Path logsPath;
 
     public final TSLRegistry<TSLTag> TAG_REGISTRY;
     public final TSLRegistry<TSLDecorator> DECORATOR_REGISTRY;
@@ -70,10 +72,12 @@ public class TheSpawnLanguage {
 
     @Deprecated()
     public TheSpawnLanguage() {
-        this(Collections.emptyList(), Collections.emptyList());
+        this(Paths.get("logs"), Collections.emptyList(), Collections.emptyList());
     }
 
-    private TheSpawnLanguage(List<Path> pluginPaths, List<Class<? extends TSLCorePlugin>> corePluginClasses) {
+    private TheSpawnLanguage(Path logsPath, List<Path> pluginPaths, List<Class<? extends TSLCorePlugin>> corePluginClasses) {
+        this.logsPath = logsPath;
+
         RESERVED_NAMES = new TSLReservedNames();
         TAG_REGISTRY = new TSLRegistry<>(keyMapper(StringUtilities::upperSnake));
         DECORATOR_REGISTRY = new TSLRegistry<>();
@@ -108,12 +112,12 @@ public class TheSpawnLanguage {
         eventBuffer = new TSLEventBuffer();
     }
 
-    public JSEngine getJsEngine() {
-        return jsEngine;
+    public Path getLogsPath() {
+        return logsPath;
     }
 
-    public OldTSLPluginManager getPluginManagerOld() {
-        return null;
+    public JSEngine getJsEngine() {
+        return jsEngine;
     }
 
     public TSLPluginManager getPluginManager() {
@@ -312,8 +316,14 @@ public class TheSpawnLanguage {
 
     public static class Bootstrapper {
 
+        protected Path logsPath = Paths.get("logs");
         protected List<Path> pluginPaths = new LinkedList<>();
         protected List<Class<? extends TSLCorePlugin>> corePluginClasses = new LinkedList<>();
+
+        public Bootstrapper logsPath(Path logsPath) {
+            this.logsPath = logsPath;
+            return this;
+        }
 
         public Bootstrapper pluginPath(Path pluginPath) {
             this.pluginPaths.add(pluginPath);
@@ -331,7 +341,7 @@ public class TheSpawnLanguage {
         }
 
         public TheSpawnLanguage bootstrap() {
-            return new TheSpawnLanguage(pluginPaths, corePluginClasses);
+            return new TheSpawnLanguage(logsPath, pluginPaths, corePluginClasses);
         }
 
     }

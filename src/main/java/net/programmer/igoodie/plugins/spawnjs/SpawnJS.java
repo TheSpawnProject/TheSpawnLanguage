@@ -1,11 +1,11 @@
 package net.programmer.igoodie.plugins.spawnjs;
 
-import net.programmer.igoodie.legacy.plugin.TSLPluginInstance;
 import net.programmer.igoodie.plugins.spawnjs.corelib.SpawnJSCorelib;
 import net.programmer.igoodie.plugins.spawnjs.funclib.SpawnJSFuncLib;
 import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
 import net.programmer.igoodie.tsl.plugin.TSLCorePlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginDescriptor;
+import net.programmer.igoodie.tsl.plugin.annotation.TSLPluginInstance;
 import net.programmer.igoodie.tsl.util.ValueHolder;
 import org.pf4j.PluginDescriptor;
 

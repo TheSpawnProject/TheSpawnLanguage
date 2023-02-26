@@ -1,9 +1,9 @@
 package example.plugin;
 
-import net.programmer.igoodie.legacy.plugin.TSLPluginInstance;
-import net.programmer.igoodie.legacy.plugin.TSLPluginLogger;
 import net.programmer.igoodie.tsl.logging.TSLLogger;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import net.programmer.igoodie.tsl.plugin.annotation.TSLPluginInstance;
+import net.programmer.igoodie.tsl.plugin.annotation.TSLPluginLogger;
 import net.programmer.igoodie.tsl.plugin.manager.TSLPluginContext;
 
 import java.util.HashMap;

@@ -13,6 +13,7 @@ import util.TestUtils;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 
 public class PluginLoaderTests {
 
@@ -23,7 +24,7 @@ public class PluginLoaderTests {
         // Loads the plugin from JAR
         URL pluginURL = TestUtils.pluginURL("example-0.0.1.jar");
         System.out.println(pluginURL);
-        tsl.getPluginManagerOld().loadPlugin(pluginURL.toURI());
+        tsl.getPluginManager().loadPlugin(Paths.get(pluginURL.toURI()));
 
         // Parse the ruleset
         TSLParser parser = new TSLParser(tsl);

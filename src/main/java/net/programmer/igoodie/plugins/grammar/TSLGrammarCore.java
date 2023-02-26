@@ -1,6 +1,5 @@
 package net.programmer.igoodie.plugins.grammar;
 
-import net.programmer.igoodie.legacy.plugin.TSLPluginInstance;
 import net.programmer.igoodie.plugins.grammar.actions.*;
 import net.programmer.igoodie.plugins.grammar.comparators.EqualsComparator;
 import net.programmer.igoodie.plugins.grammar.events.ManualTriggerEvent;
@@ -11,6 +10,7 @@ import net.programmer.igoodie.plugins.grammar.tags.ImportTag;
 import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.plugin.TSLCorePlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginDescriptor;
+import net.programmer.igoodie.tsl.plugin.annotation.TSLPluginInstance;
 import net.programmer.igoodie.tsl.util.ValueHolder;
 import org.pf4j.PluginDescriptor;
 

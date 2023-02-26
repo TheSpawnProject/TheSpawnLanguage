@@ -89,7 +89,7 @@ public class ImportTag extends TSLTag {
             TSLRuleset otherRuleset = new TSLParser(tsl).parse(targetPath.toFile());
             ruleset.importRuleset(otherRuleset);
 
-        } else if (tsl.getPluginManagerOld().getLoadedPluginsIds().contains(target)) {
+        } else if (tsl.getPluginManager().getPlugin(target) != null) {
             ruleset.addPluginAlias(alias, target);
 
         } else {
