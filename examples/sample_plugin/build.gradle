@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+}
+
+sourceCompatibility = 1.8
+
+group 'net.programmer.igoodie'
+version '0.0.1'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    flatDir { dirs("libs") }
+}
+
+dependencies {
+    implementation fileTree(dir: 'lib', includes: ['*.jar'])
+
+    implementation 'com.github.iGoodie.RuntimeGoodies:core:1.3.9'
+    implementation 'com.github.iGoodie.RuntimeGoodies:json:1.3.9'
+    implementation 'com.github.iGoodie.RuntimeGoodies:toml:1.3.9'
+
+    // PF4J - Plugin Management Framework
+    implementation 'org.pf4j:pf4j:3.9.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes(
+                "Plugin-Class": "net.programmer.igoodie.sample_plugin.SamplePlugin",
+                "Plugin-Id": "sample_plugin",
+                "Plugin-Version": "0.0.1",
+                "Plugin-Requires": "2.0.0",
+                "Plugin-Description": "My sample plugin",
+                "Plugin-Provider": "iGoodie",
+                "Plugin-License": "MIT",
+        )
+    }
+}

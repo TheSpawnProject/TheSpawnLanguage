@@ -24,6 +24,8 @@ public class TSLPluginManager extends DefaultPluginManager {
     public TSLPluginManager(TheSpawnLanguage tsl, List<Path> rootPaths, List<Class<? extends TSLCorePlugin>> corePluginClasses) {
         super(rootPaths);
 
+        setSystemVersion(TheSpawnLanguage.TSL_VERSION);
+
         this.tsl = tsl;
         this.corePluginIds = new HashSet<>();
 
@@ -69,6 +71,19 @@ public class TSLPluginManager extends DefaultPluginManager {
     }
 
     /* ---------------------- */
+
+    @Override
+    protected PluginWrapper loadPluginFromPath(Path pluginPath) {
+        PluginWrapper pluginWrapper = super.loadPluginFromPath(pluginPath);
+
+        Plugin plugin = pluginWrapper.getPlugin();
+        if (plugin instanceof TSLPlugin) {
+            TSLPlugin tslPlugin = (TSLPlugin) plugin;
+            assignAnnotatedFields(tslPlugin);
+        }
+
+        return pluginWrapper;
+    }
 
     @Override
     public String loadPlugin(Path pluginPath) {

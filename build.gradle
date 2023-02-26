@@ -13,7 +13,7 @@ apply plugin: 'signing'
 apply plugin: 'java'
 
 group 'net.programmer.igoodie'
-version '0.0.8'
+version '0.1.0'
 
 sourceCompatibility = 1.8
 

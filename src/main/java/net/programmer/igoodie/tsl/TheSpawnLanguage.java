@@ -102,8 +102,8 @@ public class TheSpawnLanguage {
                 .corePlugin(SpawnJS.class)
                 .corePlugins(corePluginClasses)
                 .build();
-        pluginManager.loadPlugins();
-        pluginManager.startPlugins();
+//        pluginManager.loadPlugins();
+//        pluginManager.startPlugins();
 
         eventBuffer = new TSLEventBuffer();
     }
