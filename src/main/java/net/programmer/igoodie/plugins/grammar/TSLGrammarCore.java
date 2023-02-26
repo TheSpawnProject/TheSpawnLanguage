@@ -2,19 +2,20 @@ package net.programmer.igoodie.plugins.grammar;
 
 import net.programmer.igoodie.legacy.plugin.TSLPluginInstance;
 import net.programmer.igoodie.plugins.grammar.actions.*;
+import net.programmer.igoodie.plugins.grammar.comparators.EqualsComparator;
+import net.programmer.igoodie.plugins.grammar.events.ManualTriggerEvent;
+import net.programmer.igoodie.plugins.grammar.predicates.BinaryOperationPredicate;
+import net.programmer.igoodie.plugins.grammar.predicates.BooleanPredicate;
 import net.programmer.igoodie.plugins.grammar.tags.DebugTag;
 import net.programmer.igoodie.plugins.grammar.tags.ImportTag;
-import net.programmer.igoodie.tsl.definition.TSLAction;
-import net.programmer.igoodie.tsl.definition.TSLTag;
+import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.plugin.TSLCorePlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPluginDescriptor;
 import net.programmer.igoodie.tsl.util.ValueHolder;
-import org.pf4j.Extension;
 import org.pf4j.PluginDescriptor;
 
 import java.util.List;
 
-@Extension
 public class TSLGrammarCore extends TSLCorePlugin {
 
     public static final TSLPluginDescriptor DESCRIPTOR = createCoreDescriptor(
@@ -56,20 +57,26 @@ public class TSLGrammarCore extends TSLCorePlugin {
         );
     }
 
-//    @Override
-//    public void registerEvents(TSLRegistry<TSLEvent> registry) {
-//        registry.register(ManualTriggerEvent.INSTANCE);
-//    }
-//
-//    @Override
-//    public void registerPredicates(TSLRegistry<TSLPredicate> registry) {
-//        registry.register(BooleanPredicate.INSTANCE);
-//        registry.register(BinaryOperationPredicate.INSTANCE);
-//    }
-//
-//    @Override
-//    public void registerComparators(TSLRegistry<TSLComparator> registry) {
-//        registry.register(EqualsComparator.INSTANCE);
-//    }
+    @Override
+    public List<ValueHolder<TSLEvent>> getEvents() {
+        return createDefinitionList(
+                ManualTriggerEvent.INSTANCE
+        );
+    }
+
+    @Override
+    public List<ValueHolder<TSLPredicate>> getPredicates() {
+        return createDefinitionList(
+                BooleanPredicate.INSTANCE,
+                BinaryOperationPredicate.INSTANCE
+        );
+    }
+
+    @Override
+    public List<ValueHolder<TSLComparator>> getComparators() {
+        return createDefinitionList(
+                EqualsComparator.INSTANCE
+        );
+    }
 
 }

@@ -2,11 +2,10 @@ package net.programmer.igoodie.tsl;
 
 import com.vdurmont.semver4j.Semver;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
-import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.legacy.plugin.OldTSLPluginManager;
-import net.programmer.igoodie.legacy.plugin.TSLPlugin;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
+import net.programmer.igoodie.plugins.spawnjs.SpawnJS;
 import net.programmer.igoodie.tsl.definition.*;
 import net.programmer.igoodie.tsl.definition.base.TSLDefinition;
 import net.programmer.igoodie.tsl.eventqueue.TSLEventBuffer;
@@ -25,7 +24,11 @@ import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +39,6 @@ public class TheSpawnLanguage {
     public static final String TSL_VERSION = "0.0.0";
     public static final Semver TSL_SEMVER = new Semver(TSL_VERSION, Semver.SemverType.NPM);
 
-    private final List<TSLPlugin> BUILT_IN_PLUGINS;
     private final TSLReservedNames RESERVED_NAMES;
 
     public final TSLRegistry<TSLTag> TAG_REGISTRY;
@@ -59,17 +61,19 @@ public class TheSpawnLanguage {
             if (colonCount > 1) {
                 throw new TSLImplementationError("Registry keys MUST not have multiple colon characters");
             }
-//            System.out.print(key + " -> ");
             String[] parts = key.split(":");
             String namespace = parts[0];
             String value = parts[1];
-//            System.out.println(namespace + ":" + mapper.apply(value));
             return namespace + ":" + mapper.apply(value);
         };
     }
 
-    public TheSpawnLanguage(TSLCorePlugin... corePlugins) {
-        BUILT_IN_PLUGINS = new LinkedList<>();
+    @Deprecated()
+    public TheSpawnLanguage() {
+        this(Collections.emptyList(), Collections.emptyList());
+    }
+
+    private TheSpawnLanguage(List<Path> pluginPaths, List<Class<? extends TSLCorePlugin>> corePluginClasses) {
         RESERVED_NAMES = new TSLReservedNames();
         TAG_REGISTRY = new TSLRegistry<>(keyMapper(StringUtilities::upperSnake));
         DECORATOR_REGISTRY = new TSLRegistry<>();
@@ -82,7 +86,7 @@ public class TheSpawnLanguage {
             @Override
             public void postRegister(TSLFunctionLibrary entry) {
                 if (entry instanceof TSLFunctionsCorelib) {
-                    if (BUILT_IN_PLUGINS.contains(entry.getPlugin())) {
+                    if (pluginManager.hasLoadedCorePlugin(entry.getPlugin())) {
                         TheSpawnLanguage.this.registerCorelib(entry);
                     }
                 }
@@ -92,14 +96,12 @@ public class TheSpawnLanguage {
         jsEngine = new JSEngine(this);
         jsEngine.defineConst("$TSL_VERSION", TSL_VERSION);
 
-        pluginManager = new TSLPluginManager(this, Arrays.asList(
-                new Couple<>(TSLGrammarCore.DESCRIPTOR, TSLGrammarCore.class)
-        ));
-//        BUILT_IN_PLUGINS.add(new TSLGrammarCore());
-//        BUILT_IN_PLUGINS.add(new SpawnJS());
-//        BUILT_IN_PLUGINS.add(new CommonEvents());
-//        BUILT_IN_PLUGINS.addAll(Arrays.asList(corePlugins));
-//        BUILT_IN_PLUGINS.forEach(pluginManager::loadPlugin);
+        pluginManager = TSLPluginManager.Builder.forTSL(this)
+                .pluginPaths(pluginPaths)
+                .corePlugin(TSLGrammarCore.class)
+                .corePlugin(SpawnJS.class)
+                .corePlugins(corePluginClasses)
+                .build();
         pluginManager.loadPlugins();
         pluginManager.startPlugins();
 
@@ -295,8 +297,8 @@ public class TheSpawnLanguage {
 //        System.out.println(registry.stream().map(Map.Entry::getKey).collect(Collectors.toList()));
 //        System.out.println("Get Definition; " + id);
         if (!id.contains(":")) {
-            for (TSLPlugin builtInPlugin : BUILT_IN_PLUGINS) {
-                String pluginId = builtInPlugin.getManifest().getPluginId();
+            for (TSLCorePlugin corePlugin : pluginManager.getCorePlugins()) {
+                String pluginId = corePlugin.getDescriptor().getPluginId();
                 if (registry.has(pluginId + ":" + id)) {
                     return registry.get(pluginId + ":" + id);
                 }
@@ -304,6 +306,34 @@ public class TheSpawnLanguage {
             return null;
         }
         return registry.get(id);
+    }
+
+    /* ------------------------ */
+
+    public static class Bootstrapper {
+
+        protected List<Path> pluginPaths = new LinkedList<>();
+        protected List<Class<? extends TSLCorePlugin>> corePluginClasses = new LinkedList<>();
+
+        public Bootstrapper pluginPath(Path pluginPath) {
+            this.pluginPaths.add(pluginPath);
+            return this;
+        }
+
+        public Bootstrapper corePlugin(Class<? extends TSLCorePlugin> corePluginClass) {
+            this.corePluginClasses.add(corePluginClass);
+            return this;
+        }
+
+        public Bootstrapper corePlugins(List<Class<? extends TSLCorePlugin>> corePluginClasses) {
+            this.corePluginClasses.addAll(corePluginClasses);
+            return this;
+        }
+
+        public TheSpawnLanguage bootstrap() {
+            return new TheSpawnLanguage(pluginPaths, corePluginClasses);
+        }
+
     }
 
 }

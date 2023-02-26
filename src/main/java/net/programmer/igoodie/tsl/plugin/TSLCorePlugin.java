@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.plugin;
 
 import net.programmer.igoodie.goodies.util.accessor.ArrayAccessor;
 import net.programmer.igoodie.tsl.plugin.manager.TSLPluginContext;
+import org.pf4j.PluginDescriptor;
 
 import java.util.Collections;
 
@@ -14,6 +15,9 @@ public abstract class TSLCorePlugin extends TSLPlugin {
     public void setPluginContext(TSLPluginContext pluginContext) {
         this.pluginContext = pluginContext;
     }
+
+    @Override
+    public abstract PluginDescriptor getDescriptor();
 
     protected static TSLPluginDescriptor createCoreDescriptor(
             String pluginId,

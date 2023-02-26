@@ -16,9 +16,7 @@ public class TSLPluginFactory extends DefaultPluginFactory {
             Constructor<?> constructor = pluginClass.getConstructor(TSLPluginContext.class);
             return (Plugin) constructor.newInstance(tslPluginContext);
 
-        } catch (Exception e) {
-
-        }
+        } catch (Exception ignored) {}
 
         return super.createInstance(pluginClass, pluginWrapper);
     }

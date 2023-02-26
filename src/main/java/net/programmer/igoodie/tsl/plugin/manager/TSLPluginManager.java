@@ -1,37 +1,62 @@
 package net.programmer.igoodie.tsl.plugin.manager;
 
-import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.goodies.util.ReflectionUtilities;
 import net.programmer.igoodie.legacy.plugin.TSLPluginInstance;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.plugin.TSLCorePlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
-import net.programmer.igoodie.tsl.plugin.TSLPluginDescriptor;
-import net.programmer.igoodie.tsl.plugin.extension.TSLDefinitionsEP;
 import org.pf4j.*;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TSLPluginManager extends DefaultPluginManager {
 
     protected TheSpawnLanguage tsl;
     protected Set<String> corePluginIds;
 
-    public TSLPluginManager(TheSpawnLanguage tsl, List<Couple<TSLPluginDescriptor, Class<? extends TSLCorePlugin>>> corePlugins) {
-        super();
+    public TSLPluginManager(TheSpawnLanguage tsl, List<Path> rootPaths, List<Class<? extends TSLCorePlugin>> corePluginClasses) {
+        super(rootPaths);
 
         this.tsl = tsl;
         this.corePluginIds = new HashSet<>();
 
-//        for (Couple<TSLPluginDescriptor, Class<? extends TSLCorePlugin>> corePlugin : corePlugins) {
-//            loadCorePlugin(corePlugin.getFirst(), corePlugin.getSecond());
-//        }
+        for (Class<? extends TSLCorePlugin> corePluginClass : corePluginClasses) {
+            try {
+                TSLCorePlugin corePlugin = corePluginClass.newInstance();
+                this.corePluginIds.add(corePlugin.getDescriptor().getPluginId());
+                loadCorePlugin(corePlugin);
+
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
+
+    public TheSpawnLanguage getTsl() {
+        return tsl;
+    }
+
+    public List<TSLCorePlugin> getCorePlugins() {
+        return corePluginIds.stream()
+                .map(this::getPlugin)
+                .map(PluginWrapper::getPlugin)
+                .filter(plugin -> plugin instanceof TSLCorePlugin)
+                .map(plugin -> ((TSLCorePlugin) plugin))
+                .collect(Collectors.toList());
+    }
+
+    public boolean hasLoadedCorePlugin(TSLPlugin plugin) {
+        return this.corePluginIds.contains(plugin.getDescriptor().getPluginId());
+    }
+
+    /* ---------------------- */
 
     @Override
     protected PluginFactory createPluginFactory() {
@@ -42,6 +67,8 @@ public class TSLPluginManager extends DefaultPluginManager {
     protected ExtensionFactory createExtensionFactory() {
         return new SingletonExtensionFactory(this);
     }
+
+    /* ---------------------- */
 
     @Override
     public String loadPlugin(Path pluginPath) {
@@ -57,35 +84,20 @@ public class TSLPluginManager extends DefaultPluginManager {
     }
 
     @Override
-    public PluginState startPlugin(String pluginId) {
-        PluginState state = super.startPlugin(pluginId);
-
-        System.out.println("Starting " + pluginId);
-
-        Plugin plugin = getPlugin(pluginId).getPlugin();
-        if (plugin instanceof TSLDefinitionsEP) {
-            TSLDefinitionsEP definitions = (TSLDefinitionsEP) plugin;
-            definitions.registerDefinitions(this.tsl);
-        }
-
-        return state;
+    protected PluginState stopPlugin(String pluginId, boolean stopDependents) {
+        if (corePluginIds.contains(pluginId))
+            throw new IllegalArgumentException("Cannot stop Core Plugins.");
+        return super.stopPlugin(pluginId, stopDependents);
     }
 
     @Override
-    protected PluginState stopPlugin(String pluginId, boolean stopDependents) {
-        PluginState state = super.stopPlugin(pluginId, stopDependents);
-
-        Plugin plugin = getPlugin(pluginId).getPlugin();
-        if (plugin instanceof TSLDefinitionsEP) {
-            TSLDefinitionsEP definitions = (TSLDefinitionsEP) plugin;
-            definitions.unregisterDefinitions(this.tsl);
-        }
-
-        return state;
+    protected boolean unloadPlugin(String pluginId, boolean unloadDependents) {
+        if (corePluginIds.contains(pluginId))
+            throw new IllegalArgumentException("Cannot unload Core Plugins.");
+        return super.unloadPlugin(pluginId, unloadDependents);
     }
 
-    // TODO: Make used only on the constructor.
-    public void loadCorePlugin(TSLCorePlugin tslPlugin) {
+    protected final void loadCorePlugin(TSLCorePlugin tslPlugin) {
         assignAnnotatedFields(tslPlugin);
 
         PluginDescriptor descriptor = tslPlugin.getDescriptor();
@@ -125,13 +137,13 @@ public class TSLPluginManager extends DefaultPluginManager {
 
         // add tslPlugin to the list with plugins
         plugins.put(pluginId, pluginWrapper);
-        getUnresolvedPlugins().add(pluginWrapper);
+        getResolvedPlugins().add(pluginWrapper);
 
         // add tslPlugin class loader to the list with class loaders
         getPluginClassLoaders().put(pluginId, pluginClassLoader);
     }
 
-    private void assignAnnotatedFields(TSLPlugin plugin) {
+    protected final void assignAnnotatedFields(TSLPlugin plugin) {
         for (Field field : plugin.getClass().getFields()) {
             if (field.isAnnotationPresent(TSLPluginInstance.class)) {
                 ReflectionUtilities.setValue(null, field, plugin);
@@ -146,6 +158,48 @@ public class TSLPluginManager extends DefaultPluginManager {
 //                ReflectionUtilities.setValue(null, field, logger);
 //            }
         }
+    }
+
+    /* ---------------------- */
+
+    public static class Builder {
+
+        protected TheSpawnLanguage tsl;
+        protected List<Path> pluginPaths = new LinkedList<>();
+        protected List<Class<? extends TSLCorePlugin>> corePluginClasses = new LinkedList<>();
+
+        private Builder() {}
+
+        public Builder pluginPath(Path pluginPath) {
+            this.pluginPaths.add(pluginPath);
+            return this;
+        }
+
+        public Builder pluginPaths(List<Path> pluginPaths) {
+            this.pluginPaths.addAll(pluginPaths);
+            return this;
+        }
+
+        public Builder corePlugin(Class<? extends TSLCorePlugin> corePluginClass) {
+            this.corePluginClasses.add(corePluginClass);
+            return this;
+        }
+
+        public Builder corePlugins(List<Class<? extends TSLCorePlugin>> corePluginClasses) {
+            this.corePluginClasses.addAll(corePluginClasses);
+            return this;
+        }
+
+        public TSLPluginManager build() {
+            return new TSLPluginManager(tsl, pluginPaths, corePluginClasses);
+        }
+
+        public static Builder forTSL(TheSpawnLanguage tsl) {
+            Builder builder = new Builder();
+            builder.tsl = tsl;
+            return builder;
+        }
+
     }
 
 }

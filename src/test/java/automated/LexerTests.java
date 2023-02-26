@@ -173,7 +173,7 @@ public class LexerTests {
         String rawText = "%Tons    of   spaces ${'Hereee!'}%";
         TSLToken token = lexSingle(rawText);
         System.out.println(token);
-        TSLContext dummyContext = new TSLContext(new TheSpawnLanguage());
+        TSLContext dummyContext = new TSLContext(new TheSpawnLanguage.Bootstrapper().bootstrap());
         Assertions.assertNotNull(token);
         Assertions.assertEquals("Tons    of   spaces Hereee!", token.evaluate(dummyContext));
     }
