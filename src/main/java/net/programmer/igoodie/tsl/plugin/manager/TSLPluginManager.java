@@ -24,8 +24,10 @@ public class TSLPluginManager extends DefaultPluginManager {
     protected TheSpawnLanguage tsl;
     protected Set<String> corePluginIds;
 
-    public TSLPluginManager(TheSpawnLanguage tsl, List<Path> rootPaths, List<Class<? extends TSLCorePlugin>> corePluginClasses) {
+    protected TSLPluginManager(TheSpawnLanguage tsl, List<Path> rootPaths, List<Class<? extends TSLCorePlugin>> corePluginClasses) {
         super(rootPaths);
+
+        setSystemVersion(TheSpawnLanguage.TSL_VERSION);
 
         this.tsl = tsl;
         this.corePluginIds = new HashSet<>();
@@ -206,9 +208,7 @@ public class TSLPluginManager extends DefaultPluginManager {
         }
 
         public TSLPluginManager build() {
-            TSLPluginManager manager = new TSLPluginManager(tsl, pluginPaths, corePluginClasses);
-            manager.setSystemVersion(TheSpawnLanguage.TSL_VERSION);
-            return manager;
+            return new TSLPluginManager(tsl, pluginPaths, corePluginClasses);
         }
 
         public static Builder forTSL(TheSpawnLanguage tsl) {

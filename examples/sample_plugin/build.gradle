@@ -34,7 +34,7 @@ jar {
                 "Plugin-Class": "net.programmer.igoodie.sample_plugin.SamplePlugin",
                 "Plugin-Id": "sample_plugin",
                 "Plugin-Version": "0.0.1",
-                "Plugin-Requires": "2.0.0",
+                "Plugin-Requires": ">=2.0.0",
                 "Plugin-Description": "My sample plugin",
                 "Plugin-Provider": "iGoodie",
                 "Plugin-License": "MIT",

@@ -1,6 +1,5 @@
 package net.programmer.igoodie.tsl;
 
-import com.vdurmont.semver4j.Semver;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
@@ -36,8 +35,7 @@ import java.util.stream.Collectors;
 
 public class TheSpawnLanguage {
 
-    public static final String TSL_VERSION = "0.0.0";
-    public static final Semver TSL_SEMVER = new Semver(TSL_VERSION, Semver.SemverType.NPM);
+    public static final String TSL_VERSION = "0.0.1";
 
     private final TSLReservedNames RESERVED_NAMES;
 
@@ -106,8 +104,6 @@ public class TheSpawnLanguage {
                 .corePlugin(SpawnJS.class)
                 .corePlugins(corePluginClasses)
                 .build();
-//        pluginManager.loadPlugins();
-//        pluginManager.startPlugins();
 
         eventBuffer = new TSLEventBuffer();
     }

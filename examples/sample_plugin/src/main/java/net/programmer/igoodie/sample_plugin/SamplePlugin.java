@@ -8,6 +8,7 @@ import net.programmer.igoodie.tsl.plugin.annotation.TSLPluginLogger;
 import net.programmer.igoodie.tsl.plugin.manager.TSLPluginContext;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
 import net.programmer.igoodie.tsl.util.ValueHolder;
+import org.pf4j.ExtensionPoint;
 
 import java.util.List;
 
