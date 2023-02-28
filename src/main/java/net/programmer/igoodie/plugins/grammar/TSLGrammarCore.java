@@ -19,6 +19,7 @@ import java.util.List;
 public class TSLGrammarCore extends TSLCorePlugin {
 
     public static final TSLPluginDescriptor DESCRIPTOR = createCoreDescriptor(
+            "*",
             "tsl_core",
             "TSL Core",
             "TODO: Description here",

@@ -14,6 +14,7 @@ import java.util.List;
 public class SpawnJS extends TSLCorePlugin {
 
     public static final TSLPluginDescriptor DESCRIPTOR = createCoreDescriptor(
+            "*",
             "spawnjs",
             "SpawnJS",
             "TODO: Description here",

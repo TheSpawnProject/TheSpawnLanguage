@@ -37,6 +37,7 @@ public class TheSpawnLanguage {
 
     public static final String TSL_VERSION = "0.0.1";
 
+    private final String platform;
     private final TSLReservedNames RESERVED_NAMES;
 
     protected final Path logsPath;
@@ -70,10 +71,11 @@ public class TheSpawnLanguage {
 
     @Deprecated()
     public TheSpawnLanguage() {
-        this(Paths.get("logs"), Collections.emptyList(), Collections.emptyList());
+        this("System", Paths.get("logs"), Collections.emptyList(), Collections.emptyList());
     }
 
-    private TheSpawnLanguage(Path logsPath, List<Path> pluginPaths, List<Class<? extends TSLCorePlugin>> corePluginClasses) {
+    private TheSpawnLanguage(String platform, Path logsPath, List<Path> pluginPaths, List<Class<? extends TSLCorePlugin>> corePluginClasses) {
+        this.platform = platform;
         this.logsPath = logsPath;
 
         RESERVED_NAMES = new TSLReservedNames();
@@ -106,6 +108,10 @@ public class TheSpawnLanguage {
                 .build();
 
         eventBuffer = new TSLEventBuffer();
+    }
+
+    public String getPlatform() {
+        return platform;
     }
 
     public Path getLogsPath() {
@@ -312,9 +318,14 @@ public class TheSpawnLanguage {
 
     public static class Bootstrapper {
 
+        protected final String platform;
         protected Path logsPath = Paths.get("logs");
         protected List<Path> pluginPaths = new LinkedList<>();
         protected List<Class<? extends TSLCorePlugin>> corePluginClasses = new LinkedList<>();
+
+        public Bootstrapper(String platform) {
+            this.platform = platform;
+        }
 
         public Bootstrapper logsPath(Path logsPath) {
             this.logsPath = logsPath;
@@ -337,7 +348,7 @@ public class TheSpawnLanguage {
         }
 
         public TheSpawnLanguage bootstrap() {
-            return new TheSpawnLanguage(logsPath, pluginPaths, corePluginClasses);
+            return new TheSpawnLanguage(platform, logsPath, pluginPaths, corePluginClasses);
         }
 
     }

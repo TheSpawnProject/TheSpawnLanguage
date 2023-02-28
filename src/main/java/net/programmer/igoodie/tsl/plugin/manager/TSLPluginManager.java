@@ -6,6 +6,7 @@ import net.programmer.igoodie.tsl.logging.TSLLogHandler;
 import net.programmer.igoodie.tsl.logging.TSLLogger;
 import net.programmer.igoodie.tsl.plugin.TSLCorePlugin;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
+import net.programmer.igoodie.tsl.plugin.TSLPluginDescriptor;
 import net.programmer.igoodie.tsl.plugin.annotation.TSLPluginInstance;
 import net.programmer.igoodie.tsl.plugin.annotation.TSLPluginLogger;
 import org.pf4j.*;
@@ -73,7 +74,23 @@ public class TSLPluginManager extends DefaultPluginManager {
         return new SingletonExtensionFactory(this);
     }
 
+    @Override
+    protected PluginDescriptorFinder createPluginDescriptorFinder() {
+        return new TSLPluginDescriptorFinder();
+    }
+
     /* ---------------------- */
+
+    @Override
+    protected boolean isPluginValid(PluginWrapper pluginWrapper) {
+        if (!super.isPluginValid(pluginWrapper)) return false;
+
+        // Check if plugin targets our system's platform
+        TSLPluginDescriptor descriptor = (TSLPluginDescriptor) pluginWrapper.getDescriptor();
+        String targetPlatform = descriptor.getTargetPlatform();
+        String systemPlatform = tsl.getPlatform();
+        return targetPlatform.equals("*") || targetPlatform.equalsIgnoreCase(systemPlatform);
+    }
 
     @Override
     protected PluginWrapper loadPluginFromPath(Path pluginPath) {
