@@ -43,7 +43,7 @@ public abstract class TSLCorePlugin extends TSLPlugin {
                 pluginAuthor,
                 license,
                 TheSpawnLanguage.TSL_VERSION, // Core Plugins shall always target system version, as they live in the system code
-                Collections.emptyList()
+                Collections.emptyList() // Core Plugins shall not depend on other plugins.
         );
     }
 
