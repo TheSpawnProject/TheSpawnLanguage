@@ -36,7 +36,6 @@ public class TSLPluginManager extends DefaultPluginManager {
         for (Class<? extends TSLCorePlugin> corePluginClass : corePluginClasses) {
             try {
                 TSLCorePlugin corePlugin = corePluginClass.newInstance();
-                this.corePluginIds.add(corePlugin.getDescriptor().getPluginId());
                 loadCorePlugin(corePlugin);
 
             } catch (InstantiationException | IllegalAccessException e) {
@@ -65,7 +64,7 @@ public class TSLPluginManager extends DefaultPluginManager {
     /* ---------------------- */
 
     @Override
-    protected PluginFactory createPluginFactory() {
+    protected TSLPluginFactory createPluginFactory() {
         return new TSLPluginFactory();
     }
 
@@ -75,7 +74,7 @@ public class TSLPluginManager extends DefaultPluginManager {
     }
 
     @Override
-    protected PluginDescriptorFinder createPluginDescriptorFinder() {
+    protected TSLPluginDescriptorFinder createPluginDescriptorFinder() {
         return new TSLPluginDescriptorFinder();
     }
 
@@ -118,18 +117,52 @@ public class TSLPluginManager extends DefaultPluginManager {
         return pluginId;
     }
 
-    @Override
-    protected PluginState stopPlugin(String pluginId, boolean stopDependents) {
-        if (corePluginIds.contains(pluginId))
-            throw new IllegalArgumentException("Cannot stop Core Plugins.");
-        return super.stopPlugin(pluginId, stopDependents);
-    }
+    public String loadPluginWithDescriptor(Class<? extends TSLPlugin> tslPluginClass, TSLPluginDescriptor descriptor) {
+        ClassLoader pluginClassLoader = tslPluginClass.getClassLoader();
+        String pluginId = descriptor.getPluginId();
 
-    @Override
-    protected boolean unloadPlugin(String pluginId, boolean unloadDependents) {
-        if (corePluginIds.contains(pluginId))
-            throw new IllegalArgumentException("Cannot unload Core Plugins.");
-        return super.unloadPlugin(pluginId, unloadDependents);
+        PluginWrapper pluginWrapper = createPluginWrapper(descriptor,
+                new File(pluginId).toPath(), pluginClassLoader);
+
+        Plugin plugin = getPluginFactory().create(pluginWrapper);
+        if (!(plugin instanceof TSLPlugin)) {
+            throw new RuntimeException("Plugin factory generated an invalid class for " + pluginId);
+        }
+
+        TSLPlugin tslPlugin = ((TSLPlugin) plugin);
+
+        assignAnnotatedFields(tslPlugin);
+
+        validatePluginDescriptor(descriptor);
+
+        if (plugins.containsKey(pluginId)) {
+            PluginWrapper loadedPlugin = getPlugin(pluginId);
+            throw new PluginRuntimeException("There is an already loaded tslPlugin ({}) "
+                    + "with the same id ({}). Simultaneous loading "
+                    + "of plugins with the same PluginId is not currently supported.\n"
+                    + "As a workaround you may include PluginVersion and PluginProvider "
+                    + "in PluginId.",
+                    loadedPlugin, pluginId);
+        }
+
+        // test for disabled tslPlugin
+        if (isPluginDisabled(descriptor.getPluginId())) {
+            pluginWrapper.setPluginState(PluginState.DISABLED);
+        }
+
+        // validate the tslPlugin
+        if (!isPluginValid(pluginWrapper)) {
+            pluginWrapper.setPluginState(PluginState.DISABLED);
+        }
+
+        // add tslPlugin to the list with plugins
+        plugins.put(pluginId, pluginWrapper);
+        getResolvedPlugins().add(pluginWrapper);
+
+        // add tslPlugin class loader to the list with class loaders
+        getPluginClassLoaders().put(pluginId, pluginClassLoader);
+
+        return pluginId;
     }
 
     protected final void loadCorePlugin(TSLCorePlugin tslPlugin) {
@@ -176,6 +209,22 @@ public class TSLPluginManager extends DefaultPluginManager {
 
         // add tslPlugin class loader to the list with class loaders
         getPluginClassLoaders().put(pluginId, pluginClassLoader);
+
+        this.corePluginIds.add(pluginId);
+    }
+
+    @Override
+    protected PluginState stopPlugin(String pluginId, boolean stopDependents) {
+        if (corePluginIds.contains(pluginId))
+            throw new IllegalArgumentException("Cannot stop Core Plugins.");
+        return super.stopPlugin(pluginId, stopDependents);
+    }
+
+    @Override
+    protected boolean unloadPlugin(String pluginId, boolean unloadDependents) {
+        if (corePluginIds.contains(pluginId))
+            throw new IllegalArgumentException("Cannot unload Core Plugins.");
+        return super.unloadPlugin(pluginId, unloadDependents);
     }
 
     protected final void assignAnnotatedFields(TSLPlugin plugin) {

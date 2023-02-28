@@ -95,6 +95,10 @@ public class TSLArguments {
         public Optional<T> parse(TSLToken token, TSLContext context) throws TSLRuntimeError {
             if (token == null) return Optional.empty();
             String value = token.evaluate(context);
+            return parse(value);
+        }
+
+        public Optional<T> parse(String value) throws TSLRuntimeError {
             T parsed = this.logic.parse(value);
             return Optional.ofNullable(parsed);
         }
