@@ -27,15 +27,18 @@ dependencies {
     testImplementation 'org.jetbrains:annotations:23.1.0'
 
     // RuntimeGoodies
-    implementation "com.github.iGoodie.RuntimeGoodies:core:$version_RuntimeGoodies"
-    implementation "com.github.iGoodie.RuntimeGoodies:json:$version_RuntimeGoodies"
+    shadow "com.github.iGoodie.RuntimeGoodies:core:$version_RuntimeGoodies"
+    shadow "com.github.iGoodie.RuntimeGoodies:json:$version_RuntimeGoodies"
+    testImplementation "com.github.iGoodie.RuntimeGoodies:core:$version_RuntimeGoodies"
+    testImplementation "com.github.iGoodie.RuntimeGoodies:json:$version_RuntimeGoodies"
 
     // Rhino - Used in JS Engine
     shadow "org.mozilla:rhino:$version_Rhino"
     testImplementation "org.mozilla:rhino:$version_Rhino"
 
     // PF4J - Plugin Management Framework
-    implementation "org.pf4j:pf4j:$version_PF4J"
+    shadow "org.pf4j:pf4j:$version_PF4J"
+    testImplementation "org.pf4j:pf4j:$version_PF4J"
 
     // JUnit
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
@@ -48,6 +51,8 @@ shadowJar {
     configurations = [project.configurations.shadow]
     classifier ""
     relocate 'org.mozilla', 'tslshadow.org.mozilla'
+    relocate 'net.programmer.igoodie.goodies', 'tslshadow.net.programmer.igoodie.goodies'
+    relocate 'org.pf4j', 'tslshadow.org.pf4j'
 }
 
 artifacts {
