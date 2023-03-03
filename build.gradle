@@ -50,9 +50,12 @@ shadowJar {
     archiveName = "$baseName-$version.$extension"
     configurations = [project.configurations.shadow]
     classifier ""
-    relocate 'org.mozilla', 'tslshadow.org.mozilla'
-    relocate 'net.programmer.igoodie.goodies', 'tslshadow.net.programmer.igoodie.goodies'
-    relocate 'org.pf4j', 'tslshadow.org.pf4j'
+    relocate 'org.mozilla', 'net.programmer.igoodie.relocated.org.mozilla'
+    relocate 'net.programmer.igoodie.goodies', 'net.programmer.igoodie.relocated.goodies'
+    relocate 'org.pf4j', 'net.programmer.igoodie.relocated.org.pf4j'
+    relocate 'com.github.zafarkhaja', 'net.programmer.igoodie.relocated.com.github.zafarkhaja'
+    relocate 'com.google.gson', 'net.programmer.igoodie.relocated.com.google.gson'
+    relocate 'org.slf4j', 'net.programmer.igoodie.relocated.org.slf4j'
 }
 
 artifacts {
