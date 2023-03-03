@@ -82,7 +82,7 @@ public class TSLArguments {
 
     public static class Parser<T> {
 
-        interface ParseLogic<T> {
+        public interface ParseLogic<T> {
             T parse(String value) throws TSLRuntimeError;
         }
 
