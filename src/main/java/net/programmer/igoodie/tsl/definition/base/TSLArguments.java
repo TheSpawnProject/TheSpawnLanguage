@@ -88,15 +88,15 @@ public class TSLArguments {
             T parse(String value) throws TSLRuntimeError;
         }
 
-        protected Class<T> type;
+        protected Class<?> type;
         protected ParseLogic<T> logic;
 
-        public Parser(Class<T> type, ParseLogic<T> logic) {
+        public Parser(Class<?> type, ParseLogic<T> logic) {
             this.type = type;
             this.logic = logic;
         }
 
-        public Class<T> getType() {
+        public Class<?> getType() {
             return type;
         }
 
