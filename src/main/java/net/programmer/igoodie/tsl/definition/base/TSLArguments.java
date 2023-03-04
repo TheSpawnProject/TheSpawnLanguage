@@ -10,7 +10,9 @@ import java.util.Optional;
 
 public class TSLArguments {
 
-    public static Parser<Boolean> BOOLEAN = new Parser<>(value -> {
+    public static Parser<String> STRING = new Parser<>(String.class, value -> value);
+
+    public static Parser<Boolean> BOOLEAN = new Parser<>(Boolean.class, value -> {
         if (value.equalsIgnoreCase("TRUE") || value.equals("1")) {
             return true;
         } else {
@@ -18,7 +20,7 @@ public class TSLArguments {
         }
     });
 
-    public static Parser<Double> DOUBLE = new Parser<>(value -> {
+    public static Parser<Double> DOUBLE = new Parser<>(Double.class, value -> {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
@@ -26,7 +28,7 @@ public class TSLArguments {
         }
     });
 
-    public static Parser<Float> FLOAT = new Parser<>(value -> {
+    public static Parser<Float> FLOAT = new Parser<>(Float.class, value -> {
         try {
             return Float.parseFloat(value);
         } catch (NumberFormatException e) {
@@ -41,7 +43,7 @@ public class TSLArguments {
      *     <li>"9.99" -> 9 (Rounds down)</li>
      * </ul>
      */
-    public static Parser<Integer> INTEGER = new Parser<>(value ->
+    public static Parser<Integer> INTEGER = new Parser<>(Integer.class, value ->
             DOUBLE.logic.parse(value).intValue());
 
     /**
@@ -51,7 +53,7 @@ public class TSLArguments {
      *     <li>"9.99" -> 9 (Rounds down)</li>
      * </ul>
      */
-    public static Parser<Short> SHORT = new Parser<>(value ->
+    public static Parser<Short> SHORT = new Parser<>(Short.class, value ->
             DOUBLE.logic.parse(value).shortValue());
 
     /**
@@ -61,10 +63,10 @@ public class TSLArguments {
      *     <li>"9.99" -> 9 (Rounds down)</li>
      * </ul>
      */
-    public static Parser<Byte> BYTE = new Parser<>(value ->
+    public static Parser<Byte> BYTE = new Parser<>(Byte.class, value ->
             DOUBLE.logic.parse(value).byteValue());
 
-    public static Parser<java.util.UUID> UUID = new Parser<>(value -> {
+    public static Parser<java.util.UUID> UUID = new Parser<>(java.util.UUID.class, value -> {
         try {
             return java.util.UUID.fromString(value);
         } catch (IllegalArgumentException e) {
@@ -72,7 +74,7 @@ public class TSLArguments {
         }
     });
 
-    public static Parser<OffsetDateTime> ISO_DATE = new Parser<>(value -> {
+    public static Parser<OffsetDateTime> ISO_DATE = new Parser<>(OffsetDateTime.class, value -> {
         try {
             return OffsetDateTime.parse(value);
         } catch (DateTimeParseException e) {
@@ -86,10 +88,16 @@ public class TSLArguments {
             T parse(String value) throws TSLRuntimeError;
         }
 
+        protected Class<T> type;
         protected ParseLogic<T> logic;
 
-        public Parser(ParseLogic<T> logic) {
+        public Parser(Class<T> type, ParseLogic<T> logic) {
+            this.type = type;
             this.logic = logic;
+        }
+
+        public Class<T> getType() {
+            return type;
         }
 
         public Optional<T> parse(TSLToken token, TSLContext context) throws TSLRuntimeError {

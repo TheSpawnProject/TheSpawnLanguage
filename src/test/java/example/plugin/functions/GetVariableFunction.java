@@ -1,6 +1,7 @@
 package example.plugin.functions;
 
 import example.plugin.ExamplePlugin;
+import net.programmer.igoodie.tsl.definition.base.TSLArguments;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.TSLFunction;
 import net.programmer.igoodie.tsl.function.scope.JSScope;
@@ -17,7 +18,7 @@ public class GetVariableFunction extends TSLFunction {
 
     @Override
     public Object call(TSLContext tslContext, JSScope scope, Object... arguments) throws TSLExpressionException {
-        String variableName = stringArgument(arguments, 0);
+        String variableName = requiredArgument(TSLArguments.STRING, arguments, 0);
         return ExamplePlugin.VARIABLE_CACHE.get(variableName);
     }
 

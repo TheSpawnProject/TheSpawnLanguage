@@ -2,6 +2,7 @@ package net.programmer.igoodie.plugins.spawnjs.corelib.functions;
 
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLFunctionLibrary;
+import net.programmer.igoodie.tsl.definition.base.TSLArguments;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.function.TSLFunction;
@@ -26,7 +27,8 @@ public class RequireFunction extends TSLFunction {
 
     @Override
     public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException {
-        String moduleArgument = stringArgument(arguments, 0);
+        String moduleArgument = requiredArgument(TSLArguments.STRING, arguments, 0);
+//        String moduleArgument = stringArgument(arguments, 0);
 
         Object resolvedLibrary = tryResolvingLibrary(context, moduleArgument);
 
@@ -48,7 +50,7 @@ public class RequireFunction extends TSLFunction {
 
         String[] modulePaths = moduleArgument.split("/");
 
-        String namespace = stringArgument(modulePaths, 0);
+        String namespace = requiredArgument(TSLArguments.STRING, modulePaths, 0);
         String libraryName = namespace.contains(":") ? namespace
                 : namespace + ":" + TSLFunctionLibrary.ROOT_LIBRARY_NAME;
 

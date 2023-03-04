@@ -1,5 +1,6 @@
 package example.plugin.functions;
 
+import net.programmer.igoodie.tsl.definition.base.TSLArguments;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.TSLFunction;
 import net.programmer.igoodie.tsl.function.scope.JSScope;
@@ -16,8 +17,8 @@ public class MultFunction extends TSLFunction {
 
     @Override
     public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException {
-        Number a = numberArgument(arguments, 0);
-        Number b = numberArgument(arguments, 1);
+        Number a = requiredArgument(TSLArguments.DOUBLE, arguments, 0);
+        Number b = requiredArgument(TSLArguments.DOUBLE, arguments, 1);
         return a.doubleValue() * b.doubleValue();
     }
 }

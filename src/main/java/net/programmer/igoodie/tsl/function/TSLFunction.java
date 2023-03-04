@@ -1,8 +1,8 @@
 package net.programmer.igoodie.tsl.function;
 
-import net.programmer.igoodie.goodies.util.TypeUtilities;
 import net.programmer.igoodie.goodies.util.accessor.ArrayAccessor;
 import net.programmer.igoodie.tsl.compat.LSPFeatures;
+import net.programmer.igoodie.tsl.definition.base.TSLArguments;
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.function.binding.TSLContextGetter;
@@ -44,30 +44,26 @@ public abstract class TSLFunction extends BaseFunction implements TSLFunctionBin
 
     /* --------------------------------- */
 
-    // TODO: Extract argument reading logic to a more fitting place
-
-    protected String stringArgument(Object[] args, int index) {
-        return stringArgumentOpt(args, index).orElseThrow(
-                () -> new TSLExpressionException("Expected string argument at index:" + index));
+    protected <T> T requiredArgument(TSLArguments.Parser<T> parser, Object[] args, int index) {
+        return optionalArgument(parser, args, index)
+                .orElseThrow(() -> new TSLExpressionException("Expected " + parser.getType().getSimpleName() + " argument at index: " + index));
     }
 
-    protected Optional<String> stringArgumentOpt(Object[] args, int index) {
-        Object element = ArrayAccessor.of(args).get(index);
-        return element instanceof String
-                ? Optional.of(((String) element))
-                : Optional.empty();
-    }
+    protected <T> Optional<T> optionalArgument(TSLArguments.Parser<T> parser, Object[] args, int index) {
+        Object value = ArrayAccessor.of(args).get(index).orElse(null);
+        if (value == null) return Optional.empty();
 
-    protected Number numberArgument(Object[] args, int index) {
-        return numberArgumentOpt(args, index).orElseThrow(
-                () -> new TSLExpressionException("Expected number argument at index:" + index));
-    }
+        if (parser.getType().isAssignableFrom(value.getClass())) {
+            @SuppressWarnings("unchecked")
+            T t = (T) value;
+            return Optional.of(t);
+        }
 
-    protected Optional<Number> numberArgumentOpt(Object[] args, int index) {
-        Object element = ArrayAccessor.of(args).get(index);
-        return element != null && TypeUtilities.isNumeric(element.getClass())
-                ? Optional.of(((Number) element))
-                : Optional.empty();
+        if (value instanceof String) {
+            return parser.parse(((String) value));
+        }
+
+        return Optional.empty();
     }
 
 }
