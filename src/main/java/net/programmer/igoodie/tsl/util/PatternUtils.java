@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ExpressionUtils {
+public class PatternUtils {
 
     public static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{(.+?)}");
     public static final Pattern CAPTURE_PARAMETER_PATTERN = Pattern.compile("\\{\\{(.+?)}}");
@@ -32,19 +32,21 @@ public class ExpressionUtils {
         Matcher matcher = expressionPattern.matcher(input);
         StringBuilder builder = new StringBuilder();
 
-        int start = 0;
+        int cursor = 0;
         try {
             while (matcher.find()) {
-                // TODO: Do not evaluate if escaped
-
+                int matchBegin = matcher.start();
                 String expression = matcher.group(1);
+                boolean isEscaped = matchBegin != 0 && input.charAt(matchBegin - 1) == '\\';
 
                 // Append previous part
-                builder.append(input, start, matcher.start());
-                start = matcher.end();
+                builder.append(input, cursor, isEscaped ? matchBegin - 1 : matchBegin);
+                cursor = matcher.end();
 
                 // Evaluate and append new value
-                builder.append(transformer.transform(expression, matcher));
+                builder.append(isEscaped
+                        ? matcher.group(0) // Do not evaluate, if escaped
+                        : transformer.transform(expression, matcher));
             }
 
         } catch (IndexOutOfBoundsException e) {
@@ -52,7 +54,7 @@ public class ExpressionUtils {
         }
 
         // Append trailing chars
-        builder.append(input, start, input.length());
+        builder.append(input, cursor, input.length());
 
         return builder.toString();
     }
@@ -60,13 +62,14 @@ public class ExpressionUtils {
     public static void traverseMatches(String input, Pattern expressionPattern, BiConsumer<Integer, Integer> rangeConsumer) {
         Matcher matcher = expressionPattern.matcher(input);
         while (matcher.find()) {
-            rangeConsumer.accept(matcher.start(), matcher.end());
+            int matchBegin = matcher.start();
+            boolean isEscaped = matchBegin != 0 && input.charAt(matchBegin - 1) == '\\';
+            if (!isEscaped) rangeConsumer.accept(matcher.start(), matcher.end());
         }
     }
 
-    // {{x}} \{{y}} --> x \{{y}}
-    // ${x} \${y} --> x \${y}
     // ${"${}"} --> ${}
+    // ${{{x}} + {{y}}} --> ${1 + 2} --> 3
     public static String replaceX(String text, String begin) {
         return null; // TODO: Find a way to handle escapes in different contexts. Nuke this class if needed (?)
     }

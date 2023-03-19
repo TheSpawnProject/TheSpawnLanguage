@@ -4,7 +4,7 @@ import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.token.*;
-import net.programmer.igoodie.tsl.util.ExpressionUtils;
+import net.programmer.igoodie.tsl.util.PatternUtils;
 
 import java.util.*;
 
@@ -117,7 +117,7 @@ public class TSLCaptureSnippet extends TSLSnippet {
     }
 
     public static String fillSingleToken(String target, Map<String, TSLToken> argumentMap) {
-        return ExpressionUtils.replaceCaptureParams(target, parameterName -> {
+        return PatternUtils.replaceCaptureParams(target, parameterName -> {
             TSLToken argument = argumentMap.get(parameterName);
             if (argument == null) return "{{" + parameterName + "}}";
             return argument.getRaw();

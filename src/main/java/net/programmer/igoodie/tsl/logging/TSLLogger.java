@@ -2,7 +2,7 @@ package net.programmer.igoodie.tsl.logging;
 
 import net.programmer.igoodie.goodies.util.accessor.ArrayAccessor;
 import net.programmer.igoodie.tsl.plugin.TSLPlugin;
-import net.programmer.igoodie.tsl.util.ExpressionUtils;
+import net.programmer.igoodie.tsl.util.PatternUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -53,7 +53,7 @@ public class TSLLogger {
 
         String formatted = String.format(message, arguments);
 
-        return ExpressionUtils.replacePattern(formatted, FORMAT_ARG_PATTERN, (placeholder, matcher) -> {
+        return PatternUtils.replacePattern(formatted, FORMAT_ARG_PATTERN, (placeholder, matcher) -> {
             String indexGroup = matcher.group("index");
 
             int argumentIndex = indexGroup == null || indexGroup.isEmpty()
