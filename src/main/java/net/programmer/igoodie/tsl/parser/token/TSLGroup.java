@@ -33,6 +33,7 @@ public class TSLGroup extends TSLToken {
     @Override
     public String evaluate(TSLContext context) {
         try {
+            // TODO: BUG -> SUMMON skeleton ~ ~ ~ %{CustomName:"\"${actor}'s Knight\""}%
             return groupTokens.stream()
                     .map(token -> token.evaluate(context))
                     .collect(Collectors.joining(" "));

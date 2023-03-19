@@ -65,7 +65,7 @@ public class TSLActionSnippet extends TSLSnippet {
 
                 } catch (IllegalArgumentException e) {
                     // TODO: Fix that non-sense message
-                    throw new TSLSyntaxError("Capture arguments MUST NOT contain multiple tokens at once. " + e.getMessage(), token);
+                    throw new TSLSyntaxError("Capture arguments MUST NOT contain multiple tokens at once.", token).causedBy(e);
                 }
 
             } else {
