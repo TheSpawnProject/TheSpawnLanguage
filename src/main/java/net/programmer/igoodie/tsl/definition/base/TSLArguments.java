@@ -1,7 +1,7 @@
 package net.programmer.igoodie.tsl.definition.base;
 
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 
 import java.time.OffsetDateTime;

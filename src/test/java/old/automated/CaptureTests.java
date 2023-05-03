@@ -1,10 +1,10 @@
 package old.automated;
 
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
-import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.legacy.parser.TSLParser;
+import net.programmer.igoodie.legacy.parser.snippet.TSLCaptureSnippet;
+import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
+import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;

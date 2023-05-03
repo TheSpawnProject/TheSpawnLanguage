@@ -1,87 +1,64 @@
 package net.programmer.igoodie.tsl.parser.token;
 
+import net.programmer.igoodie.tsl.parser.tree.TSLParseTreeEntry;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-public abstract class TSLToken {
+public abstract class TSLToken implements TSLParseTreeEntry {
 
-    protected int line, character;
+    /**
+     * 0-indexed value
+     */
+    protected int line, col;
 
-    public TSLToken(int line, int character) {
+    public TSLToken(int line, int col) {
         this.line = line;
-        this.character = character;
+        this.col = col;
     }
 
     public int getLine() {
         return line;
     }
 
-    public int getCharacter() {
-        return character;
+    public int getCol() {
+        return col;
     }
 
-    public abstract String getTypeName();
+    /* --------------------------------------- */
 
-    public abstract String getRaw();
-
-    public abstract String evaluate(TSLContext context);
-
-    public boolean hasNamespace() {
-        return getNamespace() != null;
+    public Optional<String> getNamespace() {
+        return Optional.empty();
     }
 
-    public @Nullable String getNamespace() {
-        return null;
-    }
+    /* --------------------------------------- */
 
-    public boolean isTrue(TSLContext context) {
-        String evaluation = evaluate(context);
-        return evaluation.equalsIgnoreCase("TRUE") || evaluation.equals("1");
+    public abstract @NotNull String getTokenType();
+
+    public abstract @NotNull String getRaw();
+
+    public abstract boolean equalValues(TSLToken otherToken);
+
+    protected <T extends TSLToken> Optional<T> castTokenType(Class<T> type, TSLToken argument) {
+        if (!type.isInstance(argument)) return Optional.empty();
+        return Optional.of(type.cast(argument));
     }
 
     @Override
-    public String toString() {
-        return String.format("%s(%s)", getClass().getSimpleName(), getRaw());
+    public boolean equals(Object obj) {
+        if (!(obj instanceof TSLToken)) return false;
+        TSLToken that = (TSLToken) obj;
+        return this.equalValues(that)
+                && this.line == that.line
+                && this.col == that.col;
     }
 
-    /* ---------------------------- */
+    /* --------------------------------------- */
 
-    public boolean isCaptureCall() {
-        return this instanceof TSLCaptureCall;
-    }
-
-    public boolean isCaptureParameter() {
-        return this instanceof TSLCaptureParameter;
-    }
-
-    public boolean isDecoratorCall() {
-        return this instanceof TSLDecoratorCall;
-    }
-
-    public boolean isExpression() {
-        return this instanceof TSLExpression;
-    }
-
-    public boolean isGroup() {
-        return this instanceof TSLGroup;
-    }
-
-    public boolean isNest() {
-        return this instanceof TSLNest;
-    }
-
-    public boolean isPlainWord() {
-        return this instanceof TSLPlainWord;
-    }
-
-    public boolean isSymbol() {
-        return this instanceof TSLSymbol;
-    }
-
-    /* ---------------------------- */
+    public abstract @NotNull String evaluate(TSLContext context);
 
     public static List<String> evaluateAll(TSLContext context, List<TSLToken> tokens) {
         return tokens.stream()

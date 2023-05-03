@@ -7,8 +7,8 @@ import net.programmer.igoodie.tsl.definition.TSLTag;
 import net.programmer.igoodie.tsl.definition.base.TSLArguments;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
+import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.jetbrains.annotations.NotNull;
 

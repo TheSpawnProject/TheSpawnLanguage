@@ -3,7 +3,7 @@ package automated;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
-import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.legacy.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import org.junit.jupiter.api.Assertions;

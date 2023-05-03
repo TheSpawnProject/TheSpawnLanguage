@@ -6,8 +6,8 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.parser.TSLParsingContext;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.legacy.parser.TSLParsingContext;
+import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 
 import java.util.stream.Collectors;

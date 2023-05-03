@@ -1,9 +1,9 @@
 package automated;
 
+import net.programmer.igoodie.legacy.parser.token.*;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
-import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
-import net.programmer.igoodie.tsl.parser.token.*;
+import net.programmer.igoodie.legacy.parser.TSLTokenBuffer;
+import net.programmer.igoodie.legacy.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

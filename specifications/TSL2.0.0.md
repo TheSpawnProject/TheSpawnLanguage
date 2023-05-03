@@ -119,6 +119,15 @@ ON Program Initialize
 Multi-line comments start with a hash followed by an asterisk character (`#*`) and makes the interpreter ignore the
 content up until the next asterisk character followed by a hash character (`*#`).
 
+```tsl
+#* This is a
+ Multi-line comment
+ occupying multiple lines. *#
+PRINT #* This is also a valid multi-line comment. *# %Hello World!%
+#* This too! *#
+ON Program Initialize
+```
+
 # Yet to be continued...
 
 - TODO: IMPORT inherits captures

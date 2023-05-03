@@ -1,9 +1,9 @@
 package net.programmer.igoodie.tsl.exception;
 
 import net.programmer.igoodie.tsl.exception.reason.ExceptionReason;
-import net.programmer.igoodie.tsl.parser.TSLTokenBuffer;
-import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.legacy.parser.TSLTokenBuffer;
+import net.programmer.igoodie.legacy.parser.snippet.TSLSnippet;
+import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import org.jetbrains.annotations.Nullable;
 

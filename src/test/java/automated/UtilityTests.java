@@ -1,9 +1,9 @@
 package automated;
 
-import net.programmer.igoodie.tsl.parser.snippet.TSLSnippet;
-import net.programmer.igoodie.tsl.parser.token.TSLExpression;
-import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.legacy.parser.snippet.TSLSnippet;
+import net.programmer.igoodie.legacy.parser.token.TSLExpression;
+import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
+import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.CollectionUtils;
 import org.junit.jupiter.api.Assertions;

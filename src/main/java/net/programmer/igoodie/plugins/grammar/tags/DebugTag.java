@@ -5,8 +5,8 @@ import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCoreAttributes;
 import net.programmer.igoodie.tsl.definition.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
-import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
+import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.jetbrains.annotations.NotNull;
 

@@ -4,8 +4,8 @@ import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.tsl.function.scope.JSScope;
-import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.legacy.parser.snippet.TSLCaptureSnippet;
+import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

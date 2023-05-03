@@ -1,60 +1,51 @@
 package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.runtime.TSLContext;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+import java.util.Optional;
 
 public class TSLPlainWord extends TSLToken {
 
-    protected String rawWord;
+    protected String plainWord;
 
-    public TSLPlainWord(int line, int character, String rawWord) {
-        super(line, character);
-        this.rawWord = rawWord;
-    }
-
-    public String getRawWord() {
-        return rawWord;
-    }
-
-    public boolean isTrue() {
-        String word = getRawWord();
-        return word.equalsIgnoreCase("TRUE")
-                || word.equals("1");
-    }
-
-    public boolean isFalse() {
-        String word = getRawWord();
-        return word.equalsIgnoreCase("FALSE")
-                || word.equals("0");
-    }
-
-    @Nullable
-    public String getNamespace() {
-        if (!rawWord.contains(".")) return null;
-        return rawWord.split("\\.")[0];
-    }
-
-    public String getValue() {
-        if (!rawWord.contains(".")) return rawWord;
-        return rawWord.split("\\.")[1];
+    public TSLPlainWord(int line, int col, String plainWord) {
+        super(line, col);
+        this.plainWord = plainWord;
     }
 
     @Override
-    public String getTypeName() {
+    public Optional<String> getNamespace() {
+        if (!plainWord.contains(".")) return Optional.empty();
+        return Optional.ofNullable(plainWord.split("\\.")[0]);
+    }
+
+    public String getValue() {
+        if (!plainWord.contains(".")) return plainWord;
+        return plainWord.split("\\.")[1];
+    }
+
+    @Override
+    public @NotNull String getTokenType() {
         return "Plain Word";
     }
 
     @Override
-    public String getRaw() {
-        return getRawWord();
+    public @NotNull String getRaw() {
+        return this.plainWord;
     }
 
     @Override
-    public String evaluate(TSLContext context) {
-        return getRawWord()
-                .replace("\\%", "%")
-                .replace("\\$", "$")
-                .replace("\\\\", "\\");
+    public boolean equalValues(TSLToken otherToken) {
+        return castTokenType(TSLPlainWord.class, otherToken)
+                .filter(that -> Objects.equals(that.plainWord, this.plainWord))
+                .isPresent();
+    }
+
+    @Override
+    public @NotNull String evaluate(TSLContext context) {
+        return getRaw();
     }
 
 }

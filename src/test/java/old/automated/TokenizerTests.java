@@ -1,7 +1,7 @@
 package old.automated;
 
-import net.programmer.igoodie.tsl.parser.TSLTokenizer;
-import net.programmer.igoodie.tsl.parser.token.*;
+import net.programmer.igoodie.legacy.parser.TSLTokenizer;
+import net.programmer.igoodie.legacy.parser.token.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import util.TestUtils;

@@ -1,38 +1,41 @@
 package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.runtime.TSLContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TSLSymbol extends TSLToken {
 
-    protected Type type;
+    protected Type symbolType;
 
-    public TSLSymbol(int line, int character, Type type) {
-        super(line, character);
-        this.type = type;
+    public TSLSymbol(int line, int col, Type symbolType) {
+        super(line, col);
+        this.symbolType = symbolType;
     }
 
     @Override
-    public String getTypeName() {
+    public @NotNull String getTokenType() {
         return "Symbol";
     }
 
     @Override
-    public String getRaw() {
-        return type.getSymbol();
+    public @NotNull String getRaw() {
+        return symbolType.getSymbol();
     }
 
     @Override
-    public String evaluate(TSLContext context) {
-        return type.getSymbol();
+    public @NotNull String evaluate(TSLContext context) {
+        return getRaw();
     }
 
-    public Type getType() {
-        return type;
-    }
-
-    public static boolean equals(TSLToken token, TSLSymbol.Type symbol) {
-        return token instanceof TSLSymbol
-                && ((TSLSymbol) token).getType() == symbol;
+    @Override
+    public boolean equalValues(TSLToken otherToken) {
+        return castTokenType(TSLSymbol.class, otherToken)
+                .filter(that -> that.symbolType == this.symbolType)
+                .isPresent();
     }
 
     public enum Type {
@@ -42,6 +45,18 @@ public class TSLSymbol extends TSLToken {
         MULTI_LINE_COMMENT_BEGIN("#*"),
         MULTI_LINE_COMMENT_END("*#"),
         SINGLE_LINE_COMMENT("#");
+
+        private static final Map<String, Type> REGISTRY = new HashMap<>();
+
+        static {
+            for (Type type : values()) {
+                REGISTRY.put(type.symbol, type);
+            }
+        }
+
+        public static @Nullable Type bySymbol(String symbol) {
+            return REGISTRY.get(symbol);
+        }
 
         private final String symbol;
 
