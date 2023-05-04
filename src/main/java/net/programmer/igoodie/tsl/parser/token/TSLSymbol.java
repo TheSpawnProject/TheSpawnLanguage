@@ -1,6 +1,8 @@
 package net.programmer.igoodie.tsl.parser.token;
 
+import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
+import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,8 +13,8 @@ public class TSLSymbol extends TSLToken {
 
     protected Type symbolType;
 
-    public TSLSymbol(int line, int col, Type symbolType) {
-        super(line, col);
+    public TSLSymbol(TextPosition beginPos, TextPosition endPos, Type symbolType) {
+        super(beginPos, endPos);
         this.symbolType = symbolType;
     }
 
@@ -33,7 +35,7 @@ public class TSLSymbol extends TSLToken {
 
     @Override
     public boolean equalValues(TSLToken otherToken) {
-        return castTokenType(TSLSymbol.class, otherToken)
+        return TSLReflectionUtils.castToClass(TSLSymbol.class, otherToken)
                 .filter(that -> that.symbolType == this.symbolType)
                 .isPresent();
     }

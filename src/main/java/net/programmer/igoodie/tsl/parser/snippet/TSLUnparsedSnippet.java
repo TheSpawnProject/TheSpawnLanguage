@@ -5,10 +5,14 @@ import net.programmer.igoodie.tsl.parser.snippet.base.TSLSnippetEntry;
 
 import java.util.List;
 
-public class TSLNestSnippet extends TSLSnippet implements TSLSnippetEntry {
+public class TSLUnparsedSnippet extends TSLSnippet {
 
-    public TSLNestSnippet(List<TSLSnippetEntry> entries) {
+    public TSLUnparsedSnippet(List<TSLSnippetEntry> entries) {
         super(entries);
+    }
+
+    public void pushEntry(TSLSnippetEntry entry) {
+        this.snippetEntries.add(entry);
     }
 
 }

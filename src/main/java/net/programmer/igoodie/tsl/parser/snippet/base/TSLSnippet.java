@@ -1,8 +1,7 @@
-package net.programmer.igoodie.legacy.parser.snippet;
+package net.programmer.igoodie.tsl.parser.snippet.base;
 
-import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
-import net.programmer.igoodie.tsl.util.CollectionUtils;
+import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -10,65 +9,67 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class TSLSnippet implements Collection<TSLToken> {
+public abstract class TSLSnippet implements Collection<TSLSnippetEntry> {
 
-    protected List<TSLToken> allTokens;
+    protected List<TSLSnippetEntry> snippetEntries;
 
-    public TSLSnippet(List<TSLToken> allTokens) {
-        if (allTokens.size() <= 0) {
-            throw new TSLInternalError("A Snippet MUST have at least one token.");
+    public TSLSnippet(List<TSLSnippetEntry> entries) {
+        if (entries.size() == 0) {
+            throw new TSLInternalError("A snippet MUST have at least one entry.");
         }
 
-        this.allTokens = allTokens;
+        this.snippetEntries = entries;
     }
 
-    public List<TSLToken> getAllTokens() {
-        return allTokens;
+    public List<TSLSnippetEntry> getSnippetEntries() {
+        return snippetEntries;
     }
 
-    public int getBeginningLine() {
-        return allTokens.get(0).getLine();
+    public TextPosition getBeginningPos() {
+        return snippetEntries.get(0).getBeginningPos();
     }
 
-    public int getEndingLine() {
-        return allTokens.get(allTokens.size() - 1).getLine();
+    public TextPosition getEndingPos() {
+        return snippetEntries.get(snippetEntries.size() - 1).getEndingPos();
     }
+
+    /* ------------------------ */
 
     @Override
     public int size() {
-        return allTokens.size();
+        return snippetEntries.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return allTokens.isEmpty();
+        return snippetEntries.isEmpty();
     }
 
     @Override
     public boolean contains(Object o) {
-        return allTokens.contains(o);
+        return snippetEntries.contains(o);
     }
 
     @NotNull
     @Override
-    public Iterator<TSLToken> iterator() {
-        return allTokens.iterator();
+    public Iterator<TSLSnippetEntry> iterator() {
+        return snippetEntries.iterator();
     }
 
     @NotNull
     @Override
     public Object @NotNull [] toArray() {
-        return allTokens.toArray();
+        return snippetEntries.toArray();
     }
 
     @NotNull
     @Override
     public <T> T @NotNull [] toArray(@NotNull T @NotNull [] a) {
-        return allTokens.toArray(a);
+        return snippetEntries.toArray(a);
     }
 
     @Override
-    public boolean add(TSLToken token) {
+    public boolean add(TSLSnippetEntry entry) {
         throw new UnsupportedOperationException();
     }
 
@@ -79,11 +80,11 @@ public abstract class TSLSnippet implements Collection<TSLToken> {
 
     @Override
     public boolean containsAll(@NotNull Collection<?> c) {
-        return new HashSet<>(allTokens).containsAll(c);
+        return new HashSet<>(snippetEntries).containsAll(c);
     }
 
     @Override
-    public boolean addAll(@NotNull Collection<? extends TSLToken> c) {
+    public boolean addAll(@NotNull Collection<? extends TSLSnippetEntry> c) {
         throw new UnsupportedOperationException();
     }
 
@@ -104,13 +105,9 @@ public abstract class TSLSnippet implements Collection<TSLToken> {
 
     @Override
     public String toString() {
-        return String.format("{type=%s, tokens=%s}",
+        return String.format("{type=%s, entries=%s}",
                 getClass().getSimpleName(),
-                getAllTokens());
-    }
-
-    protected static List<TSLToken> flatTokens(Object... tokens) {
-        return CollectionUtils.flatAll(TSLToken.class, tokens);
+                getSnippetEntries());
     }
 
 }

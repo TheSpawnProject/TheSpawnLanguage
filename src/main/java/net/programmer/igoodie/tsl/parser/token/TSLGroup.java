@@ -1,6 +1,8 @@
 package net.programmer.igoodie.tsl.parser.token;
 
+import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
+import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -13,8 +15,8 @@ public class TSLGroup extends TSLToken {
     protected List<TSLToken> groupedTokens;
     protected List<String> whitespaces;
 
-    public TSLGroup(int line, int col, List<TSLToken> groupTokens) {
-        super(line, col);
+    public TSLGroup(TextPosition beginPos, TextPosition endPos, List<TSLToken> groupTokens) {
+        super(beginPos, endPos);
         this.groupedTokens = groupTokens;
         calcWhitespaces();
     }
@@ -35,7 +37,7 @@ public class TSLGroup extends TSLToken {
 
     @Override
     public boolean equalValues(TSLToken otherToken) {
-        return castTokenType(TSLGroup.class, otherToken)
+        return TSLReflectionUtils.castToClass(TSLGroup.class, otherToken)
                 .filter(that -> that.groupedTokens.size() == this.groupedTokens.size())
                 .filter(that -> that.getRaw().equals(this.getRaw()))
                 .isPresent();
@@ -52,25 +54,21 @@ public class TSLGroup extends TSLToken {
         if (groupedTokens.size() < 2)
             return;
 
-        String prevTokenRaw = groupedTokens.get(0).getRaw();
-
         for (int i = 1; i < groupedTokens.size(); i++) {
             TSLToken prevToken = groupedTokens.get(i - 1);
             TSLToken token = groupedTokens.get(i);
 
-            String tokenRaw = token.getRaw();
+            StringBuilder whitespace = new StringBuilder();
 
-            if (prevToken.line != token.line) {
-                whitespaces.add("\n");
+            if (prevToken.getEndingPos().getLine() != token.getBeginningPos().getLine()) {
+                int linesBetween = token.getBeginningPos().getLine() - prevToken.getEndingPos().getLine();
+                for (int s = 0; s < linesBetween; s++) whitespace.append("\n");
             } else {
-                int prevEndCol = prevToken.col + prevTokenRaw.length();
-                int spaceBetween = token.col - prevEndCol;
-                StringBuilder whitespace = new StringBuilder();
+                int spaceBetween = token.getBeginningPos().getCol() - prevToken.getEndingPos().getCol();
                 for (int s = 0; s < spaceBetween; s++) whitespace.append(" ");
-                whitespaces.add(whitespace.toString());
             }
 
-            prevTokenRaw = tokenRaw;
+            whitespaces.add(whitespace.toString());
         }
     }
 

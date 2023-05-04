@@ -10,23 +10,23 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class TSLCaptureCall extends TSLToken {
+public class TSLDecoratorCall extends TSLToken {
 
-    protected String captureName;
+    protected String decoratorName;
     protected List<TSLToken> arguments;
 
-    public TSLCaptureCall(TextPosition beginPos, TextPosition endPos, String captureName) {
-        this(beginPos, endPos, captureName, Collections.emptyList());
+    public TSLDecoratorCall(TextPosition beginPos, TextPosition endPos, String decoratorName) {
+        this(beginPos, endPos, decoratorName, Collections.emptyList());
     }
 
-    public TSLCaptureCall(TextPosition beginPos, TextPosition endPos, String captureName, List<TSLToken> arguments) {
+    public TSLDecoratorCall(TextPosition beginPos, TextPosition endPos, String decoratorName, List<TSLToken> arguments) {
         super(beginPos, endPos);
-        this.captureName = captureName;
+        this.decoratorName = decoratorName;
         this.arguments = arguments;
     }
 
-    public String getCaptureName() {
-        return captureName;
+    public String getDecoratorName() {
+        return decoratorName;
     }
 
     public List<TSLToken> getArguments() {
@@ -35,26 +35,26 @@ public class TSLCaptureCall extends TSLToken {
 
     @Override
     public Optional<String> getNamespace() {
-        if (!captureName.contains(".")) return Optional.empty();
-        return Optional.ofNullable(captureName.split("\\.")[0]);
+        if (!decoratorName.contains(".")) return Optional.empty();
+        return Optional.ofNullable(decoratorName.split("\\.")[0]);
     }
 
     public String getValue() {
-        if (!captureName.contains(".")) return captureName;
-        return captureName.split("\\.")[1];
+        if (!decoratorName.contains(".")) return decoratorName;
+        return decoratorName.split("\\.")[1];
     }
 
     @Override
     public @NotNull String getTokenType() {
-        return "Capture Call";
+        return "Decorator";
     }
 
     @Override
     public @NotNull String getRaw() {
         if (arguments.size() == 0) {
-            return "$" + captureName;
+            return "@" + decoratorName;
         } else {
-            return "$" + captureName + "(" + arguments.stream()
+            return "@" + decoratorName + "(" + arguments.stream()
                     .map(TSLToken::getRaw)
                     .collect(Collectors.joining(", ")) + ")";
         }
@@ -62,8 +62,8 @@ public class TSLCaptureCall extends TSLToken {
 
     @Override
     public boolean equalValues(TSLToken otherToken) {
-        return TSLReflectionUtils.castToClass(TSLCaptureCall.class, otherToken)
-                .filter(that -> that.captureName.equals(this.captureName))
+        return TSLReflectionUtils.castToClass(TSLDecoratorCall.class, otherToken)
+                .filter(that -> that.decoratorName.equals(this.decoratorName))
                 .filter(that -> that.arguments.size() == this.arguments.size())
                 .filter(that -> {
                     for (int i = 0; i < that.arguments.size(); i++) {

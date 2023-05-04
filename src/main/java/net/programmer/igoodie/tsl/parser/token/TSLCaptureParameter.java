@@ -1,14 +1,16 @@
 package net.programmer.igoodie.tsl.parser.token;
 
+import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
+import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class TSLCaptureParameter extends TSLToken {
 
     protected String parameterName;
 
-    public TSLCaptureParameter(int line, int col, String parameterName) {
-        super(line, col);
+    public TSLCaptureParameter(TextPosition beginPos, TextPosition endPos, String parameterName) {
+        super(beginPos, endPos);
         this.parameterName = parameterName;
     }
 
@@ -24,7 +26,7 @@ public class TSLCaptureParameter extends TSLToken {
 
     @Override
     public boolean equalValues(TSLToken otherToken) {
-        return castTokenType(TSLCaptureParameter.class, otherToken)
+        return TSLReflectionUtils.castToClass(TSLCaptureParameter.class, otherToken)
                 .filter(that -> that.parameterName.equals(this.parameterName))
                 .isPresent();
     }

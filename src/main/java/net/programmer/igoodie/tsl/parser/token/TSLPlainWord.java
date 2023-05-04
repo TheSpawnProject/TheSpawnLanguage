@@ -1,6 +1,8 @@
 package net.programmer.igoodie.tsl.parser.token;
 
+import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
+import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -10,8 +12,8 @@ public class TSLPlainWord extends TSLToken {
 
     protected String plainWord;
 
-    public TSLPlainWord(int line, int col, String plainWord) {
-        super(line, col);
+    public TSLPlainWord(TextPosition beginPos, TextPosition endPos, String plainWord) {
+        super(beginPos, endPos);
         this.plainWord = plainWord;
     }
 
@@ -38,7 +40,7 @@ public class TSLPlainWord extends TSLToken {
 
     @Override
     public boolean equalValues(TSLToken otherToken) {
-        return castTokenType(TSLPlainWord.class, otherToken)
+        return TSLReflectionUtils.castToClass(TSLPlainWord.class, otherToken)
                 .filter(that -> Objects.equals(that.plainWord, this.plainWord))
                 .isPresent();
     }

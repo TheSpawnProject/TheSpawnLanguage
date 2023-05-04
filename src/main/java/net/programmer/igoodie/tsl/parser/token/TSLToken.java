@@ -1,31 +1,32 @@
 package net.programmer.igoodie.tsl.parser.token;
 
-import net.programmer.igoodie.tsl.parser.tree.TSLParseTreeEntry;
+import net.programmer.igoodie.tsl.parser.helper.TextPosition;
+import net.programmer.igoodie.tsl.parser.helper.TextRange;
+import net.programmer.igoodie.tsl.parser.snippet.base.TSLSnippetEntry;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
+import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public abstract class TSLToken implements TSLParseTreeEntry {
+public abstract class TSLToken implements TSLSnippetEntry {
 
-    /**
-     * 0-indexed value
-     */
-    protected int line, col;
+    protected TextRange range;
 
-    public TSLToken(int line, int col) {
-        this.line = line;
-        this.col = col;
+    public TSLToken(TextPosition beginPos, TextPosition endPos) {
+        this.range = new TextRange(beginPos, endPos);
     }
 
-    public int getLine() {
-        return line;
+    @Override
+    public TextPosition getBeginningPos() {
+        return range.getBeginPos();
     }
 
-    public int getCol() {
-        return col;
+    @Override
+    public TextPosition getEndingPos() {
+        return range.getEndPos();
     }
 
     /* --------------------------------------- */
@@ -42,18 +43,13 @@ public abstract class TSLToken implements TSLParseTreeEntry {
 
     public abstract boolean equalValues(TSLToken otherToken);
 
-    protected <T extends TSLToken> Optional<T> castTokenType(Class<T> type, TSLToken argument) {
-        if (!type.isInstance(argument)) return Optional.empty();
-        return Optional.of(type.cast(argument));
-    }
-
     @Override
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     public boolean equals(Object obj) {
-        if (!(obj instanceof TSLToken)) return false;
-        TSLToken that = (TSLToken) obj;
-        return this.equalValues(that)
-                && this.line == that.line
-                && this.col == that.col;
+        return TSLReflectionUtils.castToClass(TSLToken.class, obj)
+                .filter(that -> that.equalValues(this))
+                .filter(that -> that.range.equals(this.range))
+                .isPresent();
     }
 
     /* --------------------------------------- */

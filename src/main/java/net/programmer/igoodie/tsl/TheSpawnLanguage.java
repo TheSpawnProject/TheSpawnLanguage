@@ -2,6 +2,8 @@ package net.programmer.igoodie.tsl;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.StringUtilities;
+import net.programmer.igoodie.legacy.parser.token.TSLDecoratorCall;
+import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.plugins.spawnjs.SpawnJS;
 import net.programmer.igoodie.tsl.definition.*;
@@ -11,8 +13,6 @@ import net.programmer.igoodie.tsl.exception.TSLImplementationError;
 import net.programmer.igoodie.tsl.exception.TSLImportError;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.function.TSLFunctionsCorelib;
-import net.programmer.igoodie.legacy.parser.token.TSLDecoratorCall;
-import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.plugin.TSLCorePlugin;
 import net.programmer.igoodie.tsl.plugin.manager.TSLPluginManager;
 import net.programmer.igoodie.tsl.registry.TSLRegistry;
