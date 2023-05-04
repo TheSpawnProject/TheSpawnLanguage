@@ -6,11 +6,13 @@ import net.programmer.igoodie.tsl.parser.helper.Either;
 import net.programmer.igoodie.tsl.parser.helper.ListBuilder;
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
+import net.programmer.igoodie.tsl.parser.token.TSLCaptureParameter;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public abstract class TSLSnippet implements
         Collection<Either<TSLToken, TSLSnippet>>,
@@ -130,7 +132,26 @@ public abstract class TSLSnippet implements
 
     @Override
     public TSLSnippet fillCaptureParameters(Map<String, TSLToken> arguments) {
-        return null; // TODO
+        TSLSnippet snippet = this.copy();
+
+        snippet.snippetEntries = snippet.snippetEntries.stream()
+                .map(entry -> {
+                    Optional<TSLToken> left = entry.left();
+                    if (left.isPresent()) {
+                        TSLToken token = left.get();
+                        if (token instanceof TSLCaptureParameter) {
+                            TSLCaptureParameter paramToken = (TSLCaptureParameter) token;
+                            TSLToken argument = arguments.get(paramToken.getParameterName());
+                            if (argument != null) {
+                                return Either.<TSLToken, TSLSnippet>left(argument);
+                            }
+                        }
+                    }
+                    return entry;
+                })
+                .collect(Collectors.toList());
+
+        return snippet;
     }
 
     /* ------------- */

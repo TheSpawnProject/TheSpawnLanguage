@@ -8,6 +8,7 @@ import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: TSLSnippet<T <-- TSLUnparsedSnippet> for self type reference
 public class TSLUnparsedSnippet extends TSLSnippet {
 
     public TSLUnparsedSnippet() {
