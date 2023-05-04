@@ -17,41 +17,62 @@ public class TokenTests {
     @Test
     @DisplayName("Group Tokens should preserve whitespace information")
     public void testGroupTokenEvaluationWithWhitespaces() {
-        List<TSLToken> groupTokens = new ArrayList<>();
-        groupTokens.add(new TSLPlainWord(
-                new TextPosition(0, 13),
-                new TextPosition(0, 13 + "HELLO".length()),
+        List<TSLToken> groupedTokens = new ArrayList<>();
+        groupedTokens.add(new TSLPlainWord(
+                new TextPosition(0, 15),
+                new TextPosition(0, 15 + "HELLO".length() - 1),
                 "HELLO"));
-        groupTokens.add(new TSLPlainWord(
+        groupedTokens.add(new TSLPlainWord(
                 new TextPosition(1, 0),
-                new TextPosition(1, "WHAT".length()),
+                new TextPosition(1, "WHAT".length() - 1),
                 "WHAT"));
-        groupTokens.add(new TSLPlainWord(
+        groupedTokens.add(new TSLPlainWord(
                 new TextPosition(1, 8),
-                new TextPosition(1, 8 + "IS".length()),
+                new TextPosition(1, 8 + "IS".length() - 1),
                 "IS"));
-        groupTokens.add(new TSLExpression(
+        groupedTokens.add(new TSLExpression(
                 new TextPosition(2, 2),
-                new TextPosition(2, 2 + "${\"YOUR\"}".length()),
+                new TextPosition(2, 2 + "${\"YOUR\"}".length() - 1),
                 "\"YOUR\""));
-        groupTokens.add(new TSLPlainWord(
+        groupedTokens.add(new TSLPlainWord(
                 new TextPosition(2, 12),
-                new TextPosition(2, 12 + "NAME?".length()),
+                new TextPosition(2, 12 + "NAME?".length() - 1),
                 "NAME?"));
 
         TSLGroup groupToken = new TSLGroup(
                 new TextPosition(0, 12),
                 new TextPosition(2, 27),
+                groupedTokens);
+
+        TSLContext tslContext = new TSLContext(new TheSpawnLanguage());
+
+        Assertions.assertEquals(
+                TestUtils.unescapeNewlines("%  HELLO\nWHAT    IS\n${\"YOUR\"} NAME?          %"),
+                TestUtils.unescapeNewlines(groupToken.getRaw()));
+
+        Assertions.assertEquals(
+                TestUtils.unescapeNewlines("  HELLO\nWHAT    IS\nYOUR NAME?          "),
+                TestUtils.unescapeNewlines(groupToken.evaluate(tslContext)));
+    }
+
+    @Test
+    @DisplayName("Empty Group Tokens should preserve whitespace information")
+    public void testEmptyGroupTokenEvaluationWithWhitespaces() {
+        List<TSLToken> groupTokens = new ArrayList<>();
+
+        TSLGroup groupToken = new TSLGroup(
+                new TextPosition(0, 5),
+                new TextPosition(2, 7),
                 groupTokens);
 
         TSLContext tslContext = new TSLContext(new TheSpawnLanguage());
 
         Assertions.assertEquals(
-                TestUtils.unescapeNewlines("%HELLO\nWHAT    IS\n${\"YOUR\"} NAME?%"),
+                TestUtils.unescapeNewlines("%\n\n %"),
                 TestUtils.unescapeNewlines(groupToken.getRaw()));
 
         Assertions.assertEquals(
-                TestUtils.unescapeNewlines("HELLO\nWHAT    IS\nYOUR NAME?"),
+                TestUtils.unescapeNewlines("\n\n "),
                 TestUtils.unescapeNewlines(groupToken.evaluate(tslContext)));
     }
 

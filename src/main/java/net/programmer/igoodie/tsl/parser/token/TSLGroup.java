@@ -51,42 +51,60 @@ public class TSLGroup extends TSLToken {
     protected void calcWhitespaces() {
         this.whitespaces = new ArrayList<>();
 
-        if (groupedTokens.size() < 2)
+        if (groupedTokens.size() == 0) {
+            whitespaces.add(whitespacesBetween(
+                    this.getBeginningPos(),
+                    this.getEndingPos(),
+                    false));
             return;
+        }
 
+        // Whitespaces between group begin and first token
+        whitespaces.add(whitespacesBetween(
+                this.getBeginningPos(),
+                groupedTokens.get(0).getBeginningPos(),
+                false
+        ));
+
+        // Whitespaces between tokens
         for (int i = 1; i < groupedTokens.size(); i++) {
             TSLToken prevToken = groupedTokens.get(i - 1);
             TSLToken token = groupedTokens.get(i);
-
-            StringBuilder whitespace = new StringBuilder();
-
-            if (prevToken.getEndingPos().getLine() != token.getBeginningPos().getLine()) {
-                int linesBetween = token.getBeginningPos().getLine() - prevToken.getEndingPos().getLine();
-                for (int s = 0; s < linesBetween; s++) whitespace.append("\n");
-            } else {
-                int spaceBetween = token.getBeginningPos().getCol() - prevToken.getEndingPos().getCol();
-                for (int s = 0; s < spaceBetween; s++) whitespace.append(" ");
-            }
-
-            whitespaces.add(whitespace.toString());
+            whitespaces.add(whitespacesBetween(
+                    prevToken.getEndingPos(),
+                    token.getBeginningPos(),
+                    true));
         }
+
+        // Whitespaces between last token and group end
+        whitespaces.add(whitespacesBetween(
+                groupedTokens.get(groupedTokens.size() - 1).getEndingPos(),
+                this.getEndingPos(),
+                false
+        ));
+    }
+
+    protected String whitespacesBetween(TextPosition begin, TextPosition end, boolean onlyOneType) {
+        int linesBetween = end.getLine() - begin.getLine();
+        int spacesBetween = end.getCol() - begin.getCol() - 1;
+        StringBuilder whitespace = new StringBuilder();
+        for (int s = 0; s < linesBetween; s++) whitespace.append("\n");
+        if (!onlyOneType || whitespace.length() == 0)
+            for (int s = 0; s < spacesBetween; s++) whitespace.append(" ");
+        return whitespace.toString();
     }
 
     protected String reduceGroupedTokens(Function<TSLToken, String> reducer) {
-        if (groupedTokens.size() == 0) return "";
-        if (groupedTokens.size() == 1) return reducer.apply(groupedTokens.get(0));
+        if (groupedTokens.size() == 0) return whitespaces.get(0);
 
         StringBuilder builder = new StringBuilder();
 
-        for (int i = 0; i < groupedTokens.size(); i++) {
-            TSLToken token = groupedTokens.get(i);
-            builder.append(reducer.apply(token));
-
-            if (i != groupedTokens.size() - 1) {
-                String whitespace = whitespaces.get(i);
-                builder.append(whitespace);
-            }
+        for (int i = 0; i < whitespaces.size() - 1; i++) {
+            builder.append(whitespaces.get(i));
+            builder.append(reducer.apply(groupedTokens.get(i)));
         }
+
+        builder.append(whitespaces.get(whitespaces.size() - 1));
 
         return builder.toString();
     }
