@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.parser.snippet.base;
 
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
+import net.programmer.igoodie.tsl.parser.helper.Copyable;
 import net.programmer.igoodie.tsl.parser.helper.Either;
 import net.programmer.igoodie.tsl.parser.helper.ListBuilder;
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
@@ -11,7 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Supplier;
 
-public abstract class TSLSnippet implements Collection<Either<TSLToken, TSLSnippet>> {
+public abstract class TSLSnippet implements
+        Collection<Either<TSLToken, TSLSnippet>>,
+        TSLCaptureParameterFiller<TSLSnippet>,
+        Copyable<TSLSnippet> {
 
     protected List<Either<TSLToken, TSLSnippet>> snippetEntries;
 
@@ -121,6 +125,11 @@ public abstract class TSLSnippet implements Collection<Either<TSLToken, TSLSnipp
     /* ------------- */
 
     public List<Either<TSLToken, TSLSnippet>> fillCaptures(Map<String, TSLCaptureSnippet> captures) {
+        return null; // TODO
+    }
+
+    @Override
+    public TSLSnippet fillCaptureParameters(Map<String, TSLToken> arguments) {
         return null; // TODO
     }
 

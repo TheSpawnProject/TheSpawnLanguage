@@ -20,6 +20,15 @@ public class TSLSymbol extends TSLToken {
     }
 
     @Override
+    public TSLSymbol copy() {
+        return new TSLSymbol(
+                getBeginningPos(),
+                getEndingPos(),
+                symbolType
+        );
+    }
+
+    @Override
     public @NotNull String getTokenType() {
         return "Symbol";
     }

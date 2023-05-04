@@ -7,7 +7,7 @@ public class TextPosition {
     /**
      * 0-indexed value
      */
-    protected int line, col;
+    protected final int line, col;
 
     public TextPosition(int line, int col) {
         this.line = line;

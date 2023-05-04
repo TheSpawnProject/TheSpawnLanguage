@@ -19,6 +19,14 @@ public class TSLExpression extends TSLToken {
     }
 
     @Override
+    public TSLExpression copy() {
+        return new TSLExpression(
+                getBeginningPos(),
+                getEndingPos(),
+                expression);
+    }
+
+    @Override
     public @NotNull String getTokenType() {
         return "Expression";
     }

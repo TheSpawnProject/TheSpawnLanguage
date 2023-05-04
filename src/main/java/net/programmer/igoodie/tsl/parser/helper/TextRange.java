@@ -4,8 +4,8 @@ import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
 
 public class TextRange {
 
-    protected TextPosition beginPos;
-    protected TextPosition endPos;
+    protected final TextPosition beginPos;
+    protected final TextPosition endPos;
 
     public TextRange(int beginLine, int beginCol, int endLine, int endCol) {
         this(new TextPosition(beginLine, beginCol), new TextPosition(endLine, endCol));

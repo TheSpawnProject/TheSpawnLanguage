@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.parser.snippet;
 
+import net.programmer.igoodie.tsl.parser.helper.Copyable;
 import net.programmer.igoodie.tsl.parser.helper.Either;
 import net.programmer.igoodie.tsl.parser.snippet.base.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
@@ -15,6 +16,11 @@ public class TSLUnparsedSnippet extends TSLSnippet {
 
     public TSLUnparsedSnippet(List<Either<TSLToken, TSLSnippet>> entries) {
         super(entries);
+    }
+
+    @Override
+    public TSLUnparsedSnippet copy() {
+        return new TSLUnparsedSnippet(Copyable.copyUnmodifiableList(snippetEntries));
     }
 
     public void pushToken(TSLToken token) {

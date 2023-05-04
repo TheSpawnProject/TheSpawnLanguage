@@ -5,12 +5,29 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class Either<L, R> {
+public class Either<L, R> implements Copyable<Either<L, R>> {
 
     protected @Nullable L left;
     protected @Nullable R right;
 
     private Either() {}
+
+    @Override
+    public Either<L, R> copy() {
+        if (isLeft()) {
+            @SuppressWarnings("unchecked")
+            Either<L, R> copied = left instanceof Copyable
+                    ? Either.left(((Copyable<L>) left).copy())
+                    : Either.left(left);
+            return copied;
+        } else {
+            @SuppressWarnings("unchecked")
+            Either<L, R> copied = right instanceof Copyable
+                    ? Either.right(((Copyable<R>) right).copy())
+                    : Either.right(right);
+            return copied;
+        }
+    }
 
     public boolean isLeft() {
         return left != null;

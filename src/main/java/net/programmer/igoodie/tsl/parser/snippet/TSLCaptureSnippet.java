@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.parser.snippet;
 
+import net.programmer.igoodie.tsl.parser.helper.Copyable;
 import net.programmer.igoodie.tsl.parser.helper.Either;
 import net.programmer.igoodie.tsl.parser.snippet.base.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
@@ -41,6 +42,14 @@ public class TSLCaptureSnippet extends TSLSnippet {
 
     public List<Either<TSLToken, TSLSnippet>> getCapturedEntries() {
         return capturedEntries;
+    }
+
+    @Override
+    public TSLCaptureSnippet copy() {
+        return new TSLCaptureSnippet(
+                headerToken.copy(),
+                equalsSignToken.copy(),
+                Copyable.copyUnmodifiableList(capturedEntries));
     }
 
     /* -------------------------------- */

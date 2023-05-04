@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.parser.token;
 
+import net.programmer.igoodie.tsl.parser.helper.Copyable;
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
@@ -23,7 +24,16 @@ public class TSLDecoratorCall extends TSLToken {
     public TSLDecoratorCall(TextPosition beginPos, TextPosition endPos, String decoratorName, List<TSLToken> arguments) {
         super(beginPos, endPos);
         this.decoratorName = decoratorName;
-        this.arguments = arguments;
+        this.arguments = Collections.unmodifiableList(arguments);
+    }
+
+    @Override
+    public TSLDecoratorCall copy() {
+        return new TSLDecoratorCall(
+                getBeginningPos(),
+                getEndingPos(),
+                decoratorName,
+                Copyable.copyUnmodifiableList(arguments));
     }
 
     public String getDecoratorName() {

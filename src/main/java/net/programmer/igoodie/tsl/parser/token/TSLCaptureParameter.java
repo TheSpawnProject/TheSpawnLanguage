@@ -15,6 +15,14 @@ public class TSLCaptureParameter extends TSLToken {
         this.parameterName = parameterName;
     }
 
+    @Override
+    public TSLCaptureParameter copy() {
+        return new TSLCaptureParameter(
+                getBeginningPos(),
+                getEndingPos(),
+                parameterName);
+    }
+
     public String getParameterName() {
         return parameterName;
     }

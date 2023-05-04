@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.parser.token.base;
 
+import net.programmer.igoodie.tsl.parser.helper.Copyable;
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import net.programmer.igoodie.tsl.parser.helper.TextRange;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
@@ -10,9 +11,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public abstract class TSLToken {
+public abstract class TSLToken implements Copyable<TSLToken> {
 
-    protected TextRange range;
+    protected final TextRange range;
 
     public TSLToken(TextPosition beginPos, TextPosition endPos) {
         this.range = new TextRange(beginPos, endPos);

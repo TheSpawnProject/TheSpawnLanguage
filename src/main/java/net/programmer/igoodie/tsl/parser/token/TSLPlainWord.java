@@ -19,6 +19,14 @@ public class TSLPlainWord extends TSLToken {
     }
 
     @Override
+    public TSLPlainWord copy() {
+        return new TSLPlainWord(
+                getBeginningPos(),
+                getEndingPos(),
+                plainWord);
+    }
+
+    @Override
     public Optional<String> getNamespace() {
         if (!plainWord.contains(".")) return Optional.empty();
         return Optional.ofNullable(plainWord.split("\\.")[0]);

@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.parser.token;
 
+import net.programmer.igoodie.tsl.parser.helper.Copyable;
 import net.programmer.igoodie.tsl.parser.helper.ListBuilder;
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import net.programmer.igoodie.tsl.parser.snippet.base.TSLCaptureParameterFiller;
@@ -9,6 +10,7 @@ import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -23,7 +25,20 @@ public class TSLGroup extends TSLToken implements TSLCaptureParameterFiller<TSLG
                     List<ExpressionToken> expressions) {
         super(beginPos, endPos);
         this.template = template;
-        this.expressions = expressions;
+        this.expressions = Collections.unmodifiableList(expressions);
+    }
+
+    @Override
+    public TSLGroup copy() {
+        return new TSLGroup(
+                getBeginningPos(),
+                getEndingPos(),
+                template,
+                Copyable.copyUnmodifiableList(expressions));
+    }
+
+    public List<ExpressionToken> getExpressions() {
+        return expressions;
     }
 
     @Override
@@ -113,6 +128,16 @@ public class TSLGroup extends TSLToken implements TSLCaptureParameterFiller<TSLG
             this.beginOffset = beginOffset;
             this.endOffset = endOffset;
             this.encapsulatedToken = encapsulatedToken;
+        }
+
+        @Override
+        public ExpressionToken copy() {
+            return new ExpressionToken(
+                    getBeginningPos(),
+                    getEndingPos(),
+                    beginOffset,
+                    endOffset,
+                    encapsulatedToken.copy());
         }
 
         @Override
