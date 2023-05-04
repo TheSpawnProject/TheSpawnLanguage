@@ -15,7 +15,7 @@ apply plugin: 'java'
 group project_group
 version project_version
 
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
@@ -23,8 +23,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.jetbrains:annotations:23.1.0'
-    testImplementation 'org.jetbrains:annotations:23.1.0'
+    compileOnly 'org.jetbrains:annotations:24.0.1'
+    testImplementation 'org.jetbrains:annotations:24.0.1'
 
     // RuntimeGoodies
     shadow "com.github.iGoodie.RuntimeGoodies:core:$version_RuntimeGoodies"

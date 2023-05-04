@@ -7,7 +7,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class TestUtils {
+public class TestResources {
 
     public static String constructTSLScript(String... lines) {
         return String.join("\n", lines);
