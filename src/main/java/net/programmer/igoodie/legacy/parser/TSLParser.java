@@ -11,9 +11,9 @@ import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
-import net.programmer.igoodie.tsl.util.CollectionUtils;
 import net.programmer.igoodie.tsl.util.IOUtils;
 import net.programmer.igoodie.tsl.util.StringUtils;
+import net.programmer.igoodie.tsl.util.TSLCollectionUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -459,7 +459,7 @@ public class TSLParser {
     /* --------------------------- */
 
     private static int indexOfKeyword(List<TSLToken> tokens, String keyword) {
-        return CollectionUtils.indexOfBy(tokens,
+        return TSLCollectionUtils.indexOfBy(tokens,
                 token -> token.getRaw().equalsIgnoreCase(keyword));
     }
 

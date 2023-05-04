@@ -1,19 +1,21 @@
 package net.programmer.igoodie.tsl.parser.snippet.base;
 
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
+import net.programmer.igoodie.tsl.parser.helper.Either;
+import net.programmer.igoodie.tsl.parser.helper.ListBuilder;
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
+import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
+import net.programmer.igoodie.tsl.parser.token.TSLToken;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Supplier;
 
-public abstract class TSLSnippet implements Collection<TSLSnippetEntry> {
+public abstract class TSLSnippet implements Collection<Either<TSLToken, TSLSnippet>> {
 
-    protected List<TSLSnippetEntry> snippetEntries;
+    protected List<Either<TSLToken, TSLSnippet>> snippetEntries;
 
-    public TSLSnippet(List<TSLSnippetEntry> entries) {
+    public TSLSnippet(List<Either<TSLToken, TSLSnippet>> entries) {
         if (entries.size() == 0) {
             throw new TSLInternalError("A snippet MUST have at least one entry.");
         }
@@ -21,16 +23,22 @@ public abstract class TSLSnippet implements Collection<TSLSnippetEntry> {
         this.snippetEntries = entries;
     }
 
-    public List<TSLSnippetEntry> getSnippetEntries() {
+    public List<Either<TSLToken, TSLSnippet>> getSnippetEntries() {
         return snippetEntries;
     }
 
     public TextPosition getBeginningPos() {
-        return snippetEntries.get(0).getBeginningPos();
+        return snippetEntries.get(0).fold(
+                TSLToken::getBeginningPos,
+                TSLSnippet::getBeginningPos
+        );
     }
 
     public TextPosition getEndingPos() {
-        return snippetEntries.get(snippetEntries.size() - 1).getEndingPos();
+        return snippetEntries.get(snippetEntries.size() - 1).fold(
+                TSLToken::getBeginningPos,
+                TSLSnippet::getBeginningPos
+        );
     }
 
     /* ------------------------ */
@@ -52,7 +60,7 @@ public abstract class TSLSnippet implements Collection<TSLSnippetEntry> {
 
     @NotNull
     @Override
-    public Iterator<TSLSnippetEntry> iterator() {
+    public Iterator<Either<TSLToken, TSLSnippet>> iterator() {
         return snippetEntries.iterator();
     }
 
@@ -69,7 +77,7 @@ public abstract class TSLSnippet implements Collection<TSLSnippetEntry> {
     }
 
     @Override
-    public boolean add(TSLSnippetEntry entry) {
+    public boolean add(Either<TSLToken, TSLSnippet> entry) {
         throw new UnsupportedOperationException();
     }
 
@@ -84,7 +92,7 @@ public abstract class TSLSnippet implements Collection<TSLSnippetEntry> {
     }
 
     @Override
-    public boolean addAll(@NotNull Collection<? extends TSLSnippetEntry> c) {
+    public boolean addAll(@NotNull Collection<? extends Either<TSLToken, TSLSnippet>> c) {
         throw new UnsupportedOperationException();
     }
 
@@ -108,6 +116,22 @@ public abstract class TSLSnippet implements Collection<TSLSnippetEntry> {
         return String.format("{type=%s, entries=%s}",
                 getClass().getSimpleName(),
                 getSnippetEntries());
+    }
+
+    /* ------------- */
+
+    public List<Either<TSLToken, TSLSnippet>> fillCaptures(Map<String, TSLCaptureSnippet> captures) {
+        return null; // TODO
+    }
+
+    /* ------------- */
+
+    public static class EntryListBuilder extends ListBuilder<Either<TSLToken, TSLSnippet>> {
+
+        public EntryListBuilder(Supplier<List<Either<TSLToken, TSLSnippet>>> initializer) {
+            super(initializer);
+        }
+
     }
 
 }

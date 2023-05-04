@@ -2,7 +2,6 @@ package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import net.programmer.igoodie.tsl.parser.helper.TextRange;
-import net.programmer.igoodie.tsl.parser.snippet.base.TSLSnippetEntry;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public abstract class TSLToken implements TSLSnippetEntry {
+public abstract class TSLToken {
 
     protected TextRange range;
 
@@ -19,12 +18,10 @@ public abstract class TSLToken implements TSLSnippetEntry {
         this.range = new TextRange(beginPos, endPos);
     }
 
-    @Override
     public TextPosition getBeginningPos() {
         return range.getBeginPos();
     }
 
-    @Override
     public TextPosition getEndingPos() {
         return range.getEndPos();
     }

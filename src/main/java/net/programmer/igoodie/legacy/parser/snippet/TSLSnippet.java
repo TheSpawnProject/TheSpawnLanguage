@@ -2,7 +2,7 @@ package net.programmer.igoodie.legacy.parser.snippet;
 
 import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
-import net.programmer.igoodie.tsl.util.CollectionUtils;
+import net.programmer.igoodie.tsl.util.TSLCollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -110,7 +110,7 @@ public abstract class TSLSnippet implements Collection<TSLToken> {
     }
 
     protected static List<TSLToken> flatTokens(Object... tokens) {
-        return CollectionUtils.flatAll(TSLToken.class, tokens);
+        return TSLCollectionUtils.flatMergeAll(TSLToken.class, tokens);
     }
 
 }

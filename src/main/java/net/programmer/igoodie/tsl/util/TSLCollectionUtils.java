@@ -10,15 +10,15 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class CollectionUtils {
+public final class TSLCollectionUtils {
 
-    private CollectionUtils() {}
+    private TSLCollectionUtils() {}
 
-    public static <T> List<T> flatAll(Class<T> targetType, Object... elements) {
-        return flatAll(targetType, Arrays.asList(elements));
+    public static <T> List<T> flatMergeAll(Class<T> targetType, Object... elements) {
+        return flatMergeAll(targetType, Arrays.asList(elements));
     }
 
-    public static <T> List<T> flatAll(Class<T> targetType, Collection<?> collection) {
+    public static <T> List<T> flatMergeAll(Class<T> targetType, Collection<?> collection) {
         @SuppressWarnings("unchecked")
         List<T> flattened = (List<T>) collection.stream()
                 .flatMap(element -> {
@@ -27,7 +27,7 @@ public final class CollectionUtils {
                         return Stream.empty();
 
                     } else if (element instanceof Collection) {
-                        return flatAll(targetType, (Collection<?>) element).stream();
+                        return flatMergeAll(targetType, (Collection<?>) element).stream();
 
                     } else if (targetType.isAssignableFrom(element.getClass())) {
                         return Stream.of(element);
