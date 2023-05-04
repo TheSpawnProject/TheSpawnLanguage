@@ -3,6 +3,7 @@ package parser;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import net.programmer.igoodie.tsl.parser.token.*;
+import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,8 @@ import util.TestUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TokenTests {
 
@@ -23,7 +26,7 @@ public class TokenTests {
                     new TextPosition(0, 12),
                     new TextPosition(2, 29),
                     "  HELLO\nWHAT    IS\n|${\"YOUR\"}| NAME?          ",
-                    new TSLGroup.TemplateVariableListBuilder(ArrayList::new)
+                    new TSLGroup.ExpressionListBuilder(ArrayList::new)
                             .addElement(new TSLGroup.ExpressionToken(
                                     new TextPosition(2, 2),
                                     new TextPosition(2, 12),
@@ -65,6 +68,42 @@ public class TokenTests {
             Assertions.assertEquals(
                     TestUtils.unescapeNewlines("\n\n "),
                     TestUtils.unescapeNewlines(groupToken.evaluate(tslContext)));
+        }
+
+        @Test
+        @DisplayName("Group Tokens should be able to fill capture parameters correctly")
+        public void testCaptureParameterFilling() {
+            TSLGroup groupToken = new TSLGroup(
+                    new TextPosition(0, 0),
+                    new TextPosition(0, 23),
+                    "Hey there, |{{name}}|!",
+                    new TSLGroup.ExpressionListBuilder(ArrayList::new)
+                            .addElement(new TSLGroup.ExpressionToken(
+                                    new TextPosition(0, 12),
+                                    new TextPosition(0, 21),
+                                    11, 20,
+                                    new TSLCaptureParameter(
+                                            new TextPosition(0, 13),
+                                            new TextPosition(0, 20),
+                                            "name"
+                                    )
+                            ))
+                            .build());
+
+            Map<String, TSLToken> arguments = new HashMap<>();
+            arguments.put("name", new TSLPlainWord(
+                    new TextPosition(10, 10),
+                    new TextPosition(10, 10 + "iGoodiexx".length() + 1),
+                    "iGoodiexx"
+            ));
+
+            Assertions.assertEquals(
+                    TestUtils.unescapeNewlines("%Hey there, |{{name}}|!%"),
+                    TestUtils.unescapeNewlines(groupToken.getRaw()));
+
+            Assertions.assertEquals(
+                    TestUtils.unescapeNewlines("%Hey there, |iGoodiexx|!%"),
+                    TestUtils.unescapeNewlines(groupToken.fillCaptureParameters(arguments).getRaw()));
         }
 
     }

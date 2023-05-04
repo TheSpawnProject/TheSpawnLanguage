@@ -4,7 +4,7 @@ import net.programmer.igoodie.tsl.parser.helper.Either;
 import net.programmer.igoodie.tsl.parser.snippet.base.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.tsl.parser.token.TSLSymbol;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class TSLCaptureSnippet extends TSLSnippet {
 
     /* -------------------------------- */
 
-    public List<Either<TSLToken, TSLSnippet>> fillParameterCalls(Map<String, TSLToken> arguments) {
+    public List<Either<TSLToken, TSLSnippet>> fillParameters(Map<String, TSLToken> arguments) {
         return null; // TODO
     }
 

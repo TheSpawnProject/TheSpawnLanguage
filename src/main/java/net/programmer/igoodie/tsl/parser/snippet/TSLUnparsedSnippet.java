@@ -2,7 +2,7 @@ package net.programmer.igoodie.tsl.parser.snippet;
 
 import net.programmer.igoodie.tsl.parser.helper.Either;
 import net.programmer.igoodie.tsl.parser.snippet.base.TSLSnippet;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 
 import java.util.ArrayList;
 import java.util.List;

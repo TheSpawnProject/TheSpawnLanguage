@@ -5,7 +5,7 @@ import net.programmer.igoodie.tsl.parser.helper.Either;
 import net.programmer.igoodie.tsl.parser.helper.ListBuilder;
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
-import net.programmer.igoodie.tsl.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

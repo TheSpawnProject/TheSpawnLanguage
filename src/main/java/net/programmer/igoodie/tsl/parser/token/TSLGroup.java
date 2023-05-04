@@ -2,14 +2,18 @@ package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.parser.helper.ListBuilder;
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
+import net.programmer.igoodie.tsl.parser.snippet.base.TSLCaptureParameterFiller;
+import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
-public class TSLGroup extends TSLToken {
+public class TSLGroup extends TSLToken implements TSLCaptureParameterFiller<TSLGroup> {
 
     protected String template;
     protected List<ExpressionToken> expressions;
@@ -57,6 +61,46 @@ public class TSLGroup extends TSLToken {
         return builder.toString();
     }
 
+    @Override
+    public TSLGroup fillCaptureParameters(Map<String, TSLToken> arguments) {
+        List<ExpressionToken> filledExpressions = new ArrayList<>(this.expressions);
+        StringBuilder filledTemplate = new StringBuilder();
+
+        for (int i = 0; i < filledExpressions.size(); i++) {
+            ExpressionToken expression = filledExpressions.get(i);
+            if (expression.encapsulatedToken instanceof TSLCaptureParameter) {
+                TSLCaptureParameter parameter = (TSLCaptureParameter) expression.encapsulatedToken;
+                TSLToken value = arguments.get(parameter.getParameterName());
+                if (value != null) {
+                    filledExpressions.set(i, new ExpressionToken(
+                            expression.getBeginningPos(),
+                            expression.getEndingPos(),
+                            expression.beginOffset,
+                            expression.endOffset,
+                            value
+                    ));
+                }
+            }
+        }
+
+        int cursor = 0;
+
+        for (ExpressionToken expression : filledExpressions) {
+            filledTemplate.append(template, cursor, expression.beginOffset);
+            filledTemplate.append(expression.getRaw());
+            cursor = expression.endOffset + 1;
+        }
+
+        filledTemplate.append(template, cursor, template.length());
+
+        return new TSLGroup(
+                range.getBeginPos(),
+                range.getEndPos(),
+                filledTemplate.toString(),
+                filledExpressions
+        );
+    }
+
     /* ------------------------- */
 
     public static class ExpressionToken extends TSLToken {
@@ -95,9 +139,9 @@ public class TSLGroup extends TSLToken {
 
     }
 
-    public static class TemplateVariableListBuilder extends ListBuilder<ExpressionToken> {
+    public static class ExpressionListBuilder extends ListBuilder<ExpressionToken> {
 
-        public TemplateVariableListBuilder(Supplier<List<ExpressionToken>> initializer) {
+        public ExpressionListBuilder(Supplier<List<ExpressionToken>> initializer) {
             super(initializer);
         }
 

@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
+import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +13,10 @@ public class TSLCaptureParameter extends TSLToken {
     public TSLCaptureParameter(TextPosition beginPos, TextPosition endPos, String parameterName) {
         super(beginPos, endPos);
         this.parameterName = parameterName;
+    }
+
+    public String getParameterName() {
+        return parameterName;
     }
 
     @Override

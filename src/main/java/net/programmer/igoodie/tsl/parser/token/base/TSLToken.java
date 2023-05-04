@@ -1,4 +1,4 @@
-package net.programmer.igoodie.tsl.parser.token;
+package net.programmer.igoodie.tsl.parser.token.base;
 
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import net.programmer.igoodie.tsl.parser.helper.TextRange;
@@ -16,6 +16,10 @@ public abstract class TSLToken {
 
     public TSLToken(TextPosition beginPos, TextPosition endPos) {
         this.range = new TextRange(beginPos, endPos);
+    }
+
+    public TextRange getRange() {
+        return range;
     }
 
     public TextPosition getBeginningPos() {
