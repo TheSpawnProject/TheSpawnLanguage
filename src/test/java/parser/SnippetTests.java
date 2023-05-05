@@ -37,10 +37,7 @@ public class SnippetTests {
                         .build()
         );
 
-        Either<TSLToken, TSLSnippet> lastEntry;
-
-        lastEntry = snippet.getSnippetEntries().get(snippet.getSnippetEntries().size() - 1);
-        Assertions.assertTrue(lastEntry.left()
+        Assertions.assertTrue(snippet.getSnippetEntries().get(snippet.getSnippetEntries().size() - 1).left()
                 .filter(t -> t instanceof TSLCaptureParameter)
                 .filter(t -> ((TSLCaptureParameter) t).getParameterName().equals("name"))
                 .isPresent());
@@ -51,10 +48,9 @@ public class SnippetTests {
                 new TextPosition(0, 0),
                 "iGoodie"));
 
-        snippet = (TSLUnparsedSnippet) snippet.fillCaptureParameters(arguments);
+        snippet = snippet.fillCaptureParameters(arguments);
 
-        lastEntry = snippet.getSnippetEntries().get(snippet.getSnippetEntries().size() - 1);
-        Assertions.assertTrue(lastEntry.left()
+        Assertions.assertTrue(snippet.getSnippetEntries().get(snippet.getSnippetEntries().size() - 1).left()
                 .filter(t -> t instanceof TSLPlainWord)
                 .filter(t -> ((TSLPlainWord) t).getValue().equals("iGoodie"))
                 .isPresent());

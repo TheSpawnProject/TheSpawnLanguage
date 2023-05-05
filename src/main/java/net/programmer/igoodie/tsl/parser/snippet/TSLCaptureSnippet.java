@@ -11,16 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TSLCaptureSnippet extends TSLSnippet {
+public class TSLCaptureSnippet extends TSLSnippet<TSLCaptureSnippet> {
 
     protected TSLCaptureCall headerToken;
     protected TSLSymbol equalsSignToken;
-    protected List<Either<TSLToken, TSLSnippet>> capturedEntries;
+    protected List<Either<TSLToken, TSLSnippet<?>>> capturedEntries;
 
     public TSLCaptureSnippet(
             TSLCaptureCall headerToken,
             TSLSymbol equalsSignToken,
-            List<Either<TSLToken, TSLSnippet>> capturedEntries
+            List<Either<TSLToken, TSLSnippet<?>>> capturedEntries
     ) {
         super(new EntryListBuilder(ArrayList::new)
                 .addElement(Either.left(headerToken))
@@ -40,7 +40,7 @@ public class TSLCaptureSnippet extends TSLSnippet {
         return equalsSignToken;
     }
 
-    public List<Either<TSLToken, TSLSnippet>> getCapturedEntries() {
+    public List<Either<TSLToken, TSLSnippet<?>>> getCapturedEntries() {
         return capturedEntries;
     }
 
@@ -54,7 +54,7 @@ public class TSLCaptureSnippet extends TSLSnippet {
 
     /* -------------------------------- */
 
-    public List<Either<TSLToken, TSLSnippet>> fillParameters(Map<String, TSLToken> arguments) {
+    public List<Either<TSLToken, TSLSnippet<?>>> fillParameters(Map<String, TSLToken> arguments) {
         return null; // TODO
     }
 

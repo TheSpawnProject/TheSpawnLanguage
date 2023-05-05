@@ -7,15 +7,13 @@ import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 
 import java.util.ArrayList;
 import java.util.List;
-
-// TODO: TSLSnippet<T <-- TSLUnparsedSnippet> for self type reference
-public class TSLUnparsedSnippet extends TSLSnippet {
+public class TSLUnparsedSnippet extends TSLSnippet<TSLUnparsedSnippet> {
 
     public TSLUnparsedSnippet() {
         this(new ArrayList<>());
     }
 
-    public TSLUnparsedSnippet(List<Either<TSLToken, TSLSnippet>> entries) {
+    public TSLUnparsedSnippet(List<Either<TSLToken, TSLSnippet<?>>> entries) {
         super(entries);
     }
 
@@ -28,7 +26,7 @@ public class TSLUnparsedSnippet extends TSLSnippet {
         snippetEntries.add(Either.left(token));
     }
 
-    public void pushSnippet(TSLSnippet snippet) {
+    public void pushSnippet(TSLSnippet<?> snippet) {
         snippetEntries.add(Either.right(snippet));
     }
 

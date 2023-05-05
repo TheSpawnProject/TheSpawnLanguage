@@ -14,14 +14,14 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public abstract class TSLSnippet implements
-        Collection<Either<TSLToken, TSLSnippet>>,
-        TSLCaptureParameterFiller<TSLSnippet>,
-        Copyable<TSLSnippet> {
+public abstract class TSLSnippet<S extends TSLSnippet<S>> implements
+        Collection<Either<TSLToken, TSLSnippet<?>>>,
+        TSLCaptureParameterFiller<S>,
+        Copyable<S> {
 
-    protected List<Either<TSLToken, TSLSnippet>> snippetEntries;
+    protected List<Either<TSLToken, TSLSnippet<?>>> snippetEntries;
 
-    public TSLSnippet(List<Either<TSLToken, TSLSnippet>> entries) {
+    public TSLSnippet(List<Either<TSLToken, TSLSnippet<?>>> entries) {
         if (entries.size() == 0) {
             throw new TSLInternalError("A snippet MUST have at least one entry.");
         }
@@ -29,7 +29,7 @@ public abstract class TSLSnippet implements
         this.snippetEntries = entries;
     }
 
-    public List<Either<TSLToken, TSLSnippet>> getSnippetEntries() {
+    public List<Either<TSLToken, TSLSnippet<?>>> getSnippetEntries() {
         return snippetEntries;
     }
 
@@ -66,7 +66,7 @@ public abstract class TSLSnippet implements
 
     @NotNull
     @Override
-    public Iterator<Either<TSLToken, TSLSnippet>> iterator() {
+    public Iterator<Either<TSLToken, TSLSnippet<?>>> iterator() {
         return snippetEntries.iterator();
     }
 
@@ -83,7 +83,7 @@ public abstract class TSLSnippet implements
     }
 
     @Override
-    public boolean add(Either<TSLToken, TSLSnippet> entry) {
+    public boolean add(Either<TSLToken, TSLSnippet<?>> entry) {
         throw new UnsupportedOperationException();
     }
 
@@ -98,7 +98,7 @@ public abstract class TSLSnippet implements
     }
 
     @Override
-    public boolean addAll(@NotNull Collection<? extends Either<TSLToken, TSLSnippet>> c) {
+    public boolean addAll(@NotNull Collection<? extends Either<TSLToken, TSLSnippet<?>>> c) {
         throw new UnsupportedOperationException();
     }
 
@@ -126,39 +126,38 @@ public abstract class TSLSnippet implements
 
     /* ------------- */
 
-    public List<Either<TSLToken, TSLSnippet>> fillCaptures(Map<String, TSLCaptureSnippet> captures) {
+    public List<Either<TSLToken, TSLSnippet<?>>> fillCaptures(Map<String, TSLCaptureSnippet> captures) {
         return null; // TODO
     }
 
     @Override
-    public TSLSnippet fillCaptureParameters(Map<String, TSLToken> arguments) {
-        TSLSnippet snippet = this.copy();
+    public S fillCaptureParameters(Map<String, TSLToken> arguments) {
+        S filledSnippet = this.copy();
 
-        snippet.snippetEntries = snippet.snippetEntries.stream()
-                .map(entry -> {
-                    Optional<TSLToken> left = entry.left();
-                    if (left.isPresent()) {
-                        TSLToken token = left.get();
-                        if (token instanceof TSLCaptureParameter) {
-                            TSLCaptureParameter paramToken = (TSLCaptureParameter) token;
-                            TSLToken argument = arguments.get(paramToken.getParameterName());
-                            if (argument != null) {
-                                return Either.<TSLToken, TSLSnippet>left(argument);
-                            }
-                        }
-                    }
-                    return entry;
-                })
+        filledSnippet.snippetEntries = filledSnippet.snippetEntries.stream()
+                .map(entry -> entry.fold(
+                        token -> Optional.ofNullable(token)
+                                .filter(t -> t instanceof TSLCaptureParameter)
+                                .map(t -> ((TSLCaptureParameter) t))
+                                .map(t -> arguments.get(t.getParameterName()))
+                                .map(Either::<TSLToken, TSLSnippet<?>>left)
+                                .orElse(entry),
+
+                        snippet -> Optional.ofNullable(snippet)
+                                .map(s -> s.fillCaptureParameters(arguments))
+                                .map(Either::<TSLToken, TSLSnippet<?>>right)
+                                .orElse(entry)
+                ))
                 .collect(Collectors.toList());
 
-        return snippet;
+        return filledSnippet;
     }
 
     /* ------------- */
 
-    public static class EntryListBuilder extends ListBuilder<Either<TSLToken, TSLSnippet>> {
+    public static class EntryListBuilder extends ListBuilder<Either<TSLToken, TSLSnippet<?>>> {
 
-        public EntryListBuilder(Supplier<List<Either<TSLToken, TSLSnippet>>> initializer) {
+        public EntryListBuilder(Supplier<List<Either<TSLToken, TSLSnippet<?>>>> initializer) {
             super(initializer);
         }
 
