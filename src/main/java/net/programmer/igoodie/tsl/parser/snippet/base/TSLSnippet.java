@@ -6,8 +6,10 @@ import net.programmer.igoodie.tsl.parser.helper.Either;
 import net.programmer.igoodie.tsl.parser.helper.ListBuilder;
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
+import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureParameter;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
+import net.programmer.igoodie.tsl.util.ValuePipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -27,6 +29,12 @@ public abstract class TSLSnippet<S extends TSLSnippet<S>> implements
         }
 
         this.snippetEntries = entries;
+    }
+
+    protected final S getSelf() {
+        @SuppressWarnings("unchecked")
+        S self = (S) this;
+        return self;
     }
 
     public List<Either<TSLToken, TSLSnippet<?>>> getSnippetEntries() {
@@ -126,8 +134,38 @@ public abstract class TSLSnippet<S extends TSLSnippet<S>> implements
 
     /* ------------- */
 
-    public List<Either<TSLToken, TSLSnippet<?>>> fillCaptures(Map<String, TSLCaptureSnippet> captures) {
-        return null; // TODO
+    public S fillCaptureCalls(Map<String, TSLCaptureSnippet> captures) {
+        S filledSnippet = this.copy();
+
+        List<Either<TSLToken, TSLSnippet<?>>> entries = new ArrayList<>();
+
+        filledSnippet.snippetEntries.forEach(entry -> entry.consume(
+                token -> {
+                    if (!(token instanceof TSLCaptureCall)) {
+                        entries.add(Either.left(token));
+                        return;
+                    }
+
+                    TSLCaptureCall captureCall = (TSLCaptureCall) token;
+                    TSLCaptureSnippet capture = captures.get(captureCall.getCaptureName());
+                    if (capture == null) {
+                        entries.add(Either.left(token));
+                        return;
+                    }
+
+                    entries.addAll(capture.fillCaptureParameters(captureCall)
+                            .fillCaptureCalls(captures).snippetEntries);
+                },
+
+                snippet -> ValuePipe.of(snippet)
+                        .map(s -> s.fillCaptureCalls(captures))
+                        .map(Either::<TSLToken, TSLSnippet<?>>right)
+                        .consume(entries::add)
+        ));
+
+        filledSnippet.snippetEntries = entries;
+
+        return filledSnippet;
     }
 
     @Override
@@ -136,14 +174,14 @@ public abstract class TSLSnippet<S extends TSLSnippet<S>> implements
 
         filledSnippet.snippetEntries = filledSnippet.snippetEntries.stream()
                 .map(entry -> entry.fold(
-                        token -> Optional.ofNullable(token)
+                        token -> Optional.of(token)
                                 .filter(t -> t instanceof TSLCaptureParameter)
                                 .map(t -> ((TSLCaptureParameter) t))
                                 .map(t -> arguments.get(t.getParameterName()))
                                 .map(Either::<TSLToken, TSLSnippet<?>>left)
                                 .orElse(entry),
 
-                        snippet -> Optional.ofNullable(snippet)
+                        snippet -> Optional.of(snippet)
                                 .map(s -> s.fillCaptureParameters(arguments))
                                 .map(Either::<TSLToken, TSLSnippet<?>>right)
                                 .orElse(entry)

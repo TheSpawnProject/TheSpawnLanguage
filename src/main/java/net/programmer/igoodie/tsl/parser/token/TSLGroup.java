@@ -34,7 +34,7 @@ public class TSLGroup extends TSLToken implements TSLCaptureParameterFiller<TSLG
                 getBeginningPos(),
                 getEndingPos(),
                 template,
-                Copyable.copyUnmodifiableList(expressions));
+                Copyable.copyList(expressions));
     }
 
     public List<ExpressionToken> getExpressions() {

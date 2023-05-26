@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.parser.helper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Either<L, R> implements Copyable<Either<L, R>> {
@@ -10,7 +11,8 @@ public class Either<L, R> implements Copyable<Either<L, R>> {
     protected @Nullable L left;
     protected @Nullable R right;
 
-    private Either() {}
+    private Either() {
+    }
 
     @Override
     public Either<L, R> copy() {
@@ -59,6 +61,14 @@ public class Either<L, R> implements Copyable<Either<L, R>> {
             return leftMapper.apply(left);
         } else {
             return rightMapper.apply(right);
+        }
+    }
+
+    public void consume(Consumer<L> leftConsumer, Consumer<R> rightConsumer) {
+        if (isLeft()) {
+            leftConsumer.accept(left);
+        } else {
+            rightConsumer.accept(right);
         }
     }
 
