@@ -87,7 +87,8 @@ public class TSLLexerState {
 
     public void pushToken() {
         String raw = buildTokenRaw();
-        TextRange range = new TextRange(beginLineNo, beginColumnNo, 0, 0);
+        if (raw.length() == 0) return;
+        TextRange range = new TextRange(beginLineNo, beginColumnNo, endLineNo, endColumnNo);
         TSLToken token = TSLTokenizer.tokenize(range, raw);
         getCurrentSnippet().pushToken(token);
     }

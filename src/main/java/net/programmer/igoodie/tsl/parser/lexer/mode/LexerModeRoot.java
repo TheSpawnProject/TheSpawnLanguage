@@ -11,6 +11,17 @@ public class LexerModeRoot extends LexerMode {
             return;
         }
 
+        if (character == '(') {
+            state.pushSnippet();
+            return;
+        }
+
+        if (character == ')') {
+            state.pushToken();
+            state.popSnippet();
+            return;
+        }
+
         state.pushChar(character);
     }
 

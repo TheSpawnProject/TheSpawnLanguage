@@ -1,38 +1,31 @@
 package parser;
 
-import net.programmer.igoodie.tsl.parser.helper.Either;
-import net.programmer.igoodie.tsl.parser.helper.TextRange;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.snippet.TSLUnparsedSnippet;
-import net.programmer.igoodie.tsl.parser.snippet.base.TSLSnippet;
-import net.programmer.igoodie.tsl.parser.token.TSLPlainWord;
-import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import util.TSLAssertions;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class LexerTests {
 
     @Test
     public void testSimpleSnippet() {
-        String script = "FOO BAR BAZ";
+        String script = "FOO BAR BAZ (HEY THERE)";
         TSLLexer lexer = new TSLLexer(script);
         lexer.lex();
 
         List<TSLUnparsedSnippet> snippets = lexer.getSnippets();
 
         Assertions.assertEquals(1, snippets.size());
-        Assertions.assertEquals(new TSLUnparsedSnippet(
-                Stream.of(
-                                new TSLPlainWord(new TextRange(0, 0, 0, 2), "FOO"),
-                                new TSLPlainWord(new TextRange(0, 4, 0, 6), "BAR"),
-                                new TSLPlainWord(new TextRange(0, 8, 0, 10), "BAZ")
-                        )
-                        .map(Either::<TSLToken, TSLSnippet<?>>left)
-                        .collect(Collectors.toList())
+        TSLAssertions.assertSnippetsEqual(Arrays.asList(
+                "1- TSLPlainWord(FOO) @ (L0:0 | L0:2)",
+                "1- TSLPlainWord(BAR) @ (L0:4 | L0:6)",
+                "1- TSLPlainWord(BAZ) @ (L0:8 | L0:10)",
+                " 2- TSLPlainWord(HEY) @ (L0:13 | L0:15)",
+                " 2- TSLPlainWord(THERE) @ (L0:17 | L0:21)"
         ), snippets.get(0));
     }
 

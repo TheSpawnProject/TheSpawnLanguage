@@ -10,8 +10,10 @@ import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import util.TSLAssertions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,10 +52,11 @@ public class SnippetTests {
                         .build()
         );
 
-        Assertions.assertTrue(snippet.getSnippetEntries().get(snippet.getSnippetEntries().size() - 1).left()
-                .filter(t -> t instanceof TSLCaptureParameter)
-                .filter(t -> ((TSLCaptureParameter) t).getParameterName().equals("name"))
-                .isPresent());
+        TSLAssertions.assertSnippetsEqual(Arrays.asList(
+                "1- TSLPlainWord(Hey) @ (L0:0 | L0:0)",
+                "1- TSLPlainWord(There) @ (L0:0 | L0:0)",
+                "1- TSLCaptureParameter({{name}}) @ (L0:0 | L0:0)"
+        ), snippet);
 
         Map<String, TSLToken> arguments = new HashMap<>();
         arguments.put("name", new TSLPlainWord(
@@ -62,10 +65,11 @@ public class SnippetTests {
 
         snippet = snippet.fillCaptureParameters(arguments);
 
-        Assertions.assertTrue(snippet.getSnippetEntries().get(snippet.getSnippetEntries().size() - 1).left()
-                .filter(t -> t instanceof TSLPlainWord)
-                .filter(t -> ((TSLPlainWord) t).getValue().equals("iGoodie"))
-                .isPresent());
+        TSLAssertions.assertSnippetsEqual(Arrays.asList(
+                "1- TSLPlainWord(Hey) @ (L0:0 | L0:0)",
+                "1- TSLPlainWord(There) @ (L0:0 | L0:0)",
+                "1- TSLPlainWord(iGoodie) @ (L0:0 | L0:0)"
+        ), snippet);
     }
 
 }
