@@ -13,8 +13,6 @@ public class TSLLexerState {
 
     private final TSLLexer lexer;
 
-    protected boolean inComment = false;
-
     protected String[] lines;
     protected int scanningLine = 0;
     protected int scanningColumn = 0;
@@ -34,30 +32,6 @@ public class TSLLexerState {
         this.lines = lines;
         pushSnippet();
         pushMode(new LexerModeRoot());
-    }
-
-    public int getScanningLine() {
-        return scanningLine;
-    }
-
-    public int getScanningColumn() {
-        return scanningColumn;
-    }
-
-    public int getBeginLineNo() {
-        return beginLineNo;
-    }
-
-    public int getBeginColumnNo() {
-        return beginColumnNo;
-    }
-
-    public int getEndLineNo() {
-        return endLineNo;
-    }
-
-    public int getEndColumnNo() {
-        return endColumnNo;
     }
 
     public TSLUnparsedSnippet getCurrentSnippet() {

@@ -19,17 +19,14 @@ public class LexerModeRoot extends LexerMode {
         char character = state.getCharacterByOffset(0);
         char nextCharacter = state.getCharacterByOffset(1);
 
-        System.out.println("Traversing: "
-                + state.getCharacterByOffset(-1)
-                + state.getCharacterByOffset(0)
-                + state.getCharacterByOffset(1));
-
         if (character == '#') {
             if (nextCharacter == '*') {
                 if (state.getCharacterByOffset(2) == '*') {
                     // TODO: TSLDoc
                 }
-                // TODO: Block comment
+                state.pushToken();
+                state.pushMode(new LexerModeComment());
+                return CONTINUE;
             }
             return SKIP_LINE;
         }

@@ -4,7 +4,6 @@ import net.programmer.igoodie.tsl.parser.lexer.mode.LexerMode;
 import net.programmer.igoodie.tsl.parser.snippet.TSLUnparsedSnippet;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TSLLexer {
@@ -18,7 +17,6 @@ public class TSLLexer {
     }
 
     public void lex() {
-        System.out.println(Arrays.toString(this.state.lines));
         for (state.scanningLine = 0; state.scanningLine < state.lines.length; state.scanningLine++) {
             String line = state.getCurrentLine();
 
