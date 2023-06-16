@@ -4,6 +4,7 @@ import net.programmer.igoodie.tsl.parser.lexer.mode.LexerMode;
 import net.programmer.igoodie.tsl.parser.snippet.TSLUnparsedSnippet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TSLLexer {
@@ -17,16 +18,28 @@ public class TSLLexer {
     }
 
     public void lex() {
-        for (; state.scanningLine < state.lines.length; state.scanningLine++) {
+        System.out.println(Arrays.toString(this.state.lines));
+        for (state.scanningLine = 0; state.scanningLine < state.lines.length; state.scanningLine++) {
             String line = state.getCurrentLine();
 
-            for (; state.scanningColumn < line.length(); state.scanningColumn++) {
-                char prevCharacter = state.getCharacterByOffset(-1);
-                char character = state.getCharacterByOffset(0);
-                char nextCharacter = state.getCharacterByOffset(1);
-
+            if (line.trim().isEmpty()) {
                 LexerMode mode = state.modeStack.peek();
-                mode.process(this.state, prevCharacter, character, nextCharacter);
+                mode.handleEmptyLine(this.state);
+                continue;
+            }
+
+            for (state.scanningColumn = 0; state.scanningColumn < line.length(); state.scanningColumn++) {
+                LexerMode mode = state.modeStack.peek();
+                int result = mode.process(this.state);
+
+                if (result == LexerMode.SKIP_LINE) {
+                    mode.handleEndOfLine(state);
+                    break;
+                }
+
+                if (state.scanningColumn == line.length() - 1) {
+                    mode.handleEndOfLine(state);
+                }
             }
         }
 

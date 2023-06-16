@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.parser.lexer;
 
-import net.programmer.igoodie.tsl.exception.TSLInternalError;
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.helper.TextRange;
 import net.programmer.igoodie.tsl.parser.lexer.mode.LexerMode;
 import net.programmer.igoodie.tsl.parser.lexer.mode.LexerModeRoot;
@@ -11,7 +11,9 @@ import java.util.Stack;
 
 public class TSLLexerState {
 
-    protected TSLLexer lexer;
+    private final TSLLexer lexer;
+
+    protected boolean inComment = false;
 
     protected String[] lines;
     protected int scanningLine = 0;
@@ -32,6 +34,30 @@ public class TSLLexerState {
         this.lines = lines;
         pushSnippet();
         pushMode(new LexerModeRoot());
+    }
+
+    public int getScanningLine() {
+        return scanningLine;
+    }
+
+    public int getScanningColumn() {
+        return scanningColumn;
+    }
+
+    public int getBeginLineNo() {
+        return beginLineNo;
+    }
+
+    public int getBeginColumnNo() {
+        return beginColumnNo;
+    }
+
+    public int getEndLineNo() {
+        return endLineNo;
+    }
+
+    public int getEndColumnNo() {
+        return endColumnNo;
     }
 
     public TSLUnparsedSnippet getCurrentSnippet() {
@@ -57,14 +83,14 @@ public class TSLLexerState {
         return raw;
     }
 
-    protected void finalizeSnippet() {
+    public void finalizeSnippet() {
         if (snippetStack.size() != 1) {
-            // TODO Throw syntax error
-            throw new TSLInternalError("Foo");
+            throw new TSLSyntaxError("')' expected")
+                    .at(scanningLine, scanningColumn);
         }
 
         this.lexer.snippets.add(popSnippet());
-        System.out.println("Snippet Stack: " + snippetStack);
+        pushSnippet();
     }
 
     /* ---------------------- */
