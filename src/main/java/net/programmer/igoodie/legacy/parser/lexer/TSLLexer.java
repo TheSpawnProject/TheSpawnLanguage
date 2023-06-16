@@ -87,7 +87,7 @@ public class TSLLexer {
             }
 
             if (accumulatedString().endsWith("\\")) {
-                throw new TSLSyntaxError("Invalid escape sequence", lineNo(), charNo());
+                throw new TSLSyntaxError("Invalid escape sequence").at(lineNo(), charNo());
             }
         }
 
@@ -198,7 +198,7 @@ public class TSLLexer {
                         && ((TSLCaptureCall) secondToken).getArgs()
                         .stream().allMatch(arg -> arg instanceof TSLPlainWord)
                         && ((TSLSymbol) thirdToken).getType() == TSLSymbol.Type.CAPTURE_DECLARATION) {
-                    throw new TSLSyntaxError("Captures CANNOT be decorated.", firstToken);
+                    throw new TSLSyntaxError("Captures CANNOT be decorated.").at(firstToken);
                 }
             }
 

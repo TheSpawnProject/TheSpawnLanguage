@@ -51,7 +51,7 @@ public class IfMetaAction extends TSLAction {
     @Override
     public void validateTokens(TSLToken nameToken, ListAccessor<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
         if (arguments.size() < 3) {
-            throw new TSLSyntaxError("Expected condition and the action.", nameToken);
+            throw new TSLSyntaxError("Expected condition and the action.").at(nameToken);
         }
 
         List<List<TSLToken>> parts = splitParts(arguments, true);
@@ -61,17 +61,17 @@ public class IfMetaAction extends TSLAction {
 
             if (i == 0) { // IF part
                 if (part.size() < 3) {
-                    throw new TSLSyntaxError("Invalid IF statement", nameToken);
+                    throw new TSLSyntaxError("Invalid IF statement").at(nameToken);
                 }
 
                 TSLToken thenKeyword = part.get(1);
                 List<TSLToken> actionTokens = part.subList(2, part.size());
 
                 if (!(thenKeyword instanceof TSLPlainWord)) {
-                    throw new TSLSyntaxError("THEN keyword MUST be a plain string.", thenKeyword);
+                    throw new TSLSyntaxError("THEN keyword MUST be a plain string.").at(thenKeyword);
                 }
                 if (!thenKeyword.getRaw().equalsIgnoreCase("THEN")) {
-                    throw new TSLSyntaxError("IF statement must continue with a condition and THEN keyword.", thenKeyword);
+                    throw new TSLSyntaxError("IF statement must continue with a condition and THEN keyword.").at(thenKeyword);
                 }
 
                 parsingContext.getParser().parseAction(
@@ -81,17 +81,17 @@ public class IfMetaAction extends TSLAction {
 
             } else if (i != parts.size() - 1) { // ELSEIF part
                 if (part.size() < 4) {
-                    throw new TSLSyntaxError("Invalid ELSEIF statement", nameToken);
+                    throw new TSLSyntaxError("Invalid ELSEIF statement").at(nameToken);
                 }
 
                 TSLToken thenKeyword = part.get(2);
                 List<TSLToken> actionTokens = part.subList(3, part.size());
 
                 if (!(thenKeyword instanceof TSLPlainWord)) {
-                    throw new TSLSyntaxError("THEN keyword MUST be a plain string.", thenKeyword);
+                    throw new TSLSyntaxError("THEN keyword MUST be a plain string.").at(thenKeyword);
                 }
                 if (!thenKeyword.getRaw().equalsIgnoreCase("THEN")) {
-                    throw new TSLSyntaxError("ELSEIF statement must continue with a condition and THEN keyword.", thenKeyword);
+                    throw new TSLSyntaxError("ELSEIF statement must continue with a condition and THEN keyword.").at(thenKeyword);
                 }
 
                 parsingContext.getParser().parseAction(

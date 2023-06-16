@@ -13,7 +13,7 @@ public class LexerTests {
 
     @Test
     public void testSimpleSnippet() {
-        String script = "FOO BAR BAZ (HEY THERE)";
+        String script = "FOO BAR BAZ (HEY (THERE) MATE!)";
         TSLLexer lexer = new TSLLexer(script);
         lexer.lex();
 
@@ -25,7 +25,8 @@ public class LexerTests {
                 "1- TSLPlainWord(BAR) @ (L0:4 | L0:6)",
                 "1- TSLPlainWord(BAZ) @ (L0:8 | L0:10)",
                 " 2- TSLPlainWord(HEY) @ (L0:13 | L0:15)",
-                " 2- TSLPlainWord(THERE) @ (L0:17 | L0:21)"
+                "  3- TSLPlainWord(THERE) @ (L0:18 | L0:22)",
+                " 2- TSLPlainWord(MATE!) @ (L0:25 | L0:29)"
         ), snippets.get(0));
     }
 

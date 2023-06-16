@@ -3,7 +3,7 @@ package net.programmer.igoodie.tsl.function;
 import net.programmer.igoodie.goodies.util.accessor.ArrayAccessor;
 import net.programmer.igoodie.tsl.compat.LSPFeatures;
 import net.programmer.igoodie.tsl.definition.base.TSLArguments;
-import net.programmer.igoodie.tsl.exception.TSLExpressionException;
+import net.programmer.igoodie.tsl.exception.TSLExpressionError;
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.function.binding.TSLContextGetter;
 import net.programmer.igoodie.tsl.function.binding.TSLFunctionBinding;
@@ -40,13 +40,13 @@ public abstract class TSLFunction extends BaseFunction implements TSLFunctionBin
 
     public abstract String getName();
 
-    public abstract Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException;
+    public abstract Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionError;
 
     /* --------------------------------- */
 
     protected <T> T requiredArgument(TSLArguments.Parser<T> parser, Object[] args, int index) {
         return optionalArgument(parser, args, index)
-                .orElseThrow(() -> new TSLExpressionException("Expected " + parser.getType().getSimpleName() + " argument at index: " + index));
+                .orElseThrow(() -> new TSLExpressionError("Expected " + parser.getType().getSimpleName() + " argument at index: " + index));
     }
 
     protected <T> Optional<T> optionalArgument(TSLArguments.Parser<T> parser, Object[] args, int index) {

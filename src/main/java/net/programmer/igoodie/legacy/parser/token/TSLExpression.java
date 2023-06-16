@@ -1,6 +1,6 @@
 package net.programmer.igoodie.legacy.parser.token;
 
-import net.programmer.igoodie.tsl.exception.TSLExpressionException;
+import net.programmer.igoodie.tsl.exception.TSLExpressionError;
 import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.mozilla.javascript.RhinoException;
@@ -34,7 +34,7 @@ public class TSLExpression extends TSLToken {
             JSEngine jsEngine = context.getTsl().getJsEngine();
             return jsEngine.evaluate(expression, context);
 
-        } catch (RhinoException | TSLExpressionException error) {
+        } catch (RhinoException | TSLExpressionError error) {
             error.printStackTrace();
             return "#!ERROR!#";
         }

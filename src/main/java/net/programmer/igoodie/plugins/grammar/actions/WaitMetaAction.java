@@ -3,14 +3,14 @@ package net.programmer.igoodie.plugins.grammar.actions;
 import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.goodies.util.builder.InlineMapBuilder;
+import net.programmer.igoodie.legacy.parser.TSLParsingContext;
+import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
+import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.definition.base.TSLArguments;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.legacy.parser.TSLParsingContext;
-import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
-import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,17 +53,17 @@ public class WaitMetaAction extends TSLAction {
     @Override
     public void validateTokens(TSLToken nameToken, ListAccessor<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
         if (arguments.size() < 2) {
-            throw new TSLSyntaxError("Expected amount and a time unit", nameToken);
+            throw new TSLSyntaxError("Expected amount and a time unit").at(nameToken);
         }
         if (arguments.size() > 2) {
-            throw new TSLSyntaxError("Expected 2 tokens, found " + arguments.size() + " instead", nameToken);
+            throw new TSLSyntaxError("Expected 2 tokens, found " + arguments.size() + " instead").at(nameToken);
         }
 
         TSLToken unitToken = arguments.get(1).orElseThrow(InternalError::new);
         if (unitToken instanceof TSLPlainWord) {
             Long timeCoef = UNIT_COEF.get(unitToken.getRaw().toLowerCase());
             if (timeCoef == null) {
-                throw new TSLSyntaxError("Unknown time unit", unitToken);
+                throw new TSLSyntaxError("Unknown time unit").at(unitToken);
             }
         }
     }
@@ -80,7 +80,7 @@ public class WaitMetaAction extends TSLAction {
         long timeCoefficient = arguments.get(1)
                 .map(token -> token.evaluate(context))
                 .map(value -> UNIT_COEF.get(value.toLowerCase()))
-                .orElseThrow(() -> new TSLRuntimeError("Unknown time unit", unitToken));
+                .orElseThrow(() -> new TSLRuntimeError("Unknown time unit").at(unitToken));
 
         sleepThread((long) (time * timeCoefficient));
     }

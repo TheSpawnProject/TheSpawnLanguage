@@ -167,7 +167,7 @@ public class TheSpawnLanguage {
         String pluginId = pluginAliases.get(namespace);
 
         if (pluginId == null) {
-            throw new TSLImportError("Could not resolve " + namespace, tagNameToken);
+            throw new TSLImportError("Could not resolve " + namespace).at(tagNameToken);
         }
 
         return getDefinition(TAG_REGISTRY, pluginId + ":" + value);
@@ -197,7 +197,7 @@ public class TheSpawnLanguage {
         String pluginId = pluginAliases.get(namespace);
 
         if (pluginId == null) {
-            throw new TSLImportError("Could not resolve " + namespace, decoratorCallToken);
+            throw new TSLImportError("Could not resolve " + namespace).at(decoratorCallToken);
         }
 
         return getDefinition(DECORATOR_REGISTRY, pluginId + ":" + value);
@@ -232,7 +232,7 @@ public class TheSpawnLanguage {
 
             if (pluginId == null) {
                 TSLPlainWord namespaceToken = eventTokens.get(eventTokens.size() - 1);
-                throw new TSLImportError("Could not resolve " + namespace, namespaceToken);
+                throw new TSLImportError("Could not resolve " + namespace).at(namespaceToken);
             }
 
             TSLEvent definition = getDefinition(EVENT_REGISTRY, pluginId + ":" + eventName);
@@ -269,7 +269,7 @@ public class TheSpawnLanguage {
         String pluginId = pluginAliases.get(namespace);
 
         if (pluginId == null) {
-            throw new TSLImportError("Could not resolve " + namespace, actionName);
+            throw new TSLImportError("Could not resolve " + namespace).at(actionName);
         }
 
         return getDefinition(ACTION_REGISTRY, pluginId + ":" + value);

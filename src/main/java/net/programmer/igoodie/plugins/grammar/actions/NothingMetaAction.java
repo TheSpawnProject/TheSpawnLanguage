@@ -1,11 +1,11 @@
 package net.programmer.igoodie.plugins.grammar.actions;
 
 import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
+import net.programmer.igoodie.legacy.parser.TSLParsingContext;
+import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.legacy.parser.TSLParsingContext;
-import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 
 public class NothingMetaAction extends TSLAction {
@@ -24,7 +24,7 @@ public class NothingMetaAction extends TSLAction {
     @Override
     public void validateTokens(TSLToken nameToken, ListAccessor<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
         if (arguments.size() != 0) {
-            throw new TSLSyntaxError("NOTHING action does not accept any arguments", nameToken);
+            throw new TSLSyntaxError("NOTHING action does not accept any arguments").at(nameToken);
         }
     }
 

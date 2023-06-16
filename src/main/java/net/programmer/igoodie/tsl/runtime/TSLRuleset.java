@@ -1,10 +1,6 @@
 package net.programmer.igoodie.tsl.runtime;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
-import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.definition.TSLTag;
-import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
-import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.legacy.parser.snippet.TSLCaptureSnippet;
 import net.programmer.igoodie.legacy.parser.snippet.TSLDocSnippet;
 import net.programmer.igoodie.legacy.parser.snippet.TSLSnippet;
@@ -12,6 +8,10 @@ import net.programmer.igoodie.legacy.parser.snippet.TSLTagSnippet;
 import net.programmer.igoodie.legacy.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
 import net.programmer.igoodie.legacy.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.TheSpawnLanguage;
+import net.programmer.igoodie.tsl.definition.TSLTag;
+import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.runtime.attribute.ConstantAttributeGenerator;
 import net.programmer.igoodie.tsl.util.GoodieUtils;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,8 @@ public class TSLRuleset implements ConstantAttributeGenerator {
     protected @Nullable String name;
     // TODO: Turn Into Optional<File>
     protected @Nullable File file;
-    protected @NotNull final TheSpawnLanguage tsl;
+    protected @NotNull
+    final TheSpawnLanguage tsl;
     protected List<TSLSnippet> snippets;
 
     protected GoodieObject tagAttributes;
@@ -125,7 +126,8 @@ public class TSLRuleset implements ConstantAttributeGenerator {
         TSLCaptureSnippet referredCapture = getCaptureSnippet(captureCall.getCaptureName());
 
         if (!silently && referredCapture == null) {
-            throw new TSLRuntimeError("No capture was defined with name -> " + captureCall.getCaptureName(), captureCall);
+            throw new TSLRuntimeError("No capture was defined with name -> " + captureCall.getCaptureName())
+                    .at(captureCall);
         }
 
         return referredCapture;
@@ -186,13 +188,13 @@ public class TSLRuleset implements ConstantAttributeGenerator {
         Map<String, TSLCaptureSnippet> captureSnippets = getCaptureSnippets();
 
         if (captureSnippets.containsKey(captureName)) {
-            throw new TSLSyntaxError(captureSnippet.getHeaderToken() + " is already defined", captureSnippet);
+            throw new TSLSyntaxError(captureSnippet.getHeaderToken() + " is already defined").at(captureSnippet);
         }
 
         for (TSLToken capturedToken : captureSnippet.getCapturedTokens()) {
             if (capturedToken instanceof TSLCaptureCall) {
                 if (!captureSnippets.containsKey(((TSLCaptureCall) capturedToken).getCaptureName())) {
-                    throw new TSLSyntaxError(captureSnippet.getHeaderToken() + " is not defined.", capturedToken);
+                    throw new TSLSyntaxError(captureSnippet.getHeaderToken() + " is not defined.").at(capturedToken);
                 }
             }
         }

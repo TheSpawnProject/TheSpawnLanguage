@@ -22,6 +22,8 @@ public class LexerModeRoot extends LexerMode {
             return;
         }
 
+        // TODO Keep implementing from here
+
         state.pushChar(character);
     }
 

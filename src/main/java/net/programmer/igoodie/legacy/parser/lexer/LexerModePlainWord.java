@@ -1,8 +1,8 @@
 package net.programmer.igoodie.legacy.parser.lexer;
 
-import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.legacy.parser.token.TSLExtraSpaceToken;
 import net.programmer.igoodie.legacy.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ class LexerModePlainWord extends LexerMode {
         char nextCharacter = lexer.getCharacter(1);
 
         if (character == '*' && nextCharacter == '#') {
-            throw new TSLSyntaxError("Unexpected block comment ending", lineNo, characterNo);
+            throw new TSLSyntaxError("Unexpected block comment ending").at(lineNo, characterNo);
         }
 
         if (character == '\\') {
@@ -80,7 +80,7 @@ class LexerModePlainWord extends LexerMode {
 
             } else {
                 System.out.println("Accumulated:" + lexer.accumulatedString());
-                throw new TSLSyntaxError("Unexpected parenthesis character", lineNo, characterNo);
+                throw new TSLSyntaxError("Unexpected parenthesis character").at(lineNo, characterNo);
             }
         }
 
@@ -119,7 +119,7 @@ class LexerModePlainWord extends LexerMode {
         if (lexer.isUsingCommaDelimiter()) {
             if (prevCharacter == ' ' && character != ',') {
                 if (!lexer.accumulatedString().trim().isEmpty()) {
-                    throw new TSLSyntaxError("Unexpected space between arguments", lineNo, characterNo);
+                    throw new TSLSyntaxError("Unexpected space between arguments").at(lineNo, characterNo);
                 }
             }
         }

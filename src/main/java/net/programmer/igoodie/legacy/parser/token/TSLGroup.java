@@ -39,7 +39,7 @@ public class TSLGroup extends TSLToken {
                     .collect(Collectors.joining(" "));
 
         } catch (Exception e) {
-            throw new TSLRuntimeError("Unable to evaluate group", this).causedBy(e);
+            throw new TSLRuntimeError("Unable to evaluate group").causedBy(e).at(this);
         }
     }
 

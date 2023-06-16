@@ -111,11 +111,11 @@ public class TSLParser {
         checkNamespaceIntegrity(tokens);
 
         if (tokens.size() < 2) {
-            throw new TSLSyntaxError("Tag snippet missing a tag name", tokenBuffer);
+            throw new TSLSyntaxError("Tag snippet missing a tag name");//.at(tokenBuffer);
         }
 
         if (!(tokens.get(1) instanceof TSLPlainWord)) {
-            throw new TSLSyntaxError("Tag names MUST be plain strings.", tokens.get(1));
+            throw new TSLSyntaxError("Tag names MUST be plain strings.").at(tokens.get(1));
         }
 
         TSLPlainWord tagNameToken = ((TSLPlainWord) tokens.get(1));
@@ -126,7 +126,7 @@ public class TSLParser {
                 : tsl.getTag(pluginAliases, tagNameToken);
 
         if (tagDefinition == null) {
-            throw new TSLSyntaxError(String.format("Unknown tag name -> %s", tagNameToken.getRaw()), tagNameToken);
+            throw new TSLSyntaxError(String.format("Unknown tag name -> %s", tagNameToken.getRaw())).at(tagNameToken);
         }
 
         List<TSLToken> argTokens = tokens.subList(2, tokens.size());
@@ -144,26 +144,26 @@ public class TSLParser {
         checkNamespaceIntegrity(tokens);
 
         if (tokens.size() < 3) {
-            throw new TSLSyntaxError("Malformed capture snippet", tokenBuffer);
+            throw new TSLSyntaxError("Malformed capture snippet");//.at(tokenBuffer);
         }
 
         TSLToken captureNameToken = tokens.get(0);
 
         if (!(captureNameToken instanceof TSLCaptureCall)) {
-            throw new TSLSyntaxError(String.format("Invalid capture header -> %s", captureNameToken.getRaw()), tokenBuffer);
+            throw new TSLSyntaxError(String.format("Invalid capture header -> %s", captureNameToken.getRaw()));//.at(tokenBuffer);
         }
 
         TSLCaptureCall captureCallToken = (TSLCaptureCall) captureNameToken;
         for (TSLToken argName : captureCallToken.getArgs()) {
             if (!TSLTokenizer.VALID_PARAM.matcher(argName.getRaw()).matches()) {
-                throw new TSLSyntaxError(String.format("Illegal capture parameter name -> %s", argName), captureCallToken);
+                throw new TSLSyntaxError(String.format("Illegal capture parameter name -> %s", argName)).at(captureCallToken);
             }
         }
 
         TSLToken equalsSign = tokens.get(1);
 
         if (!(equalsSign instanceof TSLSymbol) || ((TSLSymbol) equalsSign).getType() != TSLSymbol.Type.CAPTURE_DECLARATION) {
-            throw new TSLSyntaxError(String.format("Unexpected token -> %s", equalsSign.getRaw()), tokenBuffer);
+            throw new TSLSyntaxError(String.format("Unexpected token -> %s", equalsSign.getRaw()));//.at(tokenBuffer);
         }
         List<TSLToken> capturedTokens = tokens.subList(2, tokens.size());
 
@@ -189,14 +189,14 @@ public class TSLParser {
         int indexOn = indexOfKeyword(tokens, "ON");
         if (indexOn == -1) {
             // TODO: Can we fill captures before even checking on events?
-            throw new TSLSyntaxError("Incomplete rule. Missing an event statement.", buffer);
+            throw new TSLSyntaxError("Incomplete rule. Missing an event statement.");//.at(buffer);
         }
 
         // Fetch index of first WITH keyword
         int indexWith = indexOfKeyword(tokens, "WITH");
         if (indexWith != -1 && indexOn > indexWith) {
             TSLToken keywordWith = tokens.get(indexWith);
-            throw new TSLSyntaxError("Predicate statements MUST be declared after Event statement.", keywordWith);
+            throw new TSLSyntaxError("Predicate statements MUST be declared after Event statement.").at(keywordWith);
         }
 
         // Parse 3 fundamental parts
@@ -229,7 +229,7 @@ public class TSLParser {
         List<TSLToken> actionTokens = tokens.subList(indexLastDecorator == -1 ? 0 : indexLastDecorator + 1, indexOn);
 
         if (actionTokens.size() == 0) {
-            throw new TSLSyntaxError("Rule missing action tokens.", tokens.get(0));
+            throw new TSLSyntaxError("Rule missing action tokens.").at(tokens.get(0));
         }
 
         return parseAction(pluginAliases, captureSnippets, actionTokens);
@@ -247,8 +247,8 @@ public class TSLParser {
             ListAccessor<TSLToken> flattenedTokens = ListAccessor.of(TSLActionSnippet.flatten(tokens, captureSnippets));
 
             TSLPlainWord flattenedActionName = (TSLPlainWord) flattenedTokens.get(0).filter(TSLToken::isPlainWord)
-                    .orElseThrow(() -> new TSLSyntaxError("Expected Action name to be a String Word.",
-                            flattenedTokens.get(0).orElseThrow(InternalError::new)));
+                    .orElseThrow(() -> new TSLSyntaxError("Expected Action name to be a String Word.")
+                            .at(flattenedTokens.get(0).orElseThrow(InternalError::new)));
 
             List<TSLToken> flattenedArguments = flattenedTokens.subList(1, flattenedTokens.size());
 
@@ -257,7 +257,7 @@ public class TSLParser {
                     : tsl.getAction(pluginAliases, flattenedActionName);
 
             if (actionDefinition == null) {
-                throw new TSLSyntaxError("Unknown action -> " + flattenedActionName.getRaw(), flattenedActionName);
+                throw new TSLSyntaxError("Unknown action -> " + flattenedActionName.getRaw()).at(flattenedActionName);
             }
 
             Couple<List<TSLToken>, TSLToken> couple = actionDefinition.splitByDisplaying(flattenedArguments);
@@ -278,7 +278,7 @@ public class TSLParser {
         }
 
         if (!actionName.isPlainWord()) {
-            throw new TSLSyntaxError("Action name MUST be a String Word.", actionName);
+            throw new TSLSyntaxError("Action name MUST be a String Word.").at(actionName);
         }
 
         TSLAction actionDefinition = pluginAliases == null
@@ -286,7 +286,7 @@ public class TSLParser {
                 : tsl.getAction(pluginAliases, ((TSLPlainWord) actionName));
 
         if (actionDefinition == null) {
-            throw new TSLSyntaxError("Unknown action -> " + actionName.getRaw(), actionName);
+            throw new TSLSyntaxError("Unknown action -> " + actionName.getRaw()).at(actionName);
         }
 
         Couple<List<TSLToken>, TSLToken> couple = actionDefinition.splitByDisplaying(actionArguments);
@@ -318,7 +318,7 @@ public class TSLParser {
                 : tsl.getEvent(pluginAliases, eventTokens);
 
         if (eventDefinition == null) {
-            throw new TSLSyntaxError("Unknown event name -> " + eventName, eventTokens.get(0));
+            throw new TSLSyntaxError("Unknown event name -> " + eventName).at(eventTokens.get(0));
         }
 
         return new TSLEventSnippet(
@@ -359,11 +359,11 @@ public class TSLParser {
         TSLToken withToken = tokens.get(0);
 
         if (!(withToken instanceof TSLPlainWord)) {
-            throw new TSLSyntaxError("Predicates MUST start with WITH keyword.", withToken);
+            throw new TSLSyntaxError("Predicates MUST start with WITH keyword.").at(withToken);
         }
 
         if (!((TSLPlainWord) withToken).getRawWord().equalsIgnoreCase("WITH")) {
-            throw new TSLSyntaxError("Predicates MUST start with WITH keyword.", withToken);
+            throw new TSLSyntaxError("Predicates MUST start with WITH keyword.").at(withToken);
         }
 
         List<TSLToken> predicateTokens = tokens.subList(1, tokens.size());
@@ -374,7 +374,7 @@ public class TSLParser {
                 .findFirst();
 
         if (!matchingPredicateFormat.isPresent()) {
-            throw new TSLSyntaxError("Unknown Predicate declaration format.", withToken);
+            throw new TSLSyntaxError("Unknown Predicate declaration format.").at(withToken);
         }
 
         return new TSLPredicateSnippet(
@@ -398,7 +398,7 @@ public class TSLParser {
         TSLDecorator decorator = tsl.getDecorator(pluginAliases, decoratorCall);
 
         if (decorator == null) {
-            throw new TSLSyntaxError("Unknown decorator name -> " + decoratorCall.getName(), decoratorCall);
+            throw new TSLSyntaxError("Unknown decorator name -> " + decoratorCall.getName()).at(decoratorCall);
         }
 
         return decorator;
@@ -410,7 +410,7 @@ public class TSLParser {
         for (TSLToken token : tokens) {
             String text = token.getRaw();
             if (token instanceof TSLPlainWord && StringUtils.occurrenceCount(text, '.') >= 2) {
-                throw new TSLSyntaxError("Cannot have multiple namespacing delimiters", token);
+                throw new TSLSyntaxError("Cannot have multiple namespacing delimiters").at(token);
             }
         }
     }
@@ -472,7 +472,7 @@ public class TSLParser {
             if (token instanceof TSLDecoratorCall) {
                 lastIndex = i;
                 if (!decoratorAllowed) {
-                    throw new TSLSyntaxError("Decorators MUST be declared on top of the rules.", token);
+                    throw new TSLSyntaxError("Decorators MUST be declared on top of the rules.").at(token);
                 }
             } else {
                 decoratorAllowed = false;
@@ -488,13 +488,13 @@ public class TSLParser {
 
         if (eventTokens.size() == 0) {
             TSLToken keywordOn = tokens.get(indexOn);
-            throw new TSLSyntaxError("Missing event name.", keywordOn);
+            throw new TSLSyntaxError("Missing event name.").at(keywordOn);
         }
 
         List<TSLPlainWord> eventTokensAsString = new LinkedList<>();
         for (TSLToken token : eventTokens) {
             if (!(token instanceof TSLPlainWord)) {
-                throw new TSLSyntaxError("Event statements MUST contain only String Words. Instead found -> " + token.getTypeName() + " " + token.getRaw(), token);
+                throw new TSLSyntaxError("Event statements MUST contain only String Words. Instead found -> " + token.getTypeName() + " " + token.getRaw()).at(token);
             }
             eventTokensAsString.add(((TSLPlainWord) token));
         }

@@ -3,6 +3,8 @@ package net.programmer.igoodie.plugins.grammar.predicates;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.goodies.util.StringUtilities;
+import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
+import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLComparator;
@@ -11,8 +13,6 @@ import net.programmer.igoodie.tsl.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
-import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
         String eventField = ((TSLPlainWord) eventFieldToken).getRawWord();
 
         if (eventField == null || !event.getAcceptedFields().containsKey(eventField)) {
-            throw new TSLSyntaxError("Unknown field for the event -> " + eventFieldToken, eventFieldToken);
+            throw new TSLSyntaxError("Unknown field for the event -> " + eventFieldToken).at(eventFieldToken);
         }
 
         Couple<TSLComparator, Integer> couple = longestMatchingComparator(tsl, tokens);
@@ -98,7 +98,7 @@ public class BinaryOperationPredicate extends TSLPredicate {
 
         if (!expectedType.isAssignableFrom(actualType)) {
             throw new TSLRuntimeError(String.format("Event Field value mismatches expected type. (Expected: %s, Found: %s)",
-                    expectedType, actualType), fieldNameToken);
+                    expectedType, actualType)).at(fieldNameToken);
         }
     }
 

@@ -42,7 +42,7 @@ public class LexerModeExpression extends LexerMode {
         if (character == '$' && nextCharacter == '{') {
             if (getLatestQuote() == BACKTICK) {
                 if (templateExprLevel == 0) {
-                    throw new TSLSyntaxError("Unexpected expression beginning", lineNo, characterNo);
+                    throw new TSLSyntaxError("Unexpected expression beginning").at(lineNo, characterNo);
                 }
                 lexer.pushCharacters("${");
                 return LexResult.nothing();

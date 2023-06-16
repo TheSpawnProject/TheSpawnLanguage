@@ -80,7 +80,7 @@ public class TSLCaptureSnippet extends TSLSnippet {
                 // TODO: Disallow circular capture calls (might need a stack trace...)
                 TSLCaptureCall captureCall = (TSLCaptureCall) capturedToken;
                 if (captureCall.getCaptureName().equals(this.getName())) {
-                    throw new TSLRuntimeError("Captures MUST not call themselves recursively.", captureCall);
+                    throw new TSLRuntimeError("Captures MUST not call themselves recursively.").at(captureCall);
                 }
                 TSLCaptureSnippet captureSnippet = captureSnippets.get(captureCall.getCaptureName());
                 List<TSLToken> flattenedCapture = captureSnippet.fill(captureSnippets, captureCall.getArgs());

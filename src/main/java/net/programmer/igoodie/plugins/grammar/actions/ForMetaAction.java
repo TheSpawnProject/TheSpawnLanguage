@@ -2,15 +2,15 @@ package net.programmer.igoodie.plugins.grammar.actions;
 
 import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
-import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
-import net.programmer.igoodie.tsl.definition.TSLAction;
-import net.programmer.igoodie.tsl.definition.base.TSLArguments;
-import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.legacy.parser.TSLParser;
 import net.programmer.igoodie.legacy.parser.TSLParsingContext;
 import net.programmer.igoodie.legacy.parser.snippet.TSLActionSnippet;
 import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
 import net.programmer.igoodie.legacy.parser.token.TSLToken;
+import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
+import net.programmer.igoodie.tsl.definition.TSLAction;
+import net.programmer.igoodie.tsl.definition.base.TSLArguments;
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,17 +46,17 @@ public class ForMetaAction extends TSLAction {
     @Override
     public void validateTokens(TSLToken nameToken, ListAccessor<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
         if (arguments.size() < 3) {
-            throw new TSLSyntaxError("Expected loop count and the action", nameToken);
+            throw new TSLSyntaxError("Expected loop count and the action").at(nameToken);
         }
 
         TSLToken timesKeyword = arguments.get(1).orElse(null);
         List<TSLToken> actionTokens = arguments.subList(2, arguments.size());
 
         if (!(timesKeyword instanceof TSLPlainWord)) {
-            throw new TSLSyntaxError("TIMES keyword MUST be a plain string.", timesKeyword);
+            throw new TSLSyntaxError("TIMES keyword MUST be a plain string.").at(timesKeyword);
         }
         if (!timesKeyword.getRaw().equalsIgnoreCase("TIMES")) {
-            throw new TSLSyntaxError("FOR statement must continue with a loop count and TIMES keyword.", timesKeyword);
+            throw new TSLSyntaxError("FOR statement must continue with a loop count and TIMES keyword.").at(timesKeyword);
         }
 
         // See if underlying action is parsable without errors

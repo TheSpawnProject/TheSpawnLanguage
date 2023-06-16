@@ -1,11 +1,11 @@
 package net.programmer.igoodie.plugins.grammar.actions;
 
 import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
+import net.programmer.igoodie.legacy.parser.TSLParsingContext;
+import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.definition.TSLAction;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.legacy.parser.TSLParsingContext;
-import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 
 import java.util.HashMap;
@@ -30,7 +30,7 @@ public class VariableAction extends TSLAction {
     @Override
     public void validateTokens(TSLToken nameToken, ListAccessor<TSLToken> arguments, TSLParsingContext parsingContext) throws TSLSyntaxError {
         if (arguments.size() != 2) {
-            throw new TSLSyntaxError(getName() + " MUST have a variable name and a value", nameToken);
+            throw new TSLSyntaxError(getName() + " MUST have a variable name and a value").at(nameToken);
         }
     }
 

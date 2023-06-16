@@ -1,15 +1,15 @@
 package net.programmer.igoodie.plugins.grammar.tags;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.legacy.parser.TSLParser;
+import net.programmer.igoodie.legacy.parser.snippet.TSLTagSnippet;
+import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
+import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.plugins.grammar.TSLGrammarCore;
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLTag;
 import net.programmer.igoodie.tsl.exception.TSLRuntimeError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.legacy.parser.TSLParser;
-import net.programmer.igoodie.legacy.parser.snippet.TSLTagSnippet;
-import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
-import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.util.IOUtils;
@@ -47,17 +47,17 @@ public class ImportTag extends TSLTag {
             TSLToken target = arguments.get(2);
 
             if (!(alias instanceof TSLPlainWord)) {
-                throw new TSLSyntaxError("Alias token MUST be a plain word", alias);
+                throw new TSLSyntaxError("Alias token MUST be a plain word").at(alias);
             }
 
             if (!(keywordFrom instanceof TSLPlainWord) || !keywordFrom.getRaw().equalsIgnoreCase("FROM")) {
-                throw new TSLSyntaxError("Unexpected token", keywordFrom);
+                throw new TSLSyntaxError("Unexpected token").at(keywordFrom);
             }
 
             loadTarget(ruleset.getTsl(), ruleset, ((TSLPlainWord) alias), target);
 
         } else {
-            throw new TSLSyntaxError("Unexpected amount of tokens", snippet);
+            throw new TSLSyntaxError("Unexpected amount of tokens").at(snippet);
         }
     }
 
@@ -83,7 +83,7 @@ public class ImportTag extends TSLTag {
             }
 
             if (targetPath == null) {
-                throw new TSLSyntaxError("Ruleset cannot be found", targetToken);
+                throw new TSLSyntaxError("Ruleset cannot be found").at(targetToken);
             }
 
             TSLRuleset otherRuleset = new TSLParser(tsl).parse(targetPath.toFile());
@@ -93,7 +93,7 @@ public class ImportTag extends TSLTag {
             ruleset.addPluginAlias(alias, target);
 
         } else {
-            throw new TSLSyntaxError("Unknown plugin id -> " + targetToken.evaluate(context), targetToken);
+            throw new TSLSyntaxError("Unknown plugin id -> " + targetToken.evaluate(context)).at(targetToken);
         }
     }
 

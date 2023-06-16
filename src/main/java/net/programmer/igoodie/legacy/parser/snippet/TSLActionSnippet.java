@@ -1,10 +1,10 @@
 package net.programmer.igoodie.legacy.parser.snippet;
 
-import net.programmer.igoodie.tsl.definition.TSLAction;
-import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.legacy.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
 import net.programmer.igoodie.legacy.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.definition.TSLAction;
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -58,14 +58,14 @@ public class TSLActionSnippet extends TSLSnippet {
                     TSLCaptureCall captureCall = (TSLCaptureCall) token;
                     TSLCaptureSnippet captureSnippet = captureSnippets.get(captureCall.getCaptureName());
                     if (captureSnippet == null) {
-                        throw new TSLSyntaxError("Capture not defined with name -> " + captureCall.getCaptureName(), captureCall);
+                        throw new TSLSyntaxError("Capture not defined with name -> " + captureCall.getCaptureName()).at(captureCall);
                     }
                     List<TSLToken> flattenedCapture = captureSnippet.fill(captureSnippets, captureCall.getArgs());
                     flattened.addAll(flattenedCapture);
 
                 } catch (IllegalArgumentException e) {
                     // TODO: Fix that non-sense message
-                    throw new TSLSyntaxError("Capture arguments MUST NOT contain multiple tokens at once.", token).causedBy(e);
+                    throw new TSLSyntaxError("Capture arguments MUST NOT contain multiple tokens at once.").causedBy(e).at(token);
                 }
 
             } else {

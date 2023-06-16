@@ -54,7 +54,7 @@ public class TSLCaptureCall extends TSLToken {
 
         TSLCaptureSnippet associatedCaptureSnippet = captureSnippets.get(getCaptureName());
         if (associatedCaptureSnippet == null) {
-            throw new TSLRuntimeError("Unknown capture -> " + getCaptureName(), this);
+            throw new TSLRuntimeError("Unknown capture -> " + getCaptureName()).at(this);
         }
 
         List<TSLToken> tokens = associatedCaptureSnippet.fill(captureSnippets, getArgs());

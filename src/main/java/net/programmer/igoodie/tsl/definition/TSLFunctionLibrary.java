@@ -1,7 +1,7 @@
 package net.programmer.igoodie.tsl.definition;
 
 import net.programmer.igoodie.tsl.definition.base.TSLDefinition;
-import net.programmer.igoodie.tsl.exception.TSLExpressionException;
+import net.programmer.igoodie.tsl.exception.TSLExpressionError;
 import net.programmer.igoodie.tsl.function.TSLFunction;
 import net.programmer.igoodie.tsl.function.binding.TSLFunctionBinding;
 import net.programmer.igoodie.tsl.function.scope.JSScope;
@@ -36,7 +36,7 @@ public abstract class TSLFunctionLibrary extends TSLDefinition {
             }
 
             @Override
-            public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionException {
+            public Object call(TSLContext context, JSScope scope, Object... arguments) throws TSLExpressionError {
                 return binding.call(context, scope, arguments);
             }
         });
