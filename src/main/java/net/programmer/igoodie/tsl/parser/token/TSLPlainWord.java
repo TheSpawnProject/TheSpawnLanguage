@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.parser.token;
 
-import net.programmer.igoodie.tsl.parser.helper.TextPosition;
+import net.programmer.igoodie.tsl.parser.helper.TextRange;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
@@ -13,17 +13,14 @@ public class TSLPlainWord extends TSLToken {
 
     protected String plainWord;
 
-    public TSLPlainWord(TextPosition beginPos, TextPosition endPos, String plainWord) {
-        super(beginPos, endPos);
+    public TSLPlainWord(TextRange range, String plainWord) {
+        super(range);
         this.plainWord = plainWord;
     }
 
     @Override
     public TSLPlainWord copy() {
-        return new TSLPlainWord(
-                getBeginningPos(),
-                getEndingPos(),
-                plainWord);
+        return new TSLPlainWord(getRange(), plainWord);
     }
 
     @Override

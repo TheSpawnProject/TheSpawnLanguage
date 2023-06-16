@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.parser.helper;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -70,6 +71,20 @@ public class Either<L, R> implements Copyable<Either<L, R>> {
         } else {
             rightConsumer.accept(right);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Either<?, ?> that = (Either<?, ?>) o;
+        return Objects.equals(this.left, that.left)
+                && Objects.equals(this.right, that.right);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(left, right);
     }
 
     @Override

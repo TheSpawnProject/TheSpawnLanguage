@@ -7,7 +7,8 @@ import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 
 import java.util.ArrayList;
 import java.util.List;
-public class TSLUnparsedSnippet extends TSLSnippet<TSLUnparsedSnippet> {
+
+public final class TSLUnparsedSnippet extends TSLSnippet<TSLUnparsedSnippet> {
 
     public TSLUnparsedSnippet() {
         this(new ArrayList<>());
@@ -22,12 +23,14 @@ public class TSLUnparsedSnippet extends TSLSnippet<TSLUnparsedSnippet> {
         return new TSLUnparsedSnippet(Copyable.copyUnmodifiableList(snippetEntries));
     }
 
-    public void pushToken(TSLToken token) {
+    public TSLToken pushToken(TSLToken token) {
         snippetEntries.add(Either.left(token));
+        return token;
     }
 
-    public void pushSnippet(TSLSnippet<?> snippet) {
+    public TSLSnippet<?> pushSnippet(TSLSnippet<?> snippet) {
         snippetEntries.add(Either.right(snippet));
+        return snippet;
     }
 
 }

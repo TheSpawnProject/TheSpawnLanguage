@@ -1,7 +1,7 @@
 package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.parser.helper.Copyable;
-import net.programmer.igoodie.tsl.parser.helper.TextPosition;
+import net.programmer.igoodie.tsl.parser.helper.TextRange;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
@@ -12,17 +12,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+// $capture
+// $capture(x)
+// $capture(x, y, z)
 public class TSLCaptureCall extends TSLToken {
 
     protected final String captureName;
     protected final List<TSLToken> arguments;
 
-    public TSLCaptureCall(TextPosition beginPos, TextPosition endPos, String captureName) {
-        this(beginPos, endPos, captureName, Collections.emptyList());
+    public TSLCaptureCall(TextRange range, String captureName) {
+        this(range, captureName, Collections.emptyList());
     }
 
-    public TSLCaptureCall(TextPosition beginPos, TextPosition endPos, String captureName, List<TSLToken> arguments) {
-        super(beginPos, endPos);
+    public TSLCaptureCall(TextRange range, String captureName, List<TSLToken> arguments) {
+        super(range);
         this.captureName = captureName;
         this.arguments = Collections.unmodifiableList(arguments);
     }
@@ -30,8 +33,7 @@ public class TSLCaptureCall extends TSLToken {
     @Override
     public TSLCaptureCall copy() {
         return new TSLCaptureCall(
-                getBeginningPos(),
-                getEndingPos(),
+                getRange(),
                 captureName,
                 Copyable.copyUnmodifiableList(arguments));
     }

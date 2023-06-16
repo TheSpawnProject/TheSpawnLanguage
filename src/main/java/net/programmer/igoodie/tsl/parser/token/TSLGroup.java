@@ -2,7 +2,7 @@ package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.parser.helper.Copyable;
 import net.programmer.igoodie.tsl.parser.helper.ListBuilder;
-import net.programmer.igoodie.tsl.parser.helper.TextPosition;
+import net.programmer.igoodie.tsl.parser.helper.TextRange;
 import net.programmer.igoodie.tsl.parser.snippet.base.TSLCaptureParameterFiller;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
@@ -15,15 +15,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+
 public class TSLGroup extends TSLToken implements TSLCaptureParameterFiller<TSLGroup> {
 
     protected String template;
     protected List<ExpressionToken> expressions;
 
-    public TSLGroup(TextPosition beginPos, TextPosition endPos,
+    public TSLGroup(TextRange range,
                     String template,
                     List<ExpressionToken> expressions) {
-        super(beginPos, endPos);
+        super(range);
         this.template = template;
         this.expressions = Collections.unmodifiableList(expressions);
     }
@@ -31,8 +32,7 @@ public class TSLGroup extends TSLToken implements TSLCaptureParameterFiller<TSLG
     @Override
     public TSLGroup copy() {
         return new TSLGroup(
-                getBeginningPos(),
-                getEndingPos(),
+                getRange(),
                 template,
                 Copyable.copyList(expressions));
     }
@@ -88,8 +88,7 @@ public class TSLGroup extends TSLToken implements TSLCaptureParameterFiller<TSLG
                 TSLToken value = arguments.get(parameter.getParameterName());
                 if (value != null) {
                     filledExpressions.set(i, new ExpressionToken(
-                            expression.getBeginningPos(),
-                            expression.getEndingPos(),
+                            expression.getRange(),
                             expression.beginOffset,
                             expression.endOffset,
                             value
@@ -109,8 +108,7 @@ public class TSLGroup extends TSLToken implements TSLCaptureParameterFiller<TSLG
         filledTemplate.append(template, cursor, template.length());
 
         return new TSLGroup(
-                range.getBeginPos(),
-                range.getEndPos(),
+                getRange(),
                 filledTemplate.toString(),
                 filledExpressions
         );
@@ -123,8 +121,8 @@ public class TSLGroup extends TSLToken implements TSLCaptureParameterFiller<TSLG
         protected int beginOffset, endOffset;
         protected TSLToken encapsulatedToken;
 
-        public ExpressionToken(TextPosition beginPos, TextPosition endPos, int beginOffset, int endOffset, TSLToken encapsulatedToken) {
-            super(beginPos, endPos);
+        public ExpressionToken(TextRange range, int beginOffset, int endOffset, TSLToken encapsulatedToken) {
+            super(range);
             this.beginOffset = beginOffset;
             this.endOffset = endOffset;
             this.encapsulatedToken = encapsulatedToken;
@@ -133,8 +131,7 @@ public class TSLGroup extends TSLToken implements TSLCaptureParameterFiller<TSLG
         @Override
         public ExpressionToken copy() {
             return new ExpressionToken(
-                    getBeginningPos(),
-                    getEndingPos(),
+                    getRange(),
                     beginOffset,
                     endOffset,
                     encapsulatedToken.copy());

@@ -2,28 +2,26 @@ package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.exception.TSLExpressionException;
 import net.programmer.igoodie.tsl.function.JSEngine;
-import net.programmer.igoodie.tsl.parser.helper.TextPosition;
+import net.programmer.igoodie.tsl.parser.helper.TextRange;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.mozilla.javascript.RhinoException;
 
+// ${expr}
 public class TSLExpression extends TSLToken {
 
     protected String expression;
 
-    public TSLExpression(TextPosition beginPos, TextPosition endPos, String expression) {
-        super(beginPos, endPos);
+    public TSLExpression(TextRange range, String expression) {
+        super(range);
         this.expression = expression;
     }
 
     @Override
     public TSLExpression copy() {
-        return new TSLExpression(
-                getBeginningPos(),
-                getEndingPos(),
-                expression);
+        return new TSLExpression(range, expression);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package parser;
 
 import net.programmer.igoodie.tsl.TheSpawnLanguage;
-import net.programmer.igoodie.tsl.parser.helper.TextPosition;
+import net.programmer.igoodie.tsl.parser.helper.TextRange;
 import net.programmer.igoodie.tsl.parser.token.*;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
@@ -23,17 +23,14 @@ public class TokenTests {
         @DisplayName("Group Tokens should preserve whitespace information")
         public void testGroupTokenEvaluationWithWhitespaces() {
             TSLGroup groupToken = new TSLGroup(
-                    new TextPosition(0, 12),
-                    new TextPosition(2, 29),
+                    new TextRange(0, 12, 2, 29),
                     "  HELLO\nWHAT    IS\n|${\"YOUR\"}| NAME?          ",
                     new TSLGroup.ExpressionListBuilder(ArrayList::new)
                             .addElement(new TSLGroup.ExpressionToken(
-                                    new TextPosition(2, 2),
-                                    new TextPosition(2, 12),
+                                    new TextRange(2, 2, 2, 12),
                                     19, 29,
                                     new TSLExpression(
-                                            new TextPosition(2, 3),
-                                            new TextPosition(2, 11),
+                                            new TextRange(2, 3, 2, 11),
                                             "\"YOUR\""
                                     )
                             ))
@@ -54,8 +51,7 @@ public class TokenTests {
         @DisplayName("Empty Group Tokens should preserve whitespace information")
         public void testEmptyGroupTokenEvaluationWithWhitespaces() {
             TSLGroup groupToken = new TSLGroup(
-                    new TextPosition(0, 5),
-                    new TextPosition(2, 7),
+                    new TextRange(0, 5, 2, 7),
                     "\n\n ",
                     Collections.emptyList());
 
@@ -74,17 +70,14 @@ public class TokenTests {
         @DisplayName("Group Tokens should be able to fill capture parameters correctly")
         public void testCaptureParameterFilling() {
             TSLGroup groupToken = new TSLGroup(
-                    new TextPosition(0, 0),
-                    new TextPosition(0, 23),
+                    new TextRange(0, 0, 0, 23),
                     "Hey there, |{{name}}|!",
                     new TSLGroup.ExpressionListBuilder(ArrayList::new)
                             .addElement(new TSLGroup.ExpressionToken(
-                                    new TextPosition(0, 12),
-                                    new TextPosition(0, 21),
+                                    new TextRange(0, 12, 0, 21),
                                     11, 20,
                                     new TSLCaptureParameter(
-                                            new TextPosition(0, 13),
-                                            new TextPosition(0, 20),
+                                            new TextRange(0, 13, 0, 20),
                                             "name"
                                     )
                             ))
@@ -92,8 +85,7 @@ public class TokenTests {
 
             Map<String, TSLToken> arguments = new HashMap<>();
             arguments.put("name", new TSLPlainWord(
-                    new TextPosition(10, 10),
-                    new TextPosition(10, 10 + "iGoodiexx".length() + 1),
+                    new TextRange(10, 10, 10, 10 + "iGoodiexx".length() + 1),
                     "iGoodiexx"
             ));
 
@@ -114,8 +106,7 @@ public class TokenTests {
         @DisplayName("Capture Parameter token should disallow evaluation of itself")
         public void testCaptureParameterTokenEvaluation() {
             TSLCaptureParameter token = new TSLCaptureParameter(
-                    new TextPosition(0, 0),
-                    new TextPosition(0, "{{x}}".length()),
+                    new TextRange(0, 0, 0, "{{x}}".length()),
                     "x");
 
             TSLContext context = new TSLContext(new TheSpawnLanguage());
@@ -130,8 +121,7 @@ public class TokenTests {
         @DisplayName("Capture Call token should disallow evaluation of itself")
         public void testCaptureCallTokenEvaluation() {
             TSLCaptureCall token = new TSLCaptureCall(
-                    new TextPosition(0, 0),
-                    new TextPosition(0, "$someCapture".length()),
+                    new TextRange(0, 0, 0, "$$someCapture".length()),
                     "someCapture");
 
             TSLContext context = new TSLContext(new TheSpawnLanguage());
@@ -146,8 +136,7 @@ public class TokenTests {
         @DisplayName("Decorator Call token should disallow evaluation of itself")
         public void testDecoratorCallTokenEvaluation() {
             TSLDecoratorCall token = new TSLDecoratorCall(
-                    new TextPosition(0, 0),
-                    new TextPosition(0, "@someDecorator".length()),
+                    new TextRange(0, 0, 0, "@someDecorator".length()),
                     "someDecorator");
 
             TSLContext context = new TSLContext(new TheSpawnLanguage());

@@ -1,7 +1,7 @@
 package net.programmer.igoodie.tsl.parser.token;
 
 import net.programmer.igoodie.tsl.parser.helper.Copyable;
-import net.programmer.igoodie.tsl.parser.helper.TextPosition;
+import net.programmer.igoodie.tsl.parser.helper.TextRange;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
@@ -12,17 +12,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+// @decorator
+// @decorator(x)
+// @decorator(x, y, z)
 public class TSLDecoratorCall extends TSLToken {
 
     protected String decoratorName;
     protected List<TSLToken> arguments;
 
-    public TSLDecoratorCall(TextPosition beginPos, TextPosition endPos, String decoratorName) {
-        this(beginPos, endPos, decoratorName, Collections.emptyList());
+    public TSLDecoratorCall(TextRange range, String decoratorName) {
+        this(range, decoratorName, Collections.emptyList());
     }
 
-    public TSLDecoratorCall(TextPosition beginPos, TextPosition endPos, String decoratorName, List<TSLToken> arguments) {
-        super(beginPos, endPos);
+    public TSLDecoratorCall(TextRange range, String decoratorName, List<TSLToken> arguments) {
+        super(range);
         this.decoratorName = decoratorName;
         this.arguments = Collections.unmodifiableList(arguments);
     }
@@ -30,8 +33,7 @@ public class TSLDecoratorCall extends TSLToken {
     @Override
     public TSLDecoratorCall copy() {
         return new TSLDecoratorCall(
-                getBeginningPos(),
-                getEndingPos(),
+                getRange(),
                 decoratorName,
                 Copyable.copyUnmodifiableList(arguments));
     }

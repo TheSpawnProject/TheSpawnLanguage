@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.parser.token;
 
-import net.programmer.igoodie.tsl.parser.helper.TextPosition;
+import net.programmer.igoodie.tsl.parser.helper.TextRange;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import net.programmer.igoodie.tsl.util.TSLReflectionUtils;
@@ -14,16 +14,15 @@ public class TSLSymbol extends TSLToken {
 
     protected Type symbolType;
 
-    public TSLSymbol(TextPosition beginPos, TextPosition endPos, Type symbolType) {
-        super(beginPos, endPos);
+    public TSLSymbol(TextRange range, Type symbolType) {
+        super(range);
         this.symbolType = symbolType;
     }
 
     @Override
     public TSLSymbol copy() {
         return new TSLSymbol(
-                getBeginningPos(),
-                getEndingPos(),
+                getRange(),
                 symbolType
         );
     }

@@ -13,10 +13,15 @@ import java.util.stream.Collectors;
 
 public abstract class TSLToken implements Copyable<TSLToken> {
 
+    /**
+     * A 0-index based range of text. <br/>
+     *
+     * @apiNote E.g. <em>"Line 1, col 2"</em> translates to (l:0, c:1)
+     */
     protected final TextRange range;
 
-    public TSLToken(TextPosition beginPos, TextPosition endPos) {
-        this.range = new TextRange(beginPos, endPos);
+    public TSLToken(TextRange range) {
+        this.range = range;
     }
 
     public TextRange getRange() {
@@ -52,6 +57,16 @@ public abstract class TSLToken implements Copyable<TSLToken> {
                 .filter(that -> that.equalValues(this))
                 .filter(that -> that.range.equals(this.range))
                 .isPresent();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("TSLToken(%s - L%d:%d|L%d:%d)",
+                getRaw(),
+                getBeginningPos().getLine(),
+                getBeginningPos().getCol(),
+                getEndingPos().getLine(),
+                getEndingPos().getCol());
     }
 
     /* --------------------------------------- */

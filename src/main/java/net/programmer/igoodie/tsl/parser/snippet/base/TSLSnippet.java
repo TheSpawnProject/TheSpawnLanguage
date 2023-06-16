@@ -6,6 +6,7 @@ import net.programmer.igoodie.tsl.parser.helper.Either;
 import net.programmer.igoodie.tsl.parser.helper.ListBuilder;
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
 import net.programmer.igoodie.tsl.parser.snippet.TSLCaptureSnippet;
+import net.programmer.igoodie.tsl.parser.snippet.TSLUnparsedSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureParameter;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
@@ -24,7 +25,7 @@ public abstract class TSLSnippet<S extends TSLSnippet<S>> implements
     protected List<Either<TSLToken, TSLSnippet<?>>> snippetEntries;
 
     public TSLSnippet(List<Either<TSLToken, TSLSnippet<?>>> entries) {
-        if (entries.size() == 0) {
+        if (entries.size() == 0 && !(this instanceof TSLUnparsedSnippet)) {
             throw new TSLInternalError("A snippet MUST have at least one entry.");
         }
 
@@ -123,6 +124,19 @@ public abstract class TSLSnippet<S extends TSLSnippet<S>> implements
     @Override
     public void clear() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TSLSnippet<?> that = (TSLSnippet<?>) o;
+        return Objects.equals(this.snippetEntries, that.snippetEntries);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(snippetEntries);
     }
 
     @Override
