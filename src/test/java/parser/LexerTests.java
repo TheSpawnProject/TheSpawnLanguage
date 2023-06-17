@@ -3,6 +3,7 @@ package parser;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.snippet.TSLUnparsedSnippet;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import util.TSLAssertions;
 
@@ -13,7 +14,8 @@ import java.util.List;
 public class LexerTests {
 
     @Test
-    public void testSimpleSnippet() {
+    @DisplayName("Lexer should be able to nest snippets")
+    public void testNestedSnippets() {
         String script = "FOO BAR BAZ (HEY (THERE) MATE!)";
         TSLLexer lexer = new TSLLexer(script);
         lexer.lex();
@@ -32,8 +34,9 @@ public class LexerTests {
     }
 
     @Test
+    @DisplayName("Lexer should be able to skip comments")
     public void testComments() {
-        String script = "Foo Bar Baz #Comment!\n\nB B#*\nComment\nComment Comment*#\n\nC#*\n Comment\n Foo bar\n*#\n\nD #* A looong comment *#\n\n#Hmmm\nE\n\nF (C#*\n   Comment\n   Foo bar\n  *#)\n\nFoo\n#Hmmm\nBar #Comment\nBaz";
+        String script = "Foo Bar Baz #Comment!\n\nB B#**\nComment\nComment Comment*#\n\nC#*\n Comment\n Foo bar\n*#\n\nD #* A looong comment *#\n\n#Hmmm\nE\n\nF (C#*\n   Comment\n   Foo bar\n  *#)\n\nFoo\n#Hmmm\nBar #Comment\nBaz";
 
         TSLLexer lexer = new TSLLexer(script);
         lexer.lex();
@@ -48,7 +51,12 @@ public class LexerTests {
 
         TSLAssertions.assertSnippetsEqual(Arrays.asList(
                 "1- TSLPlainWord(B) @ (L2:0 | L2:0)",
-                "1- TSLPlainWord(B) @ (L2:2 | L2:2)"
+                "1- TSLPlainWord(B) @ (L2:2 | L2:2)",
+                " 2- TSLSymbol(#**) @ (L2:3 | L2:5)",
+                " 2- TSLPlainWord(Comment) @ (L3:0 | L3:6)",
+                " 2- TSLPlainWord(Comment) @ (L4:0 | L4:6)",
+                " 2- TSLPlainWord(Comment) @ (L4:8 | L4:14)",
+                " 2- TSLSymbol(*#) @ (L4:15 | L4:16)"
         ), snippets.get(1));
 
         TSLAssertions.assertSnippetsEqual(Collections.singletonList(

@@ -21,22 +21,20 @@ public class TSLLexer {
             String line = state.getCurrentLine();
 
             if (line.trim().isEmpty()) {
-                LexerMode mode = state.modeStack.peek();
-                mode.handleEmptyLine(this.state);
+                state.modeStack.peek().handleEmptyLine(this.state);
                 continue;
             }
 
             for (state.scanningColumn = 0; state.scanningColumn < line.length(); state.scanningColumn++) {
-                LexerMode mode = state.modeStack.peek();
-                int result = mode.process(this.state);
+                int result = state.modeStack.peek().process(this.state);
 
                 if (result == LexerMode.SKIP_LINE) {
-                    mode.handleEndOfLine(state);
+                    state.modeStack.peek().handleEndOfLine(state);
                     break;
                 }
 
                 if (state.scanningColumn == line.length() - 1) {
-                    mode.handleEndOfLine(state);
+                    state.modeStack.peek().handleEndOfLine(state);
                 }
             }
         }

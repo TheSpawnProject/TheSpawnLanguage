@@ -16,7 +16,7 @@ public class TSLAssertions {
                 "\n" + debugTree(actual, 0));
     }
 
-    private static String debugTree(TSLSnippet<?> snippet, int depth) {
+    public static String debugTree(TSLSnippet<?> snippet, int depth) {
         StringBuilder sb = new StringBuilder();
 
         for (Either<TSLToken, TSLSnippet<?>> snippetEntry : snippet.getSnippetEntries()) {

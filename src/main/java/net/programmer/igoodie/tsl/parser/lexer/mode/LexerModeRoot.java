@@ -22,9 +22,15 @@ public class LexerModeRoot extends LexerMode {
         if (character == '#') {
             if (nextCharacter == '*') {
                 if (state.getCharacterByOffset(2) == '*') {
-                    // TODO: TSLDoc
+                    state.pushToken();
+                    state.pushSnippet();
+                    state.pushChars("#**");
+                    state.pushToken();
+                    state.pushMode(new LexerModeDoc());
+                    return CONTINUE;
                 }
                 state.pushToken();
+                state.skipCharacters("*");
                 state.pushMode(new LexerModeComment());
                 return CONTINUE;
             }

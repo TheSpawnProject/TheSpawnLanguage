@@ -51,6 +51,10 @@ public class TSLLexerState {
 
     /* ---------------------- */
 
+    public void skipCharacters(String text) {
+        this.scanningColumn += text.length();
+    }
+
     protected String buildTokenRaw() {
         String raw = charBuffer.toString();
         charBuffer.setLength(0);
@@ -68,6 +72,10 @@ public class TSLLexerState {
     }
 
     /* ---------------------- */
+
+    public void pushChars(String chars) {
+        pushChar(chars.toCharArray());
+    }
 
     public void pushChar(char... characters) {
         if (this.charBuffer.length() == 0) {

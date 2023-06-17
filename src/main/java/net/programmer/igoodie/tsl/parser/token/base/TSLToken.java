@@ -63,7 +63,7 @@ public abstract class TSLToken implements Copyable<TSLToken> {
     public String toString() {
         return String.format("%s(%s) @ (L%d:%d | L%d:%d)",
                 getClass().getSimpleName(),
-                getRaw(),
+                getRaw().replaceAll("\n", "\\\\n"),
                 getBeginningPos().getLine(),
                 getBeginningPos().getCol(),
                 getEndingPos().getLine(),
