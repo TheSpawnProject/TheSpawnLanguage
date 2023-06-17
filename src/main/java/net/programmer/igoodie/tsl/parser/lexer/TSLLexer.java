@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.parser.lexer;
 
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.lexer.mode.LexerMode;
 import net.programmer.igoodie.tsl.parser.snippet.TSLUnparsedSnippet;
 
@@ -16,7 +17,7 @@ public class TSLLexer {
         this.snippets = new ArrayList<>();
     }
 
-    public void lex() {
+    public List<TSLUnparsedSnippet> lex() {
         for (state.scanningLine = 0; state.scanningLine < state.lines.length; state.scanningLine++) {
             String line = state.getCurrentLine();
 
@@ -39,8 +40,14 @@ public class TSLLexer {
             }
         }
 
+        if (state.modeStack.size() != 1) {
+            throw new TSLSyntaxError("Incompleted token")
+                    .at(state.scanningLine, state.scanningColumn);
+        }
+
         state.pushToken();
         state.finalizeSnippet();
+        return snippets;
     }
 
     public List<TSLUnparsedSnippet> getSnippets() {

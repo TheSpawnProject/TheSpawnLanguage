@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.parser.lexer.mode;
 
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexerState;
 
 public class LexerModeRoot extends LexerMode {
@@ -54,9 +55,19 @@ public class LexerModeRoot extends LexerMode {
             return CONTINUE;
         }
 
+        if (character == '$' && nextCharacter == '{') {
+            if (state.getAccumulatedToken().length() != 0) {
+                throw new TSLSyntaxError("Expected a space between previous token")
+                        .at(state.getScanningLine(), state.getScanningColumn());
+            }
+            state.pushChars("${");
+            state.pushMode(new LexerModeExpression());
+            return CONTINUE;
+        }
+
         // TODO Keep implementing from here
 
-        state.pushChar(character);
+        state.pushChars(character);
         return CONTINUE;
     }
 

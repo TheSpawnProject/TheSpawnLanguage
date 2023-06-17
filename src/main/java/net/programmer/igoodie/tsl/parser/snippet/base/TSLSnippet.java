@@ -186,6 +186,8 @@ public abstract class TSLSnippet<S extends TSLSnippet<S>> implements
     public S fillCaptureParameters(Map<String, TSLToken> arguments) {
         S filledSnippet = this.copy();
 
+        // TODO: Fill TSLCaptureParameter in TSLGroup, TSLExpressions and TSLDecorations
+
         filledSnippet.snippetEntries = filledSnippet.snippetEntries.stream()
                 .map(entry -> entry.fold(
                         token -> Optional.of(token)

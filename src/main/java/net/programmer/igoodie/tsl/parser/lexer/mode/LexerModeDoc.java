@@ -28,7 +28,7 @@ public class LexerModeDoc extends LexerMode {
             return CONTINUE;
         }
 
-        state.pushChar(character);
+        state.pushChars(character);
         return CONTINUE;
     }
 

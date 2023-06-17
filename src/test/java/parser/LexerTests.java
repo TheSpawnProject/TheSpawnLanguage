@@ -18,9 +18,7 @@ public class LexerTests {
     public void testNestedSnippets() {
         String script = "FOO BAR BAZ (HEY (THERE) MATE!)";
         TSLLexer lexer = new TSLLexer(script);
-        lexer.lex();
-
-        List<TSLUnparsedSnippet> snippets = lexer.getSnippets();
+        List<TSLUnparsedSnippet> snippets = lexer.lex();
 
         Assertions.assertEquals(1, snippets.size());
         TSLAssertions.assertSnippetsEqual(Arrays.asList(
@@ -39,9 +37,7 @@ public class LexerTests {
         String script = "#! Foo Bar Baz #Comment!\n\nB B#**\nComment\nComment Comment*#\n\nC#*\n Comment\n Foo bar\n*#\n\nD #* A looong comment *#\n\n#Hmmm\nE\n\nF (C#*\n   Comment\n   Foo bar\n  *#)\n\nFoo\n#Hmmm\nBar #Comment\nBaz";
 
         TSLLexer lexer = new TSLLexer(script);
-        lexer.lex();
-
-        List<TSLUnparsedSnippet> snippets = lexer.getSnippets();
+        List<TSLUnparsedSnippet> snippets = lexer.lex();
 
         TSLAssertions.assertSnippetsEqual(Arrays.asList(
                 "1- TSLSymbol(#!) @ (L0:0 | L0:1)",
@@ -82,6 +78,23 @@ public class LexerTests {
                 "1- TSLPlainWord(Bar) @ (L23:0 | L23:2)",
                 "1- TSLPlainWord(Baz) @ (L24:0 | L24:2)"
         ), snippets.get(6));
+    }
+
+    @Test
+    @DisplayName("Lexer should be able to ")
+    public void testExpressions() {
+        //${{ \ key: `Hi there \${ ${true ? "{Jack`o Lantern}!" : "'\"'Friend\'s'\"'"}. How are ya?`}["key"]}
+        //  ^        ^             ^        ^                 ^   ^                 ^^             ^^ ^   ^ ^
+        //0 1        2             3        4                 3   4                 32             10 1   0 *
+
+        String script = "${{ \\ key: `Hi there \\${ ${true ? \"{Jack`o Lantern}!\" : \"'\\\"'Friend\\'s'\\\"'\"}. How are ya?`}[\"key\"]}";
+
+        TSLLexer lexer = new TSLLexer(script);
+        List<TSLUnparsedSnippet> snippets = lexer.lex();
+
+        TSLAssertions.assertSnippetsEqual(Collections.singletonList(
+                "1- TSLExpression(${{ \\ key: `Hi there \\${ ${true ? \"{Jack`o Lantern}!\" : \"'\\\"'Friend\\'s'\\\"'\"}. How are ya?`}[\"key\"]}) @ (L0:0 | L0:98)"
+        ), snippets.get(0));
     }
 
 }

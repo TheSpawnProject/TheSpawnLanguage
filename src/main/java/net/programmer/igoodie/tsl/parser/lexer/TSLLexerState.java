@@ -34,6 +34,18 @@ public class TSLLexerState {
         pushMode(new LexerModeRoot());
     }
 
+    public int getScanningLine() {
+        return scanningLine;
+    }
+
+    public int getScanningColumn() {
+        return scanningColumn;
+    }
+
+    public StringBuilder getAccumulatedToken() {
+        return charBuffer;
+    }
+
     public TSLUnparsedSnippet getCurrentSnippet() {
         return snippetStack.peek();
     }
@@ -74,10 +86,10 @@ public class TSLLexerState {
     /* ---------------------- */
 
     public void pushChars(String chars) {
-        pushChar(chars.toCharArray());
+        pushChars(chars.toCharArray());
     }
 
-    public void pushChar(char... characters) {
+    public void pushChars(char... characters) {
         if (this.charBuffer.length() == 0) {
             this.beginLineNo = this.scanningLine;
             this.beginColumnNo = this.scanningColumn;
