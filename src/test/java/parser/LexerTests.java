@@ -36,7 +36,7 @@ public class LexerTests {
     @Test
     @DisplayName("Lexer should be able to skip comments")
     public void testComments() {
-        String script = "Foo Bar Baz #Comment!\n\nB B#**\nComment\nComment Comment*#\n\nC#*\n Comment\n Foo bar\n*#\n\nD #* A looong comment *#\n\n#Hmmm\nE\n\nF (C#*\n   Comment\n   Foo bar\n  *#)\n\nFoo\n#Hmmm\nBar #Comment\nBaz";
+        String script = "#! Foo Bar Baz #Comment!\n\nB B#**\nComment\nComment Comment*#\n\nC#*\n Comment\n Foo bar\n*#\n\nD #* A looong comment *#\n\n#Hmmm\nE\n\nF (C#*\n   Comment\n   Foo bar\n  *#)\n\nFoo\n#Hmmm\nBar #Comment\nBaz";
 
         TSLLexer lexer = new TSLLexer(script);
         lexer.lex();
@@ -44,9 +44,10 @@ public class LexerTests {
         List<TSLUnparsedSnippet> snippets = lexer.getSnippets();
 
         TSLAssertions.assertSnippetsEqual(Arrays.asList(
-                "1- TSLPlainWord(Foo) @ (L0:0 | L0:2)",
-                "1- TSLPlainWord(Bar) @ (L0:4 | L0:6)",
-                "1- TSLPlainWord(Baz) @ (L0:8 | L0:10)"
+                "1- TSLSymbol(#!) @ (L0:0 | L0:1)",
+                "1- TSLPlainWord(Foo) @ (L0:3 | L0:5)",
+                "1- TSLPlainWord(Bar) @ (L0:7 | L0:9)",
+                "1- TSLPlainWord(Baz) @ (L0:11 | L0:13)"
         ), snippets.get(0));
 
         TSLAssertions.assertSnippetsEqual(Arrays.asList(

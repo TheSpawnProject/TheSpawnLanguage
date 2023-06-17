@@ -34,7 +34,8 @@ public class LexerModeRoot extends LexerMode {
                 state.pushMode(new LexerModeComment());
                 return CONTINUE;
             }
-            return SKIP_LINE;
+            if (nextCharacter != '!')
+                return SKIP_LINE;
         }
 
         if (Character.isSpaceChar(character)) {
