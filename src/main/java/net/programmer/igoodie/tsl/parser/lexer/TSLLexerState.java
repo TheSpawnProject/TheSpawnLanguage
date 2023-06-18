@@ -116,6 +116,7 @@ public class TSLLexerState {
         TextRange range = new TextRange(beginLineNo, beginColumnNo, endLineNo, endColumnNo);
         TSLToken token = TSLTokenizer.tokenizeStateAware(range, raw, this);
         getCurrentSnippet().pushToken(token);
+        begunWhileEscaping = false;
     }
 
     public void pushSnippet() {

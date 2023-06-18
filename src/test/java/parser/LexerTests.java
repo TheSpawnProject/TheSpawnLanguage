@@ -118,11 +118,15 @@ public class LexerTests {
 
         // ------------------------
 
-        script = "\\#!";
+        script = "Foo = \\#! #! =Unknown";
         snippets = new TSLLexer(script).lex();
 
-        TSLAssertions.assertSnippetsEqual(Collections.singletonList(
-                "1- TSLPlainWord(#!) @ (L0:1 | L0:2)"
+        TSLAssertions.assertSnippetsEqual(Arrays.asList(
+                "1- TSLPlainWord(Foo) @ (L0:0 | L0:2)",
+                "1- TSLSymbol(=) @ (L0:4 | L0:4)",
+                "1- TSLPlainWord(#!) @ (L0:7 | L0:8)",
+                "1- TSLSymbol(#!) @ (L0:10 | L0:11)",
+                "1- TSLPlainWord(=Unknown) @ (L0:13 | L0:20)"
         ), snippets.get(0));
     }
 
