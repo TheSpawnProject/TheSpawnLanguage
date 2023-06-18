@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.parser.lexer.mode;
 
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexerState;
+import net.programmer.igoodie.tsl.parser.token.TSLSymbol;
 
 public class LexerModeRoot extends LexerMode {
 
@@ -10,7 +11,7 @@ public class LexerModeRoot extends LexerMode {
     @Override
     public void handleEndOfLine(TSLLexerState state) {
         if (escaping) {
-            throw new TSLSyntaxError("Invalid escaping sequence")
+            throw new TSLSyntaxError("Incomplete escaping sequence")
                     .at(state.getScanningLine(), state.getScanningColumn());
         }
 
@@ -72,6 +73,16 @@ public class LexerModeRoot extends LexerMode {
             return CONTINUE;
         }
 
+        for (TSLSymbol.Type symbolType : TSLSymbol.Type.values()) {
+            if (matchAhead(state, symbolType.getSymbol())) {
+                if (escaping) {
+                    state.pushChars(symbolType.getSymbol());
+                    escaping = false;
+                    return CONTINUE;
+                }
+            }
+        }
+
         if (character == '$' && nextCharacter == '{') {
             if (escaping) {
                 state.pushChars("${");
@@ -90,12 +101,21 @@ public class LexerModeRoot extends LexerMode {
         // TODO Keep implementing from here
 
         if (escaping) {
-            throw new TSLSyntaxError("Invalid escaping sequence")
+            throw new TSLSyntaxError("Invalid escaping sequence -> \\{}", character)
                     .at(state.getScanningLine(), state.getScanningColumn());
         }
 
         state.pushChars(character);
         return CONTINUE;
+    }
+
+    private boolean matchAhead(TSLLexerState state, String pattern) {
+        for (int i = 0; i < pattern.length(); i++) {
+            char character = state.getCharacterByOffset(i);
+            if (character != pattern.charAt(i))
+                return false;
+        }
+        return true;
     }
 
 }

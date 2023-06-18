@@ -1,5 +1,6 @@
 package parser;
 
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.lexer.TSLLexer;
 import net.programmer.igoodie.tsl.parser.snippet.TSLUnparsedSnippet;
 import org.junit.jupiter.api.Assertions;
@@ -100,13 +101,28 @@ public class LexerTests {
     @Test
     @DisplayName("Lexer should be able to escape at root level")
     public void testRootEscape() {
-        String script = "\\${plainText}";
+        String script;
+        List<TSLUnparsedSnippet> snippets;
 
-        TSLLexer lexer = new TSLLexer(script);
-        List<TSLUnparsedSnippet> snippets = lexer.lex();
+        script = "\\${plainText}";
+        snippets = new TSLLexer(script).lex();
 
         TSLAssertions.assertSnippetsEqual(Collections.singletonList(
                 "1- TSLPlainWord(${plainText}) @ (L0:1 | L0:12)"
+        ), snippets.get(0));
+
+        // ------------------------
+
+        Assertions.assertThrows(TSLSyntaxError.class,
+                () -> new TSLLexer("\\a\nb").lex());
+
+        // ------------------------
+
+        script = "\\#!";
+        snippets = new TSLLexer(script).lex();
+
+        TSLAssertions.assertSnippetsEqual(Collections.singletonList(
+                "1- TSLPlainWord(#!) @ (L0:1 | L0:2)"
         ), snippets.get(0));
     }
 
