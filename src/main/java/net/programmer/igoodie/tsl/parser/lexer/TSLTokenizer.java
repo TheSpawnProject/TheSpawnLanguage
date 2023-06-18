@@ -9,6 +9,14 @@ import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 
 public class TSLTokenizer {
 
+    public static TSLToken tokenizeStateAware(TextRange range, String raw, TSLLexerState state) {
+        if (state.begunWhileEscaping) {
+            return new TSLPlainWord(range, raw);
+        }
+
+        return tokenize(range, raw);
+    }
+
     public static TSLToken tokenize(TextRange range, String raw) {
         // TODO
 

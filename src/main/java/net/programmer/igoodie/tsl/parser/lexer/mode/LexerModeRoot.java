@@ -5,8 +5,15 @@ import net.programmer.igoodie.tsl.parser.lexer.TSLLexerState;
 
 public class LexerModeRoot extends LexerMode {
 
+    protected boolean escaping = false;
+
     @Override
     public void handleEndOfLine(TSLLexerState state) {
+        if (escaping) {
+            throw new TSLSyntaxError("Invalid escaping sequence")
+                    .at(state.getScanningLine(), state.getScanningColumn());
+        }
+
         state.pushToken();
     }
 
@@ -55,7 +62,22 @@ public class LexerModeRoot extends LexerMode {
             return CONTINUE;
         }
 
+        if (character == '\\') {
+            if (escaping) {
+                state.pushChars('\\');
+                return CONTINUE;
+            }
+            if (state.getAccumulatedToken().length() == 0) state.markBegunWhileEscaping();
+            escaping = true;
+            return CONTINUE;
+        }
+
         if (character == '$' && nextCharacter == '{') {
+            if (escaping) {
+                state.pushChars("${");
+                escaping = false;
+                return CONTINUE;
+            }
             if (state.getAccumulatedToken().length() != 0) {
                 throw new TSLSyntaxError("Expected a space between previous token")
                         .at(state.getScanningLine(), state.getScanningColumn());
@@ -66,6 +88,11 @@ public class LexerModeRoot extends LexerMode {
         }
 
         // TODO Keep implementing from here
+
+        if (escaping) {
+            throw new TSLSyntaxError("Invalid escaping sequence")
+                    .at(state.getScanningLine(), state.getScanningColumn());
+        }
 
         state.pushChars(character);
         return CONTINUE;

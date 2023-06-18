@@ -21,6 +21,7 @@ public class TSLLexerState {
     protected int beginColumnNo = 0;
     protected int endLineNo = 0;
     protected int endColumnNo = 0;
+    protected boolean begunWhileEscaping = false;
     protected StringBuilder charBuffer = new StringBuilder();
 
     protected Stack<TSLUnparsedSnippet> snippetStack = new Stack<>();
@@ -62,6 +63,10 @@ public class TSLLexerState {
     }
 
     /* ---------------------- */
+
+    public void markBegunWhileEscaping() {
+        this.begunWhileEscaping = true;
+    }
 
     public void skipCharacters(String text) {
         this.scanningColumn += text.length();
@@ -109,7 +114,7 @@ public class TSLLexerState {
         String raw = buildTokenRaw();
         if (raw.length() == 0) return;
         TextRange range = new TextRange(beginLineNo, beginColumnNo, endLineNo, endColumnNo);
-        TSLToken token = TSLTokenizer.tokenize(range, raw);
+        TSLToken token = TSLTokenizer.tokenizeStateAware(range, raw, this);
         getCurrentSnippet().pushToken(token);
     }
 

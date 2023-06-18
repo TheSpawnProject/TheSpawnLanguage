@@ -81,7 +81,7 @@ public class LexerTests {
     }
 
     @Test
-    @DisplayName("Lexer should be able to ")
+    @DisplayName("Lexer should be able to read complex expressions")
     public void testExpressions() {
         //${{ \ key: `Hi there \${ ${true ? "{Jack`o Lantern}!" : "'\"'Friend\'s'\"'"}. How are ya?`}["key"]}
         //  ^        ^             ^        ^                 ^   ^                 ^^             ^^ ^   ^ ^
@@ -94,6 +94,19 @@ public class LexerTests {
 
         TSLAssertions.assertSnippetsEqual(Collections.singletonList(
                 "1- TSLExpression(${{ \\ key: `Hi there \\${ ${true ? \"{Jack`o Lantern}!\" : \"'\\\"'Friend\\'s'\\\"'\"}. How are ya?`}[\"key\"]}) @ (L0:0 | L0:98)"
+        ), snippets.get(0));
+    }
+
+    @Test
+    @DisplayName("Lexer should be able to escape at root level")
+    public void testRootEscape() {
+        String script = "\\${plainText}";
+
+        TSLLexer lexer = new TSLLexer(script);
+        List<TSLUnparsedSnippet> snippets = lexer.lex();
+
+        TSLAssertions.assertSnippetsEqual(Collections.singletonList(
+                "1- TSLPlainWord(${plainText}) @ (L0:1 | L0:12)"
         ), snippets.get(0));
     }
 

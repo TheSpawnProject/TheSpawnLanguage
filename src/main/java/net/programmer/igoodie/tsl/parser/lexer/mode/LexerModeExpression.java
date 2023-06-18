@@ -72,7 +72,7 @@ public class LexerModeExpression extends LexerMode {
                     return CONTINUE;
                 }
             }
-            if (scopeStack.peek().equals("${") || scopeStack.peek().equals("{")) {
+            if (getScope().equals("${") || getScope().equals("{")) {
                 state.pushChars('}');
                 scopeStack.pop();
                 return CONTINUE;
