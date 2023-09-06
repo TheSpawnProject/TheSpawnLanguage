@@ -100,9 +100,11 @@ public class TSLLexerState {
 
     public void skipCharacters(String text) {
         this.scanningColumn += text.length();
+        this.endColumnNo += text.length();
     }
 
     public void moveScanningPosTo(TSLLexerState otherState) {
+        System.out.println("Moving pos to @ " + otherState.scanningLine + " " + otherState.scanningColumn);
         this.scanningLine = otherState.scanningLine;
         this.scanningColumn = otherState.scanningColumn;
         this.endLineNo = otherState.endLineNo;
@@ -130,6 +132,10 @@ public class TSLLexerState {
     }
 
     /* ---------------------- */
+
+    public int getNestDepth() {
+        return snippetStack.size();
+    }
 
     public void pushChars(String chars) {
         pushChars(chars.toCharArray());

@@ -147,9 +147,9 @@ public class LexerTests {
     }
 
     @Test
-    @DisplayName("Lexer should be able to read captures")
+    @DisplayName("Lexer should be able to read captures nested inside other captures")
     public void testCaptureInsideCapture() {
-        String script = "DROP $item(apple, ${({ \n    displayName: \"My Apple!\" \n})}, $owner) $pi $meta()";
+        String script = "DROP $item(apple, ${({ \n    displayName: \"My Apple!\" \n})}, $owner, foo) $pi $meta()";
         TSLLexer lexer = new TSLLexer(script);
         List<TSLUnparsedSnippet> snippets = lexer.lexAll();
 

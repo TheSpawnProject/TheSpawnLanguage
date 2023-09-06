@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 public class TSLLexer {
 
@@ -28,7 +28,7 @@ public class TSLLexer {
         return lexUntil(null);
     }
 
-    public List<TSLUnparsedSnippet> lexUntil(@Nullable Predicate<TSLLexerState> until) {
+    public List<TSLUnparsedSnippet> lexUntil(@Nullable BiPredicate<TSLLexer, TSLLexerState> until) {
         lineLoop:
         for (; state.scanningLine < state.lines.length; state.scanningLine++) {
             if (state.getCurrentLine().trim().isEmpty()) {
@@ -37,15 +37,20 @@ public class TSLLexer {
             }
 
             for (; state.scanningColumn < state.getCurrentLine().length(); state.scanningColumn++) {
-                if (until != null && until.test(state)) {
+                if (until != null && until.test(this, state)) {
+                    System.out.println("Finishing UNTIL predicate " + state.hashCode());
                     break lineLoop;
                 }
 
                 System.out.println("Processing @ " + state.scanningLine + " " + state.scanningColumn
-                        + " " + state.getCharacterByOffset(0) + " " + (until == null ? "Main" : "Sub")
+                        + " - " + state.getCharacterByOffset(0) + " " + (until == null ? "Main" : "Sub")
                         + " " + state.hashCode() + " " + state.modeStack);
 
                 int result = state.modeStack.peek().process(this.state);
+
+//                System.out.println("Processed @ " + state.scanningLine + " " + state.scanningColumn
+//                        + " " + state.getCharacterByOffset(0) + " " + (until == null ? "Main" : "Sub")
+//                        + " " + state.hashCode() + " " + state.modeStack);
 
                 if (result == LexerMode.SKIP_LINE) {
                     state.modeStack.peek().handleEndOfLine(state);
@@ -64,8 +69,6 @@ public class TSLLexer {
             throw new TSLSyntaxError("Incompleted token")
                     .at(state.scanningLine, state.scanningColumn);
         }
-
-        System.out.println("Finishing " + state.hashCode());
 
         state.pushToken();
         state.finalizeSnippet();

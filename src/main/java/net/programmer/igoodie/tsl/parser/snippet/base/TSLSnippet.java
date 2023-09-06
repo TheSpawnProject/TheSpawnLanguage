@@ -10,6 +10,7 @@ import net.programmer.igoodie.tsl.parser.snippet.TSLUnparsedSnippet;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureCall;
 import net.programmer.igoodie.tsl.parser.token.TSLCaptureParameter;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
+import net.programmer.igoodie.tsl.util.StringUtils;
 import net.programmer.igoodie.tsl.util.ValuePipe;
 import org.jetbrains.annotations.NotNull;
 
@@ -144,6 +145,24 @@ public abstract class TSLSnippet<S extends TSLSnippet<S>> implements
         return String.format("{type=%s, entries=%s}",
                 getClass().getSimpleName(),
                 getSnippetEntries());
+    }
+
+    public String toCanonicalDebugTree() {
+        return toCanonicalDebugTree(0);
+    }
+
+    private String toCanonicalDebugTree(int depth) {
+        StringBuilder sb = new StringBuilder();
+
+        for (Either<TSLToken, TSLSnippet<?>> snippetEntry : this.getSnippetEntries()) {
+            String tree = snippetEntry.fold(
+                    token -> StringUtils.repeat(" ", depth) + (depth + 1) + "- " + token + "\n",
+                    subSnippet -> subSnippet.toCanonicalDebugTree(depth + 1)
+            );
+            sb.append(tree);
+        }
+
+        return sb.toString();
     }
 
     /* ------------- */

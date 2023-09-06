@@ -47,10 +47,8 @@ public class LexerModeRoot extends LexerMode {
                 return SKIP_LINE;
         }
 
-        if (Character.isSpaceChar(character)) {
-            state.pushToken();
-            return CONTINUE;
-        } else if (state.doesAllowCommaDelimiter() && character == ',') {
+        if (Character.isSpaceChar(character)
+                || (state.doesAllowCommaDelimiter() && character == ',')) {
             state.pushToken();
             return CONTINUE;
         }

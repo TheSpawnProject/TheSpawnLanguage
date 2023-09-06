@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.parser.lexer.mode;
 
 import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.goodies.util.StringUtilities;
+import net.programmer.igoodie.tsl.exception.TSLInternalError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.helper.Either;
 import net.programmer.igoodie.tsl.parser.helper.TextRange;
@@ -22,22 +23,30 @@ public class LexerModeCaptureCall extends LexerMode {
         char character = state.getCharacterByOffset(0);
 
         if (character == '(') {
-            state.pushChars('(');
-            state.skipCharacters("(");
-
             Couple<TSLLexer, TSLLexerState> result = state.copyLexerSet();
             TSLLexer paramLexer = result.getFirst();
             TSLLexerState paramState = result.getSecond().withCommaDelimiterAllowed();
 
-            System.out.println("Starting sub " + paramState.hashCode());
+            paramLexer.lexUntil((l, s) -> {
+                if (s.getCharacterByOffset(0) == ')'
+                        && s.getModeDepth() == 1
+                        && s.getNestDepth() == 2) {
+//                    s.skipCharacters(")");
+                    s.popSnippet();
+                    return true;
+                }
+                return false;
+            });
 
-            paramLexer.lexUntil(s -> s.getModeDepth() == 1
-                    && s.getCharacterByOffset(0) == ')');
-            paramState.pushChars(")");
+            System.out.println("Lexed Parameters: ");
+            paramLexer.getSnippets().forEach(s -> System.out.println(s.toCanonicalDebugTree()));
 
             state.moveScanningPosTo(paramState);
 
-            List<Either<TSLToken, TSLSnippet<?>>> paramTokens = paramLexer.getSnippets().get(0).getSnippetEntries();
+            List<Either<TSLToken, TSLSnippet<?>>> paramTokens = paramLexer.getSnippets()
+                    .get(0).getSnippetEntries()
+                    .get(0).right().orElseThrow(() -> new TSLInternalError(""))
+                    .getSnippetEntries();
 
             TextRange range = state.constructTextRange();
 
@@ -47,7 +56,7 @@ public class LexerModeCaptureCall extends LexerMode {
             }
 
             state.pushToken(raw -> {
-                String captureName = StringUtilities.shrink(raw, 1, 1);
+                String captureName = StringUtilities.shrink(raw, 1, 0);
 
                 List<TSLToken> parameters = paramTokens
                         .stream()
@@ -56,13 +65,18 @@ public class LexerModeCaptureCall extends LexerMode {
                         .map(Optional::get)
                         .collect(Collectors.toList());
 
+                System.out.println(paramLexer.getSnippets().get(0).getSnippetEntries());
+                System.out.println(paramTokens);
+                System.out.println(parameters);
+
                 return new TSLCaptureCall(range, captureName, parameters);
             });
             state.popMode();
             return CONTINUE;
         }
 
-        if (Character.isSpaceChar(character)) {
+        if (Character.isSpaceChar(character)
+                || (state.doesAllowCommaDelimiter() && character == ',')) {
             state.pushToken();
             state.popMode();
             return CONTINUE;
