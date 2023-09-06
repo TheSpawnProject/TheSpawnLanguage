@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.parser.lexer;
 
+import net.programmer.igoodie.goodies.util.Couple;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.helper.TextRange;
 import net.programmer.igoodie.tsl.parser.lexer.mode.LexerMode;
@@ -8,14 +9,17 @@ import net.programmer.igoodie.tsl.parser.snippet.TSLUnparsedSnippet;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 
 import java.util.Stack;
+import java.util.function.Function;
 
 public class TSLLexerState {
 
-    private final TSLLexer lexer;
+    private TSLLexer lexer;
 
     protected String[] lines;
     protected int scanningLine = 0;
     protected int scanningColumn = 0;
+
+    protected boolean allowsCommaDelimiter = false;
 
     protected int beginLineNo = 0;
     protected int beginColumnNo = 0;
@@ -33,6 +37,28 @@ public class TSLLexerState {
         this.lines = lines;
         pushSnippet();
         pushMode(new LexerModeRoot());
+    }
+
+    private TSLLexerState(TSLLexerState stateToCopy) {
+        this(stateToCopy.lexer, stateToCopy.lines);
+        this.scanningLine = stateToCopy.scanningLine;
+        this.scanningColumn = stateToCopy.scanningColumn;
+    }
+
+    public Couple<TSLLexer, TSLLexerState> copyLexerSet() {
+        TSLLexerState state = new TSLLexerState(this);
+        TSLLexer lexer = new TSLLexer(state);
+        state.lexer = lexer;
+        return new Couple<>(lexer, state);
+    }
+
+    public TSLLexerState withCommaDelimiterAllowed() {
+        this.allowsCommaDelimiter = true;
+        return this;
+    }
+
+    public boolean doesAllowCommaDelimiter() {
+        return allowsCommaDelimiter;
     }
 
     public int getScanningLine() {
@@ -62,6 +88,10 @@ public class TSLLexerState {
         return line.charAt(col);
     }
 
+    public int getModeDepth() {
+        return this.modeStack.size();
+    }
+
     /* ---------------------- */
 
     public void markBegunWhileEscaping() {
@@ -72,10 +102,21 @@ public class TSLLexerState {
         this.scanningColumn += text.length();
     }
 
+    public void moveScanningPosTo(TSLLexerState otherState) {
+        this.scanningLine = otherState.scanningLine;
+        this.scanningColumn = otherState.scanningColumn;
+        this.endLineNo = otherState.endLineNo;
+        this.endColumnNo = otherState.endColumnNo;
+    }
+
     protected String buildTokenRaw() {
         String raw = charBuffer.toString();
         charBuffer.setLength(0);
         return raw;
+    }
+
+    public TextRange constructTextRange() {
+        return new TextRange(beginLineNo, beginColumnNo, endLineNo, endColumnNo);
     }
 
     public void finalizeSnippet() {
@@ -95,6 +136,9 @@ public class TSLLexerState {
     }
 
     public void pushChars(char... characters) {
+        if (characters.length == 1 && characters[0] == 0) {
+            System.out.println(1);
+        }
         if (this.charBuffer.length() == 0) {
             this.beginLineNo = this.scanningLine;
             this.beginColumnNo = this.scanningColumn;
@@ -113,9 +157,14 @@ public class TSLLexerState {
     public void pushToken() {
         String raw = buildTokenRaw();
         if (raw.length() == 0) return;
-        TextRange range = new TextRange(beginLineNo, beginColumnNo, endLineNo, endColumnNo);
+        TextRange range = constructTextRange();
         TSLToken token = TSLTokenizer.tokenizeStateAware(range, raw, this);
         getCurrentSnippet().pushToken(token);
+        begunWhileEscaping = false;
+    }
+
+    public void pushToken(Function<String, TSLToken> tokenGenerator) {
+        getCurrentSnippet().pushToken(tokenGenerator.apply(buildTokenRaw()));
         begunWhileEscaping = false;
     }
 

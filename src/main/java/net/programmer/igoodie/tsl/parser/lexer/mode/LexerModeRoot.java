@@ -50,9 +50,13 @@ public class LexerModeRoot extends LexerMode {
         if (Character.isSpaceChar(character)) {
             state.pushToken();
             return CONTINUE;
+        } else if (state.doesAllowCommaDelimiter() && character == ',') {
+            state.pushToken();
+            return CONTINUE;
         }
 
         if (character == '(') {
+            state.pushToken();
             state.pushSnippet();
             return CONTINUE;
         }
@@ -83,19 +87,38 @@ public class LexerModeRoot extends LexerMode {
             }
         }
 
-        if (character == '$' && nextCharacter == '{') {
-            if (escaping) {
+        if (character == '$') {
+            if (nextCharacter == '{') {
+                if (escaping) {
+                    state.pushChars("${");
+                    escaping = false;
+                    return CONTINUE;
+                }
+                if (state.getAccumulatedToken().length() != 0) {
+                    throw new TSLSyntaxError("Expected a space before starting an expression")
+                            .at(state.getScanningLine(), state.getScanningColumn());
+                }
                 state.pushChars("${");
-                escaping = false;
+                state.pushMode(new LexerModeExpression());
                 return CONTINUE;
             }
-            if (state.getAccumulatedToken().length() != 0) {
-                throw new TSLSyntaxError("Expected a space between previous token")
-                        .at(state.getScanningLine(), state.getScanningColumn());
+        }
+
+        if (character == '$') {
+            if (Character.isAlphabetic(nextCharacter) || Character.isDigit(nextCharacter) || nextCharacter == '_') {
+                if (escaping) {
+                    state.pushChars('$', nextCharacter);
+                    escaping = false;
+                    return CONTINUE;
+                }
+                if (state.getAccumulatedToken().length() != 0) {
+                    throw new TSLSyntaxError("Expected a space before starting a capture call")
+                            .at(state.getScanningLine(), state.getScanningColumn());
+                }
+                state.pushChars('$', nextCharacter);
+                state.pushMode(new LexerModeCaptureCall());
+                return CONTINUE;
             }
-            state.pushChars("${");
-            state.pushMode(new LexerModeExpression());
-            return CONTINUE;
         }
 
         // TODO Keep implementing from here

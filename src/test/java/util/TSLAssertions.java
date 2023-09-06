@@ -22,7 +22,7 @@ public class TSLAssertions {
         for (Either<TSLToken, TSLSnippet<?>> snippetEntry : snippet.getSnippetEntries()) {
             String tree = snippetEntry.fold(
                     token -> StringUtils.repeat(" ", depth) + (depth + 1) + "- " + token + "\n",
-                    _snippet -> debugTree(_snippet, depth + 1)
+                    subSnippet -> debugTree(subSnippet, depth + 1)
             );
             sb.append(tree);
         }

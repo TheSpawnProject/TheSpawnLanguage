@@ -80,7 +80,7 @@ public class LexerModeExpression extends LexerMode {
         }
 
         state.pushChars(character);
-        if (escaping) escaping = false; // Dangling escape
+        escaping = false; // Dangling escape
         return CONTINUE;
     }
 

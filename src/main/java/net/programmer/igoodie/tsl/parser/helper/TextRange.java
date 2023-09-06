@@ -37,4 +37,12 @@ public class TextRange {
                 .isPresent();
     }
 
+    @Override
+    public String toString() {
+        return "TextRange{" +
+                "beginPos=" + beginPos +
+                ", endPos=" + endPos +
+                '}';
+    }
+
 }

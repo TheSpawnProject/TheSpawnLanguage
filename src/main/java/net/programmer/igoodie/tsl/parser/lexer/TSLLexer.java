@@ -3,9 +3,11 @@ package net.programmer.igoodie.tsl.parser.lexer;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.lexer.mode.LexerMode;
 import net.programmer.igoodie.tsl.parser.snippet.TSLUnparsedSnippet;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class TSLLexer {
 
@@ -17,16 +19,32 @@ public class TSLLexer {
         this.snippets = new ArrayList<>();
     }
 
-    public List<TSLUnparsedSnippet> lex() {
-        for (state.scanningLine = 0; state.scanningLine < state.lines.length; state.scanningLine++) {
-            String line = state.getCurrentLine();
+    public TSLLexer(TSLLexerState initialState) {
+        this.state = initialState;
+        this.snippets = new ArrayList<>();
+    }
 
-            if (line.trim().isEmpty()) {
+    public List<TSLUnparsedSnippet> lexAll() {
+        return lexUntil(null);
+    }
+
+    public List<TSLUnparsedSnippet> lexUntil(@Nullable Predicate<TSLLexerState> until) {
+        lineLoop:
+        for (; state.scanningLine < state.lines.length; state.scanningLine++) {
+            if (state.getCurrentLine().trim().isEmpty()) {
                 state.modeStack.peek().handleEmptyLine(this.state);
                 continue;
             }
 
-            for (state.scanningColumn = 0; state.scanningColumn < line.length(); state.scanningColumn++) {
+            for (; state.scanningColumn < state.getCurrentLine().length(); state.scanningColumn++) {
+                if (until != null && until.test(state)) {
+                    break lineLoop;
+                }
+
+                System.out.println("Processing @ " + state.scanningLine + " " + state.scanningColumn
+                        + " " + state.getCharacterByOffset(0) + " " + (until == null ? "Main" : "Sub")
+                        + " " + state.hashCode() + " " + state.modeStack);
+
                 int result = state.modeStack.peek().process(this.state);
 
                 if (result == LexerMode.SKIP_LINE) {
@@ -34,16 +52,20 @@ public class TSLLexer {
                     break;
                 }
 
-                if (state.scanningColumn == line.length() - 1) {
+                if (state.scanningColumn == state.getCurrentLine().length() - 1) {
                     state.modeStack.peek().handleEndOfLine(state);
                 }
             }
+
+            state.scanningColumn = 0;
         }
 
         if (state.modeStack.size() != 1) {
             throw new TSLSyntaxError("Incompleted token")
                     .at(state.scanningLine, state.scanningColumn);
         }
+
+        System.out.println("Finishing " + state.hashCode());
 
         state.pushToken();
         state.finalizeSnippet();

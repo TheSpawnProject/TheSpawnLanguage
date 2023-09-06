@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.exception.base;
 
 import net.programmer.igoodie.tsl.parser.helper.TextPosition;
+import net.programmer.igoodie.tsl.parser.helper.TextRange;
 import net.programmer.igoodie.tsl.parser.snippet.base.TSLSnippet;
 import net.programmer.igoodie.tsl.parser.token.base.TSLToken;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +43,12 @@ public abstract class TSLException extends RuntimeException {
     public TSLException at(TSLToken token) {
         this.beginningPos = token.getBeginningPos();
         this.endingPos = token.getEndingPos();
+        return this;
+    }
+
+    public TSLException at(TextRange range) {
+        this.beginningPos = range.getBeginPos();
+        this.endingPos = range.getEndPos();
         return this;
     }
 

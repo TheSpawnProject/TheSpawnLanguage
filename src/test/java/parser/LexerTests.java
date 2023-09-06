@@ -19,7 +19,7 @@ public class LexerTests {
     public void testNestedSnippets() {
         String script = "FOO BAR BAZ (HEY (THERE) MATE!)";
         TSLLexer lexer = new TSLLexer(script);
-        List<TSLUnparsedSnippet> snippets = lexer.lex();
+        List<TSLUnparsedSnippet> snippets = lexer.lexAll();
 
         Assertions.assertEquals(1, snippets.size());
         TSLAssertions.assertSnippetsEqual(Arrays.asList(
@@ -38,7 +38,7 @@ public class LexerTests {
         String script = "#! Foo Bar Baz #Comment!\n\nB B#**\nComment\nComment Comment*#\n\nC#*\n Comment\n Foo bar\n*#\n\nD #* A looong comment *#\n\n#Hmmm\nE\n\nF (C#*\n   Comment\n   Foo bar\n  *#)\n\nFoo\n#Hmmm\nBar #Comment\nBaz";
 
         TSLLexer lexer = new TSLLexer(script);
-        List<TSLUnparsedSnippet> snippets = lexer.lex();
+        List<TSLUnparsedSnippet> snippets = lexer.lexAll();
 
         TSLAssertions.assertSnippetsEqual(Arrays.asList(
                 "1- TSLSymbol(#!) @ (L0:0 | L0:1)",
@@ -91,7 +91,7 @@ public class LexerTests {
         String script = "${{ \\ key: `Hi there \\${ ${true ? \"{Jack`o Lantern}!\" : \"'\\\"'Friend\\'s'\\\"'\"}. How are ya?`}[\"key\"]}";
 
         TSLLexer lexer = new TSLLexer(script);
-        List<TSLUnparsedSnippet> snippets = lexer.lex();
+        List<TSLUnparsedSnippet> snippets = lexer.lexAll();
 
         TSLAssertions.assertSnippetsEqual(Collections.singletonList(
                 "1- TSLExpression(${{ \\ key: `Hi there \\${ ${true ? \"{Jack`o Lantern}!\" : \"'\\\"'Friend\\'s'\\\"'\"}. How are ya?`}[\"key\"]}) @ (L0:0 | L0:98)"
@@ -105,7 +105,7 @@ public class LexerTests {
         List<TSLUnparsedSnippet> snippets;
 
         script = "\\${plainText}";
-        snippets = new TSLLexer(script).lex();
+        snippets = new TSLLexer(script).lexAll();
 
         TSLAssertions.assertSnippetsEqual(Collections.singletonList(
                 "1- TSLPlainWord(${plainText}) @ (L0:1 | L0:12)"
@@ -114,12 +114,12 @@ public class LexerTests {
         // ------------------------
 
         Assertions.assertThrows(TSLSyntaxError.class,
-                () -> new TSLLexer("\\a\nb").lex());
+                () -> new TSLLexer("\\a\nb").lexAll());
 
         // ------------------------
 
         script = "Foo = \\#! #! =Unknown";
-        snippets = new TSLLexer(script).lex();
+        snippets = new TSLLexer(script).lexAll();
 
         TSLAssertions.assertSnippetsEqual(Arrays.asList(
                 "1- TSLPlainWord(Foo) @ (L0:0 | L0:2)",
@@ -127,6 +127,38 @@ public class LexerTests {
                 "1- TSLPlainWord(#!) @ (L0:7 | L0:8)",
                 "1- TSLSymbol(#!) @ (L0:10 | L0:11)",
                 "1- TSLPlainWord(=Unknown) @ (L0:13 | L0:20)"
+        ), snippets.get(0));
+    }
+
+    @Test
+    @DisplayName("Lexer should be able to read captures")
+    public void testCaptures() {
+        String script = "DROP $item(apple, ${({ \n    displayName: \"My Apple!\" \n})}) $pi $meta()";
+        TSLLexer lexer = new TSLLexer(script);
+        List<TSLUnparsedSnippet> snippets = lexer.lexAll();
+
+        Assertions.assertEquals(1, snippets.size());
+        TSLAssertions.assertSnippetsEqual(Arrays.asList(
+                "1- TSLPlainWord(DROP) @ (L0:0 | L0:3)",
+                "1- TSLCaptureCall($item(apple, ${({     displayName: \"My Apple!\" })})) @ (L0:5 | L2:3)",
+                "1- TSLPlainWord($pi) @ (L2:5 | L2:7)",
+                "1- TSLCaptureCall($meta) @ (L2:9 | L2:15)"
+        ), snippets.get(0));
+    }
+
+    @Test
+    @DisplayName("Lexer should be able to read captures")
+    public void testCaptureInsideCapture() {
+        String script = "DROP $item(apple, ${({ \n    displayName: \"My Apple!\" \n})}, $owner) $pi $meta()";
+        TSLLexer lexer = new TSLLexer(script);
+        List<TSLUnparsedSnippet> snippets = lexer.lexAll();
+
+        Assertions.assertEquals(1, snippets.size());
+        TSLAssertions.assertSnippetsEqual(Arrays.asList(
+                "1- TSLPlainWord(DROP) @ (L0:0 | L0:3)",
+                "1- TSLCaptureCall($item(apple, ${({     displayName: \"My Apple!\" })}), $owner) @ (L0:5 | L2:3)",
+                "1- TSLPlainWord($pi) @ (L2:5 | L2:7)",
+                "1- TSLCaptureCall($meta) @ (L2:9 | L2:15)"
         ), snippets.get(0));
     }
 
