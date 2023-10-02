@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class TSLGroup extends TSLToken {
 
     protected List<TSLToken> groupTokens;

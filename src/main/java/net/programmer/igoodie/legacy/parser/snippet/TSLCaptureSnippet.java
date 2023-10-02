@@ -10,6 +10,7 @@ import java.util.*;
 
 // [$captureName] [=] [DROP apple]
 // [$captureName(x,y)] [=] [DROP {{x}} {{y}}]
+@Deprecated
 public class TSLCaptureSnippet extends TSLSnippet {
 
     protected TSLCaptureCall header;

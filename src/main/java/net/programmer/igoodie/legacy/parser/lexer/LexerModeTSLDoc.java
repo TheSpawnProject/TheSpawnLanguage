@@ -2,6 +2,7 @@ package net.programmer.igoodie.legacy.parser.lexer;
 
 import net.programmer.igoodie.legacy.parser.token.TSLSymbol;
 
+@Deprecated
 public class LexerModeTSLDoc extends LexerMode {
 
     public LexerModeTSLDoc(TSLLexer lexer) {

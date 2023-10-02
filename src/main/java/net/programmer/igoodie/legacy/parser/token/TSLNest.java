@@ -5,6 +5,7 @@ import net.programmer.igoodie.tsl.runtime.TSLContext;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class TSLNest extends TSLToken {
 
     protected List<TSLToken> tokens;

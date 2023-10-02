@@ -1,5 +1,6 @@
 package net.programmer.igoodie.legacy.parser.lexer;
 
+@Deprecated
 abstract class LexerMode {
 
     protected TSLLexer lexer;

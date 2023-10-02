@@ -2,6 +2,7 @@ package net.programmer.igoodie.legacy.parser.token;
 
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 
+@Deprecated
 public class TSLSymbol extends TSLToken {
 
     protected Type type;

@@ -1,13 +1,14 @@
 package net.programmer.igoodie.legacy.parser.snippet;
 
-import net.programmer.igoodie.tsl.definition.TSLPredicate;
 import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
 import net.programmer.igoodie.legacy.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.definition.TSLPredicate;
 
 import java.util.List;
 
 // [WITH] [field = value]
 // [WITH] [true]
+@Deprecated
 public class TSLPredicateSnippet extends TSLSnippet {
 
     protected TSLPlainWord keywordWith;

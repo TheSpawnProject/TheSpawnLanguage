@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
+@Deprecated
 public class LexerModeExpression extends LexerMode {
 
     private static final char BACKTICK = '`';

@@ -10,6 +10,7 @@ import java.util.List;
 //  * @param x Description of x
 //  * @param y Description of y
 //  *#
+@Deprecated
 public class TSLDocSnippet extends TSLSnippet {
 
     TSLSymbol begin, end;

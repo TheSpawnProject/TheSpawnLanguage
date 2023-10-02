@@ -5,6 +5,7 @@ import net.programmer.igoodie.legacy.parser.token.TSLDecoratorCall;
 import java.util.List;
 
 // <Action> <Event> [Predicates]
+@Deprecated
 public class TSLRuleSnippet extends TSLSnippet {
 
     protected List<TSLDecoratorCall> decorators;

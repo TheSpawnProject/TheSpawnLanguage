@@ -1,5 +1,6 @@
 package net.programmer.igoodie.legacy.parser.lexer;
 
+@Deprecated
 public class LexerModeGroup extends LexerMode {
 
     private boolean inExpression = false;

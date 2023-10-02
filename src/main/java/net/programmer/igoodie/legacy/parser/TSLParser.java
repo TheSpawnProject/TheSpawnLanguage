@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class TSLParser {
 
     private final TheSpawnLanguage tsl;

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class TSLDecoratorCall extends TSLToken {
 
     protected String name;

@@ -3,6 +3,7 @@ package net.programmer.igoodie.legacy.parser.token;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 
 // Intended for internal usage in TSLGroup tokens
+@Deprecated
 public class TSLExtraSpaceToken extends TSLToken {
 
     private final int amount;

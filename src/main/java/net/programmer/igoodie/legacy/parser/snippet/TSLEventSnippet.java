@@ -1,12 +1,13 @@
 package net.programmer.igoodie.legacy.parser.snippet;
 
-import net.programmer.igoodie.tsl.definition.TSLEvent;
 import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
+import net.programmer.igoodie.tsl.definition.TSLEvent;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 // [ON] [Event Name]
+@Deprecated
 public class TSLEventSnippet extends TSLSnippet {
 
     protected TSLPlainWord keywordOn;

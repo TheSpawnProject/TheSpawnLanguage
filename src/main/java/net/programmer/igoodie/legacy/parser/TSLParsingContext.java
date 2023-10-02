@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
+@Deprecated
 public class TSLParsingContext {
 
     private final TSLParser parser;

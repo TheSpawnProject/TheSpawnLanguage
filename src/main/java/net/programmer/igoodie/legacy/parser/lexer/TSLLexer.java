@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class TSLLexer {
 
     private final List<String> lines;

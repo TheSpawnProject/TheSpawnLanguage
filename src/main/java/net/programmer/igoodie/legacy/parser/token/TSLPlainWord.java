@@ -3,6 +3,7 @@ package net.programmer.igoodie.legacy.parser.token;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.jetbrains.annotations.Nullable;
 
+@Deprecated
 public class TSLPlainWord extends TSLToken {
 
     protected String rawWord;

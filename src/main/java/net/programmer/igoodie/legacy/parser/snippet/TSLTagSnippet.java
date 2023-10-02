@@ -1,13 +1,14 @@
 package net.programmer.igoodie.legacy.parser.snippet;
 
-import net.programmer.igoodie.tsl.definition.TSLTag;
 import net.programmer.igoodie.legacy.parser.token.TSLPlainWord;
 import net.programmer.igoodie.legacy.parser.token.TSLSymbol;
 import net.programmer.igoodie.legacy.parser.token.TSLToken;
+import net.programmer.igoodie.tsl.definition.TSLTag;
 
 import java.util.List;
 
 // [#!] [COOLDOWN] [3000]
+@Deprecated
 public class TSLTagSnippet extends TSLSnippet {
 
     protected TSLSymbol tagSymbol;

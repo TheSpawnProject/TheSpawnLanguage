@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+@Deprecated
 public abstract class TSLSnippet implements Collection<TSLToken> {
 
     protected List<TSLToken> allTokens;

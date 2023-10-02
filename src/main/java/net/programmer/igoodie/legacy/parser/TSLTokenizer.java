@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class TSLTokenizer {
 
     public static final Pattern RULE_DECORATOR_PATTERN = Pattern.compile("@(?<name>[.\\w_-]+)(?<args>\\(.*\\))?");

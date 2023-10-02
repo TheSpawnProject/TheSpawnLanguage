@@ -5,6 +5,7 @@ import net.programmer.igoodie.legacy.parser.token.TSLToken;
 import java.util.LinkedList;
 import java.util.List;
 
+@Deprecated
 public final class TSLTokenBuffer {
 
     public enum Type {

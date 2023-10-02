@@ -5,6 +5,7 @@ import net.programmer.igoodie.tsl.function.JSEngine;
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 import org.mozilla.javascript.RhinoException;
 
+@Deprecated
 public class TSLExpression extends TSLToken {
 
     protected String expression;

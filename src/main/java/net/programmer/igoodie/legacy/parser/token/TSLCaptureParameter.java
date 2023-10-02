@@ -2,6 +2,7 @@ package net.programmer.igoodie.legacy.parser.token;
 
 import net.programmer.igoodie.tsl.runtime.TSLContext;
 
+@Deprecated
 public class TSLCaptureParameter extends TSLToken {
 
     protected String parameterName;

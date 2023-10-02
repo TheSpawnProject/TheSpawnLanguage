@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 // [DROP] [apple 2]
+@Deprecated
 public class TSLActionSnippet extends TSLSnippet {
 
     protected TSLPlainWord actionName;

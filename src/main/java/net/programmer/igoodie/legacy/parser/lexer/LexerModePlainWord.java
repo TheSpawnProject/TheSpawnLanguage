@@ -6,6 +6,7 @@ import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 
 import java.util.List;
 
+@Deprecated
 class LexerModePlainWord extends LexerMode {
 
     public LexerModePlainWord(TSLLexer lexer) {
