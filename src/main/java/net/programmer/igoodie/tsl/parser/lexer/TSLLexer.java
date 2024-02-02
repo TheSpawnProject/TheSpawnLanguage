@@ -38,13 +38,13 @@ public class TSLLexer {
 
             for (; state.scanningColumn < state.getCurrentLine().length(); state.scanningColumn++) {
                 if (until != null && until.test(this, state)) {
-                    System.out.println("Finishing UNTIL predicate " + state.hashCode());
+                    System.out.println("Finishing lexUntil predicate " + state.hashCode() + " @ " + state.constructTextRange());
                     break lineLoop;
                 }
 
-                System.out.println("Processing @ " + state.scanningLine + " " + state.scanningColumn
-                        + " - " + state.getCharacterByOffset(0) + " " + (until == null ? "Main" : "Sub")
-                        + " " + state.hashCode() + " " + state.modeStack);
+//                System.out.println("Processing @ " + state.scanningLine + " " + state.scanningColumn
+//                        + " - " + state.getCharacterByOffset(0) + " " + (until == null ? "Main" : "Sub")
+//                        + " " + state.hashCode() + " " + state.modeStack);
 
                 int result = state.modeStack.peek().process(this.state);
 

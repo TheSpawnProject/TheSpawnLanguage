@@ -104,7 +104,7 @@ public class TSLLexerState {
     }
 
     public void moveScanningPosTo(TSLLexerState otherState) {
-        System.out.println("Moving pos to @ " + otherState.scanningLine + " " + otherState.scanningColumn);
+        System.out.println("Moving pos to @ " + otherState.constructTextRange());
         this.scanningLine = otherState.scanningLine;
         this.scanningColumn = otherState.scanningColumn;
         this.endLineNo = otherState.endLineNo;

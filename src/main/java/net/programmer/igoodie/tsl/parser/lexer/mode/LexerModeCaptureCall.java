@@ -31,17 +31,16 @@ public class LexerModeCaptureCall extends LexerMode {
                 if (s.getCharacterByOffset(0) == ')'
                         && s.getModeDepth() == 1
                         && s.getNestDepth() == 2) {
-//                    s.skipCharacters(")");
                     s.popSnippet();
+                    s.skipCharacters(")");
                     return true;
                 }
                 return false;
             });
 
-            System.out.println("Lexed Parameters: ");
-            paramLexer.getSnippets().forEach(s -> System.out.println(s.toCanonicalDebugTree()));
-
             state.moveScanningPosTo(paramState);
+            System.out.println(paramState.constructTextRange());
+            System.out.println("Moved pos range: " + state.constructTextRange());
 
             List<Either<TSLToken, TSLSnippet<?>>> paramTokens = paramLexer.getSnippets()
                     .get(0).getSnippetEntries()
@@ -65,9 +64,7 @@ public class LexerModeCaptureCall extends LexerMode {
                         .map(Optional::get)
                         .collect(Collectors.toList());
 
-                System.out.println(paramLexer.getSnippets().get(0).getSnippetEntries());
-                System.out.println(paramTokens);
-                System.out.println(parameters);
+                System.out.println("Pushing CaptureCall token @ " + range);
 
                 return new TSLCaptureCall(range, captureName, parameters);
             });
