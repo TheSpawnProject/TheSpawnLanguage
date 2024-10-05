@@ -16,6 +16,10 @@ public abstract class TSLAction {
 
     public TSLAction(List<String> args) {}
 
+    public List<String> getMessage() {
+        return message;
+    }
+
     protected Pair<List<String>, List<String>> splitDisplaying(List<String> args) {
         List<String> actionPart = new ArrayList<>();
         List<String> displayingPart = new ArrayList<>();
@@ -36,8 +40,9 @@ public abstract class TSLAction {
 
     public abstract void perform(TSLEventContext ctx);
 
-    public final String replaceExpressions(String input) {
-        return ExpressionEvaluator.replaceExpressions(input, this::replaceExpressions);
+    public final String replaceExpressions(String input, TSLEventContext ctx) {
+        return ExpressionEvaluator.replaceExpressions(input,
+                expression -> replaceExpression(expression, ctx));
     }
 
     protected String replaceExpression(String expression, TSLEventContext ctx) {

@@ -19,7 +19,7 @@ public class PrintAction extends TSLAction {
 
     @Override
     public void perform(TSLEventContext ctx) {
-        System.out.println(replaceExpressions(textToPrint));
+        System.out.println(replaceExpressions(textToPrint, ctx));
     }
 
 }
