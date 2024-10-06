@@ -1,6 +1,5 @@
 package net.programmer.igoodie.runtime.action;
 
-import net.programmer.igoodie.TSL;
 import net.programmer.igoodie.exception.TSLSyntaxException;
 import net.programmer.igoodie.runtime.event.TSLEventContext;
 import net.programmer.igoodie.util.Pair;
@@ -49,13 +48,13 @@ public abstract class TSLAction {
     public abstract boolean perform(TSLEventContext ctx);
 
     public final String replaceExpressions(String input, TSLEventContext ctx) {
-        TSL tsl = ctx.getTsl();
-
         return PatternReplacer.replaceMatches(EXPRESSION_PATTERN, input, (matcher, matchIndex) -> {
             String expression = matcher.group(1);
-            ExpressionEvaluator evaluator = tsl.getExpressionEvaluator(expression).orElse(null);
-            if (evaluator == null) return null;
-            return evaluator.evaluate(expression, ctx).map(Objects::toString).orElse(null);
+            return ctx.getPlatform()
+                    .getExpressionEvaluator(expression)
+                    .map(evaluator -> evaluator.evaluate(expression, ctx))
+                    .map(Objects::toString)
+                    .orElse(null);
         });
     }
 

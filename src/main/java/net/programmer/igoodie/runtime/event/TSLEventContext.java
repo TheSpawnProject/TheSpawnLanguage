@@ -1,23 +1,23 @@
 package net.programmer.igoodie.runtime.event;
 
-import net.programmer.igoodie.TSL;
+import net.programmer.igoodie.TSLPlatform;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 
 public class TSLEventContext {
 
-    protected TSL tsl;
+    protected TSLPlatform platform;
     protected String eventName;
     protected String target;
     protected GoodieObject eventArgs;
 
-    public TSLEventContext(TSL tsl, String eventName) {
-        this.tsl = tsl;
+    public TSLEventContext(TSLPlatform platform, String eventName) {
+        this.platform = platform;
         this.eventName = eventName;
         this.eventArgs = new GoodieObject();
     }
 
-    public TSL getTsl() {
-        return tsl;
+    public TSLPlatform getPlatform() {
+        return platform;
     }
 
     public String getEventName() {

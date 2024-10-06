@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public final class TSL {
+public final class TSLPlatform {
 
     private final String platformName;
 
@@ -17,7 +17,7 @@ public final class TSL {
     private final Map<String, TSLEvent> eventDefinitions;
     private final Map<String, TSLComparator.Supplier<?>> comparatorDefinitions;
 
-    public TSL(String platformName) {
+    public TSLPlatform(String platformName) {
         this.platformName = platformName;
         this.actionDefinitions = new HashMap<>();
         this.expressionEvaluators = new HashMap<>();

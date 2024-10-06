@@ -1,7 +1,7 @@
 package example;
 
 import example.action.PrintAction;
-import net.programmer.igoodie.TSL;
+import net.programmer.igoodie.TSLPlatform;
 import net.programmer.igoodie.exception.TSLSyntaxException;
 import net.programmer.igoodie.goodies.runtime.GoodieElement;
 import net.programmer.igoodie.parser.TSLTokenizer;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class TestPlatform {
 
-    public static final TSL tsl = new TSL("TestPlatform");
+    public static final TSLPlatform platform = new TSLPlatform("TestPlatform");
 
     private static DateFormat getDateFormat(String pattern, TimeZone timezone) {
         DateFormat dateFormat = new SimpleDateFormat(pattern);
@@ -46,61 +46,69 @@ public class TestPlatform {
     public static final TSLEvent.Property<String> ACTOR_PROPERTY = TSLEvent.PropertyBuilder.STRING.create("actor");
     public static final TSLEvent.Property<String> MESSAGE_PROPERTY = TSLEvent.PropertyBuilder.STRING.create("message");
     public static final TSLEvent.Property<Double> AMOUNT_PROPERTY = TSLEvent.PropertyBuilder.DOUBLE.create("amount");
+    public static final TSLEvent.Property<Integer> MONTHS_PROPERTY = TSLEvent.PropertyBuilder.INT.create("months");
     public static final TSLEvent.Property<String> CURRENCY_PROPERTY = TSLEvent.PropertyBuilder.STRING.create("currency");
     public static final TSLEvent.Property<Set<String>> CHAT_BADGES_PROPERTY = STRING_SET_BUILDER.create("chatProperty");
 
     @BeforeAll()
     public static void registerEverything() {
-        tsl.registerAction("PRINT", PrintAction::new);
+        platform.registerAction("PRINT", PrintAction::new);
 
-        tsl.registerExpression("event", (expr, ctx) -> Optional.of(ctx.getEventName()));
-        tsl.registerExpression("streamer", (expr, ctx) -> Optional.of(ctx.getTarget()));
-        tsl.registerExpression("actor", (expr, ctx) -> ctx.getEventArgs().getString(expr));
-        tsl.registerExpression("message", (expr, ctx) -> ctx.getEventArgs().getString(expr).map(LogFormatter::escapeJson));
-        tsl.registerExpression("message_unescaped", (expr, ctx) -> ctx.getEventArgs().getString("message"));
-        tsl.registerExpression("title", (expr, ctx) -> ctx.getEventArgs().getString(expr));
-        tsl.registerExpression("amount", (expr, ctx) -> ctx.getEventArgs().getDouble(expr).filter(num -> num != 0.0));
-        tsl.registerExpression("amount_i", (expr, ctx) -> ctx.getEventArgs().getDouble("amount").filter(num -> num != 0.0).map(Double::intValue));
-        tsl.registerExpression("amount_f", (expr, ctx) -> ctx.getEventArgs().getDouble("amount").filter(num -> num != 0.0).map(num -> String.format("%.2f", num)));
-        tsl.registerExpression("currency", (expr, ctx) -> ctx.getEventArgs().getString(expr));
-        tsl.registerExpression("months", (expr, ctx) -> ctx.getEventArgs().getInteger(expr).filter(num -> num != 0));
-        tsl.registerExpression("tier", (expr, ctx) -> ctx.getEventArgs().getInteger(expr).filter(num -> num != -1).map(num -> num == 0 ? "Prime" : String.valueOf(num)));
-        tsl.registerExpression("gifted", (expr, ctx) -> ctx.getEventArgs().getBoolean(expr));
-        tsl.registerExpression("viewers", (expr, ctx) -> ctx.getEventArgs().getInteger(expr).filter(num -> num != 0));
-        tsl.registerExpression("raiders", (expr, ctx) -> ctx.getEventArgs().getInteger(expr).filter(num -> num != 0));
-        tsl.registerExpression("date", (expr, ctx) -> Optional.of(DATE_FORMAT.format(new Date())));
-        tsl.registerExpression("date_utc", (expr, ctx) -> Optional.of(UTC_DATE_FORMAT.format(new Date())));
-        tsl.registerExpression("time", (expr, ctx) -> Optional.of(TIME_FORMAT.format(new Date())));
-        tsl.registerExpression("time_utc", (expr, ctx) -> Optional.of(UTC_TIME_FORMAT.format(new Date())));
-        tsl.registerExpression("unix", (expr, ctx) -> Optional.of(Instant.now().getEpochSecond()));
+        platform.registerExpression("event", (expr, ctx) -> Optional.of(ctx.getEventName()));
+        platform.registerExpression("streamer", (expr, ctx) -> Optional.of(ctx.getTarget()));
+        platform.registerExpression("actor", (expr, ctx) -> ctx.getEventArgs().getString(expr));
+        platform.registerExpression("message", (expr, ctx) -> ctx.getEventArgs().getString(expr).map(LogFormatter::escapeJson));
+        platform.registerExpression("message_unescaped", (expr, ctx) -> ctx.getEventArgs().getString("message"));
+        platform.registerExpression("title", (expr, ctx) -> ctx.getEventArgs().getString(expr));
+        platform.registerExpression("amount", (expr, ctx) -> ctx.getEventArgs().getDouble(expr).filter(num -> num != 0.0));
+        platform.registerExpression("amount_i", (expr, ctx) -> ctx.getEventArgs().getDouble("amount").filter(num -> num != 0.0).map(Double::intValue));
+        platform.registerExpression("amount_f", (expr, ctx) -> ctx.getEventArgs().getDouble("amount").filter(num -> num != 0.0).map(num -> String.format("%.2f", num)));
+        platform.registerExpression("currency", (expr, ctx) -> ctx.getEventArgs().getString(expr));
+        platform.registerExpression("months", (expr, ctx) -> ctx.getEventArgs().getInteger(expr).filter(num -> num != 0));
+        platform.registerExpression("tier", (expr, ctx) -> ctx.getEventArgs().getInteger(expr).filter(num -> num != -1).map(num -> num == 0 ? "Prime" : String.valueOf(num)));
+        platform.registerExpression("gifted", (expr, ctx) -> ctx.getEventArgs().getBoolean(expr));
+        platform.registerExpression("viewers", (expr, ctx) -> ctx.getEventArgs().getInteger(expr).filter(num -> num != 0));
+        platform.registerExpression("raiders", (expr, ctx) -> ctx.getEventArgs().getInteger(expr).filter(num -> num != 0));
+        platform.registerExpression("date", (expr, ctx) -> Optional.of(DATE_FORMAT.format(new Date())));
+        platform.registerExpression("date_utc", (expr, ctx) -> Optional.of(UTC_DATE_FORMAT.format(new Date())));
+        platform.registerExpression("time", (expr, ctx) -> Optional.of(TIME_FORMAT.format(new Date())));
+        platform.registerExpression("time_utc", (expr, ctx) -> Optional.of(UTC_TIME_FORMAT.format(new Date())));
+        platform.registerExpression("unix", (expr, ctx) -> Optional.of(Instant.now().getEpochSecond()));
 
-        tsl.registerComparator("IN RANGE", InRangeComparator::new);
-        tsl.registerComparator("CONTAINS", ContainsComparator::new);
-        tsl.registerComparator("IS", IsComparator::new);
-        tsl.registerComparator("PREFIX", PrefixComparator::new);
-        tsl.registerComparator("POSTFIX", PostfixComparator::new);
-        tsl.registerComparator("=", EqualsComparator::new);
-        tsl.registerComparator(">", GtComparator::new);
-        tsl.registerComparator(">=", GteComparator::new);
-        tsl.registerComparator("<", LtComparator::new);
-        tsl.registerComparator("<=", LteComparator::new);
+        platform.registerComparator("IN RANGE", InRangeComparator::new);
+        platform.registerComparator("CONTAINS", ContainsComparator::new);
+        platform.registerComparator("IS", IsComparator::new);
+        platform.registerComparator("PREFIX", PrefixComparator::new);
+        platform.registerComparator("POSTFIX", PostfixComparator::new);
+        platform.registerComparator("=", EqualsComparator::new);
+        platform.registerComparator(">", GtComparator::new);
+        platform.registerComparator(">=", GteComparator::new);
+        platform.registerComparator("<", LtComparator::new);
+        platform.registerComparator("<=", LteComparator::new);
 
-        tsl.registerEvent(new TSLEvent("Donation")
+        platform.registerEvent(new TSLEvent("Donation")
                 .addPropertyType(ACTOR_PROPERTY)
                 .addPropertyType(MESSAGE_PROPERTY)
                 .addPropertyType(AMOUNT_PROPERTY)
                 .addPropertyType(CURRENCY_PROPERTY)
+        );
+
+        platform.registerEvent(new TSLEvent("Twitch Chat Message")
+                .addPropertyType(ACTOR_PROPERTY)
+                .addPropertyType(MESSAGE_PROPERTY)
+                .addPropertyType(MONTHS_PROPERTY)
+                .addPropertyType(CHAT_BADGES_PROPERTY)
         );
     }
 
     @Test
     public void shouldPerformAction() throws TSLSyntaxException {
         // Definition of the event
-        TSLEvent event = tsl.getEvent("Donation")
+        TSLEvent event = platform.getEvent("Donation")
                 .orElseThrow(() -> new RuntimeException("Unknown event name"));
 
         // Event context, normally queued by the event generators
-        TSLEventContext ctx = new TSLEventContext(tsl, "Donation");
+        TSLEventContext ctx = new TSLEventContext(platform, "Donation");
         ACTOR_PROPERTY.write(ctx.getEventArgs(), "TestActor");
         AMOUNT_PROPERTY.write(ctx.getEventArgs(), 100.0);
         CURRENCY_PROPERTY.write(ctx.getEventArgs(), "USD");
@@ -112,7 +120,7 @@ public class TestPlatform {
         List<String> actionPart = TSLTokenizer.tokenizeWords(actionScript);
         String actionName = actionPart.get(0);
         List<String> actionArgs = actionPart.subList(1, actionPart.size());
-        TSLAction action = tsl.getActionDefinition(actionName)
+        TSLAction action = platform.getActionDefinition(actionName)
                 .orElseThrow(() -> new RuntimeException("Unknown action name"))
                 .generate(actionArgs);
 
@@ -122,7 +130,7 @@ public class TestPlatform {
         String fieldName = predicatePart.get(0);
         String rightValue = predicatePart.get(predicatePart.size() - 1);
         String symbol = String.join(" ", predicatePart.subList(1, predicatePart.size() - 1)).toUpperCase();
-        TSLComparator comparator = tsl.getComparatorDefinition(symbol)
+        TSLComparator comparator = platform.getComparatorDefinition(symbol)
                 .orElseThrow(() -> new RuntimeException("Unknown comparator symbol"))
                 .generate(rightValue);
         TSLPredicate predicate = new TSLPredicate(fieldName, comparator);
