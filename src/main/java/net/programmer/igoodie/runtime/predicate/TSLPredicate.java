@@ -21,7 +21,7 @@ public class TSLPredicate implements Predicate<TSLEventContext> {
     public boolean test(TSLEventContext ctx) {
         TSL tsl = ctx.getTsl();
         GoodieObject eventArgs = ctx.getEventArgs();
-        Object left = tsl.getEventFieldExtractor(fieldName).apply(eventArgs);
+        Object left = tsl.getEventFieldExtractor(fieldName).apply(eventArgs).orElse(null);
         return comparator.compare(left);
     }
 

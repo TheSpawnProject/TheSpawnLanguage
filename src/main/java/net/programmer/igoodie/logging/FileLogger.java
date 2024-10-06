@@ -1,5 +1,7 @@
 package net.programmer.igoodie.logging;
 
+import net.programmer.igoodie.util.PatternReplacer;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -15,6 +17,9 @@ import java.util.regex.Pattern;
 public class FileLogger extends TSLLogger {
 
     public static final Pattern ARG_PATTERN = Pattern.compile("\\{}");
+
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private static final Pattern DATE_PATTERN = Pattern.compile("(.+?)\\.log");
 
     protected Logger logger;
     protected File folder;
@@ -57,27 +62,15 @@ public class FileLogger extends TSLLogger {
     }
 
     private String replaceArgs(String msg, Object... args) {
-        Matcher matcher = ARG_PATTERN.matcher(msg);
-        StringBuilder builder = new StringBuilder();
-        int start = 0;
-        int argIndex = 0;
-
-        while (matcher.find()) {
-            // Append previous part
-            builder.append(msg, start, matcher.start());
-            start = matcher.end();
-
-            // Evaluate and append new value
-            builder.append(args[argIndex++]);
-        }
-
-        // Append trailing chars
-        builder.append(msg, start, msg.length());
-
-        return builder.toString();
+        return PatternReplacer.replaceMatches(ARG_PATTERN, msg,
+                (matcher, matchIndex) -> args[matchIndex].toString());
     }
 
-    public static void clearHistoricalLogs(File folder, int maxDays) {
+    public void clearHistoricalLogs(int maxDays) {
+        clearHistoricalLogs(this.folder, maxDays);
+    }
+
+    private void clearHistoricalLogs(File folder, int maxDays) {
         if (folder == null) return;
         File[] childrenFiles = folder.listFiles();
 
@@ -98,9 +91,6 @@ public class FileLogger extends TSLLogger {
             }
         }
     }
-
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    private static final Pattern DATE_PATTERN = Pattern.compile("(.+?)\\.log");
 
     public static int daysBetweenDates(Date date1, Date date2) {
         long diff = Math.abs(date1.getTime() - date2.getTime());

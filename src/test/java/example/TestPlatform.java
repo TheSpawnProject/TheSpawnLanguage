@@ -6,6 +6,7 @@ import net.programmer.igoodie.exception.TSLSyntaxException;
 import net.programmer.igoodie.parser.TSLTokenizer;
 import net.programmer.igoodie.runtime.event.TSLEvent;
 import net.programmer.igoodie.runtime.event.TSLEventContext;
+import net.programmer.igoodie.runtime.predicate.TSLPredicate;
 import net.programmer.igoodie.runtime.predicate.comparator.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -74,7 +75,7 @@ public class TestPlatform {
         PrintAction printAction = new PrintAction(actionArgs);
 
         TSLEvent event = new TSLEvent("Donation");
-//        event.addPredicate(new TSLPredicate("amount", new EqualsComparator(100))); // <- amount = 100
+        event.addPredicate(new TSLPredicate("amount", new EqualsComparator(100))); // <- amount = 100
         event.setAction(printAction);
 
         List<String> resultingMessage = event.perform(ctx);
