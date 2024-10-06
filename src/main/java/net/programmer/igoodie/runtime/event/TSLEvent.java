@@ -28,13 +28,22 @@ public class TSLEvent {
         this.action = action;
     }
 
-    public boolean perform(TSLEventContext ctx) {
+    public void addPredicate(TSLPredicate predicate) {
+        this.predicates.add(predicate);
+    }
+
+    public List<String> perform(TSLEventContext ctx) {
         for (TSLPredicate predicate : predicates) {
             if (!predicate.test(ctx)) {
-                return false;
+                return null;
             }
         }
-        return action.perform(ctx);
+
+        if (action.perform(ctx)) {
+            return action.getCalculatedMessage(ctx);
+        }
+
+        return null;
     }
 
 }

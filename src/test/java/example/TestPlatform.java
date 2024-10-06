@@ -4,7 +4,9 @@ import example.action.PrintAction;
 import net.programmer.igoodie.TSL;
 import net.programmer.igoodie.exception.TSLSyntaxException;
 import net.programmer.igoodie.parser.TSLTokenizer;
+import net.programmer.igoodie.runtime.event.TSLEvent;
 import net.programmer.igoodie.runtime.event.TSLEventContext;
+import net.programmer.igoodie.runtime.predicate.TSLPredicate;
 import net.programmer.igoodie.runtime.predicate.comparator.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -44,13 +46,17 @@ public class TestPlatform {
         ctx.getEventArgs().put("currency", "USD");
 
         String actionScript = "PRINT Hey %There, ${actor}!% %How are you?%\n" +
-                " DISPLAYING %Display this!%";
-        List<String> actionArgs = TSLTokenizer.tokenizeWords(actionScript);
+                " DISPLAYING %Thanks ${actor}, for donating ${amount_i}${currency}!%";
+        List<String> actionPart = TSLTokenizer.tokenizeWords(actionScript);
+        List<String> actionArgs = actionPart.subList(1, actionPart.size());
         PrintAction printAction = new PrintAction(actionArgs);
 
-        printAction.perform(ctx);
+        TSLEvent event = new TSLEvent("Donation");
+        event.addPredicate(new TSLPredicate());
+        event.setAction(printAction);
 
-        System.out.println("Done! Message: " + printAction.getMessage());
+        List<String> resultingMessage = event.perform(ctx);
+        System.out.println("Resulting Message: " + resultingMessage);
     }
 
 }

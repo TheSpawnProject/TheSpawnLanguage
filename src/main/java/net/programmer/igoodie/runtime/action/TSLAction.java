@@ -10,6 +10,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class TSLAction {
 
@@ -19,6 +20,12 @@ public abstract class TSLAction {
 
     public List<String> getMessage() {
         return message;
+    }
+
+    public List<String> getCalculatedMessage(TSLEventContext ctx) {
+        return message.stream()
+                .map(word -> replaceExpressions(word, ctx))
+                .collect(Collectors.toList());
     }
 
     protected Pair<List<String>, List<String>> splitDisplaying(List<String> args) {
