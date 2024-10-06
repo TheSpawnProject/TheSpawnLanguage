@@ -13,12 +13,14 @@ public final class TSL {
     private final String platformName;
 
     private final Map<String, TSLAction.Supplier<?>> actionDefinitions;
+    private final Map<String, TSLAction.ExpressionEvaluator> expressionEvaluators;
     private final Map<String, TSLEvent> eventDefinitions;
     private final Map<String, TSLComparator.Supplier<?>> comparatorDefinitions;
 
     public TSL(String platformName) {
         this.platformName = platformName;
         this.actionDefinitions = new HashMap<>();
+        this.expressionEvaluators = new HashMap<>();
         this.eventDefinitions = new HashMap<>();
         this.comparatorDefinitions = new HashMap<>();
     }
@@ -26,6 +28,11 @@ public final class TSL {
     public <T extends TSLAction.Supplier<?>> T registerAction(String name, T action) {
         this.actionDefinitions.put(name.toUpperCase(), action);
         return action;
+    }
+
+    public <T extends TSLAction.ExpressionEvaluator> T registerExpression(String expression, T evaluator) {
+        this.expressionEvaluators.put(expression, evaluator);
+        return evaluator;
     }
 
     public <T extends TSLEvent> T registerEvent(T event) {
@@ -40,6 +47,10 @@ public final class TSL {
 
     public Optional<TSLAction.Supplier<?>> getActionDefinition(String name) {
         return Optional.ofNullable(this.actionDefinitions.get(name));
+    }
+
+    public Optional<TSLAction.ExpressionEvaluator> getExpressionEvaluator(String expression){
+        return Optional.ofNullable(expressionEvaluators.get(expression));
     }
 
     public Optional<TSLEvent> getEvent(String eventName) {

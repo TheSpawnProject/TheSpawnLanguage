@@ -11,17 +11,31 @@ import net.programmer.igoodie.runtime.event.TSLEvent;
 import net.programmer.igoodie.runtime.event.TSLEventContext;
 import net.programmer.igoodie.runtime.predicate.TSLPredicate;
 import net.programmer.igoodie.runtime.predicate.comparator.*;
+import net.programmer.igoodie.util.LogFormatter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Set;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TestPlatform {
 
     public static final TSL tsl = new TSL("TestPlatform");
+
+    private static DateFormat getDateFormat(String pattern, TimeZone timezone) {
+        DateFormat dateFormat = new SimpleDateFormat(pattern);
+        dateFormat.setTimeZone(timezone);
+        return dateFormat;
+    }
+
+    private static final DateFormat DATE_FORMAT = getDateFormat("dd-MM-yyyy", TimeZone.getDefault());
+    private static final DateFormat TIME_FORMAT = getDateFormat("HH:mm:ss", TimeZone.getDefault());
+    private static final DateFormat UTC_DATE_FORMAT = getDateFormat("dd-MM-yyyy", TimeZone.getTimeZone("UTC"));
+    private static final DateFormat UTC_TIME_FORMAT = getDateFormat("HH:mm:ss", TimeZone.getTimeZone("UTC"));
 
     private static final TSLEvent.PropertyBuilder<Set<String>> STRING_SET_BUILDER = new TSLEvent.PropertyBuilder<>(
             (eventArgs, propertyName) -> eventArgs.getArray(propertyName)
@@ -38,6 +52,27 @@ public class TestPlatform {
     @BeforeAll()
     public static void registerEverything() {
         tsl.registerAction("PRINT", PrintAction::new);
+
+        tsl.registerExpression("event", (expr, ctx) -> Optional.of(ctx.getEventName()));
+        tsl.registerExpression("streamer", (expr, ctx) -> Optional.of(ctx.getTarget()));
+        tsl.registerExpression("actor", (expr, ctx) -> ctx.getEventArgs().getString(expr));
+        tsl.registerExpression("message", (expr, ctx) -> ctx.getEventArgs().getString(expr).map(LogFormatter::escapeJson));
+        tsl.registerExpression("message_unescaped", (expr, ctx) -> ctx.getEventArgs().getString("message"));
+        tsl.registerExpression("title", (expr, ctx) -> ctx.getEventArgs().getString(expr));
+        tsl.registerExpression("amount", (expr, ctx) -> ctx.getEventArgs().getDouble(expr).filter(num -> num != 0.0));
+        tsl.registerExpression("amount_i", (expr, ctx) -> ctx.getEventArgs().getDouble("amount").filter(num -> num != 0.0).map(Double::intValue));
+        tsl.registerExpression("amount_f", (expr, ctx) -> ctx.getEventArgs().getDouble("amount").filter(num -> num != 0.0).map(num -> String.format("%.2f", num)));
+        tsl.registerExpression("currency", (expr, ctx) -> ctx.getEventArgs().getString(expr));
+        tsl.registerExpression("months", (expr, ctx) -> ctx.getEventArgs().getInteger(expr).filter(num -> num != 0));
+        tsl.registerExpression("tier", (expr, ctx) -> ctx.getEventArgs().getInteger(expr).filter(num -> num != -1).map(num -> num == 0 ? "Prime" : String.valueOf(num)));
+        tsl.registerExpression("gifted", (expr, ctx) -> ctx.getEventArgs().getBoolean(expr));
+        tsl.registerExpression("viewers", (expr, ctx) -> ctx.getEventArgs().getInteger(expr).filter(num -> num != 0));
+        tsl.registerExpression("raiders", (expr, ctx) -> ctx.getEventArgs().getInteger(expr).filter(num -> num != 0));
+        tsl.registerExpression("date", (expr, ctx) -> Optional.of(DATE_FORMAT.format(new Date())));
+        tsl.registerExpression("date_utc", (expr, ctx) -> Optional.of(UTC_DATE_FORMAT.format(new Date())));
+        tsl.registerExpression("time", (expr, ctx) -> Optional.of(TIME_FORMAT.format(new Date())));
+        tsl.registerExpression("time_utc", (expr, ctx) -> Optional.of(UTC_TIME_FORMAT.format(new Date())));
+        tsl.registerExpression("unix", (expr, ctx) -> Optional.of(Instant.now().getEpochSecond()));
 
         tsl.registerComparator("IN RANGE", InRangeComparator::new);
         tsl.registerComparator("CONTAINS", ContainsComparator::new);
@@ -96,7 +131,7 @@ public class TestPlatform {
         rule.setAction(action);
         rule.addPredicate(predicate);
         List<String> resultingMessage = rule.perform(ctx);
-        Assertions.assertEquals(resultingMessage.get(0), "Thanks TestActor, for donating 100USD!");
+        Assertions.assertEquals("Thanks TestActor, for donating 100USD!", resultingMessage.get(0));
     }
 
 }

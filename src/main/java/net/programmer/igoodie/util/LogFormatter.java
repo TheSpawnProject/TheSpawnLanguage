@@ -11,4 +11,18 @@ public final class LogFormatter {
                 (matcher, matchIndex) -> args[matchIndex].toString());
     }
 
+    public static String escapeJson(String jsonString) {
+        StringBuilder escapedString = new StringBuilder();
+
+        for (char character : jsonString.toCharArray()) {
+            if (character == '\'' || character == '"' || character == '\\') {
+                escapedString.append("\\");
+            }
+
+            escapedString.append(character);
+        }
+
+        return escapedString.toString();
+    }
+
 }
