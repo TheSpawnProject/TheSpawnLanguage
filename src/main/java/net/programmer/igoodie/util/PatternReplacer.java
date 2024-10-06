@@ -3,7 +3,7 @@ package net.programmer.igoodie.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PatternReplacer {
+public final class PatternReplacer {
 
     @FunctionalInterface
     public interface ReplacerFunc {

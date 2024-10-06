@@ -6,6 +6,7 @@ import net.programmer.igoodie.runtime.predicate.comparator.TSLComparator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public final class TSL {
 
@@ -27,22 +28,26 @@ public final class TSL {
         return action;
     }
 
-    public <T extends TSLComparator.Supplier<?>> T registerComparator(String symbol, T comparator) {
-        this.comparatorDefinitions.put(symbol.toUpperCase(), comparator);
-        return comparator;
-    }
-
     public <T extends TSLEvent> T registerEvent(T event) {
         this.eventDefinitions.put(event.getEventName(), event);
         return event;
     }
 
-    public TSLComparator.Supplier<?> getComparatorDefinition(String symbol) {
-        return this.comparatorDefinitions.get(symbol);
+    public <T extends TSLComparator.Supplier<?>> T registerComparator(String symbol, T comparator) {
+        this.comparatorDefinitions.put(symbol.toUpperCase(), comparator);
+        return comparator;
     }
 
-    public TSLEvent getEvent(String eventName) {
-        return this.eventDefinitions.get(eventName);
+    public Optional<TSLAction.Supplier<?>> getActionDefinition(String name) {
+        return Optional.ofNullable(this.actionDefinitions.get(name));
+    }
+
+    public Optional<TSLEvent> getEvent(String eventName) {
+        return Optional.ofNullable(this.eventDefinitions.get(eventName));
+    }
+
+    public Optional<TSLComparator.Supplier<?>> getComparatorDefinition(String symbol) {
+        return Optional.ofNullable(this.comparatorDefinitions.get(symbol));
     }
 
 }

@@ -1,6 +1,6 @@
 package net.programmer.igoodie.logging;
 
-import net.programmer.igoodie.util.QuickFormatter;
+import net.programmer.igoodie.util.LogFormatter;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,27 +37,27 @@ public class FileLogger extends TSLLogger {
 
     @Override
     public void info(String msg, Object... args) {
-        logger.info(QuickFormatter.replaceArgs(msg, args));
+        logger.info(LogFormatter.format(msg, args));
     }
 
     @Override
     public void warn(String msg, Object... args) {
-        logger.warning(QuickFormatter.replaceArgs(msg, args));
+        logger.warning(LogFormatter.format(msg, args));
     }
 
     @Override
     public void error(String msg, Object... args) {
-        logger.log(Level.SEVERE, QuickFormatter.replaceArgs(msg, args));
+        logger.log(Level.SEVERE, LogFormatter.format(msg, args));
     }
 
     @Override
     public void debug(String msg, Object... args) {
-        logger.log(Level.FINER, QuickFormatter.replaceArgs(msg, args));
+        logger.log(Level.FINER, LogFormatter.format(msg, args));
     }
 
     @Override
     public void trace(String msg, Object... args) {
-        logger.log(Level.FINEST, QuickFormatter.replaceArgs(msg, args));
+        logger.log(Level.FINEST, LogFormatter.format(msg, args));
     }
 
     public void clearHistoricalLogs(int maxDays) {

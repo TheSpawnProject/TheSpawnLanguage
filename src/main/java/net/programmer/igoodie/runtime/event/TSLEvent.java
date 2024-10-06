@@ -55,6 +55,11 @@ public class TSLEvent {
         public Optional<T> read(GoodieObject eventArgs) {
             return this.reader.read(eventArgs, propertyName);
         }
+
+        public T write(GoodieObject eventArgs, T value) {
+            this.writer.write(eventArgs, propertyName, value);
+            return value;
+        }
     }
 
     public static class PropertyBuilder<T> {

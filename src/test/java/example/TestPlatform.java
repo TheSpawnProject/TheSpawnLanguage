@@ -3,8 +3,10 @@ package example;
 import example.action.PrintAction;
 import net.programmer.igoodie.TSL;
 import net.programmer.igoodie.exception.TSLSyntaxException;
+import net.programmer.igoodie.goodies.runtime.GoodieElement;
 import net.programmer.igoodie.parser.TSLTokenizer;
 import net.programmer.igoodie.runtime.TSLRule;
+import net.programmer.igoodie.runtime.action.TSLAction;
 import net.programmer.igoodie.runtime.event.TSLEvent;
 import net.programmer.igoodie.runtime.event.TSLEventContext;
 import net.programmer.igoodie.runtime.predicate.TSLPredicate;
@@ -14,16 +16,24 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TestPlatform {
 
     public static final TSL tsl = new TSL("TestPlatform");
 
+    private static final TSLEvent.PropertyBuilder<Set<String>> STRING_SET_BUILDER = new TSLEvent.PropertyBuilder<>(
+            (eventArgs, propertyName) -> eventArgs.getArray(propertyName)
+                    .map(array -> array.stream().map(e -> e.asPrimitive().getString()).collect(Collectors.toSet())),
+            (eventArgs, propertyName, value) -> eventArgs.put(propertyName, GoodieElement.fromArray(value.toArray()))
+    );
 
     public static final TSLEvent.Property<String> ACTOR_PROPERTY = TSLEvent.PropertyBuilder.STRING.create("actor");
     public static final TSLEvent.Property<String> MESSAGE_PROPERTY = TSLEvent.PropertyBuilder.STRING.create("message");
     public static final TSLEvent.Property<Double> AMOUNT_PROPERTY = TSLEvent.PropertyBuilder.DOUBLE.create("amount");
     public static final TSLEvent.Property<String> CURRENCY_PROPERTY = TSLEvent.PropertyBuilder.STRING.create("currency");
+    public static final TSLEvent.Property<Set<String>> CHAT_BADGES_PROPERTY = STRING_SET_BUILDER.create("chatProperty");
 
     @BeforeAll()
     public static void registerEverything() {
@@ -46,48 +56,30 @@ public class TestPlatform {
                 .addPropertyType(AMOUNT_PROPERTY)
                 .addPropertyType(CURRENCY_PROPERTY)
         );
-
-//        tsl.registerEventFieldExtractor("actor", eventArgs -> eventArgs.getString("actor"));
-//        tsl.registerEventFieldExtractor("message", eventArgs -> eventArgs.getString("message"));
-//        tsl.registerEventFieldExtractor("currency", eventArgs -> eventArgs.getString("currency"));
-//        //tsl.registerEventFieldExtractor("donation_currency", eventArgs -> eventArgs.getString("currency"));
-//        tsl.registerEventFieldExtractor("amount", eventArgs -> eventArgs.getDouble("amount"));
-//        //tsl.registerEventFieldExtractor("donation_amount", eventArgs -> eventArgs.getDouble("amount"));
-//        tsl.registerEventFieldExtractor("months", eventArgs -> eventArgs.getInteger("months"));
-//        //tsl.registerEventFieldExtractor("subscription_months", eventArgs -> eventArgs.getInteger("months"));
-//        tsl.registerEventFieldExtractor("tier", eventArgs -> eventArgs.getInteger("tier"));
-//        //tsl.registerEventFieldExtractor("subscription_tier", eventArgs -> eventArgs.getInteger("tier"));
-//        tsl.registerEventFieldExtractor("gifted", eventArgs -> eventArgs.getBoolean("gifted"));
-//        tsl.registerEventFieldExtractor("viewers", eventArgs -> eventArgs.getInteger("viewerCount"));
-//        //tsl.registerEventFieldExtractor("viewer_count", eventArgs -> eventArgs.getInteger("viewerCount"));
-//        tsl.registerEventFieldExtractor("raiders", eventArgs -> eventArgs.getInteger("raiderCount"));
-//        //tsl.registerEventFieldExtractor("raider_count", eventArgs -> eventArgs.getInteger("raiderCount"));
-//        tsl.registerEventFieldExtractor("title", eventArgs -> eventArgs.getString("title"));
-//        tsl.registerEventFieldExtractor("rewardTitle", eventArgs -> eventArgs.getString("title"));
-//        tsl.registerEventFieldExtractor("badges", eventArgs -> eventArgs.getArray("chatBadges")
-//                .map(array -> array.stream().map(e -> e.asPrimitive().get()).collect(Collectors.toSet())));
-//        //tsl.registerEventFieldExtractor("chat_badges", eventArgs -> eventArgs.getArray("chatBadges")
-//                .map(array -> array.stream().map(e -> e.asPrimitive().get()).collect(Collectors.toSet())));
     }
 
     @Test
     public void shouldPerformAction() throws TSLSyntaxException {
         // Definition of the event
-        TSLEvent event = tsl.getEvent("Donation");
+        TSLEvent event = tsl.getEvent("Donation")
+                .orElseThrow(() -> new RuntimeException("Unknown event name"));
 
-        // Event context, normally run by the event generators
+        // Event context, normally queued by the event generators
         TSLEventContext ctx = new TSLEventContext(tsl, "Donation");
+        ACTOR_PROPERTY.write(ctx.getEventArgs(), "TestActor");
+        AMOUNT_PROPERTY.write(ctx.getEventArgs(), 100.0);
+        CURRENCY_PROPERTY.write(ctx.getEventArgs(), "USD");
         ctx.setTarget("Player:iGoodie");
-        ctx.getEventArgs().put("actor", "TestActor");
-        ctx.getEventArgs().put("amount", 100);
-        ctx.getEventArgs().put("currency", "USD");
 
         // Runtime entity representing the Action
         String actionScript = "PRINT Hey %There, ${actor} ${actor}!% %How are you?%\n" +
                 " DISPLAYING %Thanks ${actor}, for donating ${amount_i}${currency}!%";
         List<String> actionPart = TSLTokenizer.tokenizeWords(actionScript);
+        String actionName = actionPart.get(0);
         List<String> actionArgs = actionPart.subList(1, actionPart.size());
-        PrintAction action = new PrintAction(actionArgs);
+        TSLAction action = tsl.getActionDefinition(actionName)
+                .orElseThrow(() -> new RuntimeException("Unknown action name"))
+                .generate(actionArgs);
 
         // Runtime entity representing the Predicate
         String predicateScript = "amount = 100";
@@ -95,7 +87,9 @@ public class TestPlatform {
         String fieldName = predicatePart.get(0);
         String rightValue = predicatePart.get(predicatePart.size() - 1);
         String symbol = String.join(" ", predicatePart.subList(1, predicatePart.size() - 1)).toUpperCase();
-        TSLComparator comparator = tsl.getComparatorDefinition(symbol).generate(rightValue);
+        TSLComparator comparator = tsl.getComparatorDefinition(symbol)
+                .orElseThrow(() -> new RuntimeException("Unknown comparator symbol"))
+                .generate(rightValue);
         TSLPredicate predicate = new TSLPredicate(fieldName, comparator);
 
         TSLRule rule = new TSLRule(event);
