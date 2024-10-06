@@ -3,9 +3,9 @@ package example;
 import example.action.PrintAction;
 import net.programmer.igoodie.TSL;
 import net.programmer.igoodie.exception.TSLSyntaxException;
-import net.programmer.igoodie.node.event.TSLEventContext;
-import net.programmer.igoodie.node.predicate.comparator.*;
 import net.programmer.igoodie.parser.TSLTokenizer;
+import net.programmer.igoodie.runtime.event.TSLEventContext;
+import net.programmer.igoodie.runtime.predicate.comparator.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -29,20 +29,23 @@ public class TestPlatform {
         tsl.registerComparator(">=", GteComparator::new);
         tsl.registerComparator("<", LtComparator::new);
         tsl.registerComparator("<=", LteComparator::new);
+
+        tsl.registerAllowedEvent("Donation");
+        tsl.registerAllowedEvent("Twitch Subscription");
+        tsl.registerAllowedEvent("Twitch Follow");
     }
 
     @Test
     public void shouldPerformAction() throws TSLSyntaxException {
         TSLEventContext ctx = new TSLEventContext("Donation");
+        ctx.setTarget("Player:iGoodie");
         ctx.getEventArgs().put("actor", "TestActor");
         ctx.getEventArgs().put("amount", 100);
         ctx.getEventArgs().put("currency", "USD");
 
         String actionScript = "PRINT Hey %There, ${actor}!% %How are you?%\n" +
                 " DISPLAYING %Display this!%";
-
         List<String> actionArgs = TSLTokenizer.tokenizeWords(actionScript);
-
         PrintAction printAction = new PrintAction(actionArgs);
 
         printAction.perform(ctx);

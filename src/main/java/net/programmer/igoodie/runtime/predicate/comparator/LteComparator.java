@@ -1,10 +1,10 @@
-package net.programmer.igoodie.node.predicate.comparator;
+package net.programmer.igoodie.runtime.predicate.comparator;
 
 import net.programmer.igoodie.exception.TSLSyntaxException;
 
-public class GtComparator extends TSLComparator {
+public class LteComparator extends TSLComparator {
 
-    public GtComparator(Object right) throws TSLSyntaxException {
+    public LteComparator(Object right) throws TSLSyntaxException {
         super(right);
         this.right = this.tryParseNumber(right);
     }
@@ -12,7 +12,7 @@ public class GtComparator extends TSLComparator {
     @Override
     public boolean compare(Object left) {
         if (left instanceof Number && right instanceof Number)
-            return ((Number) left).doubleValue() > ((Number) right).doubleValue();
+            return ((Number) left).doubleValue() <= ((Number) right).doubleValue();
 
         return false;
     }

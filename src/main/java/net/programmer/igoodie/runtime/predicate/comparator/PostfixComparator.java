@@ -1,4 +1,4 @@
-package net.programmer.igoodie.node.predicate.comparator;
+package net.programmer.igoodie.runtime.predicate.comparator;
 
 import net.programmer.igoodie.exception.TSLSyntaxException;
 

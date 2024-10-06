@@ -1,8 +1,8 @@
 package example.action;
 
 import net.programmer.igoodie.exception.TSLSyntaxException;
-import net.programmer.igoodie.node.action.TSLAction;
-import net.programmer.igoodie.node.event.TSLEventContext;
+import net.programmer.igoodie.runtime.action.TSLAction;
+import net.programmer.igoodie.runtime.event.TSLEventContext;
 import net.programmer.igoodie.util.Pair;
 
 import java.util.List;
@@ -19,8 +19,9 @@ public class PrintAction extends TSLAction {
     }
 
     @Override
-    public void perform(TSLEventContext ctx) {
+    public boolean perform(TSLEventContext ctx) {
         System.out.println(replaceExpressions(textToPrint, ctx));
+        return true;
     }
 
 }
