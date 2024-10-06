@@ -3,16 +3,19 @@ package net.programmer.igoodie.runtime.action;
 import net.programmer.igoodie.exception.TSLSyntaxException;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.runtime.event.TSLEventContext;
-import net.programmer.igoodie.util.ExpressionEvaluator;
 import net.programmer.igoodie.util.Pair;
+import net.programmer.igoodie.util.PatternReplacer;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public abstract class TSLAction {
+
+    public static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{(.*?)\\}");
 
     protected List<String> message = Collections.emptyList();
 
@@ -49,8 +52,10 @@ public abstract class TSLAction {
     public abstract boolean perform(TSLEventContext ctx);
 
     public final String replaceExpressions(String input, TSLEventContext ctx) {
-        return ExpressionEvaluator.replaceExpressions(input,
-                expression -> replaceExpression(expression, ctx));
+        return PatternReplacer.replaceMatches(EXPRESSION_PATTERN, input, (matcher, matchIndex) -> {
+            String expression = matcher.group(1);
+            return replaceExpression(expression, ctx);
+        });
     }
 
     protected String replaceExpression(String expression, TSLEventContext ctx) {
@@ -144,7 +149,7 @@ public abstract class TSLAction {
         return null;
     }
 
-    protected static String escape(String jsonString) {
+    private static String escape(String jsonString) {
         StringBuilder escapedString = new StringBuilder();
 
         for (char character : jsonString.toCharArray()) {

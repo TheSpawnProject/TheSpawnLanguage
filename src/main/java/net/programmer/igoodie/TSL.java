@@ -1,25 +1,26 @@
 package net.programmer.igoodie;
 
+import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.runtime.action.TSLAction;
 import net.programmer.igoodie.runtime.predicate.comparator.TSLComparator;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 
 public final class TSL {
 
     private final String platformName;
     private final Map<String, TSLAction.Supplier<?>> actionDefinitions;
     private final Map<String, TSLComparator.Supplier<?>> comparatorDefinitions;
+    private final Map<String, Function<GoodieObject, Optional<?>>> eventFieldExtractors;
     private final Set<String> allowedEventNames;
 
     public TSL(String platformName) {
         this.platformName = platformName;
         this.actionDefinitions = new HashMap<>();
         this.comparatorDefinitions = new HashMap<>();
+        this.eventFieldExtractors = new HashMap<>();
         this.allowedEventNames = new HashSet<>();
     }
 
@@ -33,8 +34,17 @@ public final class TSL {
         return comparator;
     }
 
-    public void registerAllowedEvent(String name){
+    public <F extends Function<GoodieObject, Optional<?>>> F registerEventFieldExtractor(String fieldName, F fetcher) {
+        this.eventFieldExtractors.put(fieldName, fetcher);
+        return fetcher;
+    }
+
+    public void registerAllowedEvent(String name) {
         this.allowedEventNames.add(StringUtilities.upperFirstLetters(name));
+    }
+
+    public Function<GoodieObject, Optional<?>> getEventFieldExtractor(String fieldName) {
+        return this.eventFieldExtractors.get(fieldName);
     }
 
 }
