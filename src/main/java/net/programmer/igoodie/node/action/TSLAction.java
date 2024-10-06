@@ -1,7 +1,8 @@
-package net.programmer.igoodie.node;
+package net.programmer.igoodie.node.action;
 
-import net.programmer.igoodie.event.TSLEventContext;
+import net.programmer.igoodie.exception.TSLSyntaxException;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.node.event.TSLEventContext;
 import net.programmer.igoodie.util.ExpressionEvaluator;
 import net.programmer.igoodie.util.Pair;
 
@@ -14,7 +15,7 @@ public abstract class TSLAction {
 
     protected List<String> message = Collections.emptyList();
 
-    public TSLAction(List<String> args) {}
+    public TSLAction(List<String> args) throws TSLSyntaxException {}
 
     public List<String> getMessage() {
         return message;
@@ -158,7 +159,7 @@ public abstract class TSLAction {
 
     @FunctionalInterface
     public interface Supplier<T extends TSLAction> {
-        T generate(List<String> args);
+        T generate(List<String> args) throws TSLSyntaxException;
     }
 
 }

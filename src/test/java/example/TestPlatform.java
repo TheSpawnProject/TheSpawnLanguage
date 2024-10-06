@@ -2,8 +2,9 @@ package example;
 
 import example.action.PrintAction;
 import net.programmer.igoodie.TSL;
-import net.programmer.igoodie.event.TSLEventContext;
 import net.programmer.igoodie.exception.TSLSyntaxException;
+import net.programmer.igoodie.node.event.TSLEventContext;
+import net.programmer.igoodie.node.predicate.comparator.*;
 import net.programmer.igoodie.parser.TSLTokenizer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,17 @@ public class TestPlatform {
     @BeforeAll()
     public static void registerEverything() {
         tsl.registerAction("PRINT", PrintAction::new);
+
+        tsl.registerComparator("IN RANGE", InRangeComparator::new);
+        tsl.registerComparator("CONTAINS", ContainsComparator::new);
+        tsl.registerComparator("IS", IsComparator::new);
+        tsl.registerComparator("PREFIX", PrefixComparator::new);
+        tsl.registerComparator("POSTFIX", PostfixComparator::new);
+        tsl.registerComparator("=", EqualsComparator::new);
+        tsl.registerComparator(">", GtComparator::new);
+        tsl.registerComparator(">=", GteComparator::new);
+        tsl.registerComparator("<", LtComparator::new);
+        tsl.registerComparator("<=", LteComparator::new);
     }
 
     @Test

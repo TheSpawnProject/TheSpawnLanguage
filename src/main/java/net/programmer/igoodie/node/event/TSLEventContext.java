@@ -1,4 +1,4 @@
-package net.programmer.igoodie.event;
+package net.programmer.igoodie.node.event;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 
