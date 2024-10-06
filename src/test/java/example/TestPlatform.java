@@ -4,10 +4,12 @@ import example.action.PrintAction;
 import net.programmer.igoodie.TSL;
 import net.programmer.igoodie.exception.TSLSyntaxException;
 import net.programmer.igoodie.parser.TSLTokenizer;
+import net.programmer.igoodie.runtime.TSLRule;
 import net.programmer.igoodie.runtime.event.TSLEvent;
 import net.programmer.igoodie.runtime.event.TSLEventContext;
 import net.programmer.igoodie.runtime.predicate.TSLPredicate;
 import net.programmer.igoodie.runtime.predicate.comparator.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +19,9 @@ import java.util.stream.Collectors;
 public class TestPlatform {
 
     public static final TSL tsl = new TSL("TestPlatform");
+
+
+    public static final TSLEvent.PropertyType.Property<String> ACTOR = TSLEvent.PropertyType.STRING.create("actor");
 
     @BeforeAll()
     public static void registerEverything() {
@@ -33,9 +38,12 @@ public class TestPlatform {
         tsl.registerComparator("<", LtComparator::new);
         tsl.registerComparator("<=", LteComparator::new);
 
-        tsl.registerAllowedEvent("Donation");
-        tsl.registerAllowedEvent("Twitch Subscription");
-        tsl.registerAllowedEvent("Twitch Follow");
+        tsl.registerEvent(new TSLEvent("Donation")
+                .addPropertyType(TSLEvent.PropertyType.STRING.create("actor"))
+                .addPropertyType(TSLEvent.PropertyType.STRING.create("message"))
+                .addPropertyType(TSLEvent.PropertyType.DOUBLE.create("amount"))
+                .addPropertyType(TSLEvent.PropertyType.STRING.create("currency"))
+        );
 
         tsl.registerEventFieldExtractor("actor", eventArgs -> eventArgs.getString("actor"));
         tsl.registerEventFieldExtractor("message", eventArgs -> eventArgs.getString("message"));
@@ -62,30 +70,37 @@ public class TestPlatform {
 
     @Test
     public void shouldPerformAction() throws TSLSyntaxException {
+        // Definition of the event
+        TSLEvent event = tsl.getEvent("Donation");
+
+        // Event context, normally run by the event generators
         TSLEventContext ctx = new TSLEventContext(tsl, "Donation");
         ctx.setTarget("Player:iGoodie");
         ctx.getEventArgs().put("actor", "TestActor");
         ctx.getEventArgs().put("amount", 100);
         ctx.getEventArgs().put("currency", "USD");
 
+        // Runtime entity representing the Action
         String actionScript = "PRINT Hey %There, ${actor} ${actor}!% %How are you?%\n" +
                 " DISPLAYING %Thanks ${actor}, for donating ${amount_i}${currency}!%";
         List<String> actionPart = TSLTokenizer.tokenizeWords(actionScript);
         List<String> actionArgs = actionPart.subList(1, actionPart.size());
-        PrintAction printAction = new PrintAction(actionArgs);
+        PrintAction action = new PrintAction(actionArgs);
 
-        TSLEvent event = new TSLEvent("Donation");
+        // Runtime entity representing the Predicate
         String predicateScript = "amount = 100";
         List<String> predicatePart = TSLTokenizer.tokenizeWords(predicateScript);
         String fieldName = predicatePart.get(0);
         String rightValue = predicatePart.get(predicatePart.size() - 1);
         String symbol = String.join(" ", predicatePart.subList(1, predicatePart.size() - 1)).toUpperCase();
         TSLComparator comparator = tsl.getComparatorDefinition(symbol).generate(rightValue);
-        event.addPredicate(new TSLPredicate(fieldName, comparator));
-        event.setAction(printAction);
+        TSLPredicate predicate = new TSLPredicate(fieldName, comparator);
 
-        List<String> resultingMessage = event.perform(ctx);
-        System.out.println("Resulting Message: " + resultingMessage);
+        TSLRule rule = new TSLRule(event);
+        rule.setAction(action);
+        rule.addPredicate(predicate);
+        List<String> resultingMessage = rule.perform(ctx);
+        Assertions.assertEquals(resultingMessage.get(0), "Thanks TestActor, for donating 100USD!");
     }
 
 }
