@@ -47,4 +47,8 @@ public final class TSL {
         return this.eventFieldExtractors.get(fieldName);
     }
 
+    public TSLComparator.Supplier<?> getComparatorDefinition(String symbol) {
+        return this.comparatorDefinitions.get(symbol);
+    }
+
 }

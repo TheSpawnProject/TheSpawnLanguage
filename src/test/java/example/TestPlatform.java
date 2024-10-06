@@ -75,7 +75,13 @@ public class TestPlatform {
         PrintAction printAction = new PrintAction(actionArgs);
 
         TSLEvent event = new TSLEvent("Donation");
-        event.addPredicate(new TSLPredicate("amount", new EqualsComparator(100))); // <- amount = 100
+        String predicateScript = "amount = 100";
+        List<String> predicatePart = TSLTokenizer.tokenizeWords(predicateScript);
+        String fieldName = predicatePart.get(0);
+        String rightValue = predicatePart.get(predicatePart.size() - 1);
+        String symbol = String.join(" ", predicatePart.subList(1, predicatePart.size() - 1)).toUpperCase();
+        TSLComparator comparator = tsl.getComparatorDefinition(symbol).generate(rightValue);
+        event.addPredicate(new TSLPredicate(fieldName, comparator));
         event.setAction(printAction);
 
         List<String> resultingMessage = event.perform(ctx);
