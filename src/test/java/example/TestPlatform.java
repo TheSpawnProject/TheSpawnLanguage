@@ -14,14 +14,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TestPlatform {
 
     public static final TSL tsl = new TSL("TestPlatform");
 
 
-    public static final TSLEvent.PropertyType.Property<String> ACTOR = TSLEvent.PropertyType.STRING.create("actor");
+    public static final TSLEvent.Property<String> ACTOR_PROPERTY = TSLEvent.PropertyBuilder.STRING.create("actor");
+    public static final TSLEvent.Property<String> MESSAGE_PROPERTY = TSLEvent.PropertyBuilder.STRING.create("message");
+    public static final TSLEvent.Property<Double> AMOUNT_PROPERTY = TSLEvent.PropertyBuilder.DOUBLE.create("amount");
+    public static final TSLEvent.Property<String> CURRENCY_PROPERTY = TSLEvent.PropertyBuilder.STRING.create("currency");
 
     @BeforeAll()
     public static void registerEverything() {
@@ -39,33 +41,33 @@ public class TestPlatform {
         tsl.registerComparator("<=", LteComparator::new);
 
         tsl.registerEvent(new TSLEvent("Donation")
-                .addPropertyType(TSLEvent.PropertyType.STRING.create("actor"))
-                .addPropertyType(TSLEvent.PropertyType.STRING.create("message"))
-                .addPropertyType(TSLEvent.PropertyType.DOUBLE.create("amount"))
-                .addPropertyType(TSLEvent.PropertyType.STRING.create("currency"))
+                .addPropertyType(ACTOR_PROPERTY)
+                .addPropertyType(MESSAGE_PROPERTY)
+                .addPropertyType(AMOUNT_PROPERTY)
+                .addPropertyType(CURRENCY_PROPERTY)
         );
 
-        tsl.registerEventFieldExtractor("actor", eventArgs -> eventArgs.getString("actor"));
-        tsl.registerEventFieldExtractor("message", eventArgs -> eventArgs.getString("message"));
-        tsl.registerEventFieldExtractor("currency", eventArgs -> eventArgs.getString("currency"));
-        tsl.registerEventFieldExtractor("donation_currency", eventArgs -> eventArgs.getString("currency"));
-        tsl.registerEventFieldExtractor("amount", eventArgs -> eventArgs.getDouble("amount"));
-        tsl.registerEventFieldExtractor("donation_amount", eventArgs -> eventArgs.getDouble("amount"));
-        tsl.registerEventFieldExtractor("months", eventArgs -> eventArgs.getInteger("months"));
-        tsl.registerEventFieldExtractor("subscription_months", eventArgs -> eventArgs.getInteger("months"));
-        tsl.registerEventFieldExtractor("tier", eventArgs -> eventArgs.getInteger("tier"));
-        tsl.registerEventFieldExtractor("subscription_tier", eventArgs -> eventArgs.getInteger("tier"));
-        tsl.registerEventFieldExtractor("gifted", eventArgs -> eventArgs.getBoolean("gifted"));
-        tsl.registerEventFieldExtractor("viewers", eventArgs -> eventArgs.getInteger("viewerCount"));
-        tsl.registerEventFieldExtractor("viewer_count", eventArgs -> eventArgs.getInteger("viewerCount"));
-        tsl.registerEventFieldExtractor("raiders", eventArgs -> eventArgs.getInteger("raiderCount"));
-        tsl.registerEventFieldExtractor("raider_count", eventArgs -> eventArgs.getInteger("raiderCount"));
-        tsl.registerEventFieldExtractor("title", eventArgs -> eventArgs.getString("title"));
-        tsl.registerEventFieldExtractor("rewardTitle", eventArgs -> eventArgs.getString("title"));
-        tsl.registerEventFieldExtractor("badges", eventArgs -> eventArgs.getArray("chatBadges")
-                .map(array -> array.stream().map(e -> e.asPrimitive().get()).collect(Collectors.toSet())));
-        tsl.registerEventFieldExtractor("chat_badges", eventArgs -> eventArgs.getArray("chatBadges")
-                .map(array -> array.stream().map(e -> e.asPrimitive().get()).collect(Collectors.toSet())));
+//        tsl.registerEventFieldExtractor("actor", eventArgs -> eventArgs.getString("actor"));
+//        tsl.registerEventFieldExtractor("message", eventArgs -> eventArgs.getString("message"));
+//        tsl.registerEventFieldExtractor("currency", eventArgs -> eventArgs.getString("currency"));
+//        //tsl.registerEventFieldExtractor("donation_currency", eventArgs -> eventArgs.getString("currency"));
+//        tsl.registerEventFieldExtractor("amount", eventArgs -> eventArgs.getDouble("amount"));
+//        //tsl.registerEventFieldExtractor("donation_amount", eventArgs -> eventArgs.getDouble("amount"));
+//        tsl.registerEventFieldExtractor("months", eventArgs -> eventArgs.getInteger("months"));
+//        //tsl.registerEventFieldExtractor("subscription_months", eventArgs -> eventArgs.getInteger("months"));
+//        tsl.registerEventFieldExtractor("tier", eventArgs -> eventArgs.getInteger("tier"));
+//        //tsl.registerEventFieldExtractor("subscription_tier", eventArgs -> eventArgs.getInteger("tier"));
+//        tsl.registerEventFieldExtractor("gifted", eventArgs -> eventArgs.getBoolean("gifted"));
+//        tsl.registerEventFieldExtractor("viewers", eventArgs -> eventArgs.getInteger("viewerCount"));
+//        //tsl.registerEventFieldExtractor("viewer_count", eventArgs -> eventArgs.getInteger("viewerCount"));
+//        tsl.registerEventFieldExtractor("raiders", eventArgs -> eventArgs.getInteger("raiderCount"));
+//        //tsl.registerEventFieldExtractor("raider_count", eventArgs -> eventArgs.getInteger("raiderCount"));
+//        tsl.registerEventFieldExtractor("title", eventArgs -> eventArgs.getString("title"));
+//        tsl.registerEventFieldExtractor("rewardTitle", eventArgs -> eventArgs.getString("title"));
+//        tsl.registerEventFieldExtractor("badges", eventArgs -> eventArgs.getArray("chatBadges")
+//                .map(array -> array.stream().map(e -> e.asPrimitive().get()).collect(Collectors.toSet())));
+//        //tsl.registerEventFieldExtractor("chat_badges", eventArgs -> eventArgs.getArray("chatBadges")
+//                .map(array -> array.stream().map(e -> e.asPrimitive().get()).collect(Collectors.toSet())));
     }
 
     @Test

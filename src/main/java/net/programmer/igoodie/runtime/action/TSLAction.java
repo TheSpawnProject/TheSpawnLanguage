@@ -58,6 +58,8 @@ public abstract class TSLAction {
         });
     }
 
+    @Deprecated
+    /** TODO: Replace with an expression registry instead */
     protected String replaceExpression(String expression, TSLEventContext ctx) {
         GoodieObject eventArgs = ctx.getEventArgs();
 

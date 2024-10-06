@@ -1,6 +1,6 @@
 package net.programmer.igoodie.logging;
 
-import net.programmer.igoodie.util.PatternReplacer;
+import net.programmer.igoodie.util.QuickFormatter;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 
 public class FileLogger extends TSLLogger {
 
-    public static final Pattern ARG_PATTERN = Pattern.compile("\\{}");
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static final Pattern DATE_PATTERN = Pattern.compile("(.+?)\\.log");
@@ -38,32 +37,27 @@ public class FileLogger extends TSLLogger {
 
     @Override
     public void info(String msg, Object... args) {
-        logger.info(replaceArgs(msg, args));
+        logger.info(QuickFormatter.replaceArgs(msg, args));
     }
 
     @Override
     public void warn(String msg, Object... args) {
-        logger.warning(replaceArgs(msg, args));
+        logger.warning(QuickFormatter.replaceArgs(msg, args));
     }
 
     @Override
     public void error(String msg, Object... args) {
-        logger.log(Level.SEVERE, replaceArgs(msg, args));
+        logger.log(Level.SEVERE, QuickFormatter.replaceArgs(msg, args));
     }
 
     @Override
     public void debug(String msg, Object... args) {
-        logger.log(Level.FINER, replaceArgs(msg, args));
+        logger.log(Level.FINER, QuickFormatter.replaceArgs(msg, args));
     }
 
     @Override
     public void trace(String msg, Object... args) {
-        logger.log(Level.FINEST, replaceArgs(msg, args));
-    }
-
-    private String replaceArgs(String msg, Object... args) {
-        return PatternReplacer.replaceMatches(ARG_PATTERN, msg,
-                (matcher, matchIndex) -> args[matchIndex].toString());
+        logger.log(Level.FINEST, QuickFormatter.replaceArgs(msg, args));
     }
 
     public void clearHistoricalLogs(int maxDays) {

@@ -24,8 +24,7 @@ public class InRangeComparator extends TSLComparator {
             max = Double.parseDouble(matcher.group("max"));
 
         } catch (NumberFormatException e) {
-            throw new TSLSyntaxException("Expected valid numbers, found -> "
-                    + matcher.group(1) + " and " + matcher.group(2));
+            throw new TSLSyntaxException("Expected valid numbers, found -> {} and {}", matcher.group(1), matcher.group(2));
         }
 
         if (min > max)

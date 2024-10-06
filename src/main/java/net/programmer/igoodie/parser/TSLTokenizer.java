@@ -77,9 +77,9 @@ public class TSLTokenizer {
         // Check for unexpected beginning or ending of a multi-line comment
         for (String line : lines) {
             if (line.contains(MULTI_LINE_COMMENT_BEGIN))
-                throw new TSLSyntaxException("Unclosed multiline comment -> %s", line);
+                throw new TSLSyntaxException("Unclosed multiline comment -> {}", line);
             if (line.contains(MULTI_LINE_COMMENT_END))
-                throw new TSLSyntaxException("Unexpected comment closing -> %s", line);
+                throw new TSLSyntaxException("Unexpected comment closing -> {}", line);
         }
 
         StringBuilder rule = new StringBuilder();

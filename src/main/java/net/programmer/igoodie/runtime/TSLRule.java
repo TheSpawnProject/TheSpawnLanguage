@@ -1,5 +1,6 @@
 package net.programmer.igoodie.runtime;
 
+import net.programmer.igoodie.exception.TSLSyntaxException;
 import net.programmer.igoodie.runtime.action.TSLAction;
 import net.programmer.igoodie.runtime.event.TSLEvent;
 import net.programmer.igoodie.runtime.event.TSLEventContext;
@@ -20,6 +21,10 @@ public class TSLRule {
         this.predicates = new LinkedList<>();
     }
 
+    public TSLEvent getEvent() {
+        return event;
+    }
+
     public List<TSLPredicate> getPredicates() {
         return Collections.unmodifiableList(predicates);
     }
@@ -30,13 +35,16 @@ public class TSLRule {
         this.action = action;
     }
 
-    public void addPredicate(TSLPredicate predicate) {
+    public void addPredicate(TSLPredicate predicate) throws TSLSyntaxException {
+        if (this.event.getPropertyType(predicate.getFieldName()) == null)
+            throw new TSLSyntaxException("This rule's event does not support given property -> {}", predicate.getFieldName());
+
         this.predicates.add(predicate);
     }
 
     public List<String> perform(TSLEventContext ctx) {
         for (TSLPredicate predicate : predicates) {
-            if (!predicate.test(ctx)) {
+            if (!predicate.test(this, ctx)) {
                 return null;
             }
         }

@@ -1,13 +1,14 @@
 package net.programmer.igoodie.runtime.predicate;
 
-import net.programmer.igoodie.TSL;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
+import net.programmer.igoodie.runtime.TSLRule;
+import net.programmer.igoodie.runtime.event.TSLEvent;
 import net.programmer.igoodie.runtime.event.TSLEventContext;
 import net.programmer.igoodie.runtime.predicate.comparator.TSLComparator;
 
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
-public class TSLPredicate implements Predicate<TSLEventContext> {
+public class TSLPredicate implements BiPredicate<TSLRule, TSLEventContext> {
 
     protected final String fieldName;
     protected final TSLComparator comparator;
@@ -17,11 +18,15 @@ public class TSLPredicate implements Predicate<TSLEventContext> {
         this.comparator = comparator;
     }
 
+    public String getFieldName() {
+        return fieldName;
+    }
+
     @Override
-    public boolean test(TSLEventContext ctx) {
-        TSL tsl = ctx.getTsl();
+    public boolean test(TSLRule rule, TSLEventContext ctx) {
         GoodieObject eventArgs = ctx.getEventArgs();
-        Object left = tsl.getEventFieldExtractor(fieldName).apply(eventArgs).orElse(null);
+        TSLEvent.Property<?> property = rule.getEvent().getPropertyType(fieldName);
+        Object left = property.read(eventArgs).orElse(null);
         return comparator.compare(left);
     }
 

@@ -3,45 +3,66 @@ package net.programmer.igoodie.runtime.event;
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.StringUtilities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class TSLEvent {
 
     protected final String eventName;
-    protected List<PropertyType<?>> propertyTypes;
+    protected Map<String, Property<?>> propertyTypes;
 
     public TSLEvent(String eventName) {
         this.eventName = StringUtilities.upperFirstLetters(eventName);
-        this.propertyTypes = new ArrayList<>();
+        this.propertyTypes = new HashMap<>();
     }
 
     public String getEventName() {
         return eventName;
     }
 
-    public TSLEvent addPropertyType(PropertyType<?> propertyType) {
-        this.propertyTypes.add(propertyType);
+    public Property<?> getPropertyType(String fieldName) {
+        return propertyTypes.get(fieldName);
+    }
+
+    public TSLEvent addPropertyType(Property<?> propertyType) {
+        this.propertyTypes.put(propertyType.propertyName, propertyType);
         return this;
     }
 
-    public static class PropertyType<T> {
+    public static class Property<T> {
 
         @FunctionalInterface
-        public interface PropertyReader<T> {
+        public interface Reader<T> {
             Optional<T> read(GoodieObject eventArgs, String propertyName);
         }
 
         @FunctionalInterface
-        public interface PropertyWriter<T> {
+        public interface Writer<T> {
             void write(GoodieObject eventArgs, String propertyName, T value);
         }
 
-        protected final PropertyReader<T> reader;
-        protected final PropertyWriter<T> writer;
+        protected final String propertyName;
+        protected final Reader<T> reader;
+        protected final Writer<T> writer;
 
-        private PropertyType(PropertyReader<T> reader, PropertyWriter<T> writer) {
+        public Property(String propertyName, Reader<T> reader, Writer<T> writer) {
+            this.propertyName = propertyName;
+            this.reader = reader;
+            this.writer = writer;
+        }
+
+        public Optional<T> read(GoodieObject eventArgs) {
+            return this.reader.read(eventArgs, propertyName);
+        }
+    }
+
+    public static class PropertyBuilder<T> {
+
+        protected final Property.Reader<T> reader;
+        protected final Property.Writer<T> writer;
+
+        public PropertyBuilder(Property.Reader<T> reader, Property.Writer<T> writer) {
             this.reader = reader;
             this.writer = writer;
         }
@@ -50,29 +71,15 @@ public class TSLEvent {
             return new Property<>(propertyName, this.reader, this.writer);
         }
 
-        public static class Property<T> extends PropertyType<T> {
-
-            protected final String propertyName;
-
-            public Property(String propertyName, PropertyReader<T> reader, PropertyWriter<T> writer) {
-                super(reader, writer);
-                this.propertyName = propertyName;
-            }
-
-            public Optional<T> read(GoodieObject eventArgs) {
-                return this.reader.read(eventArgs, propertyName);
-            }
-        }
-
-        public static final PropertyType<Boolean> BOOLEAN = new PropertyType<>(GoodieObject::getBoolean, GoodieObject::put);
-        public static final PropertyType<String> STRING = new PropertyType<>(GoodieObject::getString, GoodieObject::put);
-        public static final PropertyType<Character> CHAR = new PropertyType<>(GoodieObject::getCharacter, GoodieObject::put);
-        public static final PropertyType<Byte> BYTE = new PropertyType<>(GoodieObject::getByte, GoodieObject::put);
-        public static final PropertyType<Short> SHORT = new PropertyType<>(GoodieObject::getShort, GoodieObject::put);
-        public static final PropertyType<Integer> INT = new PropertyType<>(GoodieObject::getInteger, GoodieObject::put);
-        public static final PropertyType<Long> LONG = new PropertyType<>(GoodieObject::getLong, GoodieObject::put);
-        public static final PropertyType<Float> FLOAT = new PropertyType<>(GoodieObject::getFloat, GoodieObject::put);
-        public static final PropertyType<Double> DOUBLE = new PropertyType<>(GoodieObject::getDouble, GoodieObject::put);
+        public static final PropertyBuilder<Boolean> BOOLEAN = new PropertyBuilder<>(GoodieObject::getBoolean, GoodieObject::put);
+        public static final PropertyBuilder<String> STRING = new PropertyBuilder<>(GoodieObject::getString, GoodieObject::put);
+        public static final PropertyBuilder<Character> CHAR = new PropertyBuilder<>(GoodieObject::getCharacter, GoodieObject::put);
+        public static final PropertyBuilder<Byte> BYTE = new PropertyBuilder<>(GoodieObject::getByte, GoodieObject::put);
+        public static final PropertyBuilder<Short> SHORT = new PropertyBuilder<>(GoodieObject::getShort, GoodieObject::put);
+        public static final PropertyBuilder<Integer> INT = new PropertyBuilder<>(GoodieObject::getInteger, GoodieObject::put);
+        public static final PropertyBuilder<Long> LONG = new PropertyBuilder<>(GoodieObject::getLong, GoodieObject::put);
+        public static final PropertyBuilder<Float> FLOAT = new PropertyBuilder<>(GoodieObject::getFloat, GoodieObject::put);
+        public static final PropertyBuilder<Double> DOUBLE = new PropertyBuilder<>(GoodieObject::getDouble, GoodieObject::put);
 
     }
 
