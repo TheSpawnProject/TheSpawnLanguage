@@ -107,7 +107,7 @@ public class TestPlatform {
     @Test
     public void shouldTokenize() throws IOException {
         String script = "PRINT Hey %There, ${actor} ${actor}!% %How are you?%\n" +
-                " DISPLAYING %Thanks ${actor}, for donating ${amount_i}${currency}!%\n" +
+                " DISPLAYING %Thanks ${actor}, 100\\% for donating ${amount_i}${currency}!%\n" +
                 " ON Donation WITH amount IN RANGE [0,100]\n" +
                 " \n" +
                 "DROP apple\n" +

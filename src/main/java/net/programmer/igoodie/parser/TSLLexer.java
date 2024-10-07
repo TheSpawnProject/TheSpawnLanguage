@@ -50,10 +50,34 @@ public class TSLLexer {
                 continue;
             }
 
+            if (inGroup) {
+                if (escaping) {
+                    // TODO
+                    escaping = false;
+                }
+
+                if(curr == '%') {
+                    tokens.add(generateToken());
+                    inGroup = false;
+                    charStream.consume();
+                    continue;
+                }
+
+                sb.append(curr);
+                charStream.consume();
+                continue;
+            }
+
             if (curr == '\n' || curr == '\r') {
                 tokens.add(generateToken());
                 sb.setLength(0);
                 prevNewLine = true;
+                charStream.consume();
+                continue;
+            }
+
+            if (curr == '%') {
+                inGroup = true;
                 charStream.consume();
                 continue;
             }
@@ -67,6 +91,10 @@ public class TSLLexer {
 
             sb.append(curr);
             charStream.consume();
+        }
+
+        if (sb.length() > 0) {
+            tokens.add(generateToken());
         }
 
         return tokens;

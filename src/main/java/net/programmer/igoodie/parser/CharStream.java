@@ -68,6 +68,7 @@ public class CharStream {
     }
 
     public boolean hasNext() throws IOException {
+        fillBufferUpTo(1);
         return !lookaheadBuffer.isEmpty() || !endOfStream;
     }
 
