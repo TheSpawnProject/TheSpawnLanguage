@@ -65,7 +65,6 @@ public class CharStream {
             }
             lookaheadBuffer.add((char) nextChar);
         }
-        System.out.println("Fill up to " + k + ". Buffer = " + lookaheadBuffer);
     }
 
     public boolean hasNext() throws IOException {

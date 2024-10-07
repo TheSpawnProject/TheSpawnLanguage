@@ -4,6 +4,8 @@ import example.action.PrintAction;
 import net.programmer.igoodie.TSLPlatform;
 import net.programmer.igoodie.exception.TSLSyntaxException;
 import net.programmer.igoodie.goodies.runtime.GoodieElement;
+import net.programmer.igoodie.parser.CharStream;
+import net.programmer.igoodie.parser.TSLLexer;
 import net.programmer.igoodie.parser.TSLTokenizer;
 import net.programmer.igoodie.runtime.TSLRule;
 import net.programmer.igoodie.runtime.action.TSLAction;
@@ -16,6 +18,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -99,6 +102,25 @@ public class TestPlatform {
                 .addPropertyType(MONTHS_PROPERTY)
                 .addPropertyType(CHAT_BADGES_PROPERTY)
         );
+    }
+
+    @Test
+    public void shouldTokenize() throws IOException {
+        String script = "PRINT Hey %There, ${actor} ${actor}!% %How are you?%\n" +
+                " DISPLAYING %Thanks ${actor}, for donating ${amount_i}${currency}!%\n" +
+                " ON Donation WITH amount IN RANGE [0,100]\n" +
+                " \n" +
+                "DROP apple\n" +
+                " ON Twitch Follow";
+
+        TSLLexer lexer = new TSLLexer(CharStream.fromString(script));
+        List<TSLLexer.Token> tokens = lexer.tokenize();
+
+        for (TSLLexer.Token token : tokens) {
+            System.out.println(token.type + " " + token.value
+                    .replaceAll("\r", "\\\\r")
+                    .replaceAll("\n", "\\\\n"));
+        }
     }
 
     @Test
