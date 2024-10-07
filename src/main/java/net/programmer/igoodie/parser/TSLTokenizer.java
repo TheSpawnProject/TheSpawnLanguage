@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+// TODO: Refactor
 public class TSLTokenizer {
 
     public static final String MULTI_LINE_COMMENT_BEGIN = "#*";
