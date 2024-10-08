@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public final class TSLPlatform {
+public class TSLPlatform {
 
     private final String platformName;
 
@@ -37,7 +37,7 @@ public final class TSLPlatform {
     }
 
     public <T extends TSLEvent> T registerEvent(T event) {
-        this.eventDefinitions.put(event.getEventName(), event);
+        this.eventDefinitions.put(event.getName(), event);
         return event;
     }
 

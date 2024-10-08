@@ -43,6 +43,10 @@ public class TSLRule {
     }
 
     public List<String> perform(TSLEventContext ctx) {
+        if (!ctx.getEventName().equalsIgnoreCase(this.event.getName())) {
+            return null;
+        }
+
         for (TSLPredicate predicate : predicates) {
             if (!predicate.test(this, ctx)) {
                 return null;

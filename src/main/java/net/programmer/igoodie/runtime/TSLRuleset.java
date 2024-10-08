@@ -1,5 +1,7 @@
 package net.programmer.igoodie.runtime;
 
+import net.programmer.igoodie.runtime.event.TSLEventContext;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +23,18 @@ public class TSLRuleset {
 
     public void addRule(TSLRule rule) {
         this.rules.add(rule);
+    }
+
+    public List<String> perform(TSLEventContext ctx) {
+        for (TSLRule rule : rules) {
+            List<String> result = rule.perform(ctx);
+
+            if (result != null) {
+                return result;
+            }
+        }
+
+        return null;
     }
 
 }

@@ -9,16 +9,16 @@ import java.util.Optional;
 
 public class TSLEvent {
 
-    protected final String eventName;
+    protected final String name;
     protected Map<String, Property<?>> propertyTypes;
 
-    public TSLEvent(String eventName) {
-        this.eventName = StringUtilities.upperFirstLetters(eventName);
+    public TSLEvent(String name) {
+        this.name = StringUtilities.upperFirstLetters(name);
         this.propertyTypes = new HashMap<>();
     }
 
-    public String getEventName() {
-        return eventName;
+    public String getName() {
+        return name;
     }
 
     public Property<?> getPropertyType(String fieldName) {

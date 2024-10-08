@@ -52,7 +52,7 @@ public abstract class TSLAction {
             String expression = matcher.group(1);
             return ctx.getPlatform()
                     .getExpressionEvaluator(expression)
-                    .map(evaluator -> evaluator.evaluate(expression, ctx))
+                    .flatMap(evaluator -> evaluator.evaluate(expression, ctx))
                     .map(Objects::toString)
                     .orElse(null);
         });

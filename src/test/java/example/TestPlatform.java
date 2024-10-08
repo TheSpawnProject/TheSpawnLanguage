@@ -7,7 +7,6 @@ import net.programmer.igoodie.goodies.runtime.GoodieElement;
 import net.programmer.igoodie.parser.CharStream;
 import net.programmer.igoodie.parser.TSLLexer;
 import net.programmer.igoodie.parser.TSLParser;
-import net.programmer.igoodie.parser.TSLTokenizer;
 import net.programmer.igoodie.runtime.TSLRule;
 import net.programmer.igoodie.runtime.TSLRuleset;
 import net.programmer.igoodie.runtime.action.TSLAction;
@@ -136,12 +135,12 @@ public class TestPlatform {
         TSLRuleset ruleset = parser.parse();
 
         Assertions.assertEquals(2, ruleset.getRules().size());
-        Assertions.assertEquals("Donation", ruleset.getRules().get(0).getEvent().getEventName());
-        Assertions.assertEquals("Twitch Follow", ruleset.getRules().get(1).getEvent().getEventName());
+        Assertions.assertEquals("Donation", ruleset.getRules().get(0).getEvent().getName());
+        Assertions.assertEquals("Twitch Follow", ruleset.getRules().get(1).getEvent().getName());
     }
 
     @Test
-    public void shouldPerformAction() throws TSLSyntaxException {
+    public void shouldPerformAction() throws IOException, TSLSyntaxException {
         // Definition of the event
         TSLEvent event = platform.getEvent("Donation")
                 .orElseThrow(() -> new RuntimeException("Unknown event name"));
@@ -156,19 +155,20 @@ public class TestPlatform {
         // Runtime entity representing the Action
         String actionScript = "PRINT Hey %There, ${actor} ${actor}!% %How are you?%\n" +
                 " DISPLAYING %Thanks ${actor}, for donating ${amount_i}${currency}!%";
-        List<String> actionPart = TSLTokenizer.tokenizeWords(actionScript);
-        String actionName = actionPart.get(0);
-        List<String> actionArgs = actionPart.subList(1, actionPart.size());
+        List<TSLLexer.Token> actionPart = new TSLLexer(CharStream.fromString(actionScript)).tokenize();
+        String actionName = actionPart.get(0).value;
+        List<String> actionArgs = actionPart.subList(1, actionPart.size()).stream().map(e -> e.value).collect(Collectors.toList());
         TSLAction action = platform.getActionDefinition(actionName)
                 .orElseThrow(() -> new RuntimeException("Unknown action name"))
                 .generate(actionArgs);
 
         // Runtime entity representing the Predicate
         String predicateScript = "amount = 100";
-        List<String> predicatePart = TSLTokenizer.tokenizeWords(predicateScript);
-        String fieldName = predicatePart.get(0);
-        String rightValue = predicatePart.get(predicatePart.size() - 1);
-        String symbol = String.join(" ", predicatePart.subList(1, predicatePart.size() - 1)).toUpperCase();
+        List<TSLLexer.Token> predicatePart = new TSLLexer(CharStream.fromString(predicateScript)).tokenize();
+        String fieldName = predicatePart.get(0).value;
+        String rightValue = predicatePart.get(predicatePart.size() - 1).value;
+        String symbol = predicatePart.subList(1, predicatePart.size() - 1).stream().map(e -> e.value)
+                .collect(Collectors.joining(" ")).toUpperCase();
         TSLComparator comparator = platform.getComparatorDefinition(symbol)
                 .orElseThrow(() -> new RuntimeException("Unknown comparator symbol"))
                 .generate(rightValue);
@@ -179,6 +179,48 @@ public class TestPlatform {
         rule.addPredicate(predicate);
         List<String> resultingMessage = rule.perform(ctx);
         Assertions.assertEquals("Thanks TestActor, for donating 100USD!", resultingMessage.get(0));
+    }
+
+    @Test
+    public void shouldParseAndPerform() throws TSLSyntaxException, IOException {
+        String script = String.join("\n",
+                "PRINT Hey %There, ${actor} ${actor}!% %How are you?% # This is a comment",
+                " DISPLAYING %Thanks ${actor}, 100\\% #*100\\%*# for donating ${amount_i}${currency}!%",
+                " ON Donation WITH amount IN RANGE [0,100]",
+                "               ",
+                "               ",
+                "PRINT apple",
+                " ON Twitch Follow"
+        );
+
+        List<TSLLexer.Token> tokens = new TSLLexer(CharStream.fromString(script)).tokenize();
+        TSLRuleset ruleset = new TSLParser(platform, "Player:iGoodie", tokens).parse();
+
+        TSLEventContext ctx;
+        List<String> result;
+
+        ctx = new TSLEventContext(platform, "Donation");
+        ACTOR_PROPERTY.write(ctx.getEventArgs(), "TestActor");
+        AMOUNT_PROPERTY.write(ctx.getEventArgs(), 100.0);
+        CURRENCY_PROPERTY.write(ctx.getEventArgs(), "USD");
+        ctx.setTarget("Player:iGoodie");
+        result = ruleset.perform(ctx);
+        System.out.println("Result = " + result);
+        Assertions.assertIterableEquals(
+                Collections.singletonList("Thanks TestActor, 100%  for donating 100USD!"),
+                result);
+
+        ctx = new TSLEventContext(platform, "Twitch Follow");
+        ctx.setTarget("Player:iGoodie");
+        result = ruleset.perform(ctx);
+        System.out.println("Result = " + result);
+        Assertions.assertIterableEquals(Collections.emptyList(), result);
+
+        ctx = new TSLEventContext(platform, "Facebook Friend Request");
+        ctx.setTarget("Player:iGoodie");
+        result = ruleset.perform(ctx);
+        System.out.println("Result = " + result);
+        Assertions.assertNull(result);
     }
 
 }
