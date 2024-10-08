@@ -78,7 +78,7 @@ public class TSLLexer {
             if (inGroup) {
                 if (isEscaping) {
                     if (curr != '%' && curr != '\\') {
-                        throw new TSLSyntaxException("Illegal escape sequence");
+                        sb.append('\\');
                     }
                     sb.append(curr);
                     charStream.consume();
