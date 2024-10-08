@@ -6,6 +6,7 @@ import net.programmer.igoodie.exception.TSLSyntaxException;
 import net.programmer.igoodie.goodies.runtime.GoodieElement;
 import net.programmer.igoodie.parser.CharStream;
 import net.programmer.igoodie.parser.TSLLexer;
+import net.programmer.igoodie.parser.TSLParser;
 import net.programmer.igoodie.parser.TSLTokenizer;
 import net.programmer.igoodie.runtime.TSLRule;
 import net.programmer.igoodie.runtime.action.TSLAction;
@@ -56,6 +57,7 @@ public class TestPlatform {
     @BeforeAll()
     public static void registerEverything() {
         platform.registerAction("PRINT", PrintAction::new);
+        platform.registerAction("DROP", PrintAction::new);
 
         platform.registerExpression("event", (expr, ctx) -> Optional.of(ctx.getEventName()));
         platform.registerExpression("streamer", (expr, ctx) -> Optional.of(ctx.getTarget()));
@@ -96,6 +98,10 @@ public class TestPlatform {
                 .addPropertyType(CURRENCY_PROPERTY)
         );
 
+        platform.registerEvent(new TSLEvent("Twitch Follow")
+                .addPropertyType(ACTOR_PROPERTY)
+        );
+
         platform.registerEvent(new TSLEvent("Twitch Chat Message")
                 .addPropertyType(ACTOR_PROPERTY)
                 .addPropertyType(MESSAGE_PROPERTY)
@@ -111,6 +117,7 @@ public class TestPlatform {
                 " DISPLAYING %Thanks ${actor}, 100\\% #*100\\%*# for donating ${amount_i}${currency}!%",
                 " ON Donation WITH amount IN RANGE [0,100]",
                 "               ",
+                "               ",
                 "DROP apple",
                 " ON Twitch Follow"
         );
@@ -123,6 +130,10 @@ public class TestPlatform {
                     .replaceAll("\r", "\\\\r")
                     .replaceAll("\n", "\\\\n"));
         }
+
+        TSLParser parser = new TSLParser(platform, tokens);
+        TSLParser.Ruleset ruleset = parser.parse();
+        System.out.println(ruleset);
     }
 
     @Test

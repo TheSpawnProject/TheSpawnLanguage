@@ -1,0 +1,6 @@
+<ruleset> ::= <rule> (EMPTY_LINE <rule>)* <empty_line>?
+<rule> ::= <action_name> <action_args> "ON" <event_name> <predicate>*
+<action_name> ::= WORD
+<action_args> ::= WORD*
+<event_name> ::= WORD+
+<predicate> ::= "WITH" <word>+

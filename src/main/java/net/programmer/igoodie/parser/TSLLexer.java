@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-// DROP apple 1\nON Twitch Donation\n\n
 public class TSLLexer {
 
     protected final CharStream charStream;
@@ -22,13 +21,6 @@ public class TSLLexer {
     public TSLLexer(CharStream charStream) {
         this.charStream = charStream;
     }
-
-    // Word -> DROP
-    // Word -> ${something}
-    // Word -> minecraft:stick
-    // Group -> %Some ${something}, words with space%
-    // Group -> %Some \${escaped}%
-    // Empty Line -> \n\n
 
     public List<Token> tokenize() throws IOException, TSLSyntaxException {
         List<Token> tokens = new ArrayList<>();
@@ -153,13 +145,14 @@ public class TSLLexer {
     }
 
     protected Token generateToken() {
-        if (inGroup) return new Token(TokenType.GROUP, sb.toString());
         if (prevNewLine) return new Token(TokenType.EMPTY_LINE, sb.toString());
+        if (sb.toString().equalsIgnoreCase("ON")) return new Token(TokenType.KEYWORD_ON, sb.toString());
+        if (sb.toString().equalsIgnoreCase("WITH")) return new Token(TokenType.KEYWORD_WITH, sb.toString());
         return new Token(TokenType.WORD, sb.toString());
     }
 
     public enum TokenType {
-        WORD, GROUP, EMPTY_LINE
+        WORD, EMPTY_LINE, KEYWORD_ON, KEYWORD_WITH;
     }
 
     public static class Token {
@@ -172,6 +165,12 @@ public class TSLLexer {
             this.value = value;
         }
 
+        @Override
+        public String toString() {
+            return String.format("%s [%s]", this.type, this.value
+                    .replaceAll("\r", "\\\\r")
+                    .replaceAll("\n", "\\\\n"));
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package net.programmer.igoodie;
 
+import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.runtime.action.TSLAction;
 import net.programmer.igoodie.runtime.event.TSLEvent;
 import net.programmer.igoodie.runtime.predicate.comparator.TSLComparator;
@@ -46,7 +47,7 @@ public final class TSLPlatform {
     }
 
     public Optional<TSLAction.Supplier<?>> getActionDefinition(String name) {
-        return Optional.ofNullable(this.actionDefinitions.get(name));
+        return Optional.ofNullable(this.actionDefinitions.get(name.toUpperCase()));
     }
 
     public Optional<TSLAction.ExpressionEvaluator> getExpressionEvaluator(String expression){
@@ -54,7 +55,7 @@ public final class TSLPlatform {
     }
 
     public Optional<TSLEvent> getEvent(String eventName) {
-        return Optional.ofNullable(this.eventDefinitions.get(eventName));
+        return Optional.ofNullable(this.eventDefinitions.get(StringUtilities.upperFirstLetters(eventName)));
     }
 
     public Optional<TSLComparator.Supplier<?>> getComparatorDefinition(String symbol) {
