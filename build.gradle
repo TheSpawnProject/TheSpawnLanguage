@@ -18,8 +18,6 @@ repositories {
 }
 
 dependencies {
-    implementation "io.socket:socket.io-client:1.0.0"
-
     api 'com.github.iGoodie.RuntimeGoodies:core:1.3.9'
     api 'com.github.iGoodie.RuntimeGoodies:json:1.3.9'
 
