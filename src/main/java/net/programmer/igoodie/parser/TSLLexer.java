@@ -14,7 +14,7 @@ public class TSLLexer {
     protected boolean inSingleComment = false;
     protected boolean inMultiComment = false;
     protected boolean inGroup = false;
-    protected boolean escaping = false;
+    protected boolean isEscaping = false;
     protected boolean prevNewLine = true;
 
     protected StringBuilder sb = new StringBuilder();
@@ -84,9 +84,20 @@ public class TSLLexer {
             }
 
             if (inGroup) {
-                if (escaping) {
-                    // TODO
-                    escaping = false;
+                if (isEscaping) {
+                    if (curr != '%' && curr != '\\') {
+                        throw new TSLSyntaxException("Illegal escape sequence");
+                    }
+                    sb.append(curr);
+                    charStream.consume();
+                    isEscaping = false;
+                    continue;
+                }
+
+                if (curr == '\\') {
+                    isEscaping = true;
+                    charStream.consume();
+                    continue;
                 }
 
                 if (curr == '%') {
@@ -132,7 +143,7 @@ public class TSLLexer {
         }
 
         if (inGroup) throw new TSLSyntaxException("Unclosed group");
-        if (escaping) throw new TSLSyntaxException("Unexpected escaping");
+        if (isEscaping) throw new TSLSyntaxException("Unexpected escaping");
 
         if (sb.length() > 0) {
             tokens.add(generateToken());

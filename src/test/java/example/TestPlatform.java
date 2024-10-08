@@ -106,12 +106,14 @@ public class TestPlatform {
 
     @Test
     public void shouldTokenize() throws IOException, TSLSyntaxException {
-        String script = "PRINT Hey %There, ${actor} ${actor}!% %How are you?% # This is a comment\n" +
-                " DISPLAYING %Thanks ${actor}, #*100\\%*# for donating ${amount_i}${currency}!%\n" +
-                " ON Donation WITH amount IN RANGE [0,100]\n" +
-                " \n" +
-                "DROP apple\n" +
-                " ON Twitch Follow";
+        String script = String.join("\n",
+                "PRINT Hey %There, ${actor} ${actor}!% %How are you?% # This is a comment",
+                " DISPLAYING %Thanks ${actor}, 100\\% #*100\\%*# for donating ${amount_i}${currency}!%",
+                " ON Donation WITH amount IN RANGE [0,100]",
+                "               ",
+                "DROP apple",
+                " ON Twitch Follow"
+        );
 
         TSLLexer lexer = new TSLLexer(CharStream.fromString(script));
         List<TSLLexer.Token> tokens = lexer.tokenize();
