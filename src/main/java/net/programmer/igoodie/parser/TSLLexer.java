@@ -1,5 +1,7 @@
 package net.programmer.igoodie.parser;
 
+import net.programmer.igoodie.exception.TSLSyntaxException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +11,8 @@ public class TSLLexer {
 
     protected final CharStream charStream;
 
+    protected boolean inSingleComment = false;
+    protected boolean inMultiComment = false;
     protected boolean inGroup = false;
     protected boolean escaping = false;
     protected boolean prevNewLine = true;
@@ -26,11 +30,40 @@ public class TSLLexer {
     // Group -> %Some \${escaped}%
     // Empty Line -> \n\n
 
-    public List<Token> tokenize() throws IOException {
+    public List<Token> tokenize() throws IOException, TSLSyntaxException {
         List<Token> tokens = new ArrayList<>();
 
         while (charStream.hasNext()) {
             char curr = charStream.peek();
+
+            if (inSingleComment) {
+                if (curr == '\n') {
+                    inSingleComment = false;
+                } else {
+                    charStream.consume();
+                    continue;
+                }
+            }
+
+            if (inMultiComment) {
+                if (curr == '*' && charStream.peek(2) == '#') {
+                    inMultiComment = false;
+                    charStream.consume(2);
+                } else {
+                    charStream.consume();
+                }
+                continue;
+            }
+
+            if (curr == '#' && charStream.peek(2) == '*') {
+                inMultiComment = true;
+                continue;
+            }
+
+            if (curr == '#') {
+                inSingleComment = true;
+                continue;
+            }
 
             if (prevNewLine) {
                 if (curr == ' ') {
@@ -56,8 +89,9 @@ public class TSLLexer {
                     escaping = false;
                 }
 
-                if(curr == '%') {
+                if (curr == '%') {
                     tokens.add(generateToken());
+                    sb.setLength(0);
                     inGroup = false;
                     charStream.consume();
                     continue;
@@ -69,8 +103,10 @@ public class TSLLexer {
             }
 
             if (curr == '\n' || curr == '\r') {
-                tokens.add(generateToken());
-                sb.setLength(0);
+                if (sb.length() > 0) {
+                    tokens.add(generateToken());
+                    sb.setLength(0);
+                }
                 prevNewLine = true;
                 charStream.consume();
                 continue;
@@ -83,8 +119,10 @@ public class TSLLexer {
             }
 
             if (curr == ' ') {
-                tokens.add(generateToken());
-                sb.setLength(0);
+                if (sb.length() > 0) {
+                    tokens.add(generateToken());
+                    sb.setLength(0);
+                }
                 charStream.consume();
                 continue;
             }
@@ -92,6 +130,9 @@ public class TSLLexer {
             sb.append(curr);
             charStream.consume();
         }
+
+        if (inGroup) throw new TSLSyntaxException("Unclosed group");
+        if (escaping) throw new TSLSyntaxException("Unexpected escaping");
 
         if (sb.length() > 0) {
             tokens.add(generateToken());

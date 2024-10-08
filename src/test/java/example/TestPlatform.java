@@ -105,9 +105,9 @@ public class TestPlatform {
     }
 
     @Test
-    public void shouldTokenize() throws IOException {
-        String script = "PRINT Hey %There, ${actor} ${actor}!% %How are you?%\n" +
-                " DISPLAYING %Thanks ${actor}, 100\\% for donating ${amount_i}${currency}!%\n" +
+    public void shouldTokenize() throws IOException, TSLSyntaxException {
+        String script = "PRINT Hey %There, ${actor} ${actor}!% %How are you?% # This is a comment\n" +
+                " DISPLAYING %Thanks ${actor}, #*100\\%*# for donating ${amount_i}${currency}!%\n" +
                 " ON Donation WITH amount IN RANGE [0,100]\n" +
                 " \n" +
                 "DROP apple\n" +
@@ -117,7 +117,7 @@ public class TestPlatform {
         List<TSLLexer.Token> tokens = lexer.tokenize();
 
         for (TSLLexer.Token token : tokens) {
-            System.out.println(token.type + " " + token.value
+            System.out.printf("%s [%s]\n", token.type, token.value
                     .replaceAll("\r", "\\\\r")
                     .replaceAll("\n", "\\\\n"));
         }
