@@ -59,7 +59,7 @@ public final class TSLPlatform {
     }
 
     public Optional<TSLComparator.Supplier<?>> getComparatorDefinition(String symbol) {
-        return Optional.ofNullable(this.comparatorDefinitions.get(symbol));
+        return Optional.ofNullable(this.comparatorDefinitions.get(symbol.toUpperCase()));
     }
 
 }

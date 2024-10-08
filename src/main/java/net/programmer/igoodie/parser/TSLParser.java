@@ -2,9 +2,12 @@ package net.programmer.igoodie.parser;
 
 import net.programmer.igoodie.TSLPlatform;
 import net.programmer.igoodie.exception.TSLSyntaxException;
+import net.programmer.igoodie.runtime.TSLRule;
+import net.programmer.igoodie.runtime.TSLRuleset;
 import net.programmer.igoodie.runtime.action.TSLAction;
 import net.programmer.igoodie.runtime.event.TSLEvent;
 import net.programmer.igoodie.runtime.predicate.TSLPredicate;
+import net.programmer.igoodie.runtime.predicate.comparator.TSLComparator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,22 +18,24 @@ import java.util.function.Supplier;
 public class TSLParser {
 
     private final TSLPlatform platform;
+    private final String target;
     private final List<TSLLexer.Token> tokens;
     private int index;
 
-    public TSLParser(TSLPlatform platform, List<TSLLexer.Token> tokens) {
+    public TSLParser(TSLPlatform platform, String target, List<TSLLexer.Token> tokens) {
         this.platform = platform;
+        this.target = target;
         this.tokens = tokens;
         this.index = 0;
     }
 
-    public Ruleset parse() throws TSLSyntaxException {
-        Ruleset ruleset = new Ruleset();
+    public TSLRuleset parse() throws TSLSyntaxException {
+        TSLRuleset ruleset = new TSLRuleset(target);
 
         parseEmptyLine(); // Skip leading empty lines
 
         while (index < tokens.size()) {
-            Rule rule = parseRule();
+            TSLRule rule = parseRule();
             ruleset.addRule(rule);
             parseEmptyLine(); // Skip empty lines between rules
         }
@@ -38,7 +43,7 @@ public class TSLParser {
         return ruleset;
     }
 
-    private Rule parseRule() throws TSLSyntaxException {
+    private TSLRule parseRule() throws TSLSyntaxException {
         String actionName = parseWord();
         if (actionName == null)
             throw new TSLSyntaxException("Expected action name.");
@@ -57,8 +62,15 @@ public class TSLParser {
         if (event == null)
             throw new TSLSyntaxException("Expected event name.");
 
-        List<TSLPredicate> predicates = parsePredicates();
-        return new Rule(action, actionArgs, event, predicates);
+        List<TSLPredicate> predicates = parsePredicates(event);
+
+        TSLRule rule = new TSLRule(event);
+        rule.setAction(action);
+        for (TSLPredicate predicate : predicates) {
+            rule.addPredicate(predicate);
+        }
+
+        return rule;
     }
 
     private List<String> parseActionArgs() {
@@ -86,16 +98,28 @@ public class TSLParser {
                 .orElseThrow(() -> new TSLSyntaxException("Unknown event -> {}", eventName.toString()));
     }
 
-    private List<TSLPredicate> parsePredicates() {
+    private List<TSLPredicate> parsePredicates(TSLEvent event) throws TSLSyntaxException {
         List<TSLPredicate> predicates = new ArrayList<>();
         while (consume(token -> token.type == TSLLexer.TokenType.KEYWORD_WITH)) {
             List<String> words = new ArrayList<>();
+
             String word;
             while ((word = parseWord()) != null) {
                 words.add(word);
             }
-            // TODO
-//            predicates.add(new TSLPredicate(words));
+
+            if (words.size() < 3)
+                throw new TSLSyntaxException("");
+
+            String fieldName = words.get(0);
+            String comparatorSymbol = String.join(" ", words.subList(1, words.size() - 1));
+            String right = words.get(words.size() - 1);
+
+            TSLComparator.Supplier<?> comparatorDefinition = platform.getComparatorDefinition(comparatorSymbol)
+                    .orElseThrow(() -> new TSLSyntaxException("Unknown comparator -> {}", comparatorSymbol));
+
+            TSLComparator comparator = comparatorDefinition.generate(right);
+            predicates.add(new TSLPredicate(fieldName, comparator));
         }
         return predicates;
     }
@@ -131,58 +155,4 @@ public class TSLParser {
         return orElse.get(); // Return the default value if predicate fails
     }
 
-    public static class Ruleset {
-        private final List<Rule> rules = new ArrayList<>();
-
-        public void addRule(Rule rule) {
-            rules.add(rule);
-        }
-    }
-
-    public static class Rule {
-        private final TSLAction action;
-        private final List<String> actionArgs;
-        private final TSLEvent event;
-        private final List<TSLPredicate> predicates;
-
-        public Rule(TSLAction action, List<String> actionArgs, TSLEvent eventName, List<TSLPredicate> predicates) {
-            this.action = action;
-            this.actionArgs = actionArgs;
-            this.event = eventName;
-            this.predicates = predicates;
-        }
-    }
-
-//    public static void main(String[] args) throws TSLSyntaxException {
-//        // Example token list
-//        List<TSLLexer.Token> tokens = Arrays.asList(
-//                new TSLLexer.Token(TSLLexer.TokenType.WORD, "PRINT"),
-//                new TSLLexer.Token(TSLLexer.TokenType.WORD, "Hello"),
-//                new TSLLexer.Token(TSLLexer.TokenType.WORD, "World"),
-//                new TSLLexer.Token(TSLLexer.TokenType.KEYWORD_ON, "ON"),
-//                new TSLLexer.Token(TSLLexer.TokenType.WORD, "Twitch"),
-//                new TSLLexer.Token(TSLLexer.TokenType.WORD, "Follow"),
-//                new TSLLexer.Token(TSLLexer.TokenType.KEYWORD_WITH, "WITH"),
-//                new TSLLexer.Token(TSLLexer.TokenType.WORD, "amount"),
-//                new TSLLexer.Token(TSLLexer.TokenType.WORD, "="),
-//                new TSLLexer.Token(TSLLexer.TokenType.WORD, "100"),
-//
-//                new TSLLexer.Token(TSLLexer.TokenType.EMPTY_LINE, "\n"),
-//
-//                new TSLLexer.Token(TSLLexer.TokenType.WORD, "PRINT"),
-////                new TSLLexer.Token(TSLLexer.TokenType.WORD, "Hello"),
-////                new TSLLexer.Token(TSLLexer.TokenType.WORD, "World"),
-//                new TSLLexer.Token(TSLLexer.TokenType.KEYWORD_ON, "ON"),
-//                new TSLLexer.Token(TSLLexer.TokenType.WORD, "Twitch"),
-//                new TSLLexer.Token(TSLLexer.TokenType.WORD, "Follow"),
-//                new TSLLexer.Token(TSLLexer.TokenType.KEYWORD_WITH, "WITH"),
-//                new TSLLexer.Token(TSLLexer.TokenType.WORD, "condition1"),
-//                new TSLLexer.Token(TSLLexer.TokenType.WORD, "condition2")
-//        );
-//
-//        TSLParser parser = new TSLParser(platform, tokens);
-//        Ruleset ruleset = parser.parse();
-//        // Process the parsed ruleset as needed
-//        System.out.println("Parsed ruleset: " + ruleset);
-//    }
 }

@@ -17,7 +17,7 @@ public class InRangeComparator extends TSLComparator {
         Matcher matcher = RANGE_PATTERN.matcher(right.toString());
 
         if (!matcher.find())
-            throw new TSLSyntaxException("Expected format like [1.0,2.0], found -> " + right.toString());
+            throw new TSLSyntaxException("Expected format like [1.0,2.0], found -> {}", right);
 
         try {
             min = Double.parseDouble(matcher.group("min"));

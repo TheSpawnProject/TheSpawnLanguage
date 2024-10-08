@@ -9,6 +9,7 @@ import net.programmer.igoodie.parser.TSLLexer;
 import net.programmer.igoodie.parser.TSLParser;
 import net.programmer.igoodie.parser.TSLTokenizer;
 import net.programmer.igoodie.runtime.TSLRule;
+import net.programmer.igoodie.runtime.TSLRuleset;
 import net.programmer.igoodie.runtime.action.TSLAction;
 import net.programmer.igoodie.runtime.event.TSLEvent;
 import net.programmer.igoodie.runtime.event.TSLEventContext;
@@ -111,7 +112,7 @@ public class TestPlatform {
     }
 
     @Test
-    public void shouldTokenize() throws IOException, TSLSyntaxException {
+    public void shouldParse() throws IOException, TSLSyntaxException {
         String script = String.join("\n",
                 "PRINT Hey %There, ${actor} ${actor}!% %How are you?% # This is a comment",
                 " DISPLAYING %Thanks ${actor}, 100\\% #*100\\%*# for donating ${amount_i}${currency}!%",
@@ -131,9 +132,12 @@ public class TestPlatform {
                     .replaceAll("\n", "\\\\n"));
         }
 
-        TSLParser parser = new TSLParser(platform, tokens);
-        TSLParser.Ruleset ruleset = parser.parse();
-        System.out.println(ruleset);
+        TSLParser parser = new TSLParser(platform, "Player:iGoodie", tokens);
+        TSLRuleset ruleset = parser.parse();
+
+        Assertions.assertEquals(2, ruleset.getRules().size());
+        Assertions.assertEquals("Donation", ruleset.getRules().get(0).getEvent().getEventName());
+        Assertions.assertEquals("Twitch Follow", ruleset.getRules().get(1).getEvent().getEventName());
     }
 
     @Test
