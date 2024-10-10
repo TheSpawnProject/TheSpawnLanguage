@@ -57,6 +57,7 @@ public class TSLEvent {
         }
 
         public T write(GoodieObject eventArgs, T value) {
+            if (value == null) return null;
             this.writer.write(eventArgs, propertyName, value);
             return value;
         }
