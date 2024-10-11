@@ -1,9 +1,9 @@
 package example.action;
 
-import net.programmer.igoodie.exception.TSLSyntaxException;
-import net.programmer.igoodie.runtime.action.TSLAction;
-import net.programmer.igoodie.runtime.event.TSLEventContext;
-import net.programmer.igoodie.util.Pair;
+import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
+import net.programmer.igoodie.tsl.runtime.action.TSLAction;
+import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
+import net.programmer.igoodie.tsl.util.Pair;
 
 import java.util.List;
 
