@@ -68,8 +68,6 @@ public class TSLLexer {
                         tokens.add(generateToken());
                         sb.setLength(0);
                     }
-                    sb.append(curr);
-                    charStream.consume();
                     prevNewLine = false;
                 }
                 continue;
