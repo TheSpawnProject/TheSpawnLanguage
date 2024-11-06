@@ -26,6 +26,10 @@ public class TSLPlatform {
         this.comparatorDefinitions = new HashMap<>();
     }
 
+    public String getPlatformName() {
+        return platformName;
+    }
+
     public <T extends TSLAction.Supplier<?>> T registerAction(String name, T action) {
         this.actionDefinitions.put(name.toUpperCase(), action);
         return action;
