@@ -232,6 +232,12 @@ public class TestPlatform {
                 "ON Donation"
         );
 
+        String.join("\n",
+                "FOR i IN 5",
+                "PRINT ${local.i}",
+                "ON Donation"
+        );
+
         String target = "Player:iGoodie";
 
         List<TSLLexer.Token> tokens = new TSLLexer(CharStream.fromString(script)).tokenize();

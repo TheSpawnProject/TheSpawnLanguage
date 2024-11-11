@@ -4,6 +4,7 @@ import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLComparator;
+import net.programmer.igoodie.tsl.std.action.NothingAction;
 import net.programmer.igoodie.tsl.std.action.SequentiallyAction;
 import net.programmer.igoodie.tsl.std.action.WaitAction;
 import net.programmer.igoodie.tsl.std.comparator.*;
@@ -78,6 +79,12 @@ public class TSLPlatform {
     public void initializeStd() {
         this.registerAction("WAIT", WaitAction::new);
         this.registerAction("SEQUENTIALLY", SequentiallyAction::new);
+        // TODO: EITHER
+        this.registerAction("NOTHING", NothingAction::new);
+        // TODO: FOR <N> TIMES
+        // TODO: FOR i IN RANGE 2 30 3 DO
+        // TODO: IF <C> THEN <A> [ELSE <A>]
+        // TODO: REFLECT
 
         this.registerComparator("IN RANGE", InRangeComparator::new);
         this.registerComparator("CONTAINS", ContainsComparator::new);

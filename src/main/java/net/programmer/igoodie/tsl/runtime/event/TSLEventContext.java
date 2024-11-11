@@ -9,11 +9,13 @@ public class TSLEventContext {
     protected String eventName;
     protected String target;
     protected GoodieObject eventArgs;
+    protected GoodieObject performState;
 
     public TSLEventContext(TSLPlatform platform, String eventName) {
         this.platform = platform;
         this.eventName = eventName;
         this.eventArgs = new GoodieObject();
+        this.performState = new GoodieObject();
     }
 
     public TSLPlatform getPlatform() {
@@ -34,6 +36,10 @@ public class TSLEventContext {
 
     public GoodieObject getEventArgs() {
         return eventArgs;
+    }
+
+    public GoodieObject getPerformState() {
+        return performState;
     }
 
 }
