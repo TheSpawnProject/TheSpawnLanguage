@@ -3,7 +3,9 @@ package net.programmer.igoodie.tsl;
 import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
-import net.programmer.igoodie.tsl.runtime.predicate.comparator.*;
+import net.programmer.igoodie.tsl.runtime.predicate.TSLComparator;
+import net.programmer.igoodie.tsl.std.action.WaitAction;
+import net.programmer.igoodie.tsl.std.comparator.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -73,6 +75,8 @@ public class TSLPlatform {
     }
 
     public void initializeStd() {
+        this.registerAction("WAIT", WaitAction::new);
+
         this.registerComparator("IN RANGE", InRangeComparator::new);
         this.registerComparator("CONTAINS", ContainsComparator::new);
         this.registerComparator("IS", IsComparator::new);

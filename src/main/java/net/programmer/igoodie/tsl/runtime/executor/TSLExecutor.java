@@ -22,15 +22,21 @@ public class TSLExecutor implements Executor {
         new Thread(threadGroup, command, "Executor-" + target).start();
     }
 
-    public CompletableFuture<?> resolveProcedure(Callable<?>... procedure) {
-        return resolveProcedure(Arrays.asList(procedure));
+    public <V> CompletableFuture<V> resolveCallable(Callable<V> callable) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return callable.call();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }, this);
     }
 
-    public CompletableFuture<?> resolveProcedure(List<Callable<?>> procedure) {
+    public <V> CompletableFuture<List<V>> resolveProcedure(Procedure<V> procedure) {
         return CompletableFuture.supplyAsync(() -> {
-            List<Object> results = new ArrayList<>();
+            List<V> results = new ArrayList<>();
 
-            for (Callable<?> command : procedure) {
+            for (Callable<V> command : procedure.steps) {
                 try {
                     results.add(command.call());
                 } catch (Exception e) {
@@ -40,6 +46,21 @@ public class TSLExecutor implements Executor {
 
             return results;
         }, this);
+    }
+
+    public static class Procedure<V> {
+
+        protected final List<Callable<V>> steps;
+
+        @SafeVarargs
+        public Procedure(Callable<V>... steps) {
+            this(Arrays.asList(steps));
+        }
+
+        public Procedure(List<Callable<V>> steps) {
+            this.steps = steps;
+        }
+
     }
 
 }

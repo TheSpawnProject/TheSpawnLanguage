@@ -14,20 +14,26 @@ public class TSLExecutorTests {
 
         long t0 = System.currentTimeMillis();
 
-        Assertions.assertThrows(CompletionException.class, () -> executor.resolveProcedure(
+        Assertions.assertThrows(CompletionException.class,
                 () -> {
-                    Thread.sleep(2_000);
-                    return 1;
-                },
-                () -> 2,
-                () -> {
-                    throw new IllegalStateException("Wopsie");
+                    TSLExecutor.Procedure<Integer> procedure = new TSLExecutor.Procedure<>(
+                            () -> {
+                                Thread.sleep(2_000);
+                                return 1;
+                            },
+                            () -> 2,
+                            () -> {
+                                throw new IllegalStateException("Wopsie");
+                            }
+                    );
+
+                    executor.resolveProcedure(procedure).whenComplete((result, e) -> {
+                        System.out.println("\nAccepting results: " + Thread.currentThread().getName());
+                        System.out.println("RESULT: " + result);
+                        System.out.println("EXCEPTION: " + e);
+                    }).join();
                 }
-        ).whenComplete((result, e) -> {
-            System.out.println("\nAccepting results: " + Thread.currentThread().getName());
-            System.out.println("RESULT: " + result);
-            System.out.println("EXCEPTION: " + e);
-        }).join());
+        );
 
         long t1 = System.currentTimeMillis();
 

@@ -1,6 +1,7 @@
-package net.programmer.igoodie.tsl.runtime.predicate.comparator;
+package net.programmer.igoodie.tsl.std.comparator;
 
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
+import net.programmer.igoodie.tsl.runtime.predicate.TSLComparator;
 
 public class GteComparator extends TSLComparator {
 

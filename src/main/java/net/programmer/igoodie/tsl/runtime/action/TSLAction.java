@@ -27,6 +27,12 @@ public abstract class TSLAction {
                 .collect(Collectors.toList());
     }
 
+    protected List<String> consumeMessagePart(List<String> args) {
+        Pair<List<String>, List<String>> parts = splitDisplaying(args);
+        this.message = parts.getRight();
+        return parts.getLeft();
+    }
+
     protected Pair<List<String>, List<String>> splitDisplaying(List<String> args) {
         List<String> actionPart = new ArrayList<>();
         List<String> displayingPart = new ArrayList<>();
@@ -66,6 +72,12 @@ public abstract class TSLAction {
     @FunctionalInterface
     public interface ExpressionEvaluator {
         Optional<?> evaluate(String expr, TSLEventContext ctx);
+    }
+
+    protected int parseInt(String string) throws TSLSyntaxException {
+        try {return Integer.parseInt(string);} catch (NumberFormatException e) {
+            throw new TSLSyntaxException("Expected an integer, found instead -> %s", string);
+        }
     }
 
 }

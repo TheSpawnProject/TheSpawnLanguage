@@ -7,9 +7,9 @@ import net.programmer.igoodie.tsl.parser.CharStream;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
-import net.programmer.igoodie.tsl.runtime.predicate.comparator.GtComparator;
-import net.programmer.igoodie.tsl.runtime.predicate.comparator.GteComparator;
-import net.programmer.igoodie.tsl.runtime.predicate.comparator.InRangeComparator;
+import net.programmer.igoodie.tsl.std.comparator.GtComparator;
+import net.programmer.igoodie.tsl.std.comparator.GteComparator;
+import net.programmer.igoodie.tsl.std.comparator.InRangeComparator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

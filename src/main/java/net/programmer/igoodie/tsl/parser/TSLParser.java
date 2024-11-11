@@ -6,8 +6,8 @@ import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
+import net.programmer.igoodie.tsl.runtime.predicate.TSLComparator;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLPredicate;
-import net.programmer.igoodie.tsl.runtime.predicate.comparator.TSLComparator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,17 +43,8 @@ public class TSLParser {
         return ruleset;
     }
 
-    private TSLRule parseRule() throws TSLSyntaxException {
-        String actionName = parseWord();
-        if (actionName == null)
-            throw new TSLSyntaxException("Expected action name.");
-
-        List<String> actionArgs = parseActionArgs();
-
-        TSLAction.Supplier<?> actionDefinition = platform.getActionDefinition(actionName)
-                .orElseThrow(() -> new TSLSyntaxException("Unknown action -> {}", actionName));
-
-        TSLAction action = actionDefinition.generate(actionArgs);
+    public TSLRule parseRule() throws TSLSyntaxException {
+        TSLAction action = parseAction();
 
         if (!consume(token -> token.type == TSLLexer.TokenType.KEYWORD_ON))
             throw new TSLSyntaxException("Expected 'ON' after action part.");
@@ -71,6 +62,19 @@ public class TSLParser {
         }
 
         return rule;
+    }
+
+    public TSLAction parseAction() throws TSLSyntaxException {
+        String actionName = parseWord();
+        if (actionName == null)
+            throw new TSLSyntaxException("Expected action name.");
+
+        List<String> actionArgs = parseActionArgs();
+
+        TSLAction.Supplier<?> actionDefinition = platform.getActionDefinition(actionName)
+                .orElseThrow(() -> new TSLSyntaxException("Unknown action -> {}", actionName));
+
+        return actionDefinition.generate(actionArgs);
     }
 
     private List<String> parseActionArgs() {

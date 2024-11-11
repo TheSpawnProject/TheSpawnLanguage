@@ -12,8 +12,9 @@ import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
+import net.programmer.igoodie.tsl.runtime.executor.TSLExecutor;
+import net.programmer.igoodie.tsl.runtime.predicate.TSLComparator;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLPredicate;
-import net.programmer.igoodie.tsl.runtime.predicate.comparator.TSLComparator;
 import net.programmer.igoodie.tsl.util.LogFormatter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,6 +25,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class TestPlatform {
@@ -184,34 +186,37 @@ public class TestPlatform {
                 " ON Twitch Follow"
         );
 
+        String target = "Player:iGoodie";
+
         List<TSLLexer.Token> tokens = new TSLLexer(CharStream.fromString(script)).tokenize();
-        TSLRuleset ruleset = new TSLParser(platform, "Player:iGoodie", tokens).parse();
+        TSLRuleset ruleset = new TSLParser(platform, target, tokens).parse();
 
-        TSLEventContext ctx;
-        List<String> result;
+        TSLExecutor executor = new TSLExecutor(target);
 
-        ctx = new TSLEventContext(platform, "Donation");
-        ACTOR_PROPERTY.write(ctx.getEventArgs(), "TestActor");
-        AMOUNT_PROPERTY.write(ctx.getEventArgs(), 100.0);
-        CURRENCY_PROPERTY.write(ctx.getEventArgs(), "USD");
-        ctx.setTarget("Player:iGoodie");
-        result = ruleset.perform(ctx);
-        System.out.println("Result = " + result);
+        TSLEventContext ctx1 = new TSLEventContext(platform, "Donation");
+        ACTOR_PROPERTY.write(ctx1.getEventArgs(), "TestActor");
+        AMOUNT_PROPERTY.write(ctx1.getEventArgs(), 100.0);
+        CURRENCY_PROPERTY.write(ctx1.getEventArgs(), "USD");
+        ctx1.setTarget(target);
+        CompletableFuture<List<String>> future1 = executor.resolveCallable(() -> ruleset.perform(ctx1));
+
+        TSLEventContext ctx2 = new TSLEventContext(platform, "Twitch Follow");
+        ctx2.setTarget(target);
+        CompletableFuture<List<String>> future2 = executor.resolveCallable(() -> ruleset.perform(ctx2));
+
+        TSLEventContext ctx3 = new TSLEventContext(platform, "Facebook Friend Request");
+        ctx3.setTarget(target);
+        CompletableFuture<List<String>> future3 = executor.resolveCallable(() -> ruleset.perform(ctx3));
+
+        CompletableFuture.allOf(future1, future2, future3).join();
+
         Assertions.assertIterableEquals(
                 Collections.singletonList("Thanks TestActor, 100%  for donating 100USD!"),
-                result);
+                future1.getNow(null));
 
-        ctx = new TSLEventContext(platform, "Twitch Follow");
-        ctx.setTarget("Player:iGoodie");
-        result = ruleset.perform(ctx);
-        System.out.println("Result = " + result);
-        Assertions.assertIterableEquals(Collections.emptyList(), result);
+        Assertions.assertIterableEquals(Collections.emptyList(), future2.getNow(null));
 
-        ctx = new TSLEventContext(platform, "Facebook Friend Request");
-        ctx.setTarget("Player:iGoodie");
-        result = ruleset.perform(ctx);
-        System.out.println("Result = " + result);
-        Assertions.assertNull(result);
+        Assertions.assertNull(future3.getNow(null));
     }
 
 }
