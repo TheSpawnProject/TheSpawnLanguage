@@ -13,7 +13,7 @@ import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLPredicate;
-import net.programmer.igoodie.tsl.runtime.predicate.comparator.*;
+import net.programmer.igoodie.tsl.runtime.predicate.comparator.TSLComparator;
 import net.programmer.igoodie.tsl.util.LogFormatter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class TestPlatform {
 
-    public static final TSLPlatform platform = new TSLPlatform("TestPlatform");
+    public static final TSLPlatform platform = new TSLPlatform("TestPlatform", 1.0f);
 
     private static DateFormat getDateFormat(String pattern, TimeZone timezone) {
         DateFormat dateFormat = new SimpleDateFormat(pattern);
@@ -56,6 +56,8 @@ public class TestPlatform {
 
     @BeforeAll()
     public static void registerEverything() {
+        platform.initializeStd();
+
         platform.registerAction("PRINT", PrintAction::new);
         platform.registerAction("DROP", PrintAction::new);
 
@@ -79,17 +81,6 @@ public class TestPlatform {
         platform.registerExpression("time", (expr, ctx) -> Optional.of(TIME_FORMAT.format(new Date())));
         platform.registerExpression("time_utc", (expr, ctx) -> Optional.of(UTC_TIME_FORMAT.format(new Date())));
         platform.registerExpression("unix", (expr, ctx) -> Optional.of(Instant.now().getEpochSecond()));
-
-        platform.registerComparator("IN RANGE", InRangeComparator::new);
-        platform.registerComparator("CONTAINS", ContainsComparator::new);
-        platform.registerComparator("IS", IsComparator::new);
-        platform.registerComparator("PREFIX", PrefixComparator::new);
-        platform.registerComparator("POSTFIX", PostfixComparator::new);
-        platform.registerComparator("=", EqualsComparator::new);
-        platform.registerComparator(">", GtComparator::new);
-        platform.registerComparator(">=", GteComparator::new);
-        platform.registerComparator("<", LtComparator::new);
-        platform.registerComparator("<=", LteComparator::new);
 
         platform.registerEvent(new TSLEvent("Donation")
                 .addPropertyType(ACTOR_PROPERTY)

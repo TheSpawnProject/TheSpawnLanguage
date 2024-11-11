@@ -3,7 +3,7 @@ package net.programmer.igoodie.tsl;
 import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
-import net.programmer.igoodie.tsl.runtime.predicate.comparator.TSLComparator;
+import net.programmer.igoodie.tsl.runtime.predicate.comparator.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,14 +12,16 @@ import java.util.Optional;
 public class TSLPlatform {
 
     private final String platformName;
+    private final float platformVersion;
 
     private final Map<String, TSLAction.Supplier<?>> actionDefinitions;
     private final Map<String, TSLAction.ExpressionEvaluator> expressionEvaluators;
     private final Map<String, TSLEvent> eventDefinitions;
     private final Map<String, TSLComparator.Supplier<?>> comparatorDefinitions;
 
-    public TSLPlatform(String platformName) {
+    public TSLPlatform(String platformName, float platformVersion) {
         this.platformName = platformName;
+        this.platformVersion = platformVersion;
         this.actionDefinitions = new HashMap<>();
         this.expressionEvaluators = new HashMap<>();
         this.eventDefinitions = new HashMap<>();
@@ -28,6 +30,10 @@ public class TSLPlatform {
 
     public String getPlatformName() {
         return platformName;
+    }
+
+    public float getPlatformVersion() {
+        return platformVersion;
     }
 
     public <T extends TSLAction.Supplier<?>> T registerAction(String name, T action) {
@@ -54,7 +60,7 @@ public class TSLPlatform {
         return Optional.ofNullable(this.actionDefinitions.get(name.toUpperCase()));
     }
 
-    public Optional<TSLAction.ExpressionEvaluator> getExpressionEvaluator(String expression){
+    public Optional<TSLAction.ExpressionEvaluator> getExpressionEvaluator(String expression) {
         return Optional.ofNullable(expressionEvaluators.get(expression));
     }
 
@@ -64,6 +70,19 @@ public class TSLPlatform {
 
     public Optional<TSLComparator.Supplier<?>> getComparatorDefinition(String symbol) {
         return Optional.ofNullable(this.comparatorDefinitions.get(symbol.toUpperCase()));
+    }
+
+    public void initializeStd() {
+        this.registerComparator("IN RANGE", InRangeComparator::new);
+        this.registerComparator("CONTAINS", ContainsComparator::new);
+        this.registerComparator("IS", IsComparator::new);
+        this.registerComparator("PREFIX", PrefixComparator::new);
+        this.registerComparator("POSTFIX", PostfixComparator::new);
+        this.registerComparator("=", EqualsComparator::new);
+        this.registerComparator(">", GtComparator::new);
+        this.registerComparator(">=", GteComparator::new);
+        this.registerComparator("<", LtComparator::new);
+        this.registerComparator("<=", LteComparator::new);
     }
 
 }

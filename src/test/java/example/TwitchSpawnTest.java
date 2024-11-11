@@ -51,7 +51,7 @@ public class TwitchSpawnTest {
                 " ON Twitch Raid\n" +
                 " WITH raiders > 100\n";
 
-        TSLPlatform platform = new TSLPlatform("Test Platform");
+        TSLPlatform platform = new TSLPlatform("Test Platform", 1.0f);
 
         platform.registerAction("DROP", PrintAction::new);
         platform.registerAction("EXECUTE", PrintAction::new);
