@@ -239,15 +239,21 @@ public class TestPlatform {
 
         TSLExecutor executor = new TSLExecutor(target);
 
-        TSLEventContext ctx1 = new TSLEventContext(platform, "Donation");
-        ACTOR_PROPERTY.write(ctx1.getEventArgs(), "TestActor");
-        AMOUNT_PROPERTY.write(ctx1.getEventArgs(), 100.0);
-        CURRENCY_PROPERTY.write(ctx1.getEventArgs(), "USD");
-        ctx1.setTarget(target);
-        executor.resolveCallable(() -> ruleset.perform(ctx1))
+        long t0 = System.currentTimeMillis();
+
+        TSLEventContext ctx = new TSLEventContext(platform, "Donation");
+        ACTOR_PROPERTY.write(ctx.getEventArgs(), "TestActor");
+        AMOUNT_PROPERTY.write(ctx.getEventArgs(), 100.0);
+        CURRENCY_PROPERTY.write(ctx.getEventArgs(), "USD");
+        ctx.setTarget(target);
+        executor.resolveCallable(() -> ruleset.perform(ctx))
                 .whenComplete((message, e) -> {
-                    System.out.println(message);
+                    System.out.println("Message = " + message);
                 }).join();
+
+        long t1 = System.currentTimeMillis();
+
+        Assertions.assertTrue(t1 - t0 > 2000);
     }
 
 }
