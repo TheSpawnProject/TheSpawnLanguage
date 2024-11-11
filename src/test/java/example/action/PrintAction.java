@@ -1,5 +1,6 @@
 package example.action;
 
+import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
@@ -10,8 +11,8 @@ public class PrintAction extends TSLAction {
 
     protected String textToPrint;
 
-    public PrintAction(List<String> args) throws TSLSyntaxException {
-        super(args);
+    public PrintAction(TSLPlatform platform, List<String> args) throws TSLSyntaxException {
+        super(platform, args);
         args = consumeMessagePart(args);
         this.textToPrint = String.join(" ", args);
     }

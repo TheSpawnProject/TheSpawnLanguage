@@ -1,21 +1,29 @@
 package net.programmer.igoodie.tsl.runtime.action;
 
+import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.util.Pair;
 import net.programmer.igoodie.tsl.util.PatternReplacer;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public abstract class TSLAction {
 
     public static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{(.*?)\\}");
 
+    protected final TSLPlatform platform;
     protected List<String> message = Collections.emptyList();
 
-    public TSLAction(List<String> args) throws TSLSyntaxException {}
+    public TSLAction(TSLPlatform platform, List<String> args) throws TSLSyntaxException {
+        this.platform = platform;
+    }
 
     public List<String> getMessage() {
         return message;
@@ -34,20 +42,17 @@ public abstract class TSLAction {
     }
 
     protected Pair<List<String>, List<String>> splitDisplaying(List<String> args) {
-        List<String> actionPart = new ArrayList<>();
-        List<String> displayingPart = new ArrayList<>();
+        int index = IntStream.range(0, args.size())
+                .filter(i -> args.get(args.size() - i - 1).equalsIgnoreCase("DISPLAYING"))
+                .map(i -> args.size() - i - 1)
+                .findFirst().orElse(-1);
 
-        Iterator<String> iterator = args.iterator();
-
-        while (iterator.hasNext()) {
-            String arg = iterator.next();
-            if (arg.equalsIgnoreCase("DISPLAYING"))
-                break;
-            actionPart.add(arg);
+        if (index == -1) {
+            return new Pair<>(args, Collections.emptyList());
         }
 
-        iterator.forEachRemaining(displayingPart::add);
-
+        List<String> actionPart = args.subList(0, index);
+        List<String> displayingPart = args.subList(index + 1, args.size());
         return new Pair<>(actionPart, displayingPart);
     }
 
@@ -66,7 +71,7 @@ public abstract class TSLAction {
 
     @FunctionalInterface
     public interface Supplier<T extends TSLAction> {
-        T generate(List<String> args) throws TSLSyntaxException;
+        T generate(TSLPlatform platform, List<String> args) throws TSLSyntaxException;
     }
 
     @FunctionalInterface

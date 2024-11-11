@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.std.action;
 
+import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
@@ -17,8 +18,8 @@ public class WaitAction extends TSLAction {
      * 10 seconds
      * 10 minutes
      */
-    public WaitAction(List<String> args) throws TSLSyntaxException {
-        super(args);
+    public WaitAction(TSLPlatform platform, List<String> args) throws TSLSyntaxException {
+        super(platform, args);
         args = consumeMessagePart(args);
 
         if (args.size() != 2) {

@@ -153,7 +153,7 @@ public class TestPlatform {
         List<String> actionArgs = actionPart.subList(1, actionPart.size()).stream().map(e -> e.value).collect(Collectors.toList());
         TSLAction action = platform.getActionDefinition(actionName)
                 .orElseThrow(() -> new RuntimeException("Unknown action name"))
-                .generate(actionArgs);
+                .generate(platform, actionArgs);
 
         // Runtime entity representing the Predicate
         String predicateScript = "amount = 100";
@@ -217,6 +217,37 @@ public class TestPlatform {
         Assertions.assertIterableEquals(Collections.emptyList(), future2.getNow(null));
 
         Assertions.assertNull(future3.getNow(null));
+    }
+
+    @Test
+    public void shouldPerformSequentiallyAction() throws TSLSyntaxException, IOException {
+        String script = String.join("\n",
+                "SEQUENTIALLY",
+                "PRINT %Hello!%",
+                "AND",
+                "WAIT 2 seconds",
+                "AND",
+                "PRINT %How are you?%",
+                "DISPLAYING %My message%",
+                "ON Donation"
+        );
+
+        String target = "Player:iGoodie";
+
+        List<TSLLexer.Token> tokens = new TSLLexer(CharStream.fromString(script)).tokenize();
+        TSLRuleset ruleset = new TSLParser(platform, target, tokens).parse();
+
+        TSLExecutor executor = new TSLExecutor(target);
+
+        TSLEventContext ctx1 = new TSLEventContext(platform, "Donation");
+        ACTOR_PROPERTY.write(ctx1.getEventArgs(), "TestActor");
+        AMOUNT_PROPERTY.write(ctx1.getEventArgs(), 100.0);
+        CURRENCY_PROPERTY.write(ctx1.getEventArgs(), "USD");
+        ctx1.setTarget(target);
+        executor.resolveCallable(() -> ruleset.perform(ctx1))
+                .whenComplete((message, e) -> {
+                    System.out.println(message);
+                }).join();
     }
 
 }

@@ -74,7 +74,7 @@ public class TSLParser {
         TSLAction.Supplier<?> actionDefinition = platform.getActionDefinition(actionName)
                 .orElseThrow(() -> new TSLSyntaxException("Unknown action -> {}", actionName));
 
-        return actionDefinition.generate(actionArgs);
+        return actionDefinition.generate(platform, actionArgs);
     }
 
     private List<String> parseActionArgs() {
