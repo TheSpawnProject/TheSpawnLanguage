@@ -27,20 +27,12 @@ public class TSLExecutor implements Executor {
     }
 
     public CompletableFuture<?> resolveProcedure(List<Callable<?>> procedure) {
-        System.out.println("\nInitiating task");
-        System.out.println("Current Thread: " + Thread.currentThread().getName());
-
         return CompletableFuture.supplyAsync(() -> {
-            System.out.println("\nCompleting task evaluation");
-            System.out.println("Current Thread: " + Thread.currentThread().getName());
-
             List<Object> results = new ArrayList<>();
 
             for (Callable<?> command : procedure) {
                 try {
-                    Object result = command.call();
-                    System.out.println("Task done: " + result);
-                    results.add(result);
+                    results.add(command.call());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
