@@ -132,7 +132,7 @@ public class EitherAction extends TSLAction {
         return actionSampler.sample().perform(ctx);
     }
 
-    enum SamplerMode {DEFAULT, WEIGHTED, PERCENTAGE}
+    public enum SamplerMode {DEFAULT, WEIGHTED, PERCENTAGE}
 
     public static class PercentageWeight {
 
@@ -203,7 +203,7 @@ public class EitherAction extends TSLAction {
         }
 
         public T sample() {
-            if (nodes.size() == 0) {
+            if (nodes.isEmpty()) {
                 throw new IllegalStateException("No elements to sample from.");
             }
 

@@ -25,7 +25,7 @@ public class SequentiallyAction extends TSLAction {
         List<List<String>> actionChunks = Utils.splitIntoChunks(args, arg -> arg.equalsIgnoreCase("AND"));
 
         for (List<String> actionChunk : actionChunks) {
-            if (actionChunk.size() == 0) {
+            if (actionChunk.isEmpty()) {
                 throw new TSLSyntaxException("");
             }
 

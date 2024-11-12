@@ -14,7 +14,7 @@ public class NothingAction extends TSLAction {
         super(platform, args);
         args = consumeMessagePart(args);
 
-        if (args.size() != 0) {
+        if (!args.isEmpty()) {
             throw new TSLSyntaxException("Expected 0 arguments, found -> %s", args);
         }
     }

@@ -62,6 +62,14 @@ public abstract class TSLAction {
     public final String replaceExpressions(String input, TSLEventContext ctx) {
         return PatternReplacer.replaceMatches(EXPRESSION_PATTERN, input, (matcher, matchIndex) -> {
             String expression = matcher.group(1);
+
+            if (ctx.getPerformState().has(expression)) {
+                return ctx.getPerformState()
+                        .get(expression)
+                        .asPrimitive()
+                        .getString();
+            }
+
             return ctx.getPlatform()
                     .getExpressionEvaluator(expression)
                     .flatMap(evaluator -> evaluator.evaluate(expression, ctx))
@@ -81,7 +89,9 @@ public abstract class TSLAction {
     }
 
     protected int parseInt(String string) throws TSLSyntaxException {
-        try {return Integer.parseInt(string);} catch (NumberFormatException e) {
+        try {
+            return Integer.parseInt(string);
+        } catch (NumberFormatException e) {
             throw new TSLSyntaxException("Expected an integer, found instead -> {}", string);
         }
     }

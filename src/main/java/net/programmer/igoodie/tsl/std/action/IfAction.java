@@ -3,12 +3,17 @@ package net.programmer.igoodie.tsl.std.action;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
+import net.programmer.igoodie.tsl.parser.CharStream;
+import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
+import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLPredicate;
 import net.programmer.igoodie.tsl.util.Pair;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -29,7 +34,7 @@ public class IfAction extends TSLAction {
                 this.thenAction = new TSLParser(platform, bodyArgs).parseAction();
             });
 
-            if (elsePart.size() > 0) {
+            if (!elsePart.isEmpty()) {
                 this.elseAction = new TSLParser(platform, elsePart).parseAction();
             }
         });
@@ -44,7 +49,7 @@ public class IfAction extends TSLAction {
 
         List<String> elseActionChunk = args.subList(indexElse + 1, args.size());
 
-        if (elseActionChunk.size() == 0) {
+        if (elseActionChunk.isEmpty()) {
             throw new TSLSyntaxException("Excepted an action after 'ELSE'.");
         }
 
@@ -78,40 +83,5 @@ public class IfAction extends TSLAction {
 
         return true;
     }
-
-//    public static void main(String[] args) throws TSLSyntaxException, TSLPerformingException, IOException {
-//        TSLPlatform platform = new TSLPlatform("", 1.0f);
-//
-//        platform.initializeStd();
-//
-//        platform.registerAction("DEBUG", (platform1, args1) -> new TSLAction(platform, args1) {
-//            @Override
-//            public boolean perform(TSLEventContext ctx) throws TSLPerformingException {
-//                System.out.println(args1);
-//                return true;
-//            }
-//        });
-//
-//        platform.registerEvent(new TSLEvent("Donation")
-//                .addPropertyType(TSLEvent.PropertyBuilder.DOUBLE.create("amount")));
-//
-//        String script = String.join("\n",
-//                "",
-//                "IF amount IN RANGE [1,2] THEN",
-//                " DEBUG Hey",
-//                "ELSE IF amount = 3 THEN",
-//                " DEBUG %OH NO!%",
-//                "ON Donation"
-//        );
-//
-//        TSLLexer lexer = new TSLLexer(CharStream.fromString(script));
-//        TSLParser parser = new TSLParser(platform, "Player:iGoodie", lexer.tokenize());
-//        TSLRuleset ruleset = parser.parse();
-//
-//        TSLEventContext ctx = new TSLEventContext(platform, "Donation");
-//        ctx.getEventArgs().put("amount", 4f);
-//
-//        ruleset.perform(ctx);
-//    }
 
 }

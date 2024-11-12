@@ -79,11 +79,10 @@ public class TSLPlatform {
         this.registerAction("SEQUENTIALLY", SequentiallyAction::new);
         this.registerAction("EITHER", EitherAction::new);
         this.registerAction("NOTHING", NothingAction::new);
-        // TODO: FOR <N> TIMES
-        // TODO: FOR i IN RANGE 2 30 3 DO
-        // TODO: IF <C> THEN <A> [ELSE <A>]
+        this.registerAction("FOR", ForAction::new);
         this.registerAction("IF", IfAction::new);
         // TODO: REFLECT
+
 
         this.registerComparator("IN RANGE", InRangeComparator::new);
         this.registerComparator("CONTAINS", ContainsComparator::new);
