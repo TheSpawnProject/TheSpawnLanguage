@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.runtime.event;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TSLPlatform;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
 
 public class TSLEventContext {
 
@@ -10,6 +11,7 @@ public class TSLEventContext {
     protected String target;
     protected GoodieObject eventArgs;
     protected GoodieObject performState;
+    protected TSLRule performingRule;
 
     public TSLEventContext(TSLPlatform platform, String eventName) {
         this.platform = platform;
@@ -40,6 +42,14 @@ public class TSLEventContext {
 
     public GoodieObject getPerformState() {
         return performState;
+    }
+
+    public TSLRule getPerformingRule() {
+        return performingRule;
+    }
+
+    public void setPerformingRule(TSLRule performingRule) {
+        this.performingRule = performingRule;
     }
 
 }

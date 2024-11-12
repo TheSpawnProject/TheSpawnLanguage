@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.std.action;
 
 import net.programmer.igoodie.tsl.TSLPlatform;
+import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
@@ -36,7 +37,7 @@ public class WaitAction extends TSLAction {
     }
 
     @Override
-    public boolean perform(TSLEventContext ctx) {
+    public boolean perform(TSLEventContext ctx) throws TSLPerformingException {
         try {
             Thread.sleep(sleepTime);
         } catch (InterruptedException e) {

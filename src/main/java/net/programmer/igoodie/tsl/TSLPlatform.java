@@ -4,10 +4,7 @@ import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLComparator;
-import net.programmer.igoodie.tsl.std.action.EitherAction;
-import net.programmer.igoodie.tsl.std.action.NothingAction;
-import net.programmer.igoodie.tsl.std.action.SequentiallyAction;
-import net.programmer.igoodie.tsl.std.action.WaitAction;
+import net.programmer.igoodie.tsl.std.action.*;
 import net.programmer.igoodie.tsl.std.comparator.*;
 
 import java.util.HashMap;
@@ -85,6 +82,7 @@ public class TSLPlatform {
         // TODO: FOR <N> TIMES
         // TODO: FOR i IN RANGE 2 30 3 DO
         // TODO: IF <C> THEN <A> [ELSE <A>]
+        this.registerAction("IF", IfAction::new);
         // TODO: REFLECT
 
         this.registerComparator("IN RANGE", InRangeComparator::new);

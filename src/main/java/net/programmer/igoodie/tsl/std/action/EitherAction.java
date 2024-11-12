@@ -2,7 +2,9 @@ package net.programmer.igoodie.tsl.std.action;
 
 import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.TSLPlatform;
+import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
+import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.util.Pair;
@@ -36,12 +38,7 @@ public class EitherAction extends TSLAction {
 
         for (List<String> actionChunk : actionChunks) {
             parseWeight(actionChunk).using((weight, actionTokens) -> {
-                String actionName = actionTokens.get(0);
-                TSLAction.Supplier<?> actionDefinition = platform.getActionDefinition(actionName)
-                        .orElseThrow(() -> new TSLSyntaxException("Unknown action -> {}", actionName));
-                List<String> actionArgs = actionTokens.subList(1, actionTokens.size());
-                TSLAction action = actionDefinition.generate(platform, actionArgs);
-
+                TSLAction action = new TSLParser(platform, actionTokens).parseAction();
                 this.actionSampler.addElement(action, weight);
             });
         }
@@ -131,7 +128,7 @@ public class EitherAction extends TSLAction {
     }
 
     @Override
-    public boolean perform(TSLEventContext ctx) {
+    public boolean perform(TSLEventContext ctx) throws TSLPerformingException {
         return actionSampler.sample().perform(ctx);
     }
 
@@ -227,31 +224,5 @@ public class EitherAction extends TSLAction {
         }
 
     }
-
-//    public static void main(String[] args) throws TSLSyntaxException {
-//        TSLPlatform platform = new TSLPlatform("TestPlatform", 1.0f);
-//
-//        platform.initializeStd();
-//
-//        platform.registerAction("DEBUG", (platform1, args1) -> new TSLAction(platform, args1) {
-//            @Override
-//            public boolean perform(TSLEventContext ctx) {
-//                System.out.println(args1);
-//                return true;
-//            }
-//        });
-//
-//        EitherAction action = new EitherAction(platform, Arrays.asList(
-//                "WEIGHT", "10", "DEBUG", "1",
-//                "OR",
-//                "WEIGHT", "2", "DEBUG", "2"
-//        ));
-//
-//        for (int i = 0; i < 100; i++) {
-//            TSLEventContext ctx = new TSLEventContext(platform, "Foo");
-//            ctx.setTarget("iGoodie");
-//            action.perform(ctx);
-//        }
-//    }
 
 }

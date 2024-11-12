@@ -1,7 +1,9 @@
 package net.programmer.igoodie.tsl.std.action;
 
 import net.programmer.igoodie.tsl.TSLPlatform;
+import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
+import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.util.Utils;
@@ -27,18 +29,13 @@ public class SequentiallyAction extends TSLAction {
                 throw new TSLSyntaxException("");
             }
 
-            String actionName = actionChunk.get(0);
-            TSLAction.Supplier<?> actionDefinition = platform.getActionDefinition(actionName)
-                    .orElseThrow(() -> new TSLSyntaxException("Unknown action -> {}", actionName));
-            List<String> actionArgs = actionChunk.subList(1, actionChunk.size());
-            TSLAction action = actionDefinition.generate(platform, actionArgs);
-
+            TSLAction action = new TSLParser(platform, actionChunk).parseAction();
             this.actions.add(action);
         }
     }
 
     @Override
-    public boolean perform(TSLEventContext ctx) {
+    public boolean perform(TSLEventContext ctx) throws TSLPerformingException {
         boolean success = true;
 
         for (TSLAction action : actions) {

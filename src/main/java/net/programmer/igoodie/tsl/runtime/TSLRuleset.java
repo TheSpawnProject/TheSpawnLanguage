@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.runtime;
 
+import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
 import java.util.ArrayList;
@@ -25,9 +26,10 @@ public class TSLRuleset {
         this.rules.add(rule);
     }
 
-    public List<String> perform(TSLEventContext ctx) {
+    public List<String> perform(TSLEventContext ctx) throws TSLPerformingException {
         for (TSLRule rule : rules) {
             List<String> result = rule.perform(ctx);
+            ctx.setPerformingRule(null);
 
             if (result != null) {
                 return result;

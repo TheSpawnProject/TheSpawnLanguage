@@ -3,6 +3,7 @@ package example;
 import example.action.PrintAction;
 import net.programmer.igoodie.goodies.runtime.GoodieElement;
 import net.programmer.igoodie.tsl.TSLPlatform;
+import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.parser.CharStream;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
@@ -133,7 +134,7 @@ public class TestPlatform {
     }
 
     @Test
-    public void shouldPerformAction() throws IOException, TSLSyntaxException {
+    public void shouldPerformAction() throws IOException, TSLSyntaxException, TSLPerformingException {
         // Definition of the event
         TSLEvent event = platform.getEvent("Donation")
                 .orElseThrow(() -> new RuntimeException("Unknown event name"));

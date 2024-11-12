@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.runtime;
 
+import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
@@ -42,7 +43,9 @@ public class TSLRule {
         this.predicates.add(predicate);
     }
 
-    public List<String> perform(TSLEventContext ctx) {
+    public List<String> perform(TSLEventContext ctx) throws TSLPerformingException {
+        ctx.setPerformingRule(this);
+
         if (!ctx.getEventName().equalsIgnoreCase(this.event.getName())) {
             return null;
         }

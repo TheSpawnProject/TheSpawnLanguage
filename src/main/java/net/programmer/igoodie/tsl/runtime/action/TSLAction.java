@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.runtime.action;
 
 import net.programmer.igoodie.tsl.TSLPlatform;
+import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.util.Pair;
@@ -56,7 +57,7 @@ public abstract class TSLAction {
         return new Pair<>(actionPart, displayingPart);
     }
 
-    public abstract boolean perform(TSLEventContext ctx);
+    public abstract boolean perform(TSLEventContext ctx) throws TSLPerformingException;
 
     public final String replaceExpressions(String input, TSLEventContext ctx) {
         return PatternReplacer.replaceMatches(EXPRESSION_PATTERN, input, (matcher, matchIndex) -> {

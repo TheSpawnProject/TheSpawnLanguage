@@ -144,9 +144,13 @@ public class TSLLexer {
 
     protected Token generateToken() {
         if (prevNewLine) return new Token(TokenType.EMPTY_LINE, sb.toString());
-        if (sb.toString().equalsIgnoreCase("ON")) return new Token(TokenType.KEYWORD_ON, sb.toString());
-        if (sb.toString().equalsIgnoreCase("WITH")) return new Token(TokenType.KEYWORD_WITH, sb.toString());
-        return new Token(TokenType.WORD, sb.toString());
+        return generateToken(sb.toString());
+    }
+
+    public static Token generateToken(String sequence) {
+        if (sequence.equalsIgnoreCase("ON")) return new Token(TokenType.KEYWORD_ON, sequence);
+        if (sequence.equalsIgnoreCase("WITH")) return new Token(TokenType.KEYWORD_WITH, sequence);
+        return new Token(TokenType.WORD, sequence);
     }
 
     public enum TokenType {

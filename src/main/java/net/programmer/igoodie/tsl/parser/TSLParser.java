@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class TSLParser {
 
@@ -27,6 +28,12 @@ public class TSLParser {
         this.target = target;
         this.tokens = tokens;
         this.index = 0;
+    }
+
+    public TSLParser(TSLPlatform platform, List<String> tokens) {
+        this(platform, "immediate", tokens.stream()
+                .map(TSLLexer::generateToken)
+                .collect(Collectors.toList()));
     }
 
     public TSLRuleset parse() throws TSLSyntaxException {
@@ -43,7 +50,7 @@ public class TSLParser {
         return ruleset;
     }
 
-    public TSLRule parseRule() throws TSLSyntaxException {
+    protected TSLRule parseRule() throws TSLSyntaxException {
         TSLAction action = parseAction();
 
         if (!consume(token -> token.type == TSLLexer.TokenType.KEYWORD_ON))
@@ -53,7 +60,7 @@ public class TSLParser {
         if (event == null)
             throw new TSLSyntaxException("Expected event name.");
 
-        List<TSLPredicate> predicates = parsePredicates(event);
+        List<TSLPredicate> predicates = parsePredicates();
 
         TSLRule rule = new TSLRule(event);
         rule.setAction(action);
@@ -88,7 +95,7 @@ public class TSLParser {
         return args;
     }
 
-    private TSLEvent parseEvent() throws TSLSyntaxException {
+    public TSLEvent parseEvent() throws TSLSyntaxException {
         StringBuilder eventName = new StringBuilder();
         String word = parseWord();
         if (word == null) return null;
@@ -104,30 +111,35 @@ public class TSLParser {
                 .orElseThrow(() -> new TSLSyntaxException("Unknown event -> {}", eventName.toString()));
     }
 
-    private List<TSLPredicate> parsePredicates(TSLEvent event) throws TSLSyntaxException {
+    private List<TSLPredicate> parsePredicates() throws TSLSyntaxException {
         List<TSLPredicate> predicates = new ArrayList<>();
         while (consume(token -> token.type == TSLLexer.TokenType.KEYWORD_WITH)) {
-            List<String> words = new ArrayList<>();
-
-            String word;
-            while ((word = parseWord()) != null) {
-                words.add(word);
-            }
-
-            if (words.size() < 3)
-                throw new TSLSyntaxException("");
-
-            String fieldName = words.get(0);
-            String comparatorSymbol = String.join(" ", words.subList(1, words.size() - 1));
-            String right = words.get(words.size() - 1);
-
-            TSLComparator.Supplier<?> comparatorDefinition = platform.getComparatorDefinition(comparatorSymbol)
-                    .orElseThrow(() -> new TSLSyntaxException("Unknown comparator -> {}", comparatorSymbol));
-
-            TSLComparator comparator = comparatorDefinition.generate(right);
-            predicates.add(new TSLPredicate(fieldName, comparator));
+            predicates.add(parsePredicate());
         }
         return predicates;
+    }
+
+    public TSLPredicate parsePredicate() throws TSLSyntaxException {
+        List<String> words = new ArrayList<>();
+
+        String word;
+        while ((word = parseWord()) != null) {
+            words.add(word);
+        }
+
+        if (words.size() < 3) {
+            throw new TSLSyntaxException("");
+        }
+
+        String fieldName = words.get(0);
+        String comparatorSymbol = String.join(" ", words.subList(1, words.size() - 1));
+        String right = words.get(words.size() - 1);
+
+        TSLComparator.Supplier<?> comparatorDefinition = platform.getComparatorDefinition(comparatorSymbol)
+                .orElseThrow(() -> new TSLSyntaxException("Unknown comparator -> {}", comparatorSymbol));
+
+        TSLComparator comparator = comparatorDefinition.generate(right);
+        return new TSLPredicate(fieldName, comparator);
     }
 
     private String parseEmptyLine() {
