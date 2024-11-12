@@ -66,8 +66,10 @@ public class TSLParser {
 
     public TSLAction parseAction() throws TSLSyntaxException {
         String actionName = parseWord();
-        if (actionName == null)
+
+        if (actionName == null) {
             throw new TSLSyntaxException("Expected action name.");
+        }
 
         List<String> actionArgs = parseActionArgs();
 

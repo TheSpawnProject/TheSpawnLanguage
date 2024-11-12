@@ -30,4 +30,12 @@ public class Pair<L, R> {
         return right;
     }
 
+    public <E extends Exception> void using(PairConsumer<L, R, E> consumer) throws E {
+        consumer.consume(this.left, this.right);
+    }
+
+    public interface PairConsumer<L, R, E extends Exception> {
+        void consume(L left, R right) throws E;
+    }
+
 }

@@ -28,9 +28,8 @@ public class SequentiallyAction extends TSLAction {
             }
 
             String actionName = actionChunk.get(0);
-
-            TSLAction.Supplier<?> actionDefinition = platform.getActionDefinition(actionName).orElseThrow(() -> new TSLSyntaxException("Unknown action -> {}", actionName));
-
+            TSLAction.Supplier<?> actionDefinition = platform.getActionDefinition(actionName)
+                    .orElseThrow(() -> new TSLSyntaxException("Unknown action -> {}", actionName));
             List<String> actionArgs = actionChunk.subList(1, actionChunk.size());
             TSLAction action = actionDefinition.generate(platform, actionArgs);
 

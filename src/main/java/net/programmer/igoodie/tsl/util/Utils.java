@@ -28,4 +28,20 @@ public final class Utils {
         return result;
     }
 
+    public static String leftPad(String str, int desiredLength, char padChar) {
+        return repeat(Character.toString(padChar), Math.max(0, desiredLength - str.length())) + str;
+    }
+
+    public static String rightPad(String str, int desiredLength, char padChar) {
+        return str + repeat(Character.toString(padChar), Math.max(0, desiredLength - str.length()));
+    }
+
+    public static String repeat(String s, int count) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            sb.append(s);
+        }
+        return sb.toString();
+    }
+
 }
