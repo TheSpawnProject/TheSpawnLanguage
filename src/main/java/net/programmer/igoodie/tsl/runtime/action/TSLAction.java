@@ -81,7 +81,7 @@ public abstract class TSLAction {
 
     protected int parseInt(String string) throws TSLSyntaxException {
         try {return Integer.parseInt(string);} catch (NumberFormatException e) {
-            throw new TSLSyntaxException("Expected an integer, found instead -> %s", string);
+            throw new TSLSyntaxException("Expected an integer, found instead -> {}", string);
         }
     }
 

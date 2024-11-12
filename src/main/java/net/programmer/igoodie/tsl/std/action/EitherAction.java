@@ -66,11 +66,7 @@ public class EitherAction extends TSLAction {
         ListAccessor<String> tokenAccessor = ListAccessor.of(tokens);
 
         if (tokenAccessor.get(0).filter(t -> t.equalsIgnoreCase("CHANCE")).isPresent()) {
-            if (samplerMode == null) {
-                samplerMode = SamplerMode.PERCENTAGE;
-            } else if (samplerMode != SamplerMode.PERCENTAGE) {
-                throw new TSLSyntaxException("Mixed EITHER branch types aren't allowed. Expected CHANCE <n> PERCENT.");
-            }
+            checkSamplerMode(SamplerMode.PERCENTAGE);
 
             String percentageString = tokenAccessor.get(1)
                     .orElseThrow(() -> new TSLSyntaxException("Expected a percentage number after CHANCE."));
@@ -83,13 +79,38 @@ public class EitherAction extends TSLAction {
             return new Pair<>(weight, tokens.subList(3, tokens.size()));
         }
 
-        if (samplerMode == null) {
-            samplerMode = SamplerMode.DEFAULT;
-        } else if (samplerMode != SamplerMode.DEFAULT) {
-            throw new TSLSyntaxException("Mixed EITHER branch types aren't allowed.");
+        if (tokenAccessor.get(0).filter(t -> t.equalsIgnoreCase("WEIGHT")).isPresent()) {
+            checkSamplerMode(SamplerMode.WEIGHTED);
+
+            String weightString = tokenAccessor.get(1)
+                    .orElseThrow(() -> new TSLSyntaxException("Expected weight value after WEIGHT."));
+
+            int weight = parseInt(weightString);
+
+            return new Pair<>(weight, tokens.subList(2, tokens.size()));
         }
 
+        checkSamplerMode(SamplerMode.DEFAULT);
         return new Pair<>(1, tokens);
+    }
+
+    protected void checkSamplerMode(SamplerMode currentlyParsing) throws TSLSyntaxException {
+        if (samplerMode == null) {
+            samplerMode = currentlyParsing;
+            return;
+        }
+
+        if (samplerMode != currentlyParsing) {
+            switch (currentlyParsing) {
+                case PERCENTAGE:
+                    throw new TSLSyntaxException("Mixed EITHER branch types aren't allowed. Expected CHANCE <n> PERCENT.");
+                case WEIGHTED:
+                    throw new TSLSyntaxException("Mixed EITHER branch types aren't allowed. Expected WEIGHT <n>.");
+                case DEFAULT:
+                    throw new TSLSyntaxException("Mixed EITHER branch types aren't allowed.");
+            }
+
+        }
     }
 
     protected List<String> consumeAllMessagePart(List<String> args) throws TSLSyntaxException {
@@ -221,9 +242,9 @@ public class EitherAction extends TSLAction {
 //        });
 //
 //        EitherAction action = new EitherAction(platform, Arrays.asList(
-//                "CHANCE", "50.555", "PERCENT", "DEBUG", "1",
+//                "WEIGHT", "10", "DEBUG", "1",
 //                "OR",
-//                "CHANCE", "49.445", "PERCENT", "DEBUG", "2"
+//                "WEIGHT", "2", "DEBUG", "2"
 //        ));
 //
 //        for (int i = 0; i < 100; i++) {
