@@ -78,39 +78,4 @@ public class ForAction extends TSLAction {
         return success;
     }
 
-//    public static void main(String[] args) throws TSLSyntaxException, TSLPerformingException, IOException, IOException {
-//        TSLPlatform platform = new TSLPlatform("", 1.0f);
-//
-//        platform.initializeStd();
-//
-//        platform.registerAction("DEBUG", (platform1, args1) -> new TSLAction(platform, args1) {
-//            @Override
-//            public boolean perform(TSLEventContext ctx) throws TSLPerformingException {
-//                System.out.println(args1.stream()
-//                        .map(a -> replaceExpressions(a, ctx))
-//                        .collect(Collectors.joining(", ", "[", "]")));
-//                return true;
-//            }
-//        });
-//
-//        platform.registerEvent(new TSLEvent("Donation")
-//                .addPropertyType(TSLEvent.PropertyBuilder.DOUBLE.create("amount")));
-//
-//        String script = String.join("\n",
-//                "",
-//                "FOR i FROM 1 TO 10",
-//                " DEBUG ${i}",
-//                "ON Donation"
-//        );
-//
-//        TSLLexer lexer = new TSLLexer(CharStream.fromString(script));
-//        TSLParser parser = new TSLParser(platform, "Player:iGoodie", lexer.tokenize());
-//        TSLRuleset ruleset = parser.parse();
-//
-//        TSLEventContext ctx = new TSLEventContext(platform, "Donation");
-//        ctx.getEventArgs().put("amount", 4f);
-//
-//        ruleset.perform(ctx);
-//    }
-
 }

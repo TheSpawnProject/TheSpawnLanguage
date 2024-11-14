@@ -20,6 +20,15 @@ public class TSLEventContext {
         this.performState = new GoodieObject();
     }
 
+    public TSLEventContext copy() {
+        TSLEventContext ctx = new TSLEventContext(platform, eventName);
+        ctx.target = this.target;
+        ctx.eventArgs = this.eventArgs.deepCopy();
+        ctx.performState = this.performState.deepCopy();
+        ctx.performingRule = this.performingRule;
+        return ctx;
+    }
+
     public TSLPlatform getPlatform() {
         return platform;
     }

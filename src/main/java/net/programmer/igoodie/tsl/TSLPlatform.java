@@ -81,8 +81,7 @@ public class TSLPlatform {
         this.registerAction("NOTHING", NothingAction::new);
         this.registerAction("FOR", ForAction::new);
         this.registerAction("IF", IfAction::new);
-        // TODO: REFLECT
-
+        this.registerAction("REFLECT", ReflectAction::new);
 
         this.registerComparator("IN RANGE", InRangeComparator::new);
         this.registerComparator("CONTAINS", ContainsComparator::new);
