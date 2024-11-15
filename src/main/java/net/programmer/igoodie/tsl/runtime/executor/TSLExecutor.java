@@ -19,7 +19,7 @@ public class TSLExecutor implements Executor {
 
     @Override
     public void execute(Runnable command) {
-        new Thread(threadGroup, command, "Executor-" + target).start();
+        new Thread(threadGroup, command, "Executor-\"" + target + "\"").start();
     }
 
     public <V> CompletableFuture<V> resolveCallable(Callable<V> callable) {
