@@ -4,19 +4,12 @@ import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.parser.CharStream;
-import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
-import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.executor.TSLExecutor;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 // REFLECT %Target1, Target2, Target3% [ONLY]? <action>
 // REFLECT <N> [ONLY]? <action>
@@ -128,96 +121,6 @@ public class ReflectAction extends TSLAction {
         default void unsubscribe() {
             ReflectAction.providers.removeIf(provider -> provider == this);
         }
-
-    }
-
-    public static void main(String[] args) throws TSLSyntaxException, IOException, TSLPerformingException {
-        TSLPlatform platform = new TSLPlatform("Test", 1.0f);
-
-        platform.initializeStd();
-
-        platform.registerEvent(new TSLEvent("Donation")
-                .addPropertyType(TSLEvent.PropertyBuilder.DOUBLE.create("amount")));
-
-        platform.registerAction("DEBUG", (platform1, args1) -> new TSLAction(platform1, args1) {
-            @Override
-            public boolean perform(TSLEventContext ctx) throws TSLPerformingException {
-                System.out.println("[DEBUG] [" + Thread.currentThread().getName() + "] [" + ctx.getTarget() + "] " + args1);
-                return true;
-            }
-        });
-
-        TSLExecutor executor = new TSLExecutor("Player:iGoodie");
-        TSLExecutor targetExecutor = new TSLExecutor("Target");
-
-        String script = String.join(" ", "",
-                "REFLECT *",
-                " IF amount IS 3 THEN",
-                "  DEBUG %HELL YEA!%",
-                " ELSE",
-                "  DEBUG %Oh noes...%",
-                "ON Donation"
-        );
-
-        TSLLexer lexer = new TSLLexer(CharStream.fromString(script));
-        TSLParser parser = new TSLParser(platform, "Player:iGoodie", lexer.tokenize());
-        TSLRuleset ruleset = parser.parse();
-
-        ReflectProvider provider = ReflectAction.registerProvider(new ReflectProvider() {
-            @Override
-            public List<String> getEventTargets(String originalTarget, List<String> targets) {
-                return targets.stream().map(t -> "Player:" + t)
-                        .collect(Collectors.toList());
-            }
-
-            @Override
-            public List<String> getAllEventTargets(String originalTarget) {
-                return Stream.of(
-                                "Player:iGoodie",
-                                "Player:CoconutOrange",
-                                "Player:TheDarkPirate",
-                                "Player:TheDiaval")
-                        .filter(p -> !p.equals(originalTarget))
-                        .collect(Collectors.toList());
-            }
-
-            @Override
-            public List<String> getRandomEventTargets(String originalTarget, int count) {
-                List<String> allEventTargets = new ArrayList<>(getAllEventTargets(originalTarget));
-                List<String> randomTargets = new ArrayList<>();
-
-                int n = Math.max(allEventTargets.size(), count);
-                Collections.shuffle(allEventTargets);
-
-                for (int i = 0; i < n; i++) {
-                    randomTargets.add(allEventTargets.get(i));
-                }
-
-                return randomTargets;
-            }
-
-            @Override
-            public void onEventReflection(String originalTarget, TSLAction action, TSLEventContext ctx) {
-                String target = ctx.getTarget();
-//                System.out.println("Reflecting from " + originalTarget + " -> "
-//                        + target + " <=> " + ctx.getEventArgs());
-
-                targetExecutor.resolveCallable(() -> action.perform(ctx));
-            }
-        });
-
-        TSLEventContext ctx = new TSLEventContext(platform, "Donation");
-        ctx.setTarget("Player:iGoodie");
-
-        executor.resolveCallable(() -> {
-                    return ruleset.perform(ctx);
-                })
-                .thenApply((a) -> {
-                    System.out.println("\n== Unsubscribed provider ==\n");
-                    provider.unsubscribe();
-                    return executor.resolveCallable(() -> ruleset.perform(ctx));
-                });
-
 
     }
 

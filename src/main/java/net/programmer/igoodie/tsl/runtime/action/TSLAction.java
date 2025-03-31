@@ -59,6 +59,12 @@ public abstract class TSLAction {
 
     public abstract boolean perform(TSLEventContext ctx) throws TSLPerformingException;
 
+    public final List<String> replaceAllExpressions(List<String> tokens, TSLEventContext ctx) {
+        return tokens.stream()
+                .map(t -> replaceExpressions(t, ctx))
+                .collect(Collectors.toList());
+    }
+
     public final String replaceExpressions(String input, TSLEventContext ctx) {
         return PatternReplacer.replaceMatches(EXPRESSION_PATTERN, input, (matcher, matchIndex) -> {
             String expression = matcher.group(1);

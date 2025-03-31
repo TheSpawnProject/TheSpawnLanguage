@@ -24,7 +24,7 @@ public class EitherAction extends TSLAction {
     public static final Pattern PERCENTAGE_PATTERN = Pattern.compile("^(\\d+)(\\.(\\d+))?$");
 
     protected SamplerMode samplerMode;
-    protected WeightedSampler<TSLAction> actionSampler = new WeightedSampler<>();
+    protected WeightedSampler<List<String>> actionSampler = new WeightedSampler<>();
 
     public EitherAction(TSLPlatform platform, List<String> args) throws TSLSyntaxException {
         super(platform, args);
@@ -38,8 +38,8 @@ public class EitherAction extends TSLAction {
 
         for (List<String> actionChunk : actionChunks) {
             parseWeight(actionChunk).using((weight, actionTokens) -> {
-                TSLAction action = new TSLParser(platform, actionTokens).parseAction();
-                this.actionSampler.addElement(action, weight);
+                new TSLParser(platform, actionTokens).parseAction();
+                this.actionSampler.addElement(actionTokens, weight);
             });
         }
 
@@ -129,7 +129,15 @@ public class EitherAction extends TSLAction {
 
     @Override
     public boolean perform(TSLEventContext ctx) throws TSLPerformingException {
-        return actionSampler.sample().perform(ctx);
+        try {
+            List<String> actionTokens = replaceAllExpressions(actionSampler.sample(), ctx);
+            return new TSLParser(platform, actionTokens).parseAction().perform(ctx);
+
+        } catch (TSLSyntaxException e) {
+            TSLPerformingException exception = new TSLPerformingException("Failed to performAction");
+            exception.initCause(e);
+            throw exception;
+        }
     }
 
     public enum SamplerMode {DEFAULT, WEIGHTED, PERCENTAGE}
