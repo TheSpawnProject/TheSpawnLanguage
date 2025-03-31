@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'net.programmer.igoodie'
-version '1.5.1-alpha3'
+version '1.5.1-alpha4'
 
 java {
     withJavadocJar()
