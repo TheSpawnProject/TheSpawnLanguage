@@ -53,6 +53,8 @@ public class TSLPlatform {
         return event;
     }
 
+    // TODO: way to unload event definitions
+
     public <T extends TSLComparator.Supplier<?>> T registerComparator(String symbol, T comparator) {
         this.comparatorDefinitions.put(symbol.toUpperCase(), comparator);
         return comparator;

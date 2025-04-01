@@ -10,7 +10,7 @@ import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.executor.TSLExecutor;
+import net.programmer.igoodie.tsl.runtime.executor.OLD_TSLExecutor;
 import net.programmer.igoodie.tsl.std.action.ReflectAction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,17 +20,17 @@ import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 
-public class TSLExecutorTests {
+public class OLDTSLExecutorTests {
 
     @Test
-    public void shouldExecuteTask() {
-        TSLExecutor executor = new TSLExecutor("iGoodie");
+    public void shouldQueueTaskTask() {
+        OLD_TSLExecutor executor = new OLD_TSLExecutor("iGoodie");
 
         long t0 = System.currentTimeMillis();
 
         Assertions.assertThrows(CompletionException.class,
                 () -> {
-                    TSLExecutor.Procedure<Integer> procedure = new TSLExecutor.Procedure<>(
+                    OLD_TSLExecutor.Procedure<Integer> procedure = new OLD_TSLExecutor.Procedure<>(
                             () -> {
                                 Thread.sleep(2_000);
                                 return 1;
@@ -86,8 +86,8 @@ public class TSLExecutorTests {
             }
         });
 
-        TSLExecutor executor = new TSLExecutor("Player:iGoodie");
-        TSLExecutor coconutExecutor = new TSLExecutor("Player:CoconutOrange");
+        OLD_TSLExecutor executor = new OLD_TSLExecutor("Player:iGoodie");
+        OLD_TSLExecutor coconutExecutor = new OLD_TSLExecutor("Player:CoconutOrange");
 
         ReflectAction.registerProvider(new ReflectAction.ReflectProvider() {
             @Override

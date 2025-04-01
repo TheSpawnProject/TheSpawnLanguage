@@ -13,7 +13,7 @@ import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.executor.TSLExecutor;
+import net.programmer.igoodie.tsl.runtime.executor.OLD_TSLExecutor;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLComparator;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLPredicate;
 import net.programmer.igoodie.tsl.util.LogFormatter;
@@ -192,7 +192,7 @@ public class TestPlatform {
         List<TSLLexer.Token> tokens = new TSLLexer(CharStream.fromString(script)).tokenize();
         TSLRuleset ruleset = new TSLParser(platform, target, tokens).parse();
 
-        TSLExecutor executor = new TSLExecutor(target);
+        OLD_TSLExecutor executor = new OLD_TSLExecutor(target);
 
         TSLEventContext ctx1 = new TSLEventContext(platform, "Donation");
         ACTOR_PROPERTY.write(ctx1.getEventArgs(), "TestActor");
@@ -244,7 +244,7 @@ public class TestPlatform {
         List<TSLLexer.Token> tokens = new TSLLexer(CharStream.fromString(script)).tokenize();
         TSLRuleset ruleset = new TSLParser(platform, target, tokens).parse();
 
-        TSLExecutor executor = new TSLExecutor(target);
+        OLD_TSLExecutor executor = new OLD_TSLExecutor(target);
 
         long t0 = System.currentTimeMillis();
 
