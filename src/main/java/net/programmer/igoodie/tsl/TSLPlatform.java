@@ -77,6 +77,7 @@ public class TSLPlatform {
     public void initializeStd() {
         this.registerAction("WAIT", WaitAction::new);
         this.registerAction("SEQUENTIALLY", SequentiallyAction::new);
+        this.registerAction("CONCURRENTLY", ConcurrentlyAction::new);
         this.registerAction("EITHER", EitherAction::new);
         this.registerAction("NOTHING", NothingAction::new);
         this.registerAction("FOR", ForAction::new);

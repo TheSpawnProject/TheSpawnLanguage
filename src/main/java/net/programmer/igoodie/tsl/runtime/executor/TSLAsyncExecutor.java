@@ -7,14 +7,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-// TODO: Revamp this; use 1 thread, queue tasks instead
-@Deprecated
-public class OLD_TSLExecutor implements Executor {
+public class TSLAsyncExecutor implements Executor {
 
     protected final String target;
     protected final ThreadGroup threadGroup;
 
-    public OLD_TSLExecutor(String target) {
+    public TSLAsyncExecutor(String target) {
         this.target = target;
         this.threadGroup = new ThreadGroup("TSLExecutor-" + target);
     }
@@ -24,17 +22,21 @@ public class OLD_TSLExecutor implements Executor {
         new Thread(threadGroup, command, "Executor-\"" + target + "\"").start();
     }
 
-    public <V> CompletableFuture<V> resolveCallable(Callable<V> callable) {
+    public <V> CompletableFuture<V> executeTaskAsync(Callable<V> task) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                return callable.call();
+                return task.call();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }, this);
     }
 
-    public <V> CompletableFuture<List<V>> resolveProcedure(Procedure<V> procedure) {
+    public <V> CompletableFuture<List<V>> executeProcedureAsync(Callable<V>... tasks) {
+        return this.executeProcedureAsync(new Procedure<>(tasks));
+    }
+
+    public <V> CompletableFuture<List<V>> executeProcedureAsync(Procedure<V> procedure) {
         return CompletableFuture.supplyAsync(() -> {
             List<V> results = new ArrayList<>();
 
