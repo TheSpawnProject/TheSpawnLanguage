@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.runtime.executor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.BiConsumer;
 
@@ -27,14 +28,20 @@ public class TSLExecutor {
         this.thread.interrupt();
     }
 
-    public void queueTask(TaskThread.Task command) {
+    public CompletableFuture<Void> queueTask(TaskThread.Task.Logic task) {
         synchronized (this.thread.tasks) {
-            this.thread.tasks.offer(command);
+            TaskThread.Task threadTask = new TaskThread.Task();
+            threadTask.logic = task;
+            threadTask.future = new CompletableFuture<>();
+
+            this.thread.tasks.offer(threadTask);
             this.thread.tasks.notifyAll();
+
+            return threadTask.future;
         }
     }
 
-    public void subscribeTaskFailListener(BiConsumer<TaskThread.Task, Exception> listener) {
+    public void subscribeTaskFailListener(BiConsumer<TaskThread.Task.Logic, Exception> listener) {
         this.thread.taskFailListeners.add(listener);
     }
 
@@ -42,13 +49,17 @@ public class TSLExecutor {
 
         protected boolean isRunning;
 
-        @FunctionalInterface
-        public interface Task {
-            void run() throws Exception;
+        public static class Task {
+            protected CompletableFuture<Void> future;
+            protected Logic logic;
+
+            public interface Logic {
+                void run() throws Exception;
+            }
         }
 
         protected final Queue<Task> tasks = new ConcurrentLinkedQueue<>();
-        protected final List<BiConsumer<Task, Exception>> taskFailListeners = new ArrayList<>();
+        protected final List<BiConsumer<Task.Logic, Exception>> taskFailListeners = new ArrayList<>();
 
         @Override
         public void run() {
@@ -56,8 +67,6 @@ public class TSLExecutor {
                 synchronized (this.tasks) {
                     try {
                         while (this.tasks.isEmpty()) this.tasks.wait();
-                    } catch (IllegalMonitorStateException e) {
-                        throw e; // <-- This should not happen, as TSLExecutor is the only consumer
                     } catch (InterruptedException ignored) {
                         // Ignored, we can discard tasks, if the executor is stopped/interrupted
                     }
@@ -66,9 +75,11 @@ public class TSLExecutor {
 
                     if (task != null) {
                         try {
-                            task.run();
+                            task.logic.run();
+                            task.future.complete(null);
                         } catch (Exception e) {
-                            taskFailListeners.forEach(listener -> listener.accept(task, e));
+                            task.future.completeExceptionally(e);
+                            taskFailListeners.forEach(listener -> listener.accept(task.logic, e));
                         }
                     }
                 }
@@ -78,28 +89,36 @@ public class TSLExecutor {
     }
 
 //    public static void main(String[] args) {
-//        TSLExecutor executor = new TSLExecutor("DummyTarget");
+//        String[] targets = {"Dummy1", "Dummy2", "Dummy3"};
 //
-//        executor.subscribeTaskFailListener((task, e) -> {
-//            System.out.println("Task failed:" + e.getMessage());
-//            System.out.println("Queueing again");
-//            executor.queueTask(task);
-//        });
+//        for (String target : targets) {
+//            TSLExecutor executor = new TSLExecutor(target);
 //
-//        executor.queueTask(() -> System.out.println(System.currentTimeMillis() + " Hi"));
-//        executor.queueTask(() -> Thread.sleep(2000));
-//        executor.queueTask(() -> System.out.println(System.currentTimeMillis() + " Hello"));
-//        executor.queueTask(() -> Thread.sleep(5000));
-//        executor.queueTask(executor::stop);
-//        executor.queueTask(() -> Thread.sleep(10000));
-//        executor.queueTask(() -> System.out.println(System.currentTimeMillis() + " Hello2"));
-//        executor.queueTask(() -> {throw new Exception("Wops");});
+//            executor.subscribeTaskFailListener((task, e) -> {
+//                System.out.println("Task failed:" + e.getMessage());
+//                System.out.println("Queueing again");
+//                executor.queueTask(task);
+//            });
 //
-//        executor.start();
+//            executor.queueTask(() -> System.out.println(System.currentTimeMillis() + " Hi, " + target));
+//            executor.queueTask(() -> Thread.sleep(2_000));
+//            executor.queueTask(() -> System.out.println(System.currentTimeMillis() + " Hello, " + target));
+//            executor.queueTask(() -> Thread.sleep(5_000));
+//            executor.queueTask(executor::stop).thenRunAsync(() -> System.out.println("Executor stopped"));
 //
-//        executor.queueTask(() -> System.out.println("Not crashed, even after task exception!"));
+//            // Should be discarded
+//            executor.queueTask(() -> Thread.sleep(10_000));
+//            executor.queueTask(() -> System.out.println(System.currentTimeMillis() + " Hello2"));
+//            executor.queueTask(() -> {throw new Exception("Wops");});
 //
-//        System.out.println("Procedure queued");
+//            System.out.println("Procedure queued for " + target);
+//
+//            executor.start();
+//
+//            System.out.println("Executor started for " + target);
+//
+//            executor.queueTask(() -> System.out.println("Not crashed, even after task exception!"));
+//        }
 //    }
 
 }
