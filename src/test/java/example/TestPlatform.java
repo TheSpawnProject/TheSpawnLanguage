@@ -13,7 +13,7 @@ import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.executor.TSLExecutor;
+import net.programmer.igoodie.tsl.runtime.executor.TSLAsyncExecutor;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLComparator;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLPredicate;
 import net.programmer.igoodie.tsl.util.LogFormatter;
@@ -192,22 +192,26 @@ public class TestPlatform {
         List<TSLLexer.Token> tokens = new TSLLexer(CharStream.fromString(script)).tokenize();
         TSLRuleset ruleset = new TSLParser(platform, target, tokens).parse();
 
-        TSLExecutor executor = new TSLExecutor(target);
+        TSLAsyncExecutor executor = new TSLAsyncExecutor(target);
 
         TSLEventContext ctx1 = new TSLEventContext(platform, "Donation");
         ACTOR_PROPERTY.write(ctx1.getEventArgs(), "TestActor");
         AMOUNT_PROPERTY.write(ctx1.getEventArgs(), 100.0);
         CURRENCY_PROPERTY.write(ctx1.getEventArgs(), "USD");
         ctx1.setTarget(target);
-        CompletableFuture<List<String>> future1 = executor.resolveCallable(() -> ruleset.perform(ctx1));
+        CompletableFuture<List<String>> future1 = executor.executeTaskAsync(() -> ruleset.perform(ctx1))
+                .whenComplete((a, b) -> System.out.println("Performed first ctx."));
+        System.out.println("Queued first ctx");
 
         TSLEventContext ctx2 = new TSLEventContext(platform, "Twitch Follow");
         ctx2.setTarget(target);
-        CompletableFuture<List<String>> future2 = executor.resolveCallable(() -> ruleset.perform(ctx2));
+        CompletableFuture<List<String>> future2 = executor.executeTaskAsync(() -> ruleset.perform(ctx2));
+        System.out.println("Queued second ctx");
 
         TSLEventContext ctx3 = new TSLEventContext(platform, "Facebook Friend Request");
         ctx3.setTarget(target);
-        CompletableFuture<List<String>> future3 = executor.resolveCallable(() -> ruleset.perform(ctx3));
+        CompletableFuture<List<String>> future3 = executor.executeTaskAsync(() -> ruleset.perform(ctx3));
+        System.out.println("Queued third ctx");
 
         CompletableFuture.allOf(future1, future2, future3).join();
 
@@ -244,7 +248,7 @@ public class TestPlatform {
         List<TSLLexer.Token> tokens = new TSLLexer(CharStream.fromString(script)).tokenize();
         TSLRuleset ruleset = new TSLParser(platform, target, tokens).parse();
 
-        OLD_TSLExecutor executor = new OLD_TSLExecutor(target);
+        TSLAsyncExecutor executor = new TSLAsyncExecutor(target);
 
         long t0 = System.currentTimeMillis();
 
@@ -253,10 +257,9 @@ public class TestPlatform {
         AMOUNT_PROPERTY.write(ctx.getEventArgs(), 100.0);
         CURRENCY_PROPERTY.write(ctx.getEventArgs(), "USD");
         ctx.setTarget(target);
-        executor.resolveCallable(() -> ruleset.perform(ctx))
-                .whenComplete((message, e) -> {
-                    System.out.println("Message = " + message);
-                }).join();
+        executor.executeTaskAsync(() -> ruleset.perform(ctx))
+                .thenAccept((message) -> System.out.println("Message = " + message))
+                .join();
 
         long t1 = System.currentTimeMillis();
 

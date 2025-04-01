@@ -10,7 +10,7 @@ import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.executor.OLD_TSLExecutor;
+import net.programmer.igoodie.tsl.runtime.executor.TSLAsyncExecutor;
 import net.programmer.igoodie.tsl.std.action.ReflectAction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,17 +20,17 @@ import java.util.List;
 import java.util.concurrent.CompletionException;
 import java.util.stream.Collectors;
 
-public class OLDTSLExecutorTests {
+public class TSLExecutorTests {
 
     @Test
     public void shouldQueueTaskTask() {
-        OLD_TSLExecutor executor = new OLD_TSLExecutor("iGoodie");
+        TSLAsyncExecutor executor = new TSLAsyncExecutor("iGoodie");
 
         long t0 = System.currentTimeMillis();
 
         Assertions.assertThrows(CompletionException.class,
                 () -> {
-                    OLD_TSLExecutor.Procedure<Integer> procedure = new OLD_TSLExecutor.Procedure<>(
+                    TSLAsyncExecutor.Procedure<Integer> procedure = new TSLAsyncExecutor.Procedure<>(
                             () -> {
                                 Thread.sleep(2_000);
                                 return 1;
@@ -41,7 +41,7 @@ public class OLDTSLExecutorTests {
                             }
                     );
 
-                    executor.resolveProcedure(procedure).whenComplete((result, e) -> {
+                    executor.executeProcedureAsync(procedure).whenComplete((result, e) -> {
                         System.out.println("\nAccepting results: " + Thread.currentThread().getName());
                         System.out.println("RESULT: " + result);
                         System.out.println("EXCEPTION: " + e);
@@ -86,8 +86,8 @@ public class OLDTSLExecutorTests {
             }
         });
 
-        OLD_TSLExecutor executor = new OLD_TSLExecutor("Player:iGoodie");
-        OLD_TSLExecutor coconutExecutor = new OLD_TSLExecutor("Player:CoconutOrange");
+        TSLAsyncExecutor executor = new TSLAsyncExecutor("Player:iGoodie");
+        TSLAsyncExecutor coconutExecutor = new TSLAsyncExecutor("Player:CoconutOrange");
 
         ReflectAction.registerProvider(new ReflectAction.ReflectProvider() {
             @Override
@@ -112,7 +112,7 @@ public class OLDTSLExecutorTests {
                     throw new IllegalArgumentException("I am only supposed to test CoconutOrange");
                 }
 
-                coconutExecutor.resolveCallable(() -> action.perform(ctx));
+                coconutExecutor.executeTaskAsync(() -> action.perform(ctx));
             }
         });
 
@@ -124,7 +124,7 @@ public class OLDTSLExecutorTests {
         ctx.setTarget("Player:iGoodie");
         ctx.getEventArgs().put("amount", 5.0d);
 
-        executor.resolveCallable(() -> ruleset.perform(ctx));
+        executor.executeTaskAsync(() -> ruleset.perform(ctx));
     }
 
 }
