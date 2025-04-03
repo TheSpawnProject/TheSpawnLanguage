@@ -38,6 +38,8 @@ public class TSLPlatform {
         return platformVersion;
     }
 
+    // TODO: Ways to unregister definitions; shall be very useful for the LSP
+
     public <T extends TSLAction.Supplier<?>> T registerAction(String name, T action) {
         this.actionDefinitions.put(name.toUpperCase(), action);
         return action;

@@ -3,17 +3,12 @@ package net.programmer.igoodie.tsl.std.action;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.parser.CharStream;
-import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
-import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLPredicate;
 import net.programmer.igoodie.tsl.util.Pair;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -30,12 +25,12 @@ public class IfAction extends TSLAction {
 
         splitIfElse(args).using((ifPart, elsePart) -> {
             splitCondition(ifPart).using((conditionArgs, bodyArgs) -> {
-                this.condition = new TSLParser(platform, conditionArgs).parsePredicate();
-                this.thenAction = new TSLParser(platform, bodyArgs).parseAction();
+                this.condition = TSLParser.immediate(platform, conditionArgs).parsePredicate();
+                this.thenAction = TSLParser.immediate(platform, bodyArgs).parseAction();
             });
 
             if (!elsePart.isEmpty()) {
-                this.elseAction = new TSLParser(platform, elsePart).parseAction();
+                this.elseAction = TSLParser.immediate(platform, elsePart).parseAction();
             }
         });
     }

@@ -38,7 +38,7 @@ public class EitherAction extends TSLAction {
 
         for (List<String> actionChunk : actionChunks) {
             parseWeight(actionChunk).using((weight, actionTokens) -> {
-                new TSLParser(platform, actionTokens).parseAction();
+                TSLParser.immediate(platform, actionTokens).parseAction();
                 this.actionSampler.addElement(actionTokens, weight);
             });
         }
@@ -131,7 +131,7 @@ public class EitherAction extends TSLAction {
     public boolean perform(TSLEventContext ctx) throws TSLPerformingException {
         try {
             List<String> actionTokens = replaceAllExpressions(actionSampler.sample(), ctx);
-            return new TSLParser(platform, actionTokens).parseAction().perform(ctx);
+            return TSLParser.immediate(platform, actionTokens).parseAction().perform(ctx);
 
         } catch (TSLSyntaxException e) {
             TSLPerformingException exception = new TSLPerformingException("Failed to performAction");

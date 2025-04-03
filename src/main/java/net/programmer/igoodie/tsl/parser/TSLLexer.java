@@ -16,10 +16,22 @@ public class TSLLexer {
     protected boolean isEscaping = false;
     protected boolean prevNewLine = true;
 
+    protected int lineNo = 0;
+    protected int charNo = 0;
+
     protected StringBuilder sb = new StringBuilder();
 
     public TSLLexer(CharStream charStream) {
         this.charStream = charStream;
+    }
+
+    protected void consumeChar() throws IOException {
+        this.consumeChar(1);
+    }
+
+    protected void consumeChar(int k) throws IOException {
+        this.charStream.consume(k);
+        charNo += k;
     }
 
     public List<Token> tokenize() throws IOException, TSLSyntaxException {
@@ -31,8 +43,10 @@ public class TSLLexer {
             if (inSingleComment) {
                 if (curr == '\n') {
                     inSingleComment = false;
+                    charNo = 0;
+                    lineNo++;
                 } else {
-                    charStream.consume();
+                    consumeChar();
                     continue;
                 }
             }
@@ -40,9 +54,9 @@ public class TSLLexer {
             if (inMultiComment) {
                 if (curr == '*' && charStream.peek(2) == '#') {
                     inMultiComment = false;
-                    charStream.consume(2);
+                    consumeChar(2);
                 } else {
-                    charStream.consume();
+                    consumeChar();
                 }
                 continue;
             }
@@ -62,9 +76,11 @@ public class TSLLexer {
                     charStream.consume();
                 } else if (curr == '\n' || curr == '\r') {
                     sb.append(curr);
-                    charStream.consume();
+                    consumeChar();
+                    charNo = 0;
+                    lineNo++;
                 } else {
-                    if (sb.length() > 0) {
+                    if (!sb.isEmpty()) {
                         tokens.add(generateToken());
                         sb.setLength(0);
                     }
@@ -79,14 +95,14 @@ public class TSLLexer {
                         sb.append('\\');
                     }
                     sb.append(curr);
-                    charStream.consume();
+                    consumeChar();
                     isEscaping = false;
                     continue;
                 }
 
                 if (curr == '\\') {
                     isEscaping = true;
-                    charStream.consume();
+                    consumeChar();
                     continue;
                 }
 
@@ -94,48 +110,50 @@ public class TSLLexer {
                     tokens.add(generateToken());
                     sb.setLength(0);
                     inGroup = false;
-                    charStream.consume();
+                    consumeChar();
                     continue;
                 }
 
                 sb.append(curr);
-                charStream.consume();
+                consumeChar();
                 continue;
             }
 
             if (curr == '\n' || curr == '\r') {
-                if (sb.length() > 0) {
+                if (!sb.isEmpty()) {
                     tokens.add(generateToken());
                     sb.setLength(0);
+                    charNo = 0;
+                    lineNo++;
                 }
                 prevNewLine = true;
-                charStream.consume();
+                consumeChar();
                 continue;
             }
 
             if (curr == '%') {
                 inGroup = true;
-                charStream.consume();
+                consumeChar();
                 continue;
             }
 
             if (curr == ' ') {
-                if (sb.length() > 0) {
+                if (!sb.isEmpty()) {
                     tokens.add(generateToken());
                     sb.setLength(0);
                 }
-                charStream.consume();
+                consumeChar();
                 continue;
             }
 
             sb.append(curr);
-            charStream.consume();
+            consumeChar();
         }
 
         if (inGroup) throw new TSLSyntaxException("Unclosed group");
         if (isEscaping) throw new TSLSyntaxException("Unexpected escaping");
 
-        if (sb.length() > 0) {
+        if (!sb.isEmpty()) {
             tokens.add(generateToken());
         }
 
@@ -143,14 +161,14 @@ public class TSLLexer {
     }
 
     protected Token generateToken() {
-        if (prevNewLine) return new Token(TokenType.EMPTY_LINE, sb.toString());
-        return generateToken(sb.toString());
+        if (prevNewLine) return new Token(TokenType.EMPTY_LINE, sb.toString(), lineNo, charNo);
+        return generateToken(sb.toString(), this.lineNo, this.charNo);
     }
 
-    public static Token generateToken(String sequence) {
-        if (sequence.equalsIgnoreCase("ON")) return new Token(TokenType.KEYWORD_ON, sequence);
-        if (sequence.equalsIgnoreCase("WITH")) return new Token(TokenType.KEYWORD_WITH, sequence);
-        return new Token(TokenType.WORD, sequence);
+    public static Token generateToken(String sequence, int lineNo, int charNo) {
+        if (sequence.equalsIgnoreCase("ON")) return new Token(TokenType.KEYWORD_ON, sequence, lineNo, charNo);
+        if (sequence.equalsIgnoreCase("WITH")) return new Token(TokenType.KEYWORD_WITH, sequence, lineNo, charNo);
+        return new Token(TokenType.WORD, sequence, lineNo, charNo);
     }
 
     public enum TokenType {
@@ -161,10 +179,13 @@ public class TSLLexer {
 
         public final TokenType type;
         public final String value;
+        public final int lineNo, charNo;
 
-        public Token(TokenType type, String value) {
+        public Token(TokenType type, String value, int line, int charNo) {
             this.type = type;
             this.value = value;
+            this.lineNo = line;
+            this.charNo = charNo;
         }
 
         @Override

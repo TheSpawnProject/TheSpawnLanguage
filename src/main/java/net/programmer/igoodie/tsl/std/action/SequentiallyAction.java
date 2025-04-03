@@ -29,7 +29,7 @@ public class SequentiallyAction extends TSLAction {
                 throw new TSLSyntaxException("");
             }
 
-            TSLAction action = new TSLParser(platform, actionChunk).parseAction();
+            TSLAction action = TSLParser.immediate(platform, actionChunk).parseAction();
             this.actions.add(action);
         }
     }

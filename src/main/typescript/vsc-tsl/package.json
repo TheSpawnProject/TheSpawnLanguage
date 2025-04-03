@@ -1,0 +1,46 @@
+{
+  "name": "tsl",
+  "displayName": "The Spawn Language (TSL)",
+  "description": "Syntax highlighting and snippets for iGoodie's TSL",
+  "version": "0.0.0",
+  "publisher": "iGoodie",
+  "author": {
+    "name": "iGoodie",
+    "email": "igoodie@programmer.net"
+  },
+  "main": "./build/extension.js",
+  "engines": {
+    "vscode": "^1.22.0"
+  },
+  "activationEvents": [
+    "onLanguage:tsl"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "tsl",
+        "aliases": [
+          "The Spawn Language",
+          "tsl"
+        ],
+        "extensions": [
+          ".tsl"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm compile",
+    "compile": "tsc -p ./",
+    "lint": "eslint",
+    "watch": "tsc -watch -p ./"
+  },
+  "dependencies": {
+    "vscode": "^1.1.37",
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0"
+  }
+}

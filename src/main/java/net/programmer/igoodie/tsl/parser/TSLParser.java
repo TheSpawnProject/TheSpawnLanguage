@@ -9,12 +9,12 @@ import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLComparator;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLPredicate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class TSLParser {
 
@@ -30,10 +30,15 @@ public class TSLParser {
         this.index = 0;
     }
 
-    public TSLParser(TSLPlatform platform, List<String> tokens) {
-        this(platform, "immediate", tokens.stream()
-                .map(TSLLexer::generateToken)
-                .collect(Collectors.toList()));
+    public static TSLParser immediate(TSLPlatform platform, List<String> calculatedTokens) throws TSLSyntaxException {
+        try {
+            CharStream charStream = CharStream.fromString(String.join(" ", calculatedTokens));
+            TSLLexer lexer = new TSLLexer(charStream);
+            return new TSLParser(platform, "immediate", lexer.tokenize());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public TSLRuleset parse() throws TSLSyntaxException {

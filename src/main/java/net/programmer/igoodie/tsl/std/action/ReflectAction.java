@@ -38,7 +38,7 @@ public class ReflectAction extends TSLAction {
 
         args = consumeTargetSelector(args);
 
-        this.action = new TSLParser(platform, args).parseAction();
+        this.action = TSLParser.immediate(platform, args).parseAction();
     }
 
     protected List<String> consumeTargetSelector(List<String> tokens) throws TSLSyntaxException {

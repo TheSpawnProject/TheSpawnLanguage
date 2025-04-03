@@ -24,7 +24,7 @@ public class ForAction extends TSLAction {
 
         args = consumeLoopHeader(args);
 
-        action = new TSLParser(platform, args).parseAction();
+        action = TSLParser.immediate(platform, args).parseAction();
     }
 
     protected List<String> consumeLoopHeader(List<String> tokens) throws TSLSyntaxException {
