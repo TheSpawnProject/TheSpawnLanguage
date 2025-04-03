@@ -177,7 +177,7 @@ public class TestPlatform {
 
     @Test
     public void shouldParseAndPerform() throws TSLSyntaxException, IOException {
-        String script = String.join("\n",
+        String script = String.join("\r\n",
                 "PRINT Hey %There, ${actor} ${actor}!% %How are you?% # This is a comment",
                 " DISPLAYING %Thanks ${actor}, 100\\% #*100\\%*# for donating ${amount_i}${currency}!%",
                 " ON Donation WITH amount IN RANGE [0,100]",

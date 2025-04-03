@@ -119,6 +119,20 @@ public class TSLLexer {
                 continue;
             }
 
+            // Handle CRLF
+            if (curr == '\r' && charStream.peek(2) == '\n') {
+                if (!sb.isEmpty()) {
+                    tokens.add(generateToken());
+                    sb.setLength(0);
+                    charNo = 0;
+                    lineNo++;
+                }
+                prevNewLine = true;
+                consumeChar(2);
+                continue;
+            }
+
+            // Handle LF or CR
             if (curr == '\n' || curr == '\r') {
                 if (!sb.isEmpty()) {
                     tokens.add(generateToken());
