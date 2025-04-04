@@ -117,6 +117,7 @@ public class TSLTextDocumentService implements TextDocumentService {
         semanticTokens.setData(data);
         return CompletableFuture.completedFuture(semanticTokens);
     }
+
 //
 //    @Override
 //    public CompletableFuture<List<? extends TextEdit>> onTypeFormatting(DocumentOnTypeFormattingParams params) {

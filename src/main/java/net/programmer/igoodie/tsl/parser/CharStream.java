@@ -44,6 +44,16 @@ public class CharStream {
         return peek(1);
     }
 
+    public String peekAhead(int k) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 1; i <= k; i++) {
+            sb.append(this.peek(i));
+        }
+
+        return sb.toString();
+    }
+
     public void consume(int k) throws IOException {
         fillBufferUpTo(k);
 
@@ -54,6 +64,15 @@ public class CharStream {
 
     public void consume() throws IOException {
         consume(1);
+    }
+
+    public boolean lookahead(String check) throws IOException {
+        for (int i = 0; i < check.length(); i++) {
+            if (peek(i + 1) != check.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void fillBufferUpTo(int k) throws IOException {

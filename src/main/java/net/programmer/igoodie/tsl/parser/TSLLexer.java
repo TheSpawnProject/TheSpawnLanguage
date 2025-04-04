@@ -16,8 +16,11 @@ public class TSLLexer {
     protected boolean isEscaping = false;
     protected boolean prevNewLine = true;
 
-    protected int lineNo = 0;
-    protected int charNo = 0;
+    protected int tokenLineNo = 0;
+    protected int tokenCharNo = 0;
+
+    protected int lineNoCursor = 0;
+    protected int charNoCursor = 0;
 
     protected StringBuilder sb = new StringBuilder();
 
@@ -31,7 +34,7 @@ public class TSLLexer {
 
     protected void consumeChar(int k) throws IOException {
         this.charStream.consume(k);
-        charNo += k;
+        charNoCursor += k;
     }
 
     public List<Token> tokenize() throws IOException, TSLSyntaxException {
@@ -43,8 +46,8 @@ public class TSLLexer {
             if (inSingleComment) {
                 if (curr == '\n') {
                     inSingleComment = false;
-                    charNo = 0;
-                    lineNo++;
+                    charNoCursor = 0;
+                    lineNoCursor++;
                 } else {
                     consumeChar();
                     continue;
@@ -55,6 +58,7 @@ public class TSLLexer {
                 if (curr == '*' && charStream.peek(2) == '#') {
                     inMultiComment = false;
                     consumeChar(2);
+                    generateToken();
                 } else {
                     consumeChar();
                 }
@@ -77,8 +81,8 @@ public class TSLLexer {
                 } else if (curr == '\n' || curr == '\r') {
                     sb.append(curr);
                     consumeChar();
-                    charNo = 0;
-                    lineNo++;
+                    charNoCursor = 0;
+                    lineNoCursor++;
                 } else {
                     if (!sb.isEmpty()) {
                         tokens.add(generateToken());
@@ -124,8 +128,8 @@ public class TSLLexer {
                 if (!sb.isEmpty()) {
                     tokens.add(generateToken());
                     sb.setLength(0);
-                    charNo = 0;
-                    lineNo++;
+                    charNoCursor = 0;
+                    lineNoCursor++;
                 }
                 prevNewLine = true;
                 consumeChar(2);
@@ -137,8 +141,8 @@ public class TSLLexer {
                 if (!sb.isEmpty()) {
                     tokens.add(generateToken());
                     sb.setLength(0);
-                    charNo = 0;
-                    lineNo++;
+                    charNoCursor = 0;
+                    lineNoCursor++;
                 }
                 prevNewLine = true;
                 consumeChar();
@@ -175,18 +179,34 @@ public class TSLLexer {
     }
 
     protected Token generateToken() {
-        if (prevNewLine) return new Token(TokenType.EMPTY_LINE, sb.toString(), lineNo, charNo);
-        return generateToken(sb.toString(), this.lineNo, this.charNo);
+        Token token = prevNewLine
+                ? new Token(TokenType.EMPTY_LINE, sb.toString(), this.tokenLineNo, this.tokenCharNo)
+                : generateToken(sb.toString(), this.tokenLineNo, this.tokenCharNo);
+
+        this.tokenLineNo = this.lineNoCursor;
+        this.tokenCharNo = this.charNoCursor;
+
+        return token;
     }
 
     public static Token generateToken(String sequence, int lineNo, int charNo) {
+        TokenType type =
+                sequence.equalsIgnoreCase("ON") ? TokenType.KEYWORD_ON :
+                        sequence.equalsIgnoreCase("WITH") ? TokenType.KEYWORD_WITH :
+                                null;
+
         if (sequence.equalsIgnoreCase("ON")) return new Token(TokenType.KEYWORD_ON, sequence, lineNo, charNo);
         if (sequence.equalsIgnoreCase("WITH")) return new Token(TokenType.KEYWORD_WITH, sequence, lineNo, charNo);
         return new Token(TokenType.WORD, sequence, lineNo, charNo);
     }
 
     public enum TokenType {
-        WORD, EMPTY_LINE, KEYWORD_ON, KEYWORD_WITH;
+        COMMENT,
+        GROUP,
+        WORD,
+        EMPTY_LINE,
+        KEYWORD_ON,
+        KEYWORD_WITH;
     }
 
     public static class Token {
@@ -204,9 +224,10 @@ public class TSLLexer {
 
         @Override
         public String toString() {
-            return String.format("%s [%s]", this.type, this.value
-                    .replaceAll("\r", "\\\\r")
-                    .replaceAll("\n", "\\\\n"));
+            return String.format("%s [%s] @(%d:%d)", this.type, this.value
+                            .replaceAll("\r", "\\\\r")
+                            .replaceAll("\n", "\\\\n"),
+                    this.lineNo, this.charNo);
         }
     }
 
