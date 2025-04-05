@@ -3,7 +3,6 @@ package net.programmer.igoodie.tsl.std.action;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.util.Utils;
@@ -31,8 +30,8 @@ public class ConcurrentlyAction extends TSLAction {
                 throw new TSLSyntaxException("");
             }
 
-            TSLAction action = TSLParser.immediate(platform, actionChunk).parseAction();
-            this.actions.add(action);
+//            TSLAction action = TSLParser.immediate(platform, actionChunk).parseAction();
+//            this.actions.add(action);
         }
     }
 

@@ -1,0 +1,3 @@
+$myName = iGoodie
+
+$print(message) = Io.PRINT {{message}}

@@ -4,7 +4,6 @@ import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.util.Pair;
@@ -37,10 +36,10 @@ public class EitherAction extends TSLAction {
         }
 
         for (List<String> actionChunk : actionChunks) {
-            parseWeight(actionChunk).using((weight, actionTokens) -> {
-                TSLParser.immediate(platform, actionTokens).parseAction();
-                this.actionSampler.addElement(actionTokens, weight);
-            });
+//            parseWeight(actionChunk).using((weight, actionTokens) -> {
+//                TSLParser.immediate(platform, actionTokens).parseAction();
+//                this.actionSampler.addElement(actionTokens, weight);
+//            });
         }
 
         if (samplerMode == SamplerMode.PERCENTAGE) {
@@ -129,15 +128,16 @@ public class EitherAction extends TSLAction {
 
     @Override
     public boolean perform(TSLEventContext ctx) throws TSLPerformingException {
-        try {
-            List<String> actionTokens = replaceAllExpressions(actionSampler.sample(), ctx);
-            return TSLParser.immediate(platform, actionTokens).parseAction().perform(ctx);
-
-        } catch (TSLSyntaxException e) {
-            TSLPerformingException exception = new TSLPerformingException("Failed to performAction");
-            exception.initCause(e);
-            throw exception;
-        }
+        return false;
+//        try {
+//            List<String> actionTokens = replaceAllExpressions(actionSampler.sample(), ctx);
+//            return TSLParser.immediate(platform, actionTokens).parseAction().perform(ctx);
+//
+//        } catch (TSLSyntaxException e) {
+//            TSLPerformingException exception = new TSLPerformingException("Failed to performAction");
+//            exception.initCause(e);
+//            throw exception;
+//        }
     }
 
     public enum SamplerMode {DEFAULT, WEIGHTED, PERCENTAGE}

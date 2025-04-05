@@ -4,7 +4,6 @@ import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
@@ -38,7 +37,7 @@ public class ReflectAction extends TSLAction {
 
         args = consumeTargetSelector(args);
 
-        this.action = TSLParser.immediate(platform, args).parseAction();
+//        this.action = TSLParser.immediate(platform, args).parseAction();
     }
 
     protected List<String> consumeTargetSelector(List<String> tokens) throws TSLSyntaxException {

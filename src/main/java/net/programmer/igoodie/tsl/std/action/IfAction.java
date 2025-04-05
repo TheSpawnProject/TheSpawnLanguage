@@ -3,7 +3,6 @@ package net.programmer.igoodie.tsl.std.action;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.action.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLPredicate;
@@ -23,16 +22,16 @@ public class IfAction extends TSLAction {
     public IfAction(TSLPlatform platform, List<String> args) throws TSLSyntaxException {
         super(platform, args);
 
-        splitIfElse(args).using((ifPart, elsePart) -> {
-            splitCondition(ifPart).using((conditionArgs, bodyArgs) -> {
-                this.condition = TSLParser.immediate(platform, conditionArgs).parsePredicate();
-                this.thenAction = TSLParser.immediate(platform, bodyArgs).parseAction();
-            });
-
-            if (!elsePart.isEmpty()) {
-                this.elseAction = TSLParser.immediate(platform, elsePart).parseAction();
-            }
-        });
+//        splitIfElse(args).using((ifPart, elsePart) -> {
+//            splitCondition(ifPart).using((conditionArgs, bodyArgs) -> {
+//                this.condition = TSLParser.immediate(platform, conditionArgs).parsePredicate();
+//                this.thenAction = TSLParser.immediate(platform, bodyArgs).parseAction();
+//            });
+//
+//            if (!elsePart.isEmpty()) {
+//                this.elseAction = TSLParser.immediate(platform, elsePart).parseAction();
+//            }
+//        });
     }
 
     protected Pair<List<String>, List<String>> splitIfElse(List<String> args) throws TSLSyntaxException {
