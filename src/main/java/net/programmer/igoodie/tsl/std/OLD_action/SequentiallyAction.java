@@ -1,9 +1,9 @@
-package net.programmer.igoodie.tsl.std.action;
+package net.programmer.igoodie.tsl.std.OLD_action;
 
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.runtime.action.TSLAction;
+import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.util.Utils;
 
@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 // SEQUENTIALLY <action> [AND <action>]+ [DISPLAYING msg+]?
-public class SequentiallyAction extends TSLAction {
+public class SequentiallyAction extends OLD_TSLAction {
 
-    protected List<TSLAction> actions;
+    protected List<OLD_TSLAction> actions;
 
     public SequentiallyAction(TSLPlatform platform, List<String> args) throws TSLSyntaxException {
         super(platform, args);
@@ -37,7 +37,7 @@ public class SequentiallyAction extends TSLAction {
     public boolean perform(TSLEventContext ctx) throws TSLPerformingException {
         boolean success = true;
 
-        for (TSLAction action : actions) {
+        for (OLD_TSLAction action : actions) {
             success &= action.perform(ctx);
         }
 

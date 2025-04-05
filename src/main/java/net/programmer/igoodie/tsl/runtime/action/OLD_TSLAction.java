@@ -4,8 +4,8 @@ import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.util.Pair;
 import net.programmer.igoodie.tsl.util.PatternReplacer;
+import net.programmer.igoodie.tsl.util.structure.Pair;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,14 +15,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public abstract class TSLAction {
+public abstract class OLD_TSLAction {
 
     public static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{(.*?)\\}");
 
     protected final TSLPlatform platform;
     protected List<String> message = Collections.emptyList();
 
-    public TSLAction(TSLPlatform platform, List<String> args) throws TSLSyntaxException {
+    public OLD_TSLAction(TSLPlatform platform, List<String> args) throws TSLSyntaxException {
         this.platform = platform;
     }
 
@@ -85,7 +85,7 @@ public abstract class TSLAction {
     }
 
     @FunctionalInterface
-    public interface Supplier<T extends TSLAction> {
+    public interface Supplier<T extends OLD_TSLAction> {
         T generate(TSLPlatform platform, List<String> args) throws TSLSyntaxException;
     }
 

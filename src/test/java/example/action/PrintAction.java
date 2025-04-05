@@ -3,12 +3,12 @@ package example.action;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.runtime.action.TSLAction;
+import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
 import java.util.List;
 
-public class PrintAction extends TSLAction {
+public class PrintAction extends OLD_TSLAction {
 
     protected String textToPrint;
 

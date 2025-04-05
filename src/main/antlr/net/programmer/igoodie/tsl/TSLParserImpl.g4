@@ -51,6 +51,8 @@ predicateOperation: IDENTIFIER binaryOperator predicateWord;
 binaryOperator: IDENTIFIER+ /*| genericOperator*/;
 
 captureRule: captureHeader SYMBOL_EQUALS actionArgs (EMPTY_LINES+ | EOF);
+captureHeader: (id = CAPTURE_IDENTIFIER) captureParams?;
+captureParams: SIGN_LPARAN (IDENTIFIER (SIGN_COMMA IDENTIFIER)*)? SIGN_RPARAN;
 
 // ---------------------
 // Structures
@@ -59,9 +61,6 @@ captureRule: captureHeader SYMBOL_EQUALS actionArgs (EMPTY_LINES+ | EOF);
 group: BEGIN_GROUP (groupString | groupExpression)* END_GROUP;
 groupString: GROUP_STRING+;
 groupExpression: BEGIN_GROUP_EXPRESSION word END_GROUP_EXPRESSION;
-
-captureHeader: (id = CAPTURE_IDENTIFIER) captureParams?;
-captureParams: SIGN_LPARAN (IDENTIFIER (SIGN_COMMA IDENTIFIER)*)? SIGN_RPARAN;
 
 captureCall: (id = CAPTURE_IDENTIFIER) captureArgs?;
 captureArgs: SIGN_LPARAN (word (SIGN_COMMA word)*)? SIGN_RPARAN;

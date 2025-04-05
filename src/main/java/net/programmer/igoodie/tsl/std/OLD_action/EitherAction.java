@@ -1,15 +1,12 @@
-package net.programmer.igoodie.tsl.std.action;
+package net.programmer.igoodie.tsl.std.OLD_action;
 
 import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
+import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.word.TSLPlainWord;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
 import net.programmer.igoodie.tsl.util.Utils;
-import net.programmer.igoodie.tsl.util.structure.Either;
 import net.programmer.igoodie.tsl.util.structure.Pair;
 
 import java.util.*;
@@ -21,31 +18,24 @@ import java.util.stream.IntStream;
 // EITHER <action> [OR <action>]+ [ALL DISPLAYING msg+]?
 // EITHER CHANCE <n> PERCENT <action> [OR CHANCE <n> PERCENT <action>]+ [ALL DISPLAYING msg+]?
 // EITHER WEIGHT <n> <action> [OR WEIGHT <n> <action>]+ [ALL DISPLAYING msg+]?
-public class EitherAction extends TSLAction {
+public class EitherAction extends OLD_TSLAction {
 
     public static final Pattern PERCENTAGE_PATTERN = Pattern.compile("^(\\d+)(\\.(\\d+))?$");
 
     protected SamplerMode samplerMode;
     protected WeightedSampler<List<String>> actionSampler = new WeightedSampler<>();
 
-    public EitherAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException {
+    public EitherAction(TSLPlatform platform, List<String> args) throws TSLSyntaxException {
         super(platform, args);
-//        args = consumeAllMessagePart(args);
+        args = consumeAllMessagePart(args);
 
-        List<List<Either<TSLWord, TSLAction>>> actionChunks = Utils.splitIntoChunks(args, arg -> {
-            TSLWord word = arg.getLeft().orElse(null);
-            if (word == null) return false;
-
-            if (!(word instanceof TSLPlainWord plainWord)) return false;
-            return plainWord.getValue().equalsIgnoreCase("OR");
-        });
+        List<List<String>> actionChunks = Utils.splitIntoChunks(args, arg -> arg.equalsIgnoreCase("OR"));
 
         if (actionChunks.size() <= 1) {
             throw new TSLSyntaxException("Expected at least 2 actions, instead found -> {}", actionChunks.size());
         }
 
-        for (List<Either<TSLWord, TSLAction>> actionChunk : actionChunks) {
-            // TODO: Migrate
+        for (List<String> actionChunk : actionChunks) {
 //            parseWeight(actionChunk).using((weight, actionTokens) -> {
 //                TSLParser.immediate(platform, actionTokens).parseAction();
 //                this.actionSampler.addElement(actionTokens, weight);
@@ -91,7 +81,7 @@ public class EitherAction extends TSLAction {
             String weightString = tokenAccessor.get(1)
                     .orElseThrow(() -> new TSLSyntaxException("Expected weight value after WEIGHT."));
 
-            int weight = Integer.parseInt(weightString);
+            int weight = parseInt(weightString);
 
             return new Pair<>(weight, tokens.subList(2, tokens.size()));
         }
@@ -131,14 +121,14 @@ public class EitherAction extends TSLAction {
                 .filter(arg -> arg.equalsIgnoreCase("DISPLAYING"))
                 .orElseThrow(() -> new TSLSyntaxException("Expected 'DISPLAYING' after 'ALL'"));
 
-//        this.message = args.subList(indexAll + 2, args.size());
+        this.message = args.subList(indexAll + 2, args.size());
 
         return args.subList(0, indexAll + 2);
     }
 
     @Override
-    public void perform(TSLEventContext ctx) throws TSLPerformingException {
-
+    public boolean perform(TSLEventContext ctx) throws TSLPerformingException {
+        return false;
 //        try {
 //            List<String> actionTokens = replaceAllExpressions(actionSampler.sample(), ctx);
 //            return TSLParser.immediate(platform, actionTokens).parseAction().perform(ctx);

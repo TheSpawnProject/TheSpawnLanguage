@@ -238,6 +238,26 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 */
 	void exitCaptureRule(TSLParserImpl.CaptureRuleContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TSLParserImpl#captureHeader}.
+	 * @param ctx the parse tree
+	 */
+	void enterCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TSLParserImpl#captureHeader}.
+	 * @param ctx the parse tree
+	 */
+	void exitCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TSLParserImpl#captureParams}.
+	 * @param ctx the parse tree
+	 */
+	void enterCaptureParams(TSLParserImpl.CaptureParamsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TSLParserImpl#captureParams}.
+	 * @param ctx the parse tree
+	 */
+	void exitCaptureParams(TSLParserImpl.CaptureParamsContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TSLParserImpl#group}.
 	 * @param ctx the parse tree
 	 */
@@ -267,26 +287,6 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitGroupExpression(TSLParserImpl.GroupExpressionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TSLParserImpl#captureHeader}.
-	 * @param ctx the parse tree
-	 */
-	void enterCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TSLParserImpl#captureHeader}.
-	 * @param ctx the parse tree
-	 */
-	void exitCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TSLParserImpl#captureParams}.
-	 * @param ctx the parse tree
-	 */
-	void enterCaptureParams(TSLParserImpl.CaptureParamsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TSLParserImpl#captureParams}.
-	 * @param ctx the parse tree
-	 */
-	void exitCaptureParams(TSLParserImpl.CaptureParamsContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TSLParserImpl#captureCall}.
 	 * @param ctx the parse tree

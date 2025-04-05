@@ -1,10 +1,10 @@
-package net.programmer.igoodie.tsl.std.action;
+package net.programmer.igoodie.tsl.std.OLD_action;
 
 import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.runtime.action.TSLAction;
+import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 // REFLECT %Target1, Target2, Target3% [ONLY]? <action>
 // REFLECT <N> [ONLY]? <action>
 // REFLECT * [ONLY]? <action>
-public class ReflectAction extends TSLAction {
+public class ReflectAction extends OLD_TSLAction {
 
     protected static List<ReflectProvider> providers = new ArrayList<>();
 
@@ -26,7 +26,7 @@ public class ReflectAction extends TSLAction {
     protected int randomTargets;
     protected boolean targetsOnly;
     protected List<String> targets;
-    protected TSLAction action;
+    protected OLD_TSLAction action;
 
     public ReflectAction(TSLPlatform platform, List<String> args) throws TSLSyntaxException {
         super(platform, args);
@@ -115,7 +115,7 @@ public class ReflectAction extends TSLAction {
 
         List<String> getRandomEventTargets(String originalTarget, int count);
 
-        void onEventReflection(String originalTarget, TSLAction action, TSLEventContext ctx);
+        void onEventReflection(String originalTarget, OLD_TSLAction action, TSLEventContext ctx);
 
         default void unsubscribe() {
             ReflectAction.providers.removeIf(provider -> provider == this);

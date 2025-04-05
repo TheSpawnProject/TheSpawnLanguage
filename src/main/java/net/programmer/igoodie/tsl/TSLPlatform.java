@@ -1,10 +1,10 @@
 package net.programmer.igoodie.tsl;
 
 import net.programmer.igoodie.goodies.util.StringUtilities;
-import net.programmer.igoodie.tsl.runtime.action.TSLAction;
+import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLComparator;
-import net.programmer.igoodie.tsl.std.action.*;
+import net.programmer.igoodie.tsl.std.OLD_action.*;
 import net.programmer.igoodie.tsl.std.comparator.*;
 
 import java.util.HashMap;
@@ -16,8 +16,8 @@ public class TSLPlatform {
     private final String platformName;
     private final float platformVersion;
 
-    private final Map<String, TSLAction.Supplier<?>> actionDefinitions;
-    private final Map<String, TSLAction.ExpressionEvaluator> expressionEvaluators;
+    private final Map<String, OLD_TSLAction.Supplier<?>> actionDefinitions;
+    private final Map<String, OLD_TSLAction.ExpressionEvaluator> expressionEvaluators;
     private final Map<String, TSLEvent> eventDefinitions;
     private final Map<String, TSLComparator.Supplier<?>> comparatorDefinitions;
 
@@ -40,12 +40,12 @@ public class TSLPlatform {
 
     // TODO: Ways to unregister definitions; shall be very useful for the LSP
 
-    public <T extends TSLAction.Supplier<?>> T registerAction(String name, T action) {
+    public <T extends OLD_TSLAction.Supplier<?>> T registerAction(String name, T action) {
         this.actionDefinitions.put(name.toUpperCase(), action);
         return action;
     }
 
-    public <T extends TSLAction.ExpressionEvaluator> T registerExpression(String expression, T evaluator) {
+    public <T extends OLD_TSLAction.ExpressionEvaluator> T registerExpression(String expression, T evaluator) {
         this.expressionEvaluators.put(expression, evaluator);
         return evaluator;
     }
@@ -60,11 +60,11 @@ public class TSLPlatform {
         return comparator;
     }
 
-    public Optional<TSLAction.Supplier<?>> getActionDefinition(String name) {
+    public Optional<OLD_TSLAction.Supplier<?>> getActionDefinition(String name) {
         return Optional.ofNullable(this.actionDefinitions.get(name.toUpperCase()));
     }
 
-    public Optional<TSLAction.ExpressionEvaluator> getExpressionEvaluator(String expression) {
+    public Optional<OLD_TSLAction.ExpressionEvaluator> getExpressionEvaluator(String expression) {
         return Optional.ofNullable(expressionEvaluators.get(expression));
     }
 

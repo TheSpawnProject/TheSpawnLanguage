@@ -1,4 +1,4 @@
-package net.programmer.igoodie.tsl.util;
+package net.programmer.igoodie.tsl.util.structure;
 
 public class Pair<L, R> {
 

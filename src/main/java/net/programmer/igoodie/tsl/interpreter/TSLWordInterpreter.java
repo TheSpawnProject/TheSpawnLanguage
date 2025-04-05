@@ -71,7 +71,7 @@ public class TSLWordInterpreter extends TSLInterpreter<TSLWord, TSLParserImpl.Wo
         TSLWord word = interpretToken(token);
 
         if (word == null) {
-            throw new TSLInternalException("Unknown word type %s",
+            throw new TSLInternalException("Unknown word type {}",
                     TSLLexer.VOCABULARY.getDisplayName(token.getType()));
         }
 

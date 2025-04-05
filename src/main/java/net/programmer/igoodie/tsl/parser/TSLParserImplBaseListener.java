@@ -293,6 +293,30 @@ public class TSLParserImplBaseListener implements TSLParserImplListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCaptureParams(TSLParserImpl.CaptureParamsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCaptureParams(TSLParserImpl.CaptureParamsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterGroup(TSLParserImpl.GroupContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -324,30 +348,6 @@ public class TSLParserImplBaseListener implements TSLParserImplListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitGroupExpression(TSLParserImpl.GroupExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterCaptureParams(TSLParserImpl.CaptureParamsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCaptureParams(TSLParserImpl.CaptureParamsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

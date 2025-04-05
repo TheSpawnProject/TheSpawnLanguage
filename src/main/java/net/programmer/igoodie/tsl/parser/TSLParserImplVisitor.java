@@ -149,6 +149,18 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCaptureRule(TSLParserImpl.CaptureRuleContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link TSLParserImpl#captureHeader}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TSLParserImpl#captureParams}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCaptureParams(TSLParserImpl.CaptureParamsContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link TSLParserImpl#group}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -166,18 +178,6 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitGroupExpression(TSLParserImpl.GroupExpressionContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TSLParserImpl#captureHeader}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TSLParserImpl#captureParams}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCaptureParams(TSLParserImpl.CaptureParamsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TSLParserImpl#captureCall}.
 	 * @param ctx the parse tree

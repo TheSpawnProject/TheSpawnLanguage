@@ -1,15 +1,15 @@
-package net.programmer.igoodie.tsl.std.action;
+package net.programmer.igoodie.tsl.std.OLD_action;
 
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.runtime.action.TSLAction;
+import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class WaitAction extends TSLAction {
+public class WaitAction extends OLD_TSLAction {
 
     private final long sleepTime;
 

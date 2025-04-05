@@ -2,7 +2,7 @@ package net.programmer.igoodie.tslsp;
 
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
-import net.programmer.igoodie.tsl.runtime.action.TSLAction;
+import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
@@ -24,7 +24,7 @@ public class TSLServerLauncher {
     static {
         DEBUG_TSL = new TSLPlatform("The Spawn Language", 1.5f);
         DEBUG_TSL.initializeStd();
-        DEBUG_TSL.registerAction("PRINT", (platform, args) -> new TSLAction(platform, args) {
+        DEBUG_TSL.registerAction("PRINT", (platform, args) -> new OLD_TSLAction(platform, args) {
             @Override
             public boolean perform(TSLEventContext ctx) throws TSLPerformingException {
                 System.out.println(">> " + String.join(" ", args));

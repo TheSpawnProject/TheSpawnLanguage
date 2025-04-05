@@ -1,9 +1,9 @@
-package net.programmer.igoodie.tsl.std.action;
+package net.programmer.igoodie.tsl.std.OLD_action;
 
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.runtime.action.TSLAction;
+import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.util.Utils;
 
@@ -13,9 +13,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 // CONCURRENTLY <action> [AND <action>]+ [DISPLAYING msg+]?
-public class ConcurrentlyAction extends TSLAction {
+public class ConcurrentlyAction extends OLD_TSLAction {
 
-    protected List<TSLAction> actions;
+    protected List<OLD_TSLAction> actions;
 
     public ConcurrentlyAction(TSLPlatform platform, List<String> args) throws TSLSyntaxException {
         super(platform, args);
@@ -42,7 +42,7 @@ public class ConcurrentlyAction extends TSLAction {
 
         for (int i = 0; i < actions.size(); i++) {
             int actionIndex = i;
-            TSLAction action = actions.get(i);
+            OLD_TSLAction action = actions.get(i);
 
             futures[i] = CompletableFuture.supplyAsync(() -> {
                 try {

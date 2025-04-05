@@ -1,23 +1,23 @@
-package net.programmer.igoodie.tsl.std.action;
+package net.programmer.igoodie.tsl.std.OLD_action;
 
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.runtime.action.TSLAction;
+import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLPredicate;
-import net.programmer.igoodie.tsl.util.Pair;
+import net.programmer.igoodie.tsl.util.structure.Pair;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
 // IF <C> THEN <A> [ELSE <A>]
-public class IfAction extends TSLAction {
+public class IfAction extends OLD_TSLAction {
 
     protected TSLPredicate condition;
-    protected TSLAction thenAction;
-    protected TSLAction elseAction;
+    protected OLD_TSLAction thenAction;
+    protected OLD_TSLAction elseAction;
 
     public IfAction(TSLPlatform platform, List<String> args) throws TSLSyntaxException {
         super(platform, args);

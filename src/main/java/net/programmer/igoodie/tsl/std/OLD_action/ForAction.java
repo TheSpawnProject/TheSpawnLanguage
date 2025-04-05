@@ -1,21 +1,21 @@
-package net.programmer.igoodie.tsl.std.action;
+package net.programmer.igoodie.tsl.std.OLD_action;
 
 import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.runtime.action.TSLAction;
+import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
 import java.util.List;
 
 // TODO: FOR <N> TIMES
 // TODO: FOR i FROM <N> TO <N> [INCREASING <N>]?
-public class ForAction extends TSLAction {
+public class ForAction extends OLD_TSLAction {
 
     protected String variableName;
     protected int from, to, inc;
-    protected TSLAction action;
+    protected OLD_TSLAction action;
 
     public ForAction(TSLPlatform platform, List<String> args) throws TSLSyntaxException {
         super(platform, args);
