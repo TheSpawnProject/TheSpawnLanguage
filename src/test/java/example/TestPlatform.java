@@ -3,7 +3,7 @@ package example;
 import example.action.PrintAction;
 import net.programmer.igoodie.goodies.runtime.GoodieElement;
 import net.programmer.igoodie.tsl.TSLPlatform;
-import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
+import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.util.LogFormatter;
 import org.junit.jupiter.api.BeforeAll;
 

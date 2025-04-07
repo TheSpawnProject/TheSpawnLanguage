@@ -2,7 +2,7 @@ package net.programmer.igoodie.tsl.runtime.predicate;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.runtime.OLD_TSLRule;
-import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
+import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
 import java.util.function.BiPredicate;

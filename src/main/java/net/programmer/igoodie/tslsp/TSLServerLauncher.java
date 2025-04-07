@@ -3,7 +3,7 @@ package net.programmer.igoodie.tslsp;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
-import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
+import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
 import net.programmer.igoodie.tsl.util.structure.Either;

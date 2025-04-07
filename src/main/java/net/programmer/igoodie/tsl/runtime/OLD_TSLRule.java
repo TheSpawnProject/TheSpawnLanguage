@@ -3,7 +3,7 @@ package net.programmer.igoodie.tsl.runtime;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
-import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
+import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLPredicate;
 

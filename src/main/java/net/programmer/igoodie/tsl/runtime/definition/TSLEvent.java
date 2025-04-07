@@ -1,4 +1,4 @@
-package net.programmer.igoodie.tsl.runtime.event;
+package net.programmer.igoodie.tsl.runtime.definition;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.goodies.util.StringUtilities;

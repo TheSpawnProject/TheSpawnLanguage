@@ -3,7 +3,7 @@ package net.programmer.igoodie.tsl;
 import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
-import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
+import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLComparator;
 import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
 
