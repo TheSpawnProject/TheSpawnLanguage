@@ -19,4 +19,8 @@ public class TSLExpression extends TSLWord {
         throw new IllegalStateException("CaptureIds aren't meant for evaluation.");
     }
 
+    public interface Evaluator {
+        String evaluate(String expression);
+    }
+
 }

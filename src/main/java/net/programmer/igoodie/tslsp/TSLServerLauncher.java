@@ -2,9 +2,11 @@ package net.programmer.igoodie.tslsp;
 
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
-import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
+import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
+import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.util.structure.Either;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.eclipse.lsp4j.launch.LSPLauncher;
 import org.eclipse.lsp4j.services.LanguageClient;
@@ -15,7 +17,10 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public class TSLServerLauncher {
 
@@ -23,16 +28,19 @@ public class TSLServerLauncher {
 
     static {
         DEBUG_TSL = new TSLPlatform("The Spawn Language", 1.5f);
-        DEBUG_TSL.initializeStd();
-        DEBUG_TSL.registerAction("PRINT", (platform, args) -> new OLD_TSLAction(platform, args) {
+        DEBUG_TSL.OLD_initializeStd();
+        DEBUG_TSL.registerAction("PRINT", (platform, args) -> new TSLAction(platform, args) {
             @Override
-            public boolean perform(TSLEventContext ctx) throws TSLPerformingException {
-                System.out.println(">> " + String.join(" ", args));
-                return true;
+            public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+                System.out.println(">> " + args.stream()
+                        .map(Either::getLeftOrThrow)
+                        .map(word -> word.evaluate(ctx))
+                        .collect(Collectors.joining(" ")));
+                return Collections.emptyList();
             }
         });
         DEBUG_TSL.registerEvent(new TSLEvent("Dummy Event")
-                .addPropertyType(TSLEvent.PropertyBuilder.STRING.create("actor")));
+                .addPropertyType(TSLEvent.Property.Builder.STRING.create("actor")));
     }
 
     public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {

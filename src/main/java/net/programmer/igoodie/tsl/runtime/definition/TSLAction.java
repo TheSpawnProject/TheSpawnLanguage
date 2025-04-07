@@ -35,7 +35,10 @@ public abstract class TSLAction {
         return displaying;
     }
 
-    public abstract List<TSLWord> perform(TSLEventContext ctx)
-            throws TSLPerformingException;
+    public abstract List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException;
+
+    public interface Supplier<T extends TSLAction> {
+        T createAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException;
+    }
 
 }

@@ -61,32 +61,36 @@ public class TSLEvent {
             this.writer.write(eventArgs, propertyName, value);
             return value;
         }
-    }
 
-    public static class PropertyBuilder<T> {
+        public static class Builder<T> {
 
-        protected final Property.Reader<T> reader;
-        protected final Property.Writer<T> writer;
+            protected final Property.Reader<T> reader;
+            protected final Property.Writer<T> writer;
 
-        public PropertyBuilder(Property.Reader<T> reader, Property.Writer<T> writer) {
-            this.reader = reader;
-            this.writer = writer;
+            protected Builder(Property.Reader<T> reader, Property.Writer<T> writer) {
+                this.reader = reader;
+                this.writer = writer;
+            }
+
+            public Property<T> create(String propertyName) {
+                return new Property<>(propertyName, this.reader, this.writer);
+            }
+
+            public static <T> Builder<T> of(Property.Reader<T> reader, Property.Writer<T> writer) {
+                return new Builder<>(reader, writer);
+            }
+
+            public static final Builder<Boolean> BOOLEAN = of(GoodieObject::getBoolean, GoodieObject::put);
+            public static final Builder<String> STRING = of(GoodieObject::getString, GoodieObject::put);
+            public static final Builder<Character> CHAR = of(GoodieObject::getCharacter, GoodieObject::put);
+            public static final Builder<Byte> BYTE = of(GoodieObject::getByte, GoodieObject::put);
+            public static final Builder<Short> SHORT = of(GoodieObject::getShort, GoodieObject::put);
+            public static final Builder<Integer> INT = of(GoodieObject::getInteger, GoodieObject::put);
+            public static final Builder<Long> LONG = of(GoodieObject::getLong, GoodieObject::put);
+            public static final Builder<Float> FLOAT = of(GoodieObject::getFloat, GoodieObject::put);
+            public static final Builder<Double> DOUBLE = of(GoodieObject::getDouble, GoodieObject::put);
+
         }
-
-        public Property<T> create(String propertyName) {
-            return new Property<>(propertyName, this.reader, this.writer);
-        }
-
-        public static final PropertyBuilder<Boolean> BOOLEAN = new PropertyBuilder<>(GoodieObject::getBoolean, GoodieObject::put);
-        public static final PropertyBuilder<String> STRING = new PropertyBuilder<>(GoodieObject::getString, GoodieObject::put);
-        public static final PropertyBuilder<Character> CHAR = new PropertyBuilder<>(GoodieObject::getCharacter, GoodieObject::put);
-        public static final PropertyBuilder<Byte> BYTE = new PropertyBuilder<>(GoodieObject::getByte, GoodieObject::put);
-        public static final PropertyBuilder<Short> SHORT = new PropertyBuilder<>(GoodieObject::getShort, GoodieObject::put);
-        public static final PropertyBuilder<Integer> INT = new PropertyBuilder<>(GoodieObject::getInteger, GoodieObject::put);
-        public static final PropertyBuilder<Long> LONG = new PropertyBuilder<>(GoodieObject::getLong, GoodieObject::put);
-        public static final PropertyBuilder<Float> FLOAT = new PropertyBuilder<>(GoodieObject::getFloat, GoodieObject::put);
-        public static final PropertyBuilder<Double> DOUBLE = new PropertyBuilder<>(GoodieObject::getDouble, GoodieObject::put);
-
     }
 
 }
