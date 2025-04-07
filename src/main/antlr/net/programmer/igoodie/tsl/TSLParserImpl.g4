@@ -50,7 +50,7 @@ predicateOperation: IDENTIFIER binaryOperator predicateWord;
 // TODO: Operators
 binaryOperator: IDENTIFIER+ /*| genericOperator*/;
 
-captureRule: captureHeader SYMBOL_EQUALS actionArgs (EMPTY_LINES+ | EOF);
+captureRule: captureHeader SYMBOL_EQUALS actionArgs;
 captureHeader: (id = CAPTURE_IDENTIFIER) captureParams?;
 captureParams: SIGN_LPARAN (IDENTIFIER (SIGN_COMMA IDENTIFIER)*)? SIGN_RPARAN;
 
