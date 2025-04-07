@@ -1,12 +1,22 @@
 package parser;
 
+import net.programmer.igoodie.tsl.TSLPlatform;
+import net.programmer.igoodie.tsl.exception.TSLPerformingException;
+import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
+import net.programmer.igoodie.tsl.interpreter.TSLWordInterpreter;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
+import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.std.action.WaitAction;
+import net.programmer.igoodie.tsl.util.structure.Either;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Objects;
 
 public class TSLParserTests {
 
@@ -26,14 +36,18 @@ public class TSLParserTests {
     }
 
     @Test
-    public void shouldInitiateWaitAction() {
-        String script = "#*WAIT*# \n 10 seconds";
+    public void shouldInitiateWaitAction() throws TSLPerformingException, TSLSyntaxException {
+        String script = "#*WAIT*# 2 seconds";
 
         TSLParser parser = TSLParser.fromScript(script);
+        List<TSLWord> actionArgs = parser.parseWords();
 
-        List<TSLWord> words = parser.parseWords();
-        System.out.println(words.size() + " words");
-        words.forEach(System.out::println);
+        TSLPlatform platform = new TSLPlatform("Dummy Platform", 1.0f);
+        WaitAction waitAction = new WaitAction(platform,
+                actionArgs.stream().map(Either::<TSLWord, TSLAction>left).toList());
+
+        TSLEventContext ctx = new TSLEventContext(platform, "Dummy Event");
+        waitAction.perform(ctx);
     }
 
 }

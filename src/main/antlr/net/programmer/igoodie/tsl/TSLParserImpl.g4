@@ -66,7 +66,7 @@ captureCall: (id = CAPTURE_IDENTIFIER) captureArgs?;
 captureArgs: SIGN_LPARAN (word (SIGN_COMMA word)*)? SIGN_RPARAN;
 
 // ---------------------
-// Tokens
+// Atoms
 // ---------------------
 
 word: EXPRESSION | PLAIN_WORD | IDENTIFIER | PLACEHOLDER | captureCall | group;

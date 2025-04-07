@@ -21,7 +21,7 @@ public class TSLCaptureInterpreter extends TSLInterpreter<TSLCapture, TSLParserI
 
     @Override
     public TSLCapture visitCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx) {
-        this.id = (TSLCaptureId) new TSLWordInterpreter().interpretToken(ctx.id);
+        this.id = (TSLCaptureId) new TSLWordInterpreter().parseWord(ctx.id);
         this.params = ctx.captureParams().IDENTIFIER().stream()
                 .map(ParseTree::getText)
                 .toList();

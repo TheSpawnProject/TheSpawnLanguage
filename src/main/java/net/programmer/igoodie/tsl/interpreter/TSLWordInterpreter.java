@@ -27,7 +27,7 @@ public class TSLWordInterpreter extends TSLInterpreter<TSLWord, TSLParserImpl.Wo
 
     @Override
     public TSLWord visitCaptureCall(TSLParserImpl.CaptureCallContext ctx) {
-        TSLCaptureId captureId = (TSLCaptureId) this.interpretToken(ctx.id);
+        TSLCaptureId captureId = (TSLCaptureId) this.parseWord(ctx.id);
 
         TSLParserImpl.CaptureArgsContext captureArgsCtx = ctx.captureArgs();
         List<TSLParserImpl.WordContext> wordCtx = captureArgsCtx == null ? Collections.emptyList() : captureArgsCtx.word();
@@ -37,7 +37,7 @@ public class TSLWordInterpreter extends TSLInterpreter<TSLWord, TSLParserImpl.Wo
         return (this.word = new TSLCaptureCall(captureId, arguments).setSource(ctx));
     }
 
-    protected TSLWord interpretToken(Token token) {
+    public TSLWord parseWord(Token token) {
         String text = token.getText();
 
         if (token.getType() == TSLLexer.PLACEHOLDER) {
@@ -68,7 +68,7 @@ public class TSLWordInterpreter extends TSLInterpreter<TSLWord, TSLParserImpl.Wo
     public TSLWord visitTerminal(TerminalNode node) {
         Token token = node.getSymbol();
 
-        TSLWord word = interpretToken(token);
+        TSLWord word = parseWord(token);
 
         if (word == null) {
             throw new TSLInternalException("Unknown word type {}",
