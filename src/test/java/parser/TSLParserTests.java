@@ -8,11 +8,13 @@ import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
+import net.programmer.igoodie.tsl.runtime.word.TSLGroup;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
 import net.programmer.igoodie.tsl.std.action.WaitAction;
 import net.programmer.igoodie.tsl.util.structure.Either;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -32,6 +34,21 @@ public class TSLParserTests {
         System.out.println("TOKENS");
         for (Token token : parser.getTokens()) {
             System.out.println(token + " " + TSLLexer.VOCABULARY.getDisplayName(token.getType()));
+        }
+    }
+
+    @Test
+    public void shouldParseGroupsCorrectly() {
+        String script = "%Testing my expressions, | ${Math.random()} |%";
+
+        TSLParser parser = TSLParser.fromScript(script);
+        TSLWord word = parser.parseWords().get(0);
+
+        TSLPlatform platform = new TSLPlatform("Dummy Platform", 1.0f);
+        TSLEventContext ctx = new TSLEventContext(platform, "Foo Bar");
+
+        if (word instanceof TSLGroup group) {
+            System.out.println(group.evaluate(ctx));
         }
     }
 

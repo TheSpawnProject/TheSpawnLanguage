@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.word;
 
+import net.programmer.igoodie.goodies.exception.YetToBeImplementedException;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
 public class TSLExpression extends TSLWord {
@@ -16,7 +17,7 @@ public class TSLExpression extends TSLWord {
 
     @Override
     public String evaluate(TSLEventContext ctx) {
-        throw new IllegalStateException("CaptureIds aren't meant for evaluation.");
+        throw new YetToBeImplementedException();
     }
 
     public interface Evaluator {

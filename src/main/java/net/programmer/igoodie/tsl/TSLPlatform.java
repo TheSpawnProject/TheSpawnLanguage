@@ -20,6 +20,7 @@ public class TSLPlatform {
 
     @Deprecated
     private final Map<String, OLD_TSLAction.ExpressionEvaluator> OLD_expressionEvaluators;
+
     @Deprecated
     private final Map<String, TSLComparator.Supplier<?>> OLD_comparatorDefinitions;
 
