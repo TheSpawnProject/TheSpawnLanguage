@@ -6,6 +6,9 @@ import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.predicate.TSLComparator;
 import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
+import net.programmer.igoodie.tsl.std.action.ConcurrentlyAction;
+import net.programmer.igoodie.tsl.std.action.SequentiallyAction;
+import net.programmer.igoodie.tsl.std.action.WaitAction;
 
 import java.util.*;
 
@@ -66,6 +69,11 @@ public class TSLPlatform {
         return comparator;
     }
 
+    public <T extends TSLExpression.Evaluator> T registerExpressionEvaluator(T evaluator) {
+        this.expressionEvaluators.add(evaluator);
+        return evaluator;
+    }
+
     /* ------------------------ */
 
     public Optional<TSLAction.Supplier<?>> getActionDefinition(String actionName) {
@@ -84,6 +92,10 @@ public class TSLPlatform {
     @Deprecated
     public Optional<TSLComparator.Supplier<?>> getComparatorDefinition(String symbol) {
         return Optional.ofNullable(this.OLD_comparatorDefinitions.get(symbol.toUpperCase()));
+    }
+
+    public List<TSLExpression.Evaluator> getExpressionEvaluators() {
+        return expressionEvaluators;
     }
 
     @Deprecated
@@ -107,6 +119,12 @@ public class TSLPlatform {
 //        this.registerComparator(">=", GteComparator::new);
 //        this.registerComparator("<", LtComparator::new);
 //        this.registerComparator("<=", LteComparator::new);
+    }
+
+    public void initializeStd() {
+        this.registerAction("WAIT", WaitAction::new);
+        this.registerAction("SEQUENTIALLY", SequentiallyAction::new);
+        this.registerAction("CONCURRENTLY", ConcurrentlyAction::new);
     }
 
 }

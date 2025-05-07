@@ -19,4 +19,9 @@ public class TSLPlainWord extends TSLWord {
         return this.value;
     }
 
+    public static boolean isKeyword(TSLWord word, String expectedKeyword) {
+        if (!(word instanceof TSLPlainWord)) return false;
+        return ((TSLPlainWord) word).getValue().equalsIgnoreCase(expectedKeyword);
+    }
+
 }

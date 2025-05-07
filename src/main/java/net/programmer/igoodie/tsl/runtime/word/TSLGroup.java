@@ -42,8 +42,7 @@ public class TSLGroup extends TSLWord {
         protected final String content;
 
         public StringContent(String content) {
-            this.content = content
-            ;
+            this.content = content;
         }
 
         @Override

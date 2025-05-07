@@ -1,7 +1,7 @@
 # Will import captures and rules from external.tsl
 #! INCLUDE %./external.tsl%
 
-PRINT %|$myName| says hi to y'all!%
+PRINT %| $myName | says hi to y'all!%
  ON Donation
 
 WRITE %./myFile.txt% %Hey there!% YIELDS $writeResult
@@ -9,11 +9,17 @@ WRITE %./myFile.txt% %Hey there!% YIELDS $writeResult
  ON Dummy Event
  WITH enum = 1
 
-$print(%Yep he says hi to y'all!%)
+$print(%Yep! the one who says hi to y'all%)
  ON Dummy Event
  WITH enum = 2
 
-FOR ${let i = 1; let n = 10; n} TIMES
+FOR ${let i = 1; const n = 10; n} TIMES
  DROP %minecraft:diamond% ${i++}
  ON Daytime Update
  WITH time = 12000
+
+CONCURRENTLY
+ (PRINT %Hello world!%)
+ AND
+ (WRITE %./myFile.result.txt% $writeResult)
+ ON Dummy Event

@@ -12,17 +12,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/*
+ * WAIT <number> <time_unit>
+ * 10 milliseconds
+ * 10 seconds
+ * 10 minutes
+ */
 public class WaitAction extends TSLAction {
 
     protected final TSLWord unitWord;
     protected final TSLWord sleepTimeWord;
 
-    /*
-     * WAIT <number> <time_unit>
-     * 10 milliseconds
-     * 10 seconds
-     * 10 minutes
-     */
     public WaitAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException {
         super(platform, args);
 
