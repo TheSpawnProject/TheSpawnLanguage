@@ -1,4 +1,4 @@
-package parser;
+package unit;
 
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
@@ -30,6 +30,34 @@ public class TSLParserTests {
         System.out.println("TOKENS");
         for (Token token : parser.readAllTokens()) {
             System.out.println(token + " " + TSLLexer.VOCABULARY.getDisplayName(token.getType()));
+        }
+    }
+
+    @Test
+    public void shouldParseCapturesCorrectly() {
+        String script = """
+                $summonMob(mobId, name) = (
+                    SUMMON {{mobId}}
+                    DISPLAYING %[{text:"| {{name}} | spawned!", color:"blue"}]%
+                )
+                
+                $summonMobWithItem(mobId, name, itemId) = (
+                    SUMMON {{mobId}} ~ ~ ~ %{HandItems:[{id:"| {{itemId}} |",Count:1b},{}]}%
+                    DISPLAYING %[{text:"| {{name}} | spawned!", color:"blue"}]%
+                )
+                
+                EITHER $summonMob(zombie, Zombie)
+                 OR $summonMobWithItem(skeleton, Skeleton, minecraft:bow)
+                 OR $summonMob(minecraft:bat, Bat)
+                 OR $summonMob(minecraft:blaze, Blaze)
+                 ON Twitch Chat Message
+                 WITH message PREFIX %!mob%
+                """;
+
+        TSLParser parser = TSLParser.fromScript(script);
+
+        for (TSLWord word : parser.parseWords()) {
+            System.out.println(word.getSource());
         }
     }
 

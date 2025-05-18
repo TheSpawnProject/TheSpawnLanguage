@@ -21,7 +21,7 @@ SINGLELINE_COMMENT: '#' ~[!*] ~[\r\n\u2028\u2029]* -> channel(HIDDEN);
 MULTILINE_COMMENT: '#*' .*? '*#' -> channel(HIDDEN);
 TSLDOC_COMMENT: '#**' .*? '*#';
 
-EMPTY_LINES: RN RN+;
+EMPTY_LINES: RN HS* (RN HS*)+;
 NEW_LINE: RN -> skip;
 HORIZONTAL_SPACES: HS+ -> skip;
 
@@ -50,7 +50,7 @@ SYMBOL_ASTERIKS: '*';
 fragment DIGIT: [0-9];
 fragment ALPHA: [A-Z];
 fragment ALPHANUMERIC: DIGIT | ALPHA;
-fragment IDENTIFIER_CHAR: ALPHANUMERIC | [_];
+fragment IDENTIFIER_CHAR: ALPHANUMERIC | [_:];
 fragment HS: [ \t];
 fragment RN: '\r'? '\n';
 
@@ -67,8 +67,8 @@ CAPTURE_IDENTIFIER: '$' IDENTIFIER_CHAR+;
 // TEST_1 | FOO
 IDENTIFIER: ALPHA IDENTIFIER_CHAR+;
 
-// 99 | TEST_1 | FOO
-PLAIN_WORD: IDENTIFIER_CHAR+;
+// 99 | TEST_1 | FOO | ~
+PLAIN_WORD: IDENTIFIER_CHAR+ | '~';
 
 SIGN_AT: '@';
 SIGN_DOLLAR: '$';

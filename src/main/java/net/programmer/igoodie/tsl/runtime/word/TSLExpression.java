@@ -1,6 +1,5 @@
 package net.programmer.igoodie.tsl.runtime.word;
 
-import net.programmer.igoodie.goodies.exception.YetToBeImplementedException;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
