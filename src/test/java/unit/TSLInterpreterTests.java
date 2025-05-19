@@ -1,9 +1,11 @@
 package unit;
 
+import net.programmer.igoodie.tsl.interpreter.TSLActionInterpreter;
 import net.programmer.igoodie.tsl.interpreter.TSLCaptureInterpreter;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
 import net.programmer.igoodie.tsl.runtime.TSLCapture;
+import net.programmer.igoodie.tsl.runtime.defer.TSLActionRef;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,30 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 public class TSLInterpreterTests {
+
+    @Test
+    public void shouldInterpretActionRef() {
+        String script = """
+                DO (DROP diamond
+                    YIELDS $foo
+                    DISPLAYING %Diamonds!%)
+                    DISPLAYING %Diamonds?%
+                ON Donation
+                """;
+
+        TSLActionInterpreter interpreter = new TSLActionInterpreter();
+
+        TSLLexer lexer = new TSLLexer(CharStreams.fromString(script));
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        TSLParserImpl parserImpl = new TSLParserImpl(tokenStream);
+
+        TSLParserImpl.TslRulesContext ast = parserImpl.tslRules();
+        List<TSLParserImpl.TslRuleContext> rulesAst = ast.tslRule();
+
+        TSLActionRef actionRef = interpreter.interpret(rulesAst.get(0).reactionRule().action());
+
+        System.out.println(actionRef);
+    }
 
     @Test
     public void shouldInterpretCapture() {

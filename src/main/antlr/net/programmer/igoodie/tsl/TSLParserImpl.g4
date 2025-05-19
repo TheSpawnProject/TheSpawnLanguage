@@ -34,10 +34,10 @@ tslDirectiveArgs: (word | SYMBOL_ASTERIKS | KEYWORD_FROM)*;
 reactionRule: action event;
 
 action: actionBody actionYields? actionDisplaying?;
-actionBody: (actionId | captureCall) actionArgs;
+actionBody: actionId actionArgs;
 actionId: IDENTIFIER;
 actionArgs: (word | actionNest)*;
-actionNest: (SIGN_LPARAN action? SIGN_RPARAN);
+actionNest: SIGN_LPARAN action SIGN_RPARAN;
 actionYields: KEYWORD_YIELDS (consumer = CAPTURE_IDENTIFIER | EXPRESSION);
 actionDisplaying: KEYWORD_DISPLAYING word;
 
