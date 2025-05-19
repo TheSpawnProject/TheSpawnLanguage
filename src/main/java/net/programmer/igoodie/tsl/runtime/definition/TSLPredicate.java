@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.definition;
 
+import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
@@ -7,6 +8,7 @@ import net.programmer.igoodie.tsl.runtime.word.TSLWord;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 
 public abstract class TSLPredicate {
 
@@ -135,6 +137,14 @@ public abstract class TSLPredicate {
             String value = this.rightHand.evaluate(ctx);
 
             return this.operator.compare(fieldValue, value);
+        }
+
+    }
+
+    public interface Ref extends Function<TSLPlatform, Optional<TSLPredicate>> {
+
+        default Optional<TSLPredicate> resolve(TSLPlatform platform) {
+            return this.apply(platform);
         }
 
     }

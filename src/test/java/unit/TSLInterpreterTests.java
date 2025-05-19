@@ -2,9 +2,11 @@ package unit;
 
 import net.programmer.igoodie.tsl.interpreter.TSLActionInterpreter;
 import net.programmer.igoodie.tsl.interpreter.TSLCaptureInterpreter;
+import net.programmer.igoodie.tsl.interpreter.TSLRuleInterpreter;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
 import net.programmer.igoodie.tsl.runtime.TSLCapture;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -66,6 +68,32 @@ public class TSLInterpreterTests {
 
         System.out.println(capture1);
         System.out.println(capture2);
+    }
+
+    @Test
+    public void shouldInterpretRuleRef() {
+        String script = """
+                DO (DROP diamond
+                    YIELDS $foo
+                    DISPLAYING %Diamonds!%)
+                    DISPLAYING %Diamonds?%
+                ON Donation
+                WITH ${event.amount >= 999}
+                WITH amount >= 999
+                WITH amount <= 1999
+                WITH amount = 1200
+                """;
+
+        TSLLexer lexer = new TSLLexer(CharStreams.fromString(script));
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        TSLParserImpl parserImpl = new TSLParserImpl(tokenStream);
+
+        TSLParserImpl.TslRulesContext ast = parserImpl.tslRules();
+        TSLParserImpl.ReactionRuleContext ruleTree = ast.tslRule().get(0).reactionRule();
+
+        TSLRule.Ref ruleRef = new TSLRuleInterpreter().interpret(ruleTree);
+
+        System.out.println(ruleRef);
     }
 
 }
