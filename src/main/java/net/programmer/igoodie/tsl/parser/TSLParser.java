@@ -1,6 +1,9 @@
 package net.programmer.igoodie.tsl.parser;
 
+import net.programmer.igoodie.tsl.interpreter.TSLRulesetInterpreter;
 import net.programmer.igoodie.tsl.interpreter.TSLWordInterpreter;
+import net.programmer.igoodie.tsl.runtime.TSLDeferred;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
 import org.antlr.v4.runtime.*;
 
@@ -32,9 +35,14 @@ public class TSLParser {
     }
 
     public List<TSLWord> parseWords() {
-        TSLParserImpl.TslWordsContext ast = this.parserImpl.tslWords();
+        TSLParserImpl.TslWordsContext wordsTree = this.parserImpl.tslWords();
         TSLWordInterpreter interpreter = new TSLWordInterpreter();
-        return ast.word().stream().map(interpreter::interpret).toList();
+        return wordsTree.word().stream().map(interpreter::interpret).toList();
+    }
+
+    public TSLDeferred<TSLRuleset> parseRuleset() {
+        TSLParserImpl.TslRulesetContext rulesetTree = this.parserImpl.tslRuleset();
+        return new TSLRulesetInterpreter().interpret(rulesetTree);
     }
 
     public static TSLParser fromScript(String script) {

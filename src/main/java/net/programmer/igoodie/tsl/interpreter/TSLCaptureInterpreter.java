@@ -10,6 +10,7 @@ import net.programmer.igoodie.tsl.util.structure.Either;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +43,11 @@ public class TSLCaptureInterpreter extends TSLInterpreter<TSLDeferred<TSLCapture
     public TSLDeferred<TSLCapture> visitCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx) {
         this.id = (TSLCaptureId) new TSLWordInterpreter().parseWord(ctx.id);
 
-        this.params = ctx.captureParams().IDENTIFIER().stream()
+        TSLParserImpl.CaptureParamsContext captureParamsTree = ctx.captureParams();
+
+        this.params = captureParamsTree == null
+                ? Collections.emptyList()
+                : captureParamsTree.IDENTIFIER().stream()
                 .map(ParseTree::getText)
                 .toList();
 

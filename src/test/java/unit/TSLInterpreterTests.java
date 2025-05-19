@@ -5,11 +5,13 @@ import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.interpreter.TSLActionInterpreter;
 import net.programmer.igoodie.tsl.interpreter.TSLCaptureInterpreter;
 import net.programmer.igoodie.tsl.interpreter.TSLRuleInterpreter;
+import net.programmer.igoodie.tsl.interpreter.TSLRulesetInterpreter;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
 import net.programmer.igoodie.tsl.runtime.TSLCapture;
 import net.programmer.igoodie.tsl.runtime.TSLDeferred;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
@@ -128,7 +130,31 @@ public class TSLInterpreterTests {
 
     @Test
     public void shouldInterpretRuleset() {
+        String script = """
+                DROP diamond ON Donation WITH amount = 1
+                
+                $x = 5
+                
+                DROP diamond ON Donation WITH amount = 2
+                
+                $y = FOO BAR
+                
+                DROP diamond ON Donation WITH amount = 2
+                
+                $z = (DROP diamond)
+                
+                DO $z ON Donation WITH amount = 4
+                """;
 
+        TSLLexer lexer = new TSLLexer(CharStreams.fromString(script));
+        CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+        TSLParserImpl parserImpl = new TSLParserImpl(tokenStream);
+
+        TSLParserImpl.TslRulesetContext rulesetTree = parserImpl.tslRuleset();
+
+        TSLDeferred<TSLRuleset> deferredRuleset = new TSLRulesetInterpreter().interpret(rulesetTree);
+
+        System.out.println(deferredRuleset);
     }
 
 }
