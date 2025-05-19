@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'java-library'
     id 'maven-publish'
+    id 'antlr'
 }
 
 group 'net.programmer.igoodie'
@@ -18,6 +19,8 @@ repositories {
 }
 
 dependencies {
+    antlr "org.antlr:antlr4:4.13.1"
+
     api 'com.github.iGoodie.RuntimeGoodies:core:1.3.9'
     api 'com.github.iGoodie.RuntimeGoodies:json:1.3.9'
 
@@ -25,6 +28,50 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 
     implementation 'org.eclipse.lsp4j:org.eclipse.lsp4j:0.23.1'
+}
+
+sourceSets {
+    main {
+        java.srcDirs += "${projectDir}/src/main/antlr"
+        java.srcDirs += "${projectDir}/src/main/typescript"
+    }
+}
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+    arguments += ["-visitor",
+                  "-long-messages",
+                  "-Xexact-output-dir",
+                  "-package", "net.programmer.igoodie.tsl.parser"]
+    outputDirectory = file("${projectDir}/src/main/antlr/net/programmer/igoodie/tsl") as File
+
+    doLast {
+        File generatedDir = outputDirectory
+        File targetDir = file("$projectDir/src/main/java/net/programmer/igoodie/tsl/parser") as File
+
+        def filesToMove = [
+                "/TSLLexer.java",
+                "/TSLParserImpl.java",
+                "/TSLParserImplBaseListener.java",
+                "/TSLParserImplBaseVisitor.java",
+                "/TSLParserImplListener.java",
+                "/TSLParserImplVisitor.java"
+        ]
+
+        filesToMove.each { relativePath ->
+            def sourceFile = new File(generatedDir, relativePath)
+            def targetFile = new File(targetDir, sourceFile.name)
+            println(targetFile)
+
+            if (sourceFile.exists()) {
+                println "Moving ${sourceFile} -> ${targetFile}"
+                targetFile.delete()
+                sourceFile.renameTo(targetFile)
+            } else {
+                println "File not found: ${sourceFile}"
+            }
+        }
+    }
 }
 
 test {

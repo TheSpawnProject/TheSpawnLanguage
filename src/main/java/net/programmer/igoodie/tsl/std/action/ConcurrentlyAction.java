@@ -4,41 +4,32 @@ import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.runtime.action.TSLAction;
+import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
+import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
+import net.programmer.igoodie.tsl.runtime.word.TSLPlainWord;
+import net.programmer.igoodie.tsl.runtime.word.TSLWord;
 import net.programmer.igoodie.tsl.util.Utils;
+import net.programmer.igoodie.tsl.util.structure.Either;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
-// CONCURRENTLY <action> [AND <action>]+ [DISPLAYING msg+]?
-public class ConcurrentlyAction extends TSLAction {
+/*
+ * CONCURRENTLY <action>
+ * [AND <action>]+
+ */
+public class ConcurrentlyAction extends SequentiallyAction {
 
-    protected List<TSLAction> actions;
-
-    public ConcurrentlyAction(TSLPlatform platform, List<String> args) throws TSLSyntaxException {
+    public ConcurrentlyAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException {
         super(platform, args);
-        args = consumeMessagePart(args);
-
-        this.actions = new ArrayList<>();
-
-        List<List<String>> actionChunks = Utils.splitIntoChunks(args, arg -> arg.equalsIgnoreCase("AND"));
-
-        for (List<String> actionChunk : actionChunks) {
-            if (actionChunk.isEmpty()) {
-                throw new TSLSyntaxException("");
-            }
-
-            TSLAction action = TSLParser.immediate(platform, actionChunk).parseAction();
-            this.actions.add(action);
-        }
     }
 
     @Override
-    public boolean perform(TSLEventContext ctx) throws TSLPerformingException {
-        boolean[] successes = new boolean[actions.size()];
+    public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
         CompletableFuture<?>[] futures = new CompletableFuture[actions.size()];
 
         for (int i = 0; i < actions.size(); i++) {
@@ -47,9 +38,9 @@ public class ConcurrentlyAction extends TSLAction {
 
             futures[i] = CompletableFuture.supplyAsync(() -> {
                 try {
-                    boolean success = action.perform(ctx);
-                    successes[actionIndex] = success;
-                    return success;
+                    List<TSLWord> yield = action.perform(ctx);
+                    // TODO: Handle yield somehow
+                    return yield;
 
                 } catch (TSLPerformingException e) {
                     throw new CompletionException(e);
@@ -59,11 +50,7 @@ public class ConcurrentlyAction extends TSLAction {
 
         CompletableFuture.allOf(futures).join();
 
-        for (boolean success : successes) {
-            if (!success) return false;
-        }
-
-        return true;
+        return Collections.emptyList();
     }
 
 }

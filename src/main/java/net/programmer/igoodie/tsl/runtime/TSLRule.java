@@ -1,25 +1,35 @@
 package net.programmer.igoodie.tsl.runtime;
 
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
-import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.runtime.action.TSLAction;
-import net.programmer.igoodie.tsl.runtime.event.TSLEvent;
+import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
+import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
+import net.programmer.igoodie.tsl.runtime.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.predicate.TSLPredicate;
+import net.programmer.igoodie.tsl.runtime.word.TSLDoc;
+import net.programmer.igoodie.tsl.runtime.word.TSLWord;
 
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 public class TSLRule {
 
-    protected TSLEvent event;
-    protected List<TSLPredicate> predicates;
-    protected TSLAction action;
+    protected TSLDoc tslDoc;
 
-    public TSLRule(TSLEvent event) {
+    protected final TSLEvent event;
+    protected final List<TSLPredicate> predicates;
+    protected final TSLAction action;
+
+    public TSLRule(TSLEvent event, List<TSLPredicate> predicates, TSLAction action) {
         this.event = event;
-        this.predicates = new LinkedList<>();
+        this.predicates = predicates;
+        this.action = action;
+    }
+
+    public TSLDoc getTslDoc() {
+        return tslDoc;
+    }
+
+    public TSLAction getAction() {
+        return action;
     }
 
     public TSLEvent getEvent() {
@@ -27,40 +37,26 @@ public class TSLRule {
     }
 
     public List<TSLPredicate> getPredicates() {
-        return Collections.unmodifiableList(predicates);
+        return predicates;
     }
 
-    public void setAction(TSLAction action) {
-        if (this.action != null)
-            throw new IllegalStateException("Action for this event is already set.");
-        this.action = action;
+    public void attachDoc(TSLDoc tslDoc) {
+        this.tslDoc = tslDoc;
     }
 
-    public void addPredicate(TSLPredicate predicate) throws TSLSyntaxException {
-        if (this.event.getPropertyType(predicate.getFieldName()) == null)
-            throw new TSLSyntaxException("This rule's event does not support given property -> {}", predicate.getFieldName());
-
-        this.predicates.add(predicate);
-    }
-
-    public List<String> perform(TSLEventContext ctx) throws TSLPerformingException {
+    public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
         ctx.setPerformingRule(this);
 
         if (!ctx.getEventName().equalsIgnoreCase(this.event.getName())) {
             return null;
         }
 
-        for (TSLPredicate predicate : predicates) {
-            if (!predicate.test(this, ctx)) {
-                return null;
-            }
+        for (TSLPredicate predicate : this.predicates) {
+            boolean test = predicate.test(ctx);
+            if (!test) return null;
         }
 
-        if (action.perform(ctx)) {
-            return action.getCalculatedMessage(ctx);
-        }
-
-        return null;
+        return this.action.perform(ctx);
     }
 
 }
