@@ -1,5 +1,7 @@
 package unit;
 
+import net.programmer.igoodie.tsl.TSLPlatform;
+import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.interpreter.TSLActionInterpreter;
 import net.programmer.igoodie.tsl.interpreter.TSLCaptureInterpreter;
 import net.programmer.igoodie.tsl.interpreter.TSLRuleInterpreter;
@@ -8,10 +10,14 @@ import net.programmer.igoodie.tsl.parser.TSLParserImpl;
 import net.programmer.igoodie.tsl.runtime.TSLCapture;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
+import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
+import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
+import net.programmer.igoodie.tsl.runtime.word.TSLWord;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 public class TSLInterpreterTests {
@@ -94,6 +100,29 @@ public class TSLInterpreterTests {
         TSLRule.Ref ruleRef = new TSLRuleInterpreter().interpret(ruleTree);
 
         System.out.println(ruleRef);
+
+        TSLPlatform platform = new TSLPlatform("Test Platform", 1.0f);
+
+        platform.initializeStd();
+        platform.registerAction("DROP", (_platform, args) -> new TSLAction(_platform, args) {
+            @Override
+            public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+                TSLWord droppedItemId = args.get(0).getLeft().orElseThrow();
+                System.out.println("Dropping items " + droppedItemId.evaluate(ctx));
+                return Collections.singletonList(droppedItemId);
+            }
+        });
+        platform.registerEvent(new TSLEvent("Donation")
+                .addPropertyType(TSLEvent.Property.Builder.INT.create("amount")));
+        platform.registerExpressionEvaluator(expression -> "false");
+
+        TSLRule rule = ruleRef.resolve(platform).orElseThrow();
+
+        TSLEventContext ctx = new TSLEventContext(platform, "Donation");
+        ctx.getEventArgs().put("amount", 1200);
+        List<TSLWord> yield = rule.perform(ctx);
+
+        System.out.println("Yield " + yield);
     }
 
 }

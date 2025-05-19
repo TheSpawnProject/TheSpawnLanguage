@@ -44,6 +44,7 @@ public class TSLRule {
 
         for (TSLPredicate predicate : this.predicates) {
             boolean test = predicate.test(ctx);
+            if (!test) return null;
         }
 
         return this.action.perform(ctx);

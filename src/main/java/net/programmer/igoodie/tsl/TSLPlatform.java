@@ -6,6 +6,7 @@ import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
 import net.programmer.igoodie.tsl.std.action.ConcurrentlyAction;
+import net.programmer.igoodie.tsl.std.action.DoAction;
 import net.programmer.igoodie.tsl.std.action.SequentiallyAction;
 import net.programmer.igoodie.tsl.std.action.WaitAction;
 
@@ -109,6 +110,7 @@ public class TSLPlatform {
         this.registerAction("WAIT", WaitAction::new);
         this.registerAction("SEQUENTIALLY", SequentiallyAction::new);
         this.registerAction("CONCURRENTLY", ConcurrentlyAction::new);
+        this.registerAction("DO", DoAction::new);
     }
 
 }
