@@ -5,7 +5,7 @@ import net.programmer.igoodie.tsl.interpreter.TSLCaptureInterpreter;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
 import net.programmer.igoodie.tsl.runtime.TSLCapture;
-import net.programmer.igoodie.tsl.runtime.defer.TSLActionRef;
+import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ public class TSLInterpreterTests {
         TSLParserImpl.TslRulesContext ast = parserImpl.tslRules();
         List<TSLParserImpl.TslRuleContext> rulesAst = ast.tslRule();
 
-        TSLActionRef actionRef = interpreter.interpret(rulesAst.get(0).reactionRule().action());
+        TSLAction.Ref actionRef = interpreter.interpret(rulesAst.get(0).reactionRule().action());
 
         System.out.println(actionRef);
     }
@@ -61,8 +61,8 @@ public class TSLInterpreterTests {
         TSLParserImpl.TslRulesContext ast = parserImpl.tslRules();
         List<TSLParserImpl.TslRuleContext> rulesAst = ast.tslRule();
 
-        TSLCapture capture1 = interpreter.interpret(rulesAst.get(0).captureRule());
-        TSLCapture capture2 = interpreter.interpret(rulesAst.get(1).captureRule());
+        TSLCapture.Ref capture1 = interpreter.interpret(rulesAst.get(0).captureRule());
+        TSLCapture.Ref capture2 = interpreter.interpret(rulesAst.get(1).captureRule());
 
         System.out.println(capture1);
         System.out.println(capture2);

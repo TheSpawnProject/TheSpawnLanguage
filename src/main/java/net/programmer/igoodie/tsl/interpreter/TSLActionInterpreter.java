@@ -1,7 +1,7 @@
 package net.programmer.igoodie.tsl.interpreter;
 
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
-import net.programmer.igoodie.tsl.runtime.defer.TSLActionRef;
+import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.word.TSLCaptureId;
 import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
@@ -11,27 +11,27 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TSLActionInterpreter extends TSLInterpreter<TSLActionRef, TSLParserImpl.ActionContext> {
+public class TSLActionInterpreter extends TSLInterpreter<TSLAction.Ref, TSLParserImpl.ActionContext> {
 
     protected String name;
-    protected List<Either<TSLWord, TSLActionRef>> args;
+    protected List<Either<TSLWord, TSLAction.Ref>> args;
     protected Either<TSLCaptureId, TSLExpression> yieldConsumer;
     protected TSLWord displaying;
 
     @Override
-    public TSLActionRef yieldValue(TSLParserImpl.ActionContext tree) {
-        return new TSLActionRef(name, args, yieldConsumer, displaying);
+    public TSLAction.Ref yieldValue(TSLParserImpl.ActionContext tree) {
+        return new TSLAction.Ref(name, args, yieldConsumer, displaying);
     }
 
     @Override
-    public TSLActionRef visitActionId(TSLParserImpl.ActionIdContext ctx) {
+    public TSLAction.Ref visitActionId(TSLParserImpl.ActionIdContext ctx) {
         this.name = ctx.IDENTIFIER().getText();
 
         return null;
     }
 
     @Override
-    public TSLActionRef visitActionArgs(TSLParserImpl.ActionArgsContext ctx) {
+    public TSLAction.Ref visitActionArgs(TSLParserImpl.ActionArgsContext ctx) {
         this.args = new ArrayList<>();
 
         for (ParseTree child : ctx.children) {
@@ -41,7 +41,7 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLActionRef, TSLParser
 
             } else if (child instanceof TSLParserImpl.ActionNestContext nestChild) {
                 TSLParserImpl.ActionContext actionTree = nestChild.action();
-                TSLActionRef actionRef = new TSLActionInterpreter().interpret(actionTree);
+                TSLAction.Ref actionRef = new TSLActionInterpreter().interpret(actionTree);
                 this.args.add(Either.right(actionRef));
             }
         }
@@ -50,7 +50,7 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLActionRef, TSLParser
     }
 
     @Override
-    public TSLActionRef visitActionYields(TSLParserImpl.ActionYieldsContext ctx) {
+    public TSLAction.Ref visitActionYields(TSLParserImpl.ActionYieldsContext ctx) {
         TSLWord yieldConsumer = new TSLWordInterpreter().parseWord(ctx.consumer);
 
         if (yieldConsumer instanceof TSLCaptureId) {
@@ -63,7 +63,7 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLActionRef, TSLParser
     }
 
     @Override
-    public TSLActionRef visitActionDisplaying(TSLParserImpl.ActionDisplayingContext ctx) {
+    public TSLAction.Ref visitActionDisplaying(TSLParserImpl.ActionDisplayingContext ctx) {
         this.displaying = new TSLWordInterpreter().interpret(ctx.word());
 
         return null;
