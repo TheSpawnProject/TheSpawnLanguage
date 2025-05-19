@@ -2,16 +2,21 @@ package net.programmer.igoodie.tsl.runtime.event;
 
 import net.programmer.igoodie.goodies.runtime.GoodieObject;
 import net.programmer.igoodie.tsl.TSLPlatform;
-import net.programmer.igoodie.tsl.runtime.OLD_TSLRule;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
+
+import java.util.Optional;
 
 public class TSLEventContext {
 
-    protected TSLPlatform platform;
-    protected String eventName;
-    protected String target;
+    protected final TSLPlatform platform;
+    protected final String eventName;
     protected GoodieObject eventArgs;
     protected GoodieObject performState;
-    protected OLD_TSLRule performingRule;
+
+    protected String target;
+    protected TSLRule performingRule;
+    protected TSLRuleset performingRuleset;
 
     public TSLEventContext(TSLPlatform platform, String eventName) {
         this.platform = platform;
@@ -30,15 +35,15 @@ public class TSLEventContext {
     }
 
     public TSLPlatform getPlatform() {
-        return platform;
+        return this.platform;
     }
 
     public String getEventName() {
-        return eventName;
+        return this.eventName;
     }
 
-    public String getTarget() {
-        return target;
+    public Optional<String> getTarget() {
+        return Optional.ofNullable(this.target);
     }
 
     public void setTarget(String target) {
@@ -53,12 +58,20 @@ public class TSLEventContext {
         return performState;
     }
 
-    public OLD_TSLRule getPerformingRule() {
-        return performingRule;
+    public Optional<TSLRule> getPerformingRule() {
+        return Optional.ofNullable(performingRule);
     }
 
-    public void setPerformingRule(OLD_TSLRule performingRule) {
+    public void setPerformingRule(TSLRule performingRule) {
         this.performingRule = performingRule;
+    }
+
+    public Optional<TSLRuleset> getPerformingRuleset() {
+        return Optional.ofNullable(performingRuleset);
+    }
+
+    public void setPerformingRuleset(TSLRuleset performingRuleset) {
+        this.performingRuleset = performingRuleset;
     }
 
 }

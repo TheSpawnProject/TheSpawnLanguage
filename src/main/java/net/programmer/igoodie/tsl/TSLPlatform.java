@@ -4,7 +4,6 @@ import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
-import net.programmer.igoodie.tsl.runtime.predicate.TSLComparator;
 import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
 import net.programmer.igoodie.tsl.std.action.ConcurrentlyAction;
 import net.programmer.igoodie.tsl.std.action.SequentiallyAction;
@@ -24,9 +23,6 @@ public class TSLPlatform {
     @Deprecated
     private final Map<String, OLD_TSLAction.ExpressionEvaluator> OLD_expressionEvaluators;
 
-    @Deprecated
-    private final Map<String, TSLComparator.Supplier<?>> OLD_comparatorDefinitions;
-
     public TSLPlatform(String platformName, float platformVersion) {
         this.platformName = platformName;
         this.platformVersion = platformVersion;
@@ -34,7 +30,6 @@ public class TSLPlatform {
         this.expressionEvaluators = new ArrayList<>();
         this.OLD_expressionEvaluators = new HashMap<>();
         this.eventDefinitions = new HashMap<>();
-        this.OLD_comparatorDefinitions = new HashMap<>();
     }
 
     public String getPlatformName() {
@@ -63,12 +58,6 @@ public class TSLPlatform {
         return event;
     }
 
-    @Deprecated
-    public <T extends TSLComparator.Supplier<?>> T registerComparator(String symbol, T comparator) {
-        this.OLD_comparatorDefinitions.put(symbol.toUpperCase(), comparator);
-        return comparator;
-    }
-
     public <T extends TSLExpression.Evaluator> T registerExpressionEvaluator(T evaluator) {
         this.expressionEvaluators.add(evaluator);
         return evaluator;
@@ -87,11 +76,6 @@ public class TSLPlatform {
 
     public Optional<TSLEvent> getEvent(String eventName) {
         return Optional.ofNullable(this.eventDefinitions.get(StringUtilities.upperFirstLetters(eventName)));
-    }
-
-    @Deprecated
-    public Optional<TSLComparator.Supplier<?>> getComparatorDefinition(String symbol) {
-        return Optional.ofNullable(this.OLD_comparatorDefinitions.get(symbol.toUpperCase()));
     }
 
     public List<TSLExpression.Evaluator> getExpressionEvaluators() {

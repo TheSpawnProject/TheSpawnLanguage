@@ -19,7 +19,7 @@ public class TSLRuleInterpreter extends TSLInterpreter<TSLRule.Ref, TSLParserImp
 
     protected TSLAction.Ref action;
     protected String eventName;
-    protected List<TSLPredicate.Ref> predicates = new ArrayList<>();
+    protected List<TSLPredicate> predicates = new ArrayList<>();
 
     @Override
     public TSLRule.Ref yieldValue(TSLParserImpl.ReactionRuleContext tree) {
@@ -50,10 +50,7 @@ public class TSLRuleInterpreter extends TSLInterpreter<TSLRule.Ref, TSLParserImp
             throw new TSLInternalException("Matched something other than an word in an word predicate.");
         }
 
-        this.predicates.add(platform ->
-                platform.getEvent(TSLRuleInterpreter.this.eventName)
-                        .map(event -> new TSLPredicate.ByExpression(event, expression))
-        );
+        this.predicates.add(new TSLPredicate.ByExpression(expression));
 
         return null;
     }
@@ -73,10 +70,7 @@ public class TSLRuleInterpreter extends TSLInterpreter<TSLRule.Ref, TSLParserImp
         TerminalNode predicateWordNode = (TerminalNode) ctx.predicateWord().getChild(0);
         TSLWord rightHandValue = new TSLWordInterpreter().parseWord(predicateWordNode.getSymbol());
 
-        this.predicates.add(platform ->
-                platform.getEvent(TSLRuleInterpreter.this.eventName)
-                        .map(event -> new TSLPredicate.OfBinaryOperation(event, fieldName, operator, rightHandValue))
-        );
+        this.predicates.add(new TSLPredicate.OfBinaryOperation(fieldName, operator, rightHandValue));
 
         return null;
     }

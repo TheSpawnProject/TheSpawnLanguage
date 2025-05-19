@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.definition;
 
-import net.programmer.igoodie.tsl.TSLPlatform;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
@@ -8,15 +8,8 @@ import net.programmer.igoodie.tsl.runtime.word.TSLWord;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
-import java.util.function.Function;
 
 public abstract class TSLPredicate {
-
-    protected final TSLEvent boundEvent;
-
-    protected TSLPredicate(TSLEvent boundEvent) {
-        this.boundEvent = boundEvent;
-    }
 
     public abstract boolean test(TSLEventContext ctx);
 
@@ -25,8 +18,7 @@ public abstract class TSLPredicate {
 
         protected final TSLExpression expression;
 
-        public ByExpression(TSLEvent boundEvent, TSLExpression expression) {
-            super(boundEvent);
+        public ByExpression(TSLExpression expression) {
             this.expression = expression;
         }
 
@@ -120,8 +112,7 @@ public abstract class TSLPredicate {
             }
         }
 
-        public OfBinaryOperation(TSLEvent boundEvent, String fieldName, Operator operator, TSLWord rightHand) {
-            super(boundEvent);
+        public OfBinaryOperation(String fieldName, Operator operator, TSLWord rightHand) {
             this.fieldName = fieldName;
             this.operator = operator;
             this.rightHand = rightHand;
@@ -129,7 +120,10 @@ public abstract class TSLPredicate {
 
         @Override
         public boolean test(TSLEventContext ctx) {
-            TSLEvent.Property<?> propertyType = this.boundEvent.getPropertyType(this.fieldName);
+            TSLRule rule = ctx.getPerformingRule().orElseThrow();
+            TSLEvent event = rule.getEvent();
+
+            TSLEvent.Property<?> propertyType = event.getPropertyType(this.fieldName);
             Optional<?> eventArgOpt = propertyType.read(ctx.getEventArgs());
             if (eventArgOpt.isEmpty()) return false;
 
@@ -137,14 +131,6 @@ public abstract class TSLPredicate {
             String value = this.rightHand.evaluate(ctx);
 
             return this.operator.compare(fieldValue, value);
-        }
-
-    }
-
-    public interface Ref extends Function<TSLPlatform, Optional<TSLPredicate>> {
-
-        default Optional<TSLPredicate> resolve(TSLPlatform platform) {
-            return this.apply(platform);
         }
 
     }

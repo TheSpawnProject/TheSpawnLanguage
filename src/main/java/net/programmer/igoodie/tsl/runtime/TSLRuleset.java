@@ -2,6 +2,10 @@ package net.programmer.igoodie.tsl.runtime;
 
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
+import net.programmer.igoodie.tsl.runtime.word.TSLCaptureId;
+import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
+import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.util.structure.Either;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,28 +15,32 @@ public class TSLRuleset {
 
     protected final String target;
 
-    protected List<OLD_TSLRule> rules;
+    protected List<TSLRule> rules;
 
     public TSLRuleset(String target) {
         this.target = target;
         this.rules = new ArrayList<>();
     }
 
-    public List<OLD_TSLRule> getRules() {
+    public List<TSLRule> getRules() {
         return Collections.unmodifiableList(rules);
     }
 
-    public void addRule(OLD_TSLRule rule) {
+    public void addRule(TSLRule rule) {
         this.rules.add(rule);
     }
 
-    public List<String> perform(TSLEventContext ctx) throws TSLPerformingException {
-        for (OLD_TSLRule rule : rules) {
-            List<String> result = rule.perform(ctx);
+    public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+        ctx.setPerformingRuleset(this);
+
+        for (TSLRule rule : rules) {
+            List<TSLWord> yield = rule.perform(ctx);
             ctx.setPerformingRule(null);
 
-            if (result != null) {
-                return result;
+            if (yield != null) {
+                Either<TSLCaptureId, TSLExpression> yieldConsumer = rule.getAction().getYieldConsumer();
+                // TODO: do something with yieldConsumer
+                return yield;
             }
         }
 
