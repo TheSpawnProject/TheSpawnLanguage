@@ -113,12 +113,6 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitEventName(TSLParserImpl.EventNameContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TSLParserImpl#eventFrom}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEventFrom(TSLParserImpl.EventFromContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link TSLParserImpl#eventPredicate}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -136,12 +130,6 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPredicateOperation(TSLParserImpl.PredicateOperationContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TSLParserImpl#binaryOperator}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBinaryOperator(TSLParserImpl.BinaryOperatorContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TSLParserImpl#captureRule}.
 	 * @param ctx the parse tree

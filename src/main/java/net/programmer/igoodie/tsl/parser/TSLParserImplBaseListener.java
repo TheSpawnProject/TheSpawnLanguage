@@ -221,18 +221,6 @@ public class TSLParserImplBaseListener implements TSLParserImplListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEventFrom(TSLParserImpl.EventFromContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitEventFrom(TSLParserImpl.EventFromContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterEventPredicate(TSLParserImpl.EventPredicateContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -264,18 +252,6 @@ public class TSLParserImplBaseListener implements TSLParserImplListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPredicateOperation(TSLParserImpl.PredicateOperationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterBinaryOperator(TSLParserImpl.BinaryOperatorContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBinaryOperator(TSLParserImpl.BinaryOperatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -41,14 +41,11 @@ actionNest: SIGN_LPARAN action SIGN_RPARAN;
 actionYields: KEYWORD_YIELDS (consumer = CAPTURE_IDENTIFIER | EXPRESSION);
 actionDisplaying: KEYWORD_DISPLAYING word;
 
-event: KEYWORD_ON eventName (KEYWORD_FROM eventFrom)? (eventPredicate)*;
+event: KEYWORD_ON eventName (eventPredicate)*;
 eventName: IDENTIFIER+;
-eventFrom: IDENTIFIER;
 eventPredicate: KEYWORD_WITH (predicateExpression | predicateOperation);
 predicateExpression: EXPRESSION;
-predicateOperation: IDENTIFIER binaryOperator predicateWord;
-// TODO: Operators
-binaryOperator: IDENTIFIER+ /*| genericOperator*/;
+predicateOperation: (field = IDENTIFIER) (operator = IDENTIFIER+) predicateWord;
 
 captureRule: captureHeader SYMBOL_EQUALS actionArgs;
 captureHeader: (id = CAPTURE_IDENTIFIER) captureParams?;

@@ -39,7 +39,7 @@ public class TSLInterpreterTests {
     }
 
     @Test
-    public void shouldInterpretCapture() {
+    public void shouldInterpretCaptureRef() {
         String script = """
                  $summonMob(mobId, name) = (
                     SUMMON {{mobId}}

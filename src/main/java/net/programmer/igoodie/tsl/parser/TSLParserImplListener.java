@@ -178,16 +178,6 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 */
 	void exitEventName(TSLParserImpl.EventNameContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TSLParserImpl#eventFrom}.
-	 * @param ctx the parse tree
-	 */
-	void enterEventFrom(TSLParserImpl.EventFromContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TSLParserImpl#eventFrom}.
-	 * @param ctx the parse tree
-	 */
-	void exitEventFrom(TSLParserImpl.EventFromContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link TSLParserImpl#eventPredicate}.
 	 * @param ctx the parse tree
 	 */
@@ -217,16 +207,6 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPredicateOperation(TSLParserImpl.PredicateOperationContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TSLParserImpl#binaryOperator}.
-	 * @param ctx the parse tree
-	 */
-	void enterBinaryOperator(TSLParserImpl.BinaryOperatorContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TSLParserImpl#binaryOperator}.
-	 * @param ctx the parse tree
-	 */
-	void exitBinaryOperator(TSLParserImpl.BinaryOperatorContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TSLParserImpl#captureRule}.
 	 * @param ctx the parse tree
