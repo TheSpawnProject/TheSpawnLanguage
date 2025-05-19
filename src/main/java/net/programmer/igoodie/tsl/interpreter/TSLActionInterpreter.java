@@ -1,12 +1,12 @@
 package net.programmer.igoodie.tsl.interpreter;
 
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
-import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
+import net.programmer.igoodie.tsl.runtime.defer.TSLActionRef;
 
-public class TSLActionInterpreter extends TSLInterpreter<TSLAction, TSLParserImpl.ActionArgsContext> {
+public class TSLActionInterpreter extends TSLInterpreter<TSLActionRef, TSLParserImpl.ActionArgsContext> {
 
     @Override
-    public TSLAction yieldValue(TSLParserImpl.ActionArgsContext tree) {
+    public TSLActionRef yieldValue(TSLParserImpl.ActionArgsContext tree) {
         return null;
     }
 

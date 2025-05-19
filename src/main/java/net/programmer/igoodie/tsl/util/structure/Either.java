@@ -60,8 +60,16 @@ public class Either<L, R> {
         throw thrower.get();
     }
 
-    public <T> T map(Function<L, T> mapLeft, Function<R, T> mapRight) {
-        return isRight ? mapRight.apply(right) : mapLeft.apply(left);
+    public <T> T reduce(Function<L, T> reduceLeft, Function<R, T> reduceRight) {
+        return this.isRight
+                ? reduceRight.apply(this.right)
+                : reduceLeft.apply(this.left);
+    }
+
+    public <NL, NR> Either<NL, NR> map(Function<L, NL> mapLeft, Function<R, NR> mapRight) {
+        return this.isRight
+                ? Either.right(mapRight.apply(this.right))
+                : Either.left(mapLeft.apply(this.left));
     }
 
     public void ifLeft(Consumer<L> consumer) {
