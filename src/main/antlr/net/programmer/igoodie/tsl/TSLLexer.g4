@@ -17,9 +17,9 @@ tokens {
 // Comments
 // ---------------------
 
+TSLDOC_COMMENT: '#**' .*? '*#';
 SINGLELINE_COMMENT: '#' ~[!*] ~[\r\n\u2028\u2029]* -> channel(HIDDEN);
 MULTILINE_COMMENT: '#*' .*? '*#' -> channel(HIDDEN);
-TSLDOC_COMMENT: '#**' .*? '*#';
 
 EMPTY_LINES: RN HS* (RN HS*)+;
 NEW_LINE: RN -> skip;

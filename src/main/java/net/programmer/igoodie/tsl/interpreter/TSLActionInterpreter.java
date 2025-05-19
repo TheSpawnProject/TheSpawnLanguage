@@ -11,7 +11,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>, TSLParserImpl.ActionContext> {
 
@@ -23,21 +22,16 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
     @Override
     public TSLDeferred<TSLAction> yieldValue(TSLParserImpl.ActionContext tree) {
         return platform -> {
-            try {
-                List<Either<TSLWord, TSLAction>> resolvedArgs = this.args.stream()
-                        .map(argRef -> argRef.map(
-                                word -> word,
-                                nestRef -> nestRef.resolve(platform).orElseThrow()
-                        ))
-                        .toList();
+            List<Either<TSLWord, TSLAction>> resolvedArgs = this.args.stream()
+                    .map(argRef -> argRef.map(
+                            word -> word,
+                            deferredAction -> deferredAction.resolve(platform)
+                    ))
+                    .toList();
 
-                TSLAction.Supplier<?> supplier = platform.getActionDefinition(this.name).orElseThrow();
+            TSLAction.Supplier<?> supplier = platform.getActionDefinition(this.name).orElseThrow();
 
-                return Optional.ofNullable(supplier.createAction(platform, resolvedArgs));
-
-            } catch (Exception e) {
-                return Optional.empty();
-            }
+            return supplier.createAction(platform, resolvedArgs);
         };
     }
 

@@ -14,7 +14,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class TSLRuleInterpreter extends TSLInterpreter<TSLDeferred<TSLRule>, TSLParserImpl.ReactionRuleContext> {
@@ -26,20 +25,12 @@ public class TSLRuleInterpreter extends TSLInterpreter<TSLDeferred<TSLRule>, TSL
     @Override
     public TSLDeferred<TSLRule> yieldValue(TSLParserImpl.ReactionRuleContext tree) {
         return platform -> {
-            try {
-                Optional<TSLEvent> eventOpt = platform.getEvent(this.eventName);
-                if (eventOpt.isEmpty()) return Optional.empty();
-                TSLEvent event = eventOpt.get();
+            TSLEvent event = platform.getEvent(this.eventName).orElseThrow(() ->
+                    new TSLSyntaxException("Unknown event -> {}", this.eventName));
 
-                Optional<TSLAction> actionOpt = this.action.resolve(platform);
-                if (actionOpt.isEmpty()) return Optional.empty();
-                TSLAction action = actionOpt.get();
+            TSLAction action = this.action.resolve(platform);
 
-                return Optional.of(new TSLRule(event, this.predicates, action));
-
-            } catch (Exception e) {
-                return Optional.empty();
-            }
+            return new TSLRule(event, this.predicates, action);
         };
     }
 

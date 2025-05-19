@@ -12,7 +12,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class TSLCaptureInterpreter extends TSLInterpreter<TSLDeferred<TSLCapture>, TSLParserImpl.CaptureRuleContext> {
 
@@ -23,19 +22,14 @@ public class TSLCaptureInterpreter extends TSLInterpreter<TSLDeferred<TSLCapture
     @Override
     public TSLDeferred<TSLCapture> yieldValue(TSLParserImpl.CaptureRuleContext tree) {
         return platform -> {
-            try {
-                List<Either<TSLWord, TSLAction>> resolvedContent = this.contents.stream()
-                        .map(argRef -> argRef.map(
-                                word -> word,
-                                nestRef -> nestRef.resolve(platform).orElseThrow()
-                        ))
-                        .toList();
+            List<Either<TSLWord, TSLAction>> resolvedContent = this.contents.stream()
+                    .map(deferredArg -> deferredArg.map(
+                            word -> word,
+                            nestRef -> nestRef.resolve(platform)
+                    ))
+                    .toList();
 
-                return Optional.of(new TSLCapture(this.id, this.params, resolvedContent));
-
-            } catch (Exception e) {
-                return Optional.empty();
-            }
+            return new TSLCapture(this.id, this.params, resolvedContent);
         };
     }
 

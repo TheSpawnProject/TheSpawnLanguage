@@ -7,18 +7,19 @@ import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
 import net.programmer.igoodie.tsl.util.structure.Either;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class TSLRuleset {
 
     protected final String target;
 
+    protected Map<String, TSLCapture> captures;
+
     protected List<TSLRule> rules;
 
     public TSLRuleset(String target) {
         this.target = target;
+        this.captures = new HashMap<>();
         this.rules = new ArrayList<>();
     }
 
@@ -30,8 +31,14 @@ public class TSLRuleset {
         return Collections.unmodifiableList(rules);
     }
 
-    public void addRule(TSLRule rule) {
+    public TSLRule addRule(TSLRule rule) {
         this.rules.add(rule);
+        return rule;
+    }
+
+    public TSLCapture addCapture(TSLCapture capture) {
+        this.captures.put(capture.id.getCaptureName(), capture);
+        return capture;
     }
 
     public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {

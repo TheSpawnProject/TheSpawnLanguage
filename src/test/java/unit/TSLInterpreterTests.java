@@ -25,6 +25,31 @@ import java.util.List;
 
 public class TSLInterpreterTests {
 
+    private static TSLPlatform getDemoPlatform() {
+        TSLPlatform platform = new TSLPlatform("Test Platform", 1.0f);
+
+        platform.initializeStd();
+
+        // Register Actions
+        platform.registerAction("DROP", (_platform, args) -> new TSLAction(_platform, args) {
+            @Override
+            public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+                TSLWord droppedItemId = args.get(0).getLeft().orElseThrow();
+                System.out.println("Dropping items " + droppedItemId.evaluate(ctx));
+                return Collections.singletonList(droppedItemId);
+            }
+        });
+
+        // Register Events
+        platform.registerEvent(new TSLEvent("Donation")
+                .addPropertyType(TSLEvent.Property.Builder.INT.create("amount")));
+
+        // Register Expr Evaluators
+        platform.registerExpressionEvaluator(expression -> "true");
+
+        return platform;
+    }
+
     @Test
     public void shouldInterpretAction() {
         String script = """
@@ -104,22 +129,9 @@ public class TSLInterpreterTests {
 
         System.out.println(deferredRule);
 
-        TSLPlatform platform = new TSLPlatform("Test Platform", 1.0f);
+        TSLPlatform platform = getDemoPlatform();
 
-        platform.initializeStd();
-        platform.registerAction("DROP", (_platform, args) -> new TSLAction(_platform, args) {
-            @Override
-            public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
-                TSLWord droppedItemId = args.get(0).getLeft().orElseThrow();
-                System.out.println("Dropping items " + droppedItemId.evaluate(ctx));
-                return Collections.singletonList(droppedItemId);
-            }
-        });
-        platform.registerEvent(new TSLEvent("Donation")
-                .addPropertyType(TSLEvent.Property.Builder.INT.create("amount")));
-        platform.registerExpressionEvaluator(expression -> "true");
-
-        TSLRule rule = deferredRule.resolve(platform).orElseThrow();
+        TSLRule rule = deferredRule.resolve(platform);
 
         TSLEventContext ctx = new TSLEventContext(platform, "Donation");
         ctx.getEventArgs().put("amount", 1200);
@@ -135,7 +147,7 @@ public class TSLInterpreterTests {
                 
                 $x = 5
                 
-                DROP diamond ON Donation WITH amount = 2
+                DROP apple ON Donation WITH amount = 2
                 
                 $y = FOO BAR
                 
@@ -143,7 +155,14 @@ public class TSLInterpreterTests {
                 
                 $z = (DROP diamond)
                 
-                DO $z ON Donation WITH amount = 4
+                #**       
+                 * This is my
+                 * TSLDoc hurraay!
+                 *
+                 *
+                 *#
+                #DO $z ON Donation WITH amount = 4
+                DROP diamond ON Donation WITH amount = 4
                 """;
 
         TSLLexer lexer = new TSLLexer(CharStreams.fromString(script));
@@ -155,6 +174,16 @@ public class TSLInterpreterTests {
         TSLDeferred<TSLRuleset> deferredRuleset = new TSLRulesetInterpreter().interpret(rulesetTree);
 
         System.out.println(deferredRuleset);
+
+        TSLPlatform platform = getDemoPlatform();
+
+        TSLRuleset ruleset = deferredRuleset.resolve(platform);
+
+        TSLEventContext ctx = new TSLEventContext(platform, "Donation");
+        ctx.getEventArgs().put("amount", 2);
+        List<TSLWord> yield = ruleset.perform(ctx);
+
+        System.out.println("Yield " + yield);
     }
 
 }
