@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Deprecated
 public abstract class OLD_TSLAction {
 
     public static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{(.*?)\\}");

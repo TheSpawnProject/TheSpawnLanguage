@@ -8,6 +8,7 @@ import net.programmer.igoodie.tsl.interpreter.TSLRuleInterpreter;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
 import net.programmer.igoodie.tsl.runtime.TSLCapture;
+import net.programmer.igoodie.tsl.runtime.TSLDeferred;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
@@ -23,7 +24,7 @@ import java.util.List;
 public class TSLInterpreterTests {
 
     @Test
-    public void shouldInterpretActionRef() {
+    public void shouldInterpretAction() {
         String script = """
                 DO (DROP diamond
                     YIELDS $foo
@@ -41,13 +42,13 @@ public class TSLInterpreterTests {
         TSLParserImpl.TslRulesContext ast = parserImpl.tslRules();
         List<TSLParserImpl.TslRuleContext> rulesAst = ast.tslRule();
 
-        TSLAction.Ref actionRef = interpreter.interpret(rulesAst.get(0).reactionRule().action());
+        TSLDeferred<TSLAction> deferredAction = interpreter.interpret(rulesAst.get(0).reactionRule().action());
 
-        System.out.println(actionRef);
+        System.out.println(deferredAction);
     }
 
     @Test
-    public void shouldInterpretCaptureRef() {
+    public void shouldInterpretCapture() {
         String script = """
                  $summonMob(mobId, name) = (
                     SUMMON {{mobId}}
@@ -69,15 +70,15 @@ public class TSLInterpreterTests {
         TSLParserImpl.TslRulesContext ast = parserImpl.tslRules();
         List<TSLParserImpl.TslRuleContext> rulesAst = ast.tslRule();
 
-        TSLCapture.Ref capture1 = interpreter.interpret(rulesAst.get(0).captureRule());
-        TSLCapture.Ref capture2 = interpreter.interpret(rulesAst.get(1).captureRule());
+        TSLDeferred<TSLCapture> deferredCapture1 = interpreter.interpret(rulesAst.get(0).captureRule());
+        TSLDeferred<TSLCapture> deferredCapture2 = interpreter.interpret(rulesAst.get(1).captureRule());
 
-        System.out.println(capture1);
-        System.out.println(capture2);
+        System.out.println(deferredCapture1);
+        System.out.println(deferredCapture2);
     }
 
     @Test
-    public void shouldInterpretRuleRef() {
+    public void shouldInterpretRule() {
         String script = """
                 DO (DROP diamond
                     YIELDS $foo
@@ -97,9 +98,9 @@ public class TSLInterpreterTests {
         TSLParserImpl.TslRulesContext ast = parserImpl.tslRules();
         TSLParserImpl.ReactionRuleContext ruleTree = ast.tslRule().get(0).reactionRule();
 
-        TSLRule.Ref ruleRef = new TSLRuleInterpreter().interpret(ruleTree);
+        TSLDeferred<TSLRule> deferredRule = new TSLRuleInterpreter().interpret(ruleTree);
 
-        System.out.println(ruleRef);
+        System.out.println(deferredRule);
 
         TSLPlatform platform = new TSLPlatform("Test Platform", 1.0f);
 
@@ -114,15 +115,20 @@ public class TSLInterpreterTests {
         });
         platform.registerEvent(new TSLEvent("Donation")
                 .addPropertyType(TSLEvent.Property.Builder.INT.create("amount")));
-        platform.registerExpressionEvaluator(expression -> "false");
+        platform.registerExpressionEvaluator(expression -> "true");
 
-        TSLRule rule = ruleRef.resolve(platform).orElseThrow();
+        TSLRule rule = deferredRule.resolve(platform).orElseThrow();
 
         TSLEventContext ctx = new TSLEventContext(platform, "Donation");
         ctx.getEventArgs().put("amount", 1200);
         List<TSLWord> yield = rule.perform(ctx);
 
         System.out.println("Yield " + yield);
+    }
+
+    @Test
+    public void shouldInterpretRuleset() {
+
     }
 
 }

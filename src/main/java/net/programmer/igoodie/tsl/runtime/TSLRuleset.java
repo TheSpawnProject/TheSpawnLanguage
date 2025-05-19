@@ -22,6 +22,10 @@ public class TSLRuleset {
         this.rules = new ArrayList<>();
     }
 
+    public String getTarget() {
+        return target;
+    }
+
     public List<TSLRule> getRules() {
         return Collections.unmodifiableList(rules);
     }
