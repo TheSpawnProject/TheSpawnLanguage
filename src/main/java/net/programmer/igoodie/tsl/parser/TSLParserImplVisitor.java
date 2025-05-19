@@ -131,6 +131,12 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPredicateOperation(TSLParserImpl.PredicateOperationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link TSLParserImpl#predicateOperator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPredicateOperator(TSLParserImpl.PredicateOperatorContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link TSLParserImpl#captureRule}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

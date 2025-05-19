@@ -257,6 +257,18 @@ public class TSLParserImplBaseListener implements TSLParserImplListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterPredicateOperator(TSLParserImpl.PredicateOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPredicateOperator(TSLParserImpl.PredicateOperatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterCaptureRule(TSLParserImpl.CaptureRuleContext ctx) { }
 	/**
 	 * {@inheritDoc}

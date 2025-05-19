@@ -208,6 +208,16 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 */
 	void exitPredicateOperation(TSLParserImpl.PredicateOperationContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TSLParserImpl#predicateOperator}.
+	 * @param ctx the parse tree
+	 */
+	void enterPredicateOperator(TSLParserImpl.PredicateOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TSLParserImpl#predicateOperator}.
+	 * @param ctx the parse tree
+	 */
+	void exitPredicateOperator(TSLParserImpl.PredicateOperatorContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TSLParserImpl#captureRule}.
 	 * @param ctx the parse tree
 	 */

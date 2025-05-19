@@ -45,7 +45,8 @@ event: KEYWORD_ON eventName (eventPredicate)*;
 eventName: IDENTIFIER+;
 eventPredicate: KEYWORD_WITH (predicateExpression | predicateOperation);
 predicateExpression: EXPRESSION;
-predicateOperation: (field = IDENTIFIER) (operator = IDENTIFIER+) predicateWord;
+predicateOperation: (field = IDENTIFIER) predicateOperator predicateWord;
+predicateOperator: (IDENTIFIER | SYMBOL_EQUALS | SYMBOL_GT | SYMBOL_GTE | SYMBOL_LT | SYMBOL_LTE)+;
 
 captureRule: captureHeader SYMBOL_EQUALS actionArgs;
 captureHeader: (id = CAPTURE_IDENTIFIER) captureParams?;
