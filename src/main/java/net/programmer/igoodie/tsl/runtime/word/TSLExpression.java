@@ -1,36 +1,24 @@
 package net.programmer.igoodie.tsl.runtime.word;
 
 import net.programmer.igoodie.tsl.TSLPlatform;
-import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-
-import java.util.Objects;
-import java.util.Optional;
 
 public class TSLExpression extends TSLWord {
 
-    protected final String script;
+    protected final String expression;
 
     public TSLExpression(String script) {
-        this.script = script;
+        this.expression = script;
     }
 
-    public String getScript() {
-        return script;
+    public String getExpression() {
+        return expression;
     }
 
     @Override
     public String evaluate(TSLEventContext ctx) {
         TSLPlatform platform = ctx.getPlatform();
-
-        // TODO: Rework
-        Optional<String> result = platform.getExpressionEvaluators().stream()
-                .map(evaluator -> evaluator.evaluate(script))
-                .filter(Objects::nonNull)
-                .findFirst();
-
-        return result.orElseThrow(() ->
-                new TSLPerformingException("Cannot evaluate "));
+        return platform.getExpressionEvaluator().evaluate(expression);
     }
 
     public interface Evaluator {

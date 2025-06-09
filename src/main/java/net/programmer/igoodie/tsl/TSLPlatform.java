@@ -10,7 +10,10 @@ import net.programmer.igoodie.tsl.std.action.DoAction;
 import net.programmer.igoodie.tsl.std.action.SequentiallyAction;
 import net.programmer.igoodie.tsl.std.action.WaitAction;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Stack;
 
 public class TSLPlatform {
 
@@ -19,7 +22,7 @@ public class TSLPlatform {
 
     private final Map<String, TSLAction.Supplier<?>> actionDefinitions;
 
-    private final List<TSLExpression.Evaluator> expressionEvaluators;
+    private final Stack<TSLExpression.Evaluator> expressionEvaluator;
     private final Map<String, TSLEvent> eventDefinitions;
 
     @Deprecated
@@ -29,7 +32,7 @@ public class TSLPlatform {
         this.platformName = platformName;
         this.platformVersion = platformVersion;
         this.actionDefinitions = new HashMap<>();
-        this.expressionEvaluators = new ArrayList<>();
+        this.expressionEvaluator = new Stack<>();
         this.OLD_expressionEvaluators = new HashMap<>();
         this.eventDefinitions = new HashMap<>();
     }
@@ -60,9 +63,15 @@ public class TSLPlatform {
         return event;
     }
 
-    public <T extends TSLExpression.Evaluator> T registerExpressionEvaluator(T evaluator) {
-        this.expressionEvaluators.add(evaluator);
+    public <T extends TSLExpression.Evaluator> T pushExpressionEvaluator(T evaluator) {
+        this.expressionEvaluator.push(evaluator);
         return evaluator;
+    }
+
+    /* ------------------------ */
+
+    public TSLExpression.Evaluator popExpressionEvaluator() {
+        return this.expressionEvaluator.pop();
     }
 
     /* ------------------------ */
@@ -80,8 +89,10 @@ public class TSLPlatform {
         return Optional.ofNullable(this.eventDefinitions.get(StringUtilities.upperFirstLetters(eventName)));
     }
 
-    public List<TSLExpression.Evaluator> getExpressionEvaluators() {
-        return expressionEvaluators;
+    public TSLExpression.Evaluator getExpressionEvaluator() {
+        TSLExpression.Evaluator evaluator = expressionEvaluator.peek();
+        if (evaluator == null) return (expr) -> expr;
+        return evaluator;
     }
 
     @Deprecated

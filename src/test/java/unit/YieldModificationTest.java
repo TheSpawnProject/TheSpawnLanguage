@@ -50,8 +50,8 @@ public class YieldModificationTest {
         platform.registerEvent(new TSLEvent("Donation")
                 .addPropertyType(TSLEvent.Property.Builder.INT.create("amount")));
 
-        // Register Expr Evaluators
-        platform.registerExpressionEvaluator(expression -> "true");
+        // Bind Expr Evaluator
+        platform.pushExpressionEvaluator(expression -> "true");
 
         return platform;
     }

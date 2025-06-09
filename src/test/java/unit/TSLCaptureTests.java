@@ -34,7 +34,7 @@ public class TSLCaptureTests {
 
         TSLPlatform platform = new TSLPlatform("Test Platform", 1.0f);
         platform.registerAction("PRINT", PrintAction::new);
-        platform.registerExpressionEvaluator(expression -> "3");
+        platform.pushExpressionEvaluator(expression -> "3");
 
         TSLRuleset ruleset = parser.parseRuleset().resolve(platform);
         TSLCapture capture = ruleset.getCapture("d").orElseThrow();

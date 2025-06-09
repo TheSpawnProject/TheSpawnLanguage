@@ -71,7 +71,7 @@ public class TSLParserTests {
         TSLPlatform platform = new TSLPlatform("Dummy Platform", 1.0f);
         TSLEventContext ctx = new TSLEventContext(platform, "Foo Bar");
 
-        platform.registerExpressionEvaluator(expression -> expression);
+        platform.pushExpressionEvaluator(expression -> expression);
 
         if (word instanceof TSLGroup group) {
             System.out.println(group.evaluate(ctx));
