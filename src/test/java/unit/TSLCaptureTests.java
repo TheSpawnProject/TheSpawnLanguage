@@ -4,6 +4,7 @@ import example.action.PrintAction;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.TSLCapture;
+import net.programmer.igoodie.tsl.runtime.TSLCaptureResolver;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
@@ -38,8 +39,10 @@ public class TSLCaptureTests {
         TSLRuleset ruleset = parser.parseRuleset().resolve(platform);
         TSLCapture capture = ruleset.getCapture("d").orElseThrow();
 
-        List<Either<TSLWord, TSLAction>> resolvedContent =
-                capture.resolveContent(ruleset.getCaptures(), Collections.emptyList());
+        TSLCaptureResolver captureResolver = new TSLCaptureResolver(ruleset.getCaptures(), capture, Collections.emptyList());
+        List<Either<TSLWord, TSLAction>> resolvedContent = captureResolver.resolve();
+
+        System.out.println(resolvedContent);
 
         TSLEventContext ctx = new TSLEventContext(platform, "Dummy Event");
 
