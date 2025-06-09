@@ -57,7 +57,7 @@ public class TSLInterpreterTests {
         }
     }
 
-    private static TSLPlatform getDemoPlatform() {
+    private static TSLPlatform getTestPlatform() {
         TSLPlatform platform = new TSLPlatform("Test Platform", 1.0f);
 
         platform.initializeStd();
@@ -126,7 +126,7 @@ public class TSLInterpreterTests {
         TSLDeferred<TSLCapture> deferredCapture1 = interpreter.interpret(rulesAst.get(0).captureRule());
         TSLDeferred<TSLCapture> deferredCapture2 = interpreter.interpret(rulesAst.get(1).captureRule());
 
-        TSLPlatform demoPlatform = getDemoPlatform();
+        TSLPlatform demoPlatform = getTestPlatform();
 
         List<Either<TSLWord, TSLAction>> contents1 = deferredCapture1.resolve(demoPlatform).getContents();
         List<Either<TSLWord, TSLAction>> contents2 = deferredCapture2.resolve(demoPlatform).getContents();
@@ -160,7 +160,7 @@ public class TSLInterpreterTests {
 
         System.out.println(deferredRule);
 
-        TSLPlatform platform = getDemoPlatform();
+        TSLPlatform platform = getTestPlatform();
 
         TSLRule rule = deferredRule.resolve(platform);
 
@@ -208,7 +208,7 @@ public class TSLInterpreterTests {
 
         System.out.println(deferredRuleset);
 
-        TSLPlatform platform = getDemoPlatform();
+        TSLPlatform platform = getTestPlatform();
 
         TSLRuleset ruleset = deferredRuleset.resolve(platform);
 

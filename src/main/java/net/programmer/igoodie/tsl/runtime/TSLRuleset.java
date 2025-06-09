@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.runtime;
 
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
+import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLCaptureId;
 import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
@@ -41,6 +42,10 @@ public class TSLRuleset {
         return capture;
     }
 
+    public Optional<TSLCapture> getCapture(String name) {
+        return Optional.ofNullable(this.captures.get(name));
+    }
+
     public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
         ctx.setPerformingRuleset(this);
 
@@ -50,7 +55,17 @@ public class TSLRuleset {
 
             if (yield != null) {
                 Either<TSLCaptureId, TSLExpression> yieldConsumer = rule.getAction().getYieldConsumer();
-                // TODO: do something with yieldConsumer
+                yieldConsumer.ifLeft(captureId -> {
+                    TSLCapture capture = new TSLCapture(
+                            captureId,
+                            Collections.emptyList(),
+                            yield.stream().map(Either::<TSLWord, TSLAction>left).toList()
+                    );
+                    this.addCapture(capture);
+                });
+                yieldConsumer.ifRight(expression -> {
+                    // TODO: do something with the expression
+                });
                 return yield;
             }
         }

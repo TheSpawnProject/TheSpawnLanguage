@@ -46,7 +46,7 @@ public class TestPlatform {
 
     @BeforeAll()
     public static void registerEverything() {
-        platform.OLD_initializeStd();
+        platform.initializeStd();
 
         platform.registerAction("PRINT", PrintAction::new);
         platform.registerAction("DROP", PrintAction::new);
