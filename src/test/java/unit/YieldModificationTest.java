@@ -20,8 +20,13 @@ public class YieldModificationTest {
 
     private static class TestSumAction extends TSLAction {
 
-        public TestSumAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException {
-            super(platform, args);
+        public TestSumAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+            super(sourceArguments);
+        }
+
+        @Override
+        public void interpretArguments(TSLPlatform platform, List<Either<TSLWord, TSLAction>> words) throws TSLSyntaxException {
+
         }
 
         @Override

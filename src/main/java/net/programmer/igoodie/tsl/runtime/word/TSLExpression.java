@@ -23,6 +23,7 @@ public class TSLExpression extends TSLWord {
     public String evaluate(TSLEventContext ctx) {
         TSLPlatform platform = ctx.getPlatform();
 
+        // TODO: Rework
         Optional<String> result = platform.getExpressionEvaluators().stream()
                 .map(evaluator -> evaluator.evaluate(script))
                 .filter(Objects::nonNull)

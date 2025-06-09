@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.runtime.word;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TSLGroup extends TSLWord {
@@ -20,7 +21,23 @@ public class TSLGroup extends TSLWord {
                 .collect(Collectors.joining());
     }
 
-    public static abstract class Word extends TSLWord {}
+    public TSLGroup resolveFromCapture(Map<String, TSLWord> arguments) {
+        List<Word> resolvedGroupWords = this.args.stream().map(word -> {
+            if (word instanceof Expression expr) {
+                if (expr.word instanceof TSLPlaceholder placeholder) {
+                    TSLWord argument = arguments.get(placeholder.parameterName);
+                    return new Expression(argument);
+                }
+            }
+
+            return word;
+        }).toList();
+
+        return new TSLGroup(resolvedGroupWords);
+    }
+
+    public static abstract class Word extends TSLWord {
+    }
 
     public static class Expression extends Word {
 

@@ -53,6 +53,11 @@ public class Either<L, R> {
                 : Either.left(mapLeft.apply(this.left));
     }
 
+    public void consume(Consumer<L> consumeLeft, Consumer<R> consumeRight) {
+        if (this.isRight) consumeRight.accept(this.right);
+        else consumeLeft.accept(this.left);
+    }
+
     public void ifLeft(Consumer<L> consumer) {
         if (isLeft()) consumer.accept(left);
     }

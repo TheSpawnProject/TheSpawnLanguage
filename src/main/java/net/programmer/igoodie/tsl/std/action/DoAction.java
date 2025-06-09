@@ -21,14 +21,17 @@ public class DoAction extends TSLAction {
 
     protected Either<TSLExpression, TSLAction> subject;
 
-    public DoAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException {
-        super(platform, args);
+    public DoAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+        super(sourceArguments);
+    }
 
-        if (args.size() != 1) {
-            throw new TSLSyntaxException("Expected 1 argument, found {}", args.size());
+    @Override
+    public void interpretArguments(TSLPlatform platform, List<Either<TSLWord, TSLAction>> words) throws TSLSyntaxException {
+        if (words.size() != 1) {
+            throw new TSLSyntaxException("Expected 1 argument, found {}", words.size());
         }
 
-        this.subject = args.get(0).map(
+        this.subject = words.get(0).map(
                 word -> {
                     if (!(word instanceof TSLExpression expression)) {
                         throw new TSLSyntaxException("Unexpected token {}", word);

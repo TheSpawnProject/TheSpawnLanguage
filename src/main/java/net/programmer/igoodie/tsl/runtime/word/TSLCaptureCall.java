@@ -14,6 +14,14 @@ public class TSLCaptureCall extends TSLWord {
         this.args = args;
     }
 
+    public TSLCaptureId getId() {
+        return id;
+    }
+
+    public List<TSLWord> getArgs() {
+        return args;
+    }
+
     @Override
     public String evaluate(TSLEventContext ctx) {
         throw new IllegalStateException("CaptureCalls aren't meant for evaluation.");

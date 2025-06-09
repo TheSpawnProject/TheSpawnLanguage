@@ -21,13 +21,16 @@ public class SequentiallyAction extends TSLAction {
 
     protected List<TSLAction> actions;
 
-    public SequentiallyAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException {
-        super(platform, args);
+    public SequentiallyAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+        super(sourceArguments);
+    }
 
+    @Override
+    public void interpretArguments(TSLPlatform platform, List<Either<TSLWord, TSLAction>> words) throws TSLSyntaxException {
         this.actions = new ArrayList<>();
 
-        for (int i = 0; i < args.size(); i++) {
-            Either<TSLWord, TSLAction> arg = args.get(i);
+        for (int i = 0; i < words.size(); i++) {
+            Either<TSLWord, TSLAction> arg = words.get(i);
 
             if (i % 2 == 0) {
                 TSLAction action = arg.getRight().orElseThrow(() ->
@@ -43,7 +46,7 @@ public class SequentiallyAction extends TSLAction {
             }
         }
 
-        if (args.size() % 2 != 1) {
+        if (words.size() % 2 != 1) {
             throw new TSLSyntaxException("Expected an action, after AND");
         }
     }

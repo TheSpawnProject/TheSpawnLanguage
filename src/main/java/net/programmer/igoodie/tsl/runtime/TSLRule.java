@@ -56,6 +56,8 @@ public class TSLRule {
             if (!test) return null;
         }
 
+//        this.action.getSourceArguments()
+        this.action.interpretArguments(ctx.getPlatform(), null);
         return this.action.perform(ctx);
     }
 

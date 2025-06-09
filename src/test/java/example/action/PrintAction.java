@@ -15,12 +15,15 @@ import java.util.stream.Collectors;
 
 public class PrintAction extends TSLAction {
 
-    protected final List<TSLWord> wordsToPrint;
+    protected List<TSLWord> wordsToPrint;
 
-    public PrintAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException {
-        super(platform, args);
+    public PrintAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+        super(sourceArguments);
+    }
 
-        this.wordsToPrint = args.stream()
+    @Override
+    public void interpretArguments(TSLPlatform platform, List<Either<TSLWord, TSLAction>> words) throws TSLSyntaxException {
+        this.wordsToPrint = words.stream()
                 .map(Either::getLeft)
                 .map(Optional::orElseThrow)
                 .toList();

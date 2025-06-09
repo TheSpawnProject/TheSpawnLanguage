@@ -42,6 +42,10 @@ public class TSLRuleset {
         return capture;
     }
 
+    public Map<String, TSLCapture> getCaptures() {
+        return Collections.unmodifiableMap(captures);
+    }
+
     public Optional<TSLCapture> getCapture(String name) {
         return Optional.ofNullable(this.captures.get(name));
     }

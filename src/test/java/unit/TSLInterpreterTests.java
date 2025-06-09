@@ -30,9 +30,13 @@ public class TSLInterpreterTests {
     private static class DemoDropAction extends TSLAction {
         protected TSLWord droppedItemId;
 
-        public DemoDropAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException {
-            super(platform, args);
-            this.droppedItemId = args.get(0).getLeft().orElseThrow();
+        public DemoDropAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+            super(sourceArguments);
+        }
+
+        @Override
+        public void interpretArguments(TSLPlatform platform, List<Either<TSLWord, TSLAction>> words) throws TSLSyntaxException {
+            this.droppedItemId = words.get(0).getLeft().orElseThrow();
         }
 
         @Override
@@ -45,9 +49,13 @@ public class TSLInterpreterTests {
     private static class DemoSummonAction extends TSLAction {
         protected TSLWord mobId;
 
-        public DemoSummonAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException {
-            super(platform, args);
-            this.mobId = args.get(0).getLeft().orElseThrow();
+        public DemoSummonAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+            super(sourceArguments);
+        }
+
+        @Override
+        public void interpretArguments(TSLPlatform platform, List<Either<TSLWord, TSLAction>> words) throws TSLSyntaxException {
+            this.mobId = words.get(0).getLeft().orElseThrow();
         }
 
         @Override

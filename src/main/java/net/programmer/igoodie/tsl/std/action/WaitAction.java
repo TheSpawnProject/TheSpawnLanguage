@@ -20,21 +20,24 @@ import java.util.concurrent.TimeUnit;
  */
 public class WaitAction extends TSLAction {
 
-    protected final TSLWord unitWord;
-    protected final TSLWord sleepTimeWord;
+    protected TSLWord unitWord;
+    protected TSLWord sleepTimeWord;
 
-    public WaitAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException {
-        super(platform, args);
+    public WaitAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+        super(sourceArguments);
+    }
 
-        if (args.size() != 2) {
-            throw new TSLSyntaxException("Expected two words, found %d instead", args.size());
+    @Override
+    public void interpretArguments(TSLPlatform platform, List<Either<TSLWord, TSLAction>> words) throws TSLSyntaxException {
+        if (words.size() != 2) {
+            throw new TSLSyntaxException("Expected two words, found %d instead", words.size());
         }
 
-        this.sleepTimeWord = args.get(0).getLeft().orElseThrow(
+        this.sleepTimeWord = words.get(0).getLeft().orElseThrow(
                 () -> new TSLSyntaxException("Expected a word")
         );
 
-        this.unitWord = args.get(1).getLeft().orElseThrow(
+        this.unitWord = words.get(1).getLeft().orElseThrow(
                 () -> new TSLSyntaxException("Expected a word")
         );
     }

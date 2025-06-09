@@ -86,8 +86,7 @@ public class TSLParserTests {
         List<TSLWord> actionArgs = parser.parseWords();
 
         TSLPlatform platform = new TSLPlatform("Dummy Platform", 1.0f);
-        WaitAction waitAction = new WaitAction(platform,
-                actionArgs.stream().map(Either::<TSLWord, TSLAction>left).toList());
+        WaitAction waitAction = new WaitAction(actionArgs.stream().map(Either::<TSLWord, TSLAction>left).toList());
 
         TSLEventContext ctx = new TSLEventContext(platform, "Dummy Event");
         waitAction.perform(ctx);

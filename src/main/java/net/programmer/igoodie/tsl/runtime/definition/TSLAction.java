@@ -13,10 +13,16 @@ import java.util.List;
 
 public abstract class TSLAction {
 
+    protected final List<Either<TSLWord, TSLAction>> sourceArguments;
     protected Either<TSLCaptureId, TSLExpression> yieldConsumer;
     protected TSLWord displaying;
 
-    public TSLAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException {
+    public TSLAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+        this.sourceArguments = sourceArguments;
+    }
+
+    public List<Either<TSLWord, TSLAction>> getSourceArguments() {
+        return sourceArguments;
     }
 
     public TSLAction setYieldConsumer(Either<TSLCaptureId, TSLExpression> yieldConsumer) {
@@ -37,12 +43,14 @@ public abstract class TSLAction {
         return displaying;
     }
 
-    public abstract List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException;
+    public abstract void interpretArguments(TSLPlatform platform, List<Either<TSLWord, TSLAction>> words) throws TSLSyntaxException;
 
+    public abstract List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException;
+    
     /* ----------------------- */
 
     public interface Supplier<T extends TSLAction> {
-        T createAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException;
+        T createAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException;
     }
 
 }

@@ -24,7 +24,7 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
     public TSLDeferred<TSLAction> yieldValue(TSLParserImpl.ActionContext tree) {
         return platform -> {
             List<Either<TSLWord, TSLAction>> resolvedArgs = this.args.stream()
-                    .map(argRef -> argRef.map(
+                    .map(arg -> arg.map(
                             word -> word,
                             deferredAction -> deferredAction.resolve(platform)
                     ))
@@ -33,7 +33,7 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
             TSLAction.Supplier<?> supplier = platform.getActionDefinition(this.name)
                     .orElseThrow(() -> new TSLInternalException("Unresolvable action -> {}", this.name));
 
-            return supplier.createAction(platform, resolvedArgs)
+            return supplier.createAction(resolvedArgs)
                     .setYieldConsumer(this.yieldConsumer)
                     .setDisplaying(this.displaying);
         };

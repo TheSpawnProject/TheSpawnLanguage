@@ -18,7 +18,7 @@ public class TSLPlatform {
     private final float platformVersion;
 
     private final Map<String, TSLAction.Supplier<?>> actionDefinitions;
-    // TODO: Turn into a Stack
+
     private final List<TSLExpression.Evaluator> expressionEvaluators;
     private final Map<String, TSLEvent> eventDefinitions;
 
