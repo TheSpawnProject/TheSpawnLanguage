@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.interpreter;
 
+import net.programmer.igoodie.tsl.exception.TSLInternalException;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
 import net.programmer.igoodie.tsl.runtime.TSLDeferred;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
@@ -29,9 +30,12 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
                     ))
                     .toList();
 
-            TSLAction.Supplier<?> supplier = platform.getActionDefinition(this.name).orElseThrow();
+            TSLAction.Supplier<?> supplier = platform.getActionDefinition(this.name)
+                    .orElseThrow(() -> new TSLInternalException("Unresolvable action -> {}", this.name));
 
-            return supplier.createAction(platform, resolvedArgs);
+            return supplier.createAction(platform, resolvedArgs)
+                    .setYieldConsumer(this.yieldConsumer)
+                    .setDisplaying(this.displaying);
         };
     }
 

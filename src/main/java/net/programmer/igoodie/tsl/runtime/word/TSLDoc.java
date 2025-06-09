@@ -7,18 +7,22 @@ import java.util.stream.Collectors;
 
 public class TSLDoc extends TSLWord {
 
-    protected final String doc;
+    protected final String content;
 
-    public TSLDoc(String doc) {
-        String[] lines = doc.replaceFirst("^#\\*\\*", "")
+    public TSLDoc(String content) {
+        String[] lines = content.replaceFirst("^#\\*\\*", "")
                 .replaceFirst("\\*#$", "")
                 .split("\\r?\\n");
 
-        this.doc = Arrays.stream(lines)
-                .map(line -> line.replaceFirst("^\\s*\\*", ""))
+        this.content = Arrays.stream(lines)
+                .map(line -> line.replaceFirst("^\\s*\\*\\s?", ""))
                 .map(String::trim)
                 .filter(line -> !line.isEmpty())
                 .collect(Collectors.joining(" "));
+    }
+
+    public String getContent() {
+        return content;
     }
 
     @Override

@@ -13,12 +13,12 @@ public class TSLCapture {
     protected TSLDoc tslDoc;
 
     protected final TSLCaptureId id;
-    protected final List<String> params;
+    protected final List<String> paramNames;
     protected final List<Either<TSLWord, TSLAction>> contents;
 
-    public TSLCapture(TSLCaptureId id, List<String> params, List<Either<TSLWord, TSLAction>> contents) {
+    public TSLCapture(TSLCaptureId id, List<String> paramNames, List<Either<TSLWord, TSLAction>> contents) {
         this.id = id;
-        this.params = params;
+        this.paramNames = paramNames;
         this.contents = contents;
     }
 
@@ -28,6 +28,14 @@ public class TSLCapture {
 
     public TSLCaptureId getId() {
         return id;
+    }
+
+    public List<String> getParamNames() {
+        return paramNames;
+    }
+
+    public List<Either<TSLWord, TSLAction>> getContents() {
+        return contents;
     }
 
     public void attachDoc(TSLDoc tslDoc) {

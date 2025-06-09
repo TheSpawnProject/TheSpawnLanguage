@@ -19,12 +19,14 @@ public abstract class TSLAction {
     public TSLAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException {
     }
 
-    public void setYieldConsumer(Either<TSLCaptureId, TSLExpression> yieldConsumer) {
+    public TSLAction setYieldConsumer(Either<TSLCaptureId, TSLExpression> yieldConsumer) {
         this.yieldConsumer = yieldConsumer;
+        return this;
     }
 
-    public void setDisplaying(TSLWord displaying) {
+    public TSLAction setDisplaying(TSLWord displaying) {
         this.displaying = displaying;
+        return this;
     }
 
     public Either<TSLCaptureId, TSLExpression> getYieldConsumer() {

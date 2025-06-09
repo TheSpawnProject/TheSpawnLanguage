@@ -2,6 +2,7 @@ package unit;
 
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
+import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.interpreter.TSLActionInterpreter;
 import net.programmer.igoodie.tsl.interpreter.TSLCaptureInterpreter;
 import net.programmer.igoodie.tsl.interpreter.TSLRuleInterpreter;
@@ -16,6 +17,7 @@ import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.util.structure.Either;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
@@ -25,20 +27,44 @@ import java.util.List;
 
 public class TSLInterpreterTests {
 
+    private static class DemoDropAction extends TSLAction {
+        protected TSLWord droppedItemId;
+
+        public DemoDropAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException {
+            super(platform, args);
+            this.droppedItemId = args.get(0).getLeft().orElseThrow();
+        }
+
+        @Override
+        public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+            System.out.println("Dropping items " + droppedItemId.evaluate(ctx));
+            return Collections.singletonList(droppedItemId);
+        }
+    }
+
+    private static class DemoSummonAction extends TSLAction {
+        protected TSLWord mobId;
+
+        public DemoSummonAction(TSLPlatform platform, List<Either<TSLWord, TSLAction>> args) throws TSLSyntaxException {
+            super(platform, args);
+            this.mobId = args.get(0).getLeft().orElseThrow();
+        }
+
+        @Override
+        public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+            System.out.println("Summoning mob " + mobId.evaluate(ctx));
+            return Collections.singletonList(mobId);
+        }
+    }
+
     private static TSLPlatform getDemoPlatform() {
         TSLPlatform platform = new TSLPlatform("Test Platform", 1.0f);
 
         platform.initializeStd();
 
         // Register Actions
-        platform.registerAction("DROP", (_platform, args) -> new TSLAction(_platform, args) {
-            @Override
-            public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
-                TSLWord droppedItemId = args.get(0).getLeft().orElseThrow();
-                System.out.println("Dropping items " + droppedItemId.evaluate(ctx));
-                return Collections.singletonList(droppedItemId);
-            }
-        });
+        platform.registerAction("DROP", DemoDropAction::new);
+        platform.registerAction("SUMMON", DemoSummonAction::new);
 
         // Register Events
         platform.registerEvent(new TSLEvent("Donation")
@@ -100,8 +126,13 @@ public class TSLInterpreterTests {
         TSLDeferred<TSLCapture> deferredCapture1 = interpreter.interpret(rulesAst.get(0).captureRule());
         TSLDeferred<TSLCapture> deferredCapture2 = interpreter.interpret(rulesAst.get(1).captureRule());
 
-        System.out.println(deferredCapture1);
-        System.out.println(deferredCapture2);
+        TSLPlatform demoPlatform = getDemoPlatform();
+
+        List<Either<TSLWord, TSLAction>> contents1 = deferredCapture1.resolve(demoPlatform).getContents();
+        List<Either<TSLWord, TSLAction>> contents2 = deferredCapture2.resolve(demoPlatform).getContents();
+
+        System.out.println(contents1);
+        System.out.println(contents2);
     }
 
     @Test
@@ -137,6 +168,8 @@ public class TSLInterpreterTests {
         ctx.getEventArgs().put("amount", 1200);
         List<TSLWord> yield = rule.perform(ctx);
 
+        System.out.println(rule.getAction().getDisplaying());
+
         System.out.println("Yield " + yield);
     }
 
@@ -157,7 +190,7 @@ public class TSLInterpreterTests {
                 
                 #**       
                  * This is my
-                 * TSLDoc hurraay!
+                 * <strong>TSLDoc hurraay!</strong>
                  *
                  *
                  *#
