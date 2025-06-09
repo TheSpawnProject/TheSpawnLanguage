@@ -67,7 +67,7 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
 
     @Override
     public TSLDeferred<TSLAction> visitActionYields(TSLParserImpl.ActionYieldsContext ctx) {
-        TSLWord yieldConsumer = new TSLWordInterpreter().parseWord(ctx.consumer);
+        TSLWord yieldConsumer = new TSLWordInterpreter().interpretWord(ctx.consumer);
 
         if (yieldConsumer instanceof TSLCaptureId) {
             this.yieldConsumer = Either.left(((TSLCaptureId) yieldConsumer));

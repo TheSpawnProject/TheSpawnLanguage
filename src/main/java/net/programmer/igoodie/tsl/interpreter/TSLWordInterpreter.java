@@ -19,25 +19,7 @@ public class TSLWordInterpreter extends TSLInterpreter<TSLWord, TSLParserImpl.Wo
         return this.word;
     }
 
-    @Override
-    public TSLWord visitGroup(TSLParserImpl.GroupContext ctx) {
-        TSLGroupInterpreter interpreter = new TSLGroupInterpreter();
-        return (this.word = interpreter.interpret(ctx));
-    }
-
-    @Override
-    public TSLWord visitCaptureCall(TSLParserImpl.CaptureCallContext ctx) {
-        TSLCaptureId captureId = (TSLCaptureId) this.parseWord(ctx.id);
-
-        TSLParserImpl.CaptureArgsContext captureArgsCtx = ctx.captureArgs();
-        List<TSLParserImpl.WordContext> wordCtx = captureArgsCtx == null ? Collections.emptyList() : captureArgsCtx.word();
-
-        List<TSLWord> arguments = wordCtx.stream().map(this::interpret).toList();
-
-        return (this.word = new TSLCaptureCall(captureId, arguments).setSource(ctx));
-    }
-
-    public TSLWord parseWord(Token token) {
+    public TSLWord interpretWord(Token token) {
         String text = token.getText();
 
         if (token.getType() == TSLLexer.PLACEHOLDER) {
@@ -65,10 +47,28 @@ public class TSLWordInterpreter extends TSLInterpreter<TSLWord, TSLParserImpl.Wo
     }
 
     @Override
+    public TSLWord visitGroup(TSLParserImpl.GroupContext ctx) {
+        TSLGroupInterpreter interpreter = new TSLGroupInterpreter();
+        return (this.word = interpreter.interpret(ctx));
+    }
+
+    @Override
+    public TSLWord visitCaptureCall(TSLParserImpl.CaptureCallContext ctx) {
+        TSLCaptureId captureId = (TSLCaptureId) this.interpretWord(ctx.id);
+
+        TSLParserImpl.CaptureArgsContext captureArgsCtx = ctx.captureArgs();
+        List<TSLParserImpl.WordContext> wordCtx = captureArgsCtx == null ? Collections.emptyList() : captureArgsCtx.word();
+
+        List<TSLWord> arguments = wordCtx.stream().map(this::interpret).toList();
+
+        return (this.word = new TSLCaptureCall(captureId, arguments).setSource(ctx));
+    }
+
+    @Override
     public TSLWord visitTerminal(TerminalNode node) {
         Token token = node.getSymbol();
 
-        TSLWord word = parseWord(token);
+        TSLWord word = interpretWord(token);
 
         if (word == null) {
             throw new TSLInternalException("Unknown word type {}",

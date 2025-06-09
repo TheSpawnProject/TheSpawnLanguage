@@ -30,11 +30,11 @@ public class WaitAction extends TSLAction {
             throw new TSLSyntaxException("Expected two words, found %d instead", args.size());
         }
 
-        this.sleepTimeWord = args.get(0).getLeftOrThrow(
+        this.sleepTimeWord = args.get(0).getLeft().orElseThrow(
                 () -> new TSLSyntaxException("Expected a word")
         );
 
-        this.unitWord = args.get(1).getLeftOrThrow(
+        this.unitWord = args.get(1).getLeft().orElseThrow(
                 () -> new TSLSyntaxException("Expected a word")
         );
     }

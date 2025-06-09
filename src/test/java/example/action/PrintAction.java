@@ -3,7 +3,6 @@ package example.action;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
@@ -11,6 +10,7 @@ import net.programmer.igoodie.tsl.util.structure.Either;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class PrintAction extends TSLAction {
@@ -21,7 +21,8 @@ public class PrintAction extends TSLAction {
         super(platform, args);
 
         this.wordsToPrint = args.stream()
-                .map(Either::getLeftOrThrow)
+                .map(Either::getLeft)
+                .map(Optional::orElseThrow)
                 .toList();
     }
 

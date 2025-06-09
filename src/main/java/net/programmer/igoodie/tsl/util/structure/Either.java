@@ -4,7 +4,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class Either<L, R> {
 
@@ -40,24 +39,6 @@ public class Either<L, R> {
 
     public Optional<R> getRight() {
         return isRight() ? Optional.of(right) : Optional.empty();
-    }
-
-    public L getLeftOrThrow() {
-        return this.getLeftOrThrow(() -> new IllegalStateException("Not a Left value"));
-    }
-
-    public <E extends Exception> L getLeftOrThrow(Supplier<E> thrower) throws E {
-        if (isLeft()) return left;
-        throw thrower.get();
-    }
-
-    public R getRightOrThrow() {
-        return getRightOrThrow(() -> new IllegalStateException("Not a Right value"));
-    }
-
-    public <E extends Exception> R getRightOrThrow(Supplier<E> thrower) throws E {
-        if (isRight()) return right;
-        throw thrower.get();
     }
 
     public <T> T reduce(Function<L, T> reduceLeft, Function<R, T> reduceRight) {

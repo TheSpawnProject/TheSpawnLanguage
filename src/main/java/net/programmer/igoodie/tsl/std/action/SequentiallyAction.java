@@ -12,8 +12,6 @@ import net.programmer.igoodie.tsl.util.structure.Either;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 
 /*
  * SEQUENTIALLY <action>
@@ -32,8 +30,8 @@ public class SequentiallyAction extends TSLAction {
             Either<TSLWord, TSLAction> arg = args.get(i);
 
             if (i % 2 == 0) {
-                TSLAction action = arg.getRightOrThrow(() ->
-                        new TSLSyntaxException("Expected an action, instead found -> {}", arg.getLeftOrThrow()));
+                TSLAction action = arg.getRight().orElseThrow(() ->
+                        new TSLSyntaxException("Expected an action, instead found -> {}", arg.getLeft().orElseThrow()));
                 this.actions.add(action);
                 continue;
             }

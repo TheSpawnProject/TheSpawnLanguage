@@ -52,7 +52,7 @@ public class TSLRuleInterpreter extends TSLInterpreter<TSLDeferred<TSLRule>, TSL
 
     @Override
     public TSLDeferred<TSLRule> visitPredicateExpression(TSLParserImpl.PredicateExpressionContext ctx) {
-        TSLWord word = new TSLWordInterpreter().parseWord(ctx.EXPRESSION().getSymbol());
+        TSLWord word = new TSLWordInterpreter().interpretWord(ctx.EXPRESSION().getSymbol());
 
         if (!(word instanceof TSLExpression expression)) {
             throw new TSLInternalException("Matched something other than an word in an word predicate.");

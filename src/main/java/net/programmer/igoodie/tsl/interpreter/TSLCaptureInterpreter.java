@@ -35,7 +35,7 @@ public class TSLCaptureInterpreter extends TSLInterpreter<TSLDeferred<TSLCapture
 
     @Override
     public TSLDeferred<TSLCapture> visitCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx) {
-        this.id = (TSLCaptureId) new TSLWordInterpreter().parseWord(ctx.id);
+        this.id = (TSLCaptureId) new TSLWordInterpreter().interpretWord(ctx.id);
 
         TSLParserImpl.CaptureParamsContext captureParamsTree = ctx.captureParams();
 

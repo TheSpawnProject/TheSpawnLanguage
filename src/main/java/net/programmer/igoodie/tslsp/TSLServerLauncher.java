@@ -19,6 +19,7 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,8 @@ public class TSLServerLauncher {
             @Override
             public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
                 System.out.println(">> " + args.stream()
-                        .map(Either::getLeftOrThrow)
+                        .map(Either::getLeft)
+                        .map(Optional::orElseThrow)
                         .map(word -> word.evaluate(ctx))
                         .collect(Collectors.joining(" ")));
                 return Collections.emptyList();

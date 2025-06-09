@@ -59,7 +59,6 @@ public class TSLRulesetInterpreter extends TSLInterpreter<TSLDeferred<TSLRuleset
 
             tslDoc = new TSLDoc(lastNode.getText());
             tslDoc.setSource(lastNode);
-            System.out.println(tslDoc.getContent());
         }
 
         TSLParserImpl.ReactionRuleContext reactionRuleTree = ctx.reactionRule();
