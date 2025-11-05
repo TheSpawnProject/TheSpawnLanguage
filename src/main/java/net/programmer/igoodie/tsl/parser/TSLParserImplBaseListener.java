@@ -173,13 +173,13 @@ public class TSLParserImplBaseListener implements TSLParserImplListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterActionYields(TSLParserImpl.ActionYieldsContext ctx) { }
+	@Override public void enterActionYielding(TSLParserImpl.ActionYieldingContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitActionYields(TSLParserImpl.ActionYieldsContext ctx) { }
+	@Override public void exitActionYielding(TSLParserImpl.ActionYieldingContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -216,6 +216,18 @@ public class TSLParserImplBaseListener implements TSLParserImplListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitEventName(TSLParserImpl.EventNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterEventFrom(TSLParserImpl.EventFromContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEventFrom(TSLParserImpl.EventFromContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

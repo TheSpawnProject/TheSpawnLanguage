@@ -25,7 +25,7 @@ public class YieldModificationTest {
         }
 
         @Override
-        public void interpretArguments(TSLPlatform platform, List<Either<TSLWord, TSLAction>> words) throws TSLSyntaxException {
+        public void interpretArguments(TSLPlatform platform) throws TSLSyntaxException {
 
         }
 

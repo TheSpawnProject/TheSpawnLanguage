@@ -89,11 +89,11 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitActionNest(TSLParserImpl.ActionNestContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TSLParserImpl#actionYields}.
+	 * Visit a parse tree produced by {@link TSLParserImpl#actionYielding}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitActionYields(TSLParserImpl.ActionYieldsContext ctx);
+	T visitActionYielding(TSLParserImpl.ActionYieldingContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TSLParserImpl#actionDisplaying}.
 	 * @param ctx the parse tree
@@ -112,6 +112,12 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitEventName(TSLParserImpl.EventNameContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TSLParserImpl#eventFrom}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEventFrom(TSLParserImpl.EventFromContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TSLParserImpl#eventPredicate}.
 	 * @param ctx the parse tree

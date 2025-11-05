@@ -25,7 +25,7 @@ tslRuleDoc: (TSLDOC_COMMENT EMPTY_LINES?)+;
 // ---------------------
 
 tslDirective: SYMBOL_DIRECTIVE (id = IDENTIFIER) tslDirectiveArgs (EMPTY_LINES+ | EOF);
-tslDirectiveArgs: (word | SYMBOL_ASTERIKS | KEYWORD_FROM)*;
+tslDirectiveArgs: (word | KEYWORD_FROM)*;
 
 // ---------------------
 // TSL Rules - Available rule types owned by the engine
@@ -33,16 +33,17 @@ tslDirectiveArgs: (word | SYMBOL_ASTERIKS | KEYWORD_FROM)*;
 
 reactionRule: action event;
 
-action: actionBody actionYields? actionDisplaying?;
 actionBody: actionId actionArgs;
+action: actionBody actionYielding? actionDisplaying?;
 actionId: IDENTIFIER;
 actionArgs: (word | actionNest)*;
 actionNest: SIGN_LPARAN action SIGN_RPARAN;
-actionYields: KEYWORD_YIELDS (consumer = CAPTURE_IDENTIFIER | EXPRESSION);
+actionYielding: KEYWORD_YIELDING (consumer = CAPTURE_IDENTIFIER | EXPRESSION);
 actionDisplaying: KEYWORD_DISPLAYING word;
 
-event: KEYWORD_ON eventName (eventPredicate)*;
+event: KEYWORD_ON eventName (KEYWORD_FROM eventFrom)? (eventPredicate)*;
 eventName: IDENTIFIER+;
+eventFrom: IDENTIFIER;
 eventPredicate: KEYWORD_WITH (predicateExpression | predicateOperation);
 predicateExpression: EXPRESSION;
 predicateOperation: (field = IDENTIFIER) predicateOperator predicateWord;

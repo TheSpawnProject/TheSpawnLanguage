@@ -20,7 +20,7 @@ public class TSLParserTests {
 
     @Test
     public void shouldTokenizeSimple() {
-        String script = "PRINT %namespace:|${\"item\"}|% ${10 * Math.random()} $smth";
+        String script = "PRINT %namespace:\\\\|${\"item\"}|% ${10 * Math.random()} $smth";
 
         TSLParser parser = TSLParser.fromScript(script);
         parser.parseWords().forEach(System.out::println);
@@ -86,7 +86,10 @@ public class TSLParserTests {
         List<TSLWord> actionArgs = parser.parseWords();
 
         TSLPlatform platform = new TSLPlatform("Dummy Platform", 1.0f);
-        WaitAction waitAction = new WaitAction(actionArgs.stream().map(Either::<TSLWord, TSLAction>left).toList());
+        platform.initializeStd();
+
+        WaitAction waitAction = (WaitAction) platform.getActionDefinition("WAIT").orElseThrow()
+                .createAction(actionArgs.stream().map(Either::<TSLWord, TSLAction>left).toList());
 
         TSLEventContext ctx = new TSLEventContext(platform, "Dummy Event");
         waitAction.perform(ctx);

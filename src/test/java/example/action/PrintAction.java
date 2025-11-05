@@ -22,8 +22,8 @@ public class PrintAction extends TSLAction {
     }
 
     @Override
-    public void interpretArguments(TSLPlatform platform, List<Either<TSLWord, TSLAction>> words) throws TSLSyntaxException {
-        this.wordsToPrint = words.stream()
+    public void interpretArguments(TSLPlatform platform) throws TSLSyntaxException {
+        this.wordsToPrint = this.sourceArguments.stream()
                 .map(Either::getLeft)
                 .map(Optional::orElseThrow)
                 .toList();

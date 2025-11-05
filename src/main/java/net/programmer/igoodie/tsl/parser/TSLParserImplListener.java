@@ -138,15 +138,15 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 */
 	void exitActionNest(TSLParserImpl.ActionNestContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TSLParserImpl#actionYields}.
+	 * Enter a parse tree produced by {@link TSLParserImpl#actionYielding}.
 	 * @param ctx the parse tree
 	 */
-	void enterActionYields(TSLParserImpl.ActionYieldsContext ctx);
+	void enterActionYielding(TSLParserImpl.ActionYieldingContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link TSLParserImpl#actionYields}.
+	 * Exit a parse tree produced by {@link TSLParserImpl#actionYielding}.
 	 * @param ctx the parse tree
 	 */
-	void exitActionYields(TSLParserImpl.ActionYieldsContext ctx);
+	void exitActionYielding(TSLParserImpl.ActionYieldingContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TSLParserImpl#actionDisplaying}.
 	 * @param ctx the parse tree
@@ -177,6 +177,16 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitEventName(TSLParserImpl.EventNameContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TSLParserImpl#eventFrom}.
+	 * @param ctx the parse tree
+	 */
+	void enterEventFrom(TSLParserImpl.EventFromContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TSLParserImpl#eventFrom}.
+	 * @param ctx the parse tree
+	 */
+	void exitEventFrom(TSLParserImpl.EventFromContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TSLParserImpl#eventPredicate}.
 	 * @param ctx the parse tree

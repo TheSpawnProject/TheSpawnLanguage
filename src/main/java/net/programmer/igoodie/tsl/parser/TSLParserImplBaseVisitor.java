@@ -109,7 +109,7 @@ public class TSLParserImplBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitActionYields(TSLParserImpl.ActionYieldsContext ctx) { return visitChildren(ctx); }
+	@Override public T visitActionYielding(TSLParserImpl.ActionYieldingContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -131,6 +131,13 @@ public class TSLParserImplBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitEventName(TSLParserImpl.EventNameContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitEventFrom(TSLParserImpl.EventFromContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

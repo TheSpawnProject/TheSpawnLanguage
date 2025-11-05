@@ -1,0 +1,40 @@
+$doThings(author, item) = SEQUENTIALLY
+ (DROP {{item}})
+ AND
+ (PRINT %Hello World, | {{author}} |!%)
+ AND
+ (SEQUENTIALLY
+    (DROP pineapple)
+    AND
+    (COWSAY %1 + 1 = | ${1+1} |%) YIELDING $foo)
+ YIELDING $foo
+ DISPLAYING %{ json: "schema", to: "test" }%
+
+$doThings(iGoodie, apple) ON Manual Trigger
+
+
+$variable = iGoodie
+
+$macro(x) = {{x}} ${"Foo" + "bar"}
+
+
+FORWARD_MAIL arda@gmail.com
+ ON Mail Received
+
+EXECUTE %/tp @a %
+
+
+SEQUENTIALLY
+ (WAIT 10 seconds)
+ AND
+ (DROP apple)
+ AND
+ (WAIT 10 seconds)
+ AND
+ (DROP stick)
+ ON Donation
+
+SELECT * FROM users
+ ON Donation
+
+PRINT %Hello World, \%99,  | ${1+1} |%

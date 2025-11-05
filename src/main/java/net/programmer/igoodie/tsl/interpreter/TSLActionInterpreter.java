@@ -66,7 +66,7 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
     }
 
     @Override
-    public TSLDeferred<TSLAction> visitActionYields(TSLParserImpl.ActionYieldsContext ctx) {
+    public TSLDeferred<TSLAction> visitActionYielding(TSLParserImpl.ActionYieldingContext ctx) {
         TSLWord yieldConsumer = new TSLWordInterpreter().interpretWord(ctx.consumer);
 
         if (yieldConsumer instanceof TSLCaptureId) {

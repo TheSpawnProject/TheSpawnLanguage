@@ -43,10 +43,10 @@ public abstract class TSLAction {
         return displaying;
     }
 
-    public abstract void interpretArguments(TSLPlatform platform, List<Either<TSLWord, TSLAction>> words) throws TSLSyntaxException;
+    public abstract void interpretArguments(TSLPlatform platform) throws TSLSyntaxException;
 
     public abstract List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException;
-    
+
     /* ----------------------- */
 
     public interface Supplier<T extends TSLAction> {

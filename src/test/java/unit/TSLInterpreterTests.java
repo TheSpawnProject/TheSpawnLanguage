@@ -35,8 +35,8 @@ public class TSLInterpreterTests {
         }
 
         @Override
-        public void interpretArguments(TSLPlatform platform, List<Either<TSLWord, TSLAction>> words) throws TSLSyntaxException {
-            this.droppedItemId = words.get(0).getLeft().orElseThrow();
+        public void interpretArguments(TSLPlatform platform) throws TSLSyntaxException {
+            this.droppedItemId = this.sourceArguments.get(0).getLeft().orElseThrow();
         }
 
         @Override
@@ -54,8 +54,8 @@ public class TSLInterpreterTests {
         }
 
         @Override
-        public void interpretArguments(TSLPlatform platform, List<Either<TSLWord, TSLAction>> words) throws TSLSyntaxException {
-            this.mobId = words.get(0).getLeft().orElseThrow();
+        public void interpretArguments(TSLPlatform platform) throws TSLSyntaxException {
+            this.mobId = this.sourceArguments.get(0).getLeft().orElseThrow();
         }
 
         @Override

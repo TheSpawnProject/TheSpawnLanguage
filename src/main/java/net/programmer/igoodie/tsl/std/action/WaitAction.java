@@ -28,16 +28,16 @@ public class WaitAction extends TSLAction {
     }
 
     @Override
-    public void interpretArguments(TSLPlatform platform, List<Either<TSLWord, TSLAction>> words) throws TSLSyntaxException {
-        if (words.size() != 2) {
-            throw new TSLSyntaxException("Expected two words, found %d instead", words.size());
+    public void interpretArguments(TSLPlatform platform) throws TSLSyntaxException {
+        if (this.sourceArguments.size() != 2) {
+            throw new TSLSyntaxException("Expected two words, found %d instead", this.sourceArguments.size());
         }
 
-        this.sleepTimeWord = words.get(0).getLeft().orElseThrow(
+        this.sleepTimeWord = this.sourceArguments.get(0).getLeft().orElseThrow(
                 () -> new TSLSyntaxException("Expected a word")
         );
 
-        this.unitWord = words.get(1).getLeft().orElseThrow(
+        this.unitWord = this.sourceArguments.get(1).getLeft().orElseThrow(
                 () -> new TSLSyntaxException("Expected a word")
         );
     }

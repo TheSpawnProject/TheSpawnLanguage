@@ -29,6 +29,7 @@ public class TSLRuleInterpreter extends TSLInterpreter<TSLDeferred<TSLRule>, TSL
                     new TSLSyntaxException("Unknown event -> {}", this.eventName));
 
             TSLAction action = this.action.resolve(platform);
+            action.interpretArguments(platform);
 
             return new TSLRule(event, this.predicates, action);
         };
@@ -40,6 +41,8 @@ public class TSLRuleInterpreter extends TSLInterpreter<TSLDeferred<TSLRule>, TSL
 
         return null;
     }
+
+    // TODO: Visit action arguments too, and pass to
 
     @Override
     public TSLDeferred<TSLRule> visitEventName(TSLParserImpl.EventNameContext ctx) {
