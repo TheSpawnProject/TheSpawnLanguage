@@ -10,6 +10,7 @@ import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
 import net.programmer.igoodie.tsl.util.structure.Either;
+import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -40,21 +41,22 @@ public class TSLCaptureTests {
         TSLCapture capture = ruleset.getCapture("d").orElseThrow();
 
         TSLCaptureResolver captureResolver = new TSLCaptureResolver(ruleset.getCaptures(), capture, Collections.emptyList());
-        List<Either<TSLWord, TSLAction>> resolvedContent = captureResolver.resolve();
-
-        System.out.println(resolvedContent);
+        List<Either<TSLWord, TSLAction>> resolvedClause = captureResolver.resolve();
 
         TSLEventContext ctx = new TSLEventContext(platform, "Dummy Event");
 
-        String sourceRebuilt = resolvedContent.stream().map(content -> content.reduce(
-                tslWord -> tslWord.evaluate(ctx),
-                tslAction -> tslAction.getSourceArguments().stream().map(actionContent -> actionContent.reduce(
-                        tslWord2 -> tslWord2.evaluate(ctx),
-                        tslAction2 -> tslAction2.toString()
-                )).collect(Collectors.joining(" ", "(", ")"))
-        )).collect(Collectors.joining(" "));
+        String sourceRebuilt = debugClause(resolvedClause);
 
         System.out.println(sourceRebuilt);
+    }
+
+    private String debugClause(List<Either<TSLWord, TSLAction>> clause) {
+        return clause.stream()
+                .map(content -> content.reduce(
+                        word -> word.getSource().stream().map(Token::getText).collect(Collectors.joining()),
+                        nest -> debugClause(nest.getSourceArguments())
+                ))
+                .collect(Collectors.joining(" ", "(", ")"));
     }
 
 }

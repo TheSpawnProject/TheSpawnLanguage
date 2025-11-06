@@ -38,3 +38,11 @@ SELECT * FROM users
  ON Donation
 
 PRINT %Hello World, \%99,  | ${1+1} |%
+
+GENERATE_UUID YIELDING $uuid
+ ON Donation
+ WITH amount = 1
+
+PRINT $uuid
+ ON Donation
+ WITH amount = 2

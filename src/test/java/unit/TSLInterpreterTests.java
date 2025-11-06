@@ -136,11 +136,11 @@ public class TSLInterpreterTests {
 
         TSLPlatform demoPlatform = getTestPlatform();
 
-        List<Either<TSLWord, TSLAction>> contents1 = deferredCapture1.resolve(demoPlatform).getContents();
-        List<Either<TSLWord, TSLAction>> contents2 = deferredCapture2.resolve(demoPlatform).getContents();
+        List<Either<TSLWord, TSLAction>> template1 = deferredCapture1.resolve(demoPlatform).getTemplate();
+        List<Either<TSLWord, TSLAction>> template2 = deferredCapture2.resolve(demoPlatform).getTemplate();
 
-        System.out.println(contents1);
-        System.out.println(contents2);
+        System.out.println(template1);
+        System.out.println(template2);
     }
 
     @Test

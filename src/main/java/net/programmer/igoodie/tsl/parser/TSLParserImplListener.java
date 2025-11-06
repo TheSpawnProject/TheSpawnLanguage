@@ -88,16 +88,6 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 */
 	void exitReactionRule(TSLParserImpl.ReactionRuleContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TSLParserImpl#action}.
-	 * @param ctx the parse tree
-	 */
-	void enterAction(TSLParserImpl.ActionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TSLParserImpl#action}.
-	 * @param ctx the parse tree
-	 */
-	void exitAction(TSLParserImpl.ActionContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link TSLParserImpl#actionBody}.
 	 * @param ctx the parse tree
 	 */
@@ -107,6 +97,16 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitActionBody(TSLParserImpl.ActionBodyContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TSLParserImpl#action}.
+	 * @param ctx the parse tree
+	 */
+	void enterAction(TSLParserImpl.ActionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TSLParserImpl#action}.
+	 * @param ctx the parse tree
+	 */
+	void exitAction(TSLParserImpl.ActionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TSLParserImpl#actionId}.
 	 * @param ctx the parse tree

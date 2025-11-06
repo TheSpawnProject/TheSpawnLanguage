@@ -59,6 +59,9 @@ public class TSLRuleset {
 
             if (yield != null) {
                 Either<TSLCaptureId, TSLExpression> yieldConsumer = rule.getAction().getYieldConsumer();
+
+                if (yieldConsumer == null) return yield;
+
                 yieldConsumer.ifLeft(captureId -> {
                     TSLCapture capture = new TSLCapture(
                             captureId,
@@ -70,6 +73,7 @@ public class TSLRuleset {
                 yieldConsumer.ifRight(expression -> {
                     // TODO: do something with the expression
                 });
+
                 return yield;
             }
         }

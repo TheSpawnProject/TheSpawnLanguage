@@ -38,7 +38,10 @@ public class DoAction extends TSLAction {
                     }
                     return expression;
                 },
-                action -> action
+                action -> {
+                    action.interpretArguments(platform);
+                    return action;
+                }
         );
     }
 

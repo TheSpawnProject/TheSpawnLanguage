@@ -113,18 +113,6 @@ public class TSLParserImplBaseListener implements TSLParserImplListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAction(TSLParserImpl.ActionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAction(TSLParserImpl.ActionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterActionBody(TSLParserImpl.ActionBodyContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -132,6 +120,18 @@ public class TSLParserImplBaseListener implements TSLParserImplListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitActionBody(TSLParserImpl.ActionBodyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAction(TSLParserImpl.ActionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAction(TSLParserImpl.ActionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

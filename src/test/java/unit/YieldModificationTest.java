@@ -62,7 +62,7 @@ public class YieldModificationTest {
                 $result = 0
                 
                 SUM $result 1
-                  YIELDS $result
+                  YIELDING $result
                   ON Donation
                 """;
 
@@ -79,7 +79,7 @@ public class YieldModificationTest {
         ruleset.perform(ctx);
 
         TSLCapture capture = ruleset.getCapture("result").orElseThrow();
-        TSLWord firstWord = capture.getContents().get(0).getLeft().orElseThrow();
+        TSLWord firstWord = capture.getTemplate().get(0).getLeft().orElseThrow();
         System.out.println(firstWord.evaluate(ctx));
     }
 

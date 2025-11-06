@@ -59,17 +59,17 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitReactionRule(TSLParserImpl.ReactionRuleContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TSLParserImpl#action}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAction(TSLParserImpl.ActionContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link TSLParserImpl#actionBody}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitActionBody(TSLParserImpl.ActionBodyContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TSLParserImpl#action}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAction(TSLParserImpl.ActionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TSLParserImpl#actionId}.
 	 * @param ctx the parse tree

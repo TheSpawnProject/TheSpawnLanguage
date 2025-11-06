@@ -22,14 +22,14 @@ public class TSLCaptureInterpreter extends TSLInterpreter<TSLDeferred<TSLCapture
     @Override
     public TSLDeferred<TSLCapture> yieldValue(TSLParserImpl.CaptureRuleContext tree) {
         return platform -> {
-            List<Either<TSLWord, TSLAction>> resolvedContent = this.contents.stream()
+            List<Either<TSLWord, TSLAction>> resolvedTemplate = this.contents.stream()
                     .map(deferredArg -> deferredArg.map(
                             word -> word,
-                            nestRef -> nestRef.resolve(platform)
+                            deferredNest -> deferredNest.resolve(platform)
                     ))
                     .toList();
 
-            return new TSLCapture(this.id, this.params, resolvedContent);
+            return new TSLCapture(this.id, this.params, resolvedTemplate);
         };
     }
 

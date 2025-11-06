@@ -46,6 +46,8 @@ public class SequentiallyAction extends TSLAction {
             }
         }
 
+        this.actions.forEach(action -> interpretArguments(platform));
+
         if (this.sourceArguments.size() % 2 != 1) {
             throw new TSLSyntaxException("Expected an action, after AND");
         }

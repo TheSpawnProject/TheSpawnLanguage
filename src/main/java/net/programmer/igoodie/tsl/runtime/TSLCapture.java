@@ -14,12 +14,12 @@ public class TSLCapture {
 
     protected final TSLCaptureId id;
     protected final List<String> paramNames;
-    protected final List<Either<TSLWord, TSLAction>> contents;
+    protected final List<Either<TSLWord, TSLAction>> template;
 
-    public TSLCapture(TSLCaptureId id, List<String> paramNames, List<Either<TSLWord, TSLAction>> contents) {
+    public TSLCapture(TSLCaptureId id, List<String> paramNames, List<Either<TSLWord, TSLAction>> template) {
         this.id = id;
         this.paramNames = paramNames;
-        this.contents = contents;
+        this.template = template;
     }
 
     public TSLDoc getTslDoc() {
@@ -34,8 +34,8 @@ public class TSLCapture {
         return paramNames;
     }
 
-    public List<Either<TSLWord, TSLAction>> getContents() {
-        return contents;
+    public List<Either<TSLWord, TSLAction>> getTemplate() {
+        return template;
     }
 
     public void attachDoc(TSLDoc tslDoc) {

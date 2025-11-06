@@ -41,7 +41,7 @@ public class TSLCaptureResolver {
     }
 
     public List<Either<TSLWord, TSLAction>> resolve() {
-        for (Either<TSLWord, TSLAction> content : this.capture.contents) {
+        for (Either<TSLWord, TSLAction> content : this.capture.template) {
             content.consume(
                     tslWord -> this.resolution.addAll(this.resolveWord(tslWord)),
                     tslAction -> this.resolution.add(Either.right(this.resolveAction(tslAction)))

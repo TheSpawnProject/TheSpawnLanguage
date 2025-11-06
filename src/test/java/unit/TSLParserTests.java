@@ -91,6 +91,8 @@ public class TSLParserTests {
         WaitAction waitAction = (WaitAction) platform.getActionDefinition("WAIT").orElseThrow()
                 .createAction(actionArgs.stream().map(Either::<TSLWord, TSLAction>left).toList());
 
+        waitAction.interpretArguments(platform);
+
         TSLEventContext ctx = new TSLEventContext(platform, "Dummy Event");
         waitAction.perform(ctx);
     }
