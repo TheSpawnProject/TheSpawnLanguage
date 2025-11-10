@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.std.action;
 
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
+import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
@@ -18,7 +19,7 @@ import java.util.concurrent.CompletionException;
  */
 public class ConcurrentlyAction extends SequentiallyAction {
 
-    public ConcurrentlyAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+    public ConcurrentlyAction(List<TSLClause> sourceArguments) throws TSLSyntaxException {
         super(sourceArguments);
     }
 

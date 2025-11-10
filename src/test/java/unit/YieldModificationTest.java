@@ -5,6 +5,7 @@ import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.TSLCapture;
+import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
@@ -20,7 +21,7 @@ public class YieldModificationTest {
 
     private static class TestSumAction extends TSLAction {
 
-        public TestSumAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+        public TestSumAction(List<TSLClause> sourceArguments) throws TSLSyntaxException {
             super(sourceArguments);
         }
 
@@ -79,7 +80,7 @@ public class YieldModificationTest {
         ruleset.perform(ctx);
 
         TSLCapture capture = ruleset.getCapture("result").orElseThrow();
-        TSLWord firstWord = capture.getTemplate().get(0).getLeft().orElseThrow();
+        TSLWord firstWord = capture.getTemplate().get(0).getWord().orElseThrow();
         System.out.println(firstWord.evaluate(ctx));
     }
 

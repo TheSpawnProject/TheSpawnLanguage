@@ -16,7 +16,7 @@ public class TSLCaptureResolver {
     protected final TSLCapture capture;
     protected final Map<String, TSLWord> arguments;
 
-    protected List<Either<TSLWord, TSLAction>> resolution = new ArrayList<>();
+    protected List<TSLClause> resolution = new ArrayList<>();
 
     public TSLCaptureResolver(Map<String, TSLCapture> captureCache, TSLCapture capture, Map<String, TSLWord> arguments) {
         this.captureCache = captureCache;
@@ -40,18 +40,19 @@ public class TSLCaptureResolver {
         return argumentMap;
     }
 
-    public List<Either<TSLWord, TSLAction>> resolve() {
-        for (Either<TSLWord, TSLAction> content : this.capture.template) {
-            content.consume(
-                    tslWord -> this.resolution.addAll(this.resolveWord(tslWord)),
-                    tslAction -> this.resolution.add(Either.right(this.resolveAction(tslAction)))
-            );
+    public List<TSLClause> resolve() {
+        for (TSLClause clause : this.capture.template) {
+            if (clause.isWord())
+                this.resolution.addAll(this.resolveWord(clause.asWord()));
+            if (clause.isAction())
+                this.resolution.add(this.resolveAction(clause.asAction()));
+
         }
 
         return resolution;
     }
 
-    protected List<Either<TSLWord, TSLAction>> resolveWord(TSLWord word) {
+    protected List<TSLClause> resolveWord(TSLWord word) {
         if (word instanceof TSLCaptureCall captureCall) {
             String captureName = captureCall.getId().getCaptureName();
             TSLCapture capture = this.captureCache.get(captureName);
@@ -63,13 +64,13 @@ public class TSLCaptureResolver {
         if (word instanceof TSLPlaceholder placeholder) {
             String parameterName = placeholder.getParameterName();
             TSLWord argument = this.arguments.get(parameterName);
-            return Collections.singletonList(Either.left(argument));
+            return Collections.singletonList(argument);
         }
 
         if (word instanceof TSLGroup group) {
             List<TSLGroup.Word> resolvedGroupWords = group.getArgs().stream().map(groupWord -> {
                 if (groupWord instanceof TSLGroup.Expression expr) {
-                    if (expr.getWord() instanceof TSLPlaceholder placeholder) {
+                    if (expr.getExpressionWord() instanceof TSLPlaceholder placeholder) {
                         TSLWord argument = arguments.get(placeholder.getParameterName());
                         return new TSLGroup.Expression(argument);
                     }
@@ -78,10 +79,10 @@ public class TSLCaptureResolver {
                 return groupWord;
             }).toList();
 
-            return Collections.singletonList(Either.left(new TSLGroup(resolvedGroupWords)));
+            return Collections.singletonList(new TSLGroup(resolvedGroupWords));
         }
 
-        return Collections.singletonList(Either.left(word));
+        return Collections.singletonList(word);
     }
 
     protected TSLAction resolveAction(TSLAction action) {

@@ -35,7 +35,7 @@ public class TSLGroup extends TSLWord {
             this.word = word;
         }
 
-        public TSLWord getWord() {
+        public TSLWord getExpressionWord() {
             return word;
         }
 

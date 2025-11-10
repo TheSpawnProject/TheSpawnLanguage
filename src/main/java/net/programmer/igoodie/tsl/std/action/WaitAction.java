@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.std.action;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
+import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
@@ -23,7 +24,7 @@ public class WaitAction extends TSLAction {
     protected TSLWord unitWord;
     protected TSLWord sleepTimeWord;
 
-    public WaitAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+    public WaitAction(List<TSLClause> sourceArguments) throws TSLSyntaxException {
         super(sourceArguments);
     }
 
@@ -33,11 +34,11 @@ public class WaitAction extends TSLAction {
             throw new TSLSyntaxException("Expected two words, found %d instead", this.sourceArguments.size());
         }
 
-        this.sleepTimeWord = this.sourceArguments.get(0).getLeft().orElseThrow(
+        this.sleepTimeWord = this.sourceArguments.get(0).getWord().orElseThrow(
                 () -> new TSLSyntaxException("Expected a word")
         );
 
-        this.unitWord = this.sourceArguments.get(1).getLeft().orElseThrow(
+        this.unitWord = this.sourceArguments.get(1).getWord().orElseThrow(
                 () -> new TSLSyntaxException("Expected a word")
         );
     }

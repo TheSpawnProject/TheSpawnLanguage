@@ -5,6 +5,7 @@ import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.TSLCapture;
 import net.programmer.igoodie.tsl.runtime.TSLCaptureResolver;
+import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
@@ -41,21 +42,24 @@ public class TSLCaptureTests {
         TSLCapture capture = ruleset.getCapture("d").orElseThrow();
 
         TSLCaptureResolver captureResolver = new TSLCaptureResolver(ruleset.getCaptures(), capture, Collections.emptyList());
-        List<Either<TSLWord, TSLAction>> resolvedClause = captureResolver.resolve();
+        List<TSLClause> resolvedClauses = captureResolver.resolve();
 
         TSLEventContext ctx = new TSLEventContext(platform, "Dummy Event");
 
-        String sourceRebuilt = debugClause(resolvedClause);
+        String sourceRebuilt = debugClause(resolvedClauses);
 
         System.out.println(sourceRebuilt);
     }
 
-    private String debugClause(List<Either<TSLWord, TSLAction>> clause) {
-        return clause.stream()
-                .map(content -> content.reduce(
-                        word -> word.getSource().stream().map(Token::getText).collect(Collectors.joining()),
-                        nest -> debugClause(nest.getSourceArguments())
-                ))
+    private String debugClause(List<TSLClause> clauses) {
+        return clauses.stream()
+                .map(clause -> {
+                    if (clause.isWord())
+                        return clause.asWord().getSource().stream().map(Token::getText).collect(Collectors.joining());
+                    if (clause.isAction())
+                        return debugClause(clause.asAction().getSourceArguments());
+                    return null;
+                })
                 .collect(Collectors.joining(" ", "(", ")"));
     }
 

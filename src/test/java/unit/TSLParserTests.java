@@ -5,6 +5,7 @@ import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
+import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLGroup;
@@ -20,7 +21,7 @@ public class TSLParserTests {
 
     @Test
     public void shouldTokenizeSimple() {
-        String script = "PRINT %namespace:\\\\|${\"item\"}|% ${10 * Math.random()} $smth";
+        String script = "PRINT %namespace:\\\\||${\"item\"}|% ${10 * Math.random()} $smth (NEST)";
 
         TSLParser parser = TSLParser.fromScript(script);
         parser.parseWords().forEach(System.out::println);
@@ -89,7 +90,7 @@ public class TSLParserTests {
         platform.initializeStd();
 
         WaitAction waitAction = (WaitAction) platform.getActionDefinition("WAIT").orElseThrow()
-                .createAction(actionArgs.stream().map(Either::<TSLWord, TSLAction>left).toList());
+                .createAction(actionArgs.stream().map(word -> ((TSLClause) word)).toList());
 
         waitAction.interpretArguments(platform);
 

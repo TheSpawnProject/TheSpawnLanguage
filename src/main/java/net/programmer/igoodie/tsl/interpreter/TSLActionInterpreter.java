@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.interpreter;
 
 import net.programmer.igoodie.tsl.exception.TSLInternalException;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
+import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.TSLDeferred;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.word.TSLCaptureId;
@@ -23,8 +24,8 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
     @Override
     public TSLDeferred<TSLAction> yieldValue(TSLParserImpl.ActionContext tree) {
         return platform -> {
-            List<Either<TSLWord, TSLAction>> resolvedArgs = this.args.stream()
-                    .map(arg -> arg.map(
+            List<TSLClause> resolvedArgs = this.args.stream()
+                    .map(arg -> arg.reduce(
                             word -> word,
                             deferredAction -> deferredAction.resolve(platform)
                     ))

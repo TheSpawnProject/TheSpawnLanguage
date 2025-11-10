@@ -88,7 +88,7 @@ ESCAPED_GROUP_EXPR: '\\|' -> type(GROUP_STRING);
 BEGIN_GROUP_EXPRESSION: '|' -> pushMode(DEFAULT_MODE);
 END_GROUP: '%' -> popMode;
 
-GROUP_STRING: .;
+GROUP_STRING: ('\\\\' | '\\%' | '\\|' | ~[%|])+;
 
 // ---------------------
 // Javascript Context

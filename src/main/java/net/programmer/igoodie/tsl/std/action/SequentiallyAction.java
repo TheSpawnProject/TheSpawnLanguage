@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.std.action;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
+import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLPlainWord;
@@ -21,7 +22,7 @@ public class SequentiallyAction extends TSLAction {
 
     protected List<TSLAction> actions;
 
-    public SequentiallyAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+    public SequentiallyAction(List<TSLClause> sourceArguments) throws TSLSyntaxException {
         super(sourceArguments);
     }
 
@@ -30,16 +31,16 @@ public class SequentiallyAction extends TSLAction {
         this.actions = new ArrayList<>();
 
         for (int i = 0; i < this.sourceArguments.size(); i++) {
-            Either<TSLWord, TSLAction> arg = this.sourceArguments.get(i);
+            TSLClause arg = this.sourceArguments.get(i);
 
             if (i % 2 == 0) {
-                TSLAction action = arg.getRight().orElseThrow(() ->
-                        new TSLSyntaxException("Expected an action, instead found -> {}", arg.getLeft().orElseThrow()));
+                TSLAction action = arg.getAction().orElseThrow(() ->
+                        new TSLSyntaxException("Expected an action, instead found -> {}", arg.getWord().orElseThrow()));
                 this.actions.add(action);
                 continue;
             }
 
-            TSLWord keywordAnd = arg.getLeft().orElseThrow();
+            TSLWord keywordAnd = arg.getWord().orElseThrow();
 
             if (!TSLPlainWord.isKeyword(keywordAnd, "AND")) {
                 throw new TSLSyntaxException("Expected an AND delimiter between actions.");

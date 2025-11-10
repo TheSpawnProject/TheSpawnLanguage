@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.interpreter;
 
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
 import net.programmer.igoodie.tsl.runtime.TSLCapture;
+import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.TSLDeferred;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.word.TSLCaptureId;
@@ -22,8 +23,8 @@ public class TSLCaptureInterpreter extends TSLInterpreter<TSLDeferred<TSLCapture
     @Override
     public TSLDeferred<TSLCapture> yieldValue(TSLParserImpl.CaptureRuleContext tree) {
         return platform -> {
-            List<Either<TSLWord, TSLAction>> resolvedTemplate = this.contents.stream()
-                    .map(deferredArg -> deferredArg.map(
+            List<TSLClause> resolvedTemplate = this.contents.stream()
+                    .map(deferredArg -> deferredArg.reduce(
                             word -> word,
                             deferredNest -> deferredNest.resolve(platform)
                     ))

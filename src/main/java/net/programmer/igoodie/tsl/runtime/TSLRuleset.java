@@ -66,7 +66,7 @@ public class TSLRuleset {
                     TSLCapture capture = new TSLCapture(
                             captureId,
                             Collections.emptyList(),
-                            yield.stream().map(Either::<TSLWord, TSLAction>left).toList()
+                            yield.stream().map(word -> ((TSLClause) word)).toList()
                     );
                     this.addCapture(capture);
                 });

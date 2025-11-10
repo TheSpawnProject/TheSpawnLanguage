@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.word;
 
+import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.util.AstUtils;
 import org.antlr.v4.runtime.Token;
@@ -9,7 +10,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.List;
 import java.util.stream.Stream;
 
-public abstract class TSLWord {
+public abstract class TSLWord implements TSLClause {
 
     protected List<Token> source;
 

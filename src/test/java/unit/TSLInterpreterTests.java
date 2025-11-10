@@ -9,10 +9,7 @@ import net.programmer.igoodie.tsl.interpreter.TSLRuleInterpreter;
 import net.programmer.igoodie.tsl.interpreter.TSLRulesetInterpreter;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
-import net.programmer.igoodie.tsl.runtime.TSLCapture;
-import net.programmer.igoodie.tsl.runtime.TSLDeferred;
-import net.programmer.igoodie.tsl.runtime.TSLRule;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
+import net.programmer.igoodie.tsl.runtime.*;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
@@ -30,13 +27,13 @@ public class TSLInterpreterTests {
     private static class DemoDropAction extends TSLAction {
         protected TSLWord droppedItemId;
 
-        public DemoDropAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+        public DemoDropAction(List<TSLClause> sourceArguments) throws TSLSyntaxException {
             super(sourceArguments);
         }
 
         @Override
         public void interpretArguments(TSLPlatform platform) throws TSLSyntaxException {
-            this.droppedItemId = this.sourceArguments.get(0).getLeft().orElseThrow();
+            this.droppedItemId = this.sourceArguments.get(0).getWord().orElseThrow();
         }
 
         @Override
@@ -49,13 +46,13 @@ public class TSLInterpreterTests {
     private static class DemoSummonAction extends TSLAction {
         protected TSLWord mobId;
 
-        public DemoSummonAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+        public DemoSummonAction(List<TSLClause> sourceArguments) throws TSLSyntaxException {
             super(sourceArguments);
         }
 
         @Override
         public void interpretArguments(TSLPlatform platform) throws TSLSyntaxException {
-            this.mobId = this.sourceArguments.get(0).getLeft().orElseThrow();
+            this.mobId = this.sourceArguments.get(0).getWord().orElseThrow();
         }
 
         @Override
@@ -136,8 +133,8 @@ public class TSLInterpreterTests {
 
         TSLPlatform demoPlatform = getTestPlatform();
 
-        List<Either<TSLWord, TSLAction>> template1 = deferredCapture1.resolve(demoPlatform).getTemplate();
-        List<Either<TSLWord, TSLAction>> template2 = deferredCapture2.resolve(demoPlatform).getTemplate();
+        List<TSLClause> template1 = deferredCapture1.resolve(demoPlatform).getTemplate();
+        List<TSLClause> template2 = deferredCapture2.resolve(demoPlatform).getTemplate();
 
         System.out.println(template1);
         System.out.println(template2);

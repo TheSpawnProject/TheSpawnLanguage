@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.std.action;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
+import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
@@ -21,7 +22,7 @@ public class DoAction extends TSLAction {
 
     protected Either<TSLExpression, TSLAction> subject;
 
-    public DoAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+    public DoAction(List<TSLClause> sourceArguments) throws TSLSyntaxException {
         super(sourceArguments);
     }
 
@@ -31,7 +32,7 @@ public class DoAction extends TSLAction {
             throw new TSLSyntaxException("Expected 1 argument, found {}", this.sourceArguments.size());
         }
 
-        this.subject = this.sourceArguments.get(0).map(
+        this.subject = this.sourceArguments.get(0).asEither().map(
                 word -> {
                     if (!(word instanceof TSLExpression expression)) {
                         throw new TSLSyntaxException("Unexpected token {}", word);

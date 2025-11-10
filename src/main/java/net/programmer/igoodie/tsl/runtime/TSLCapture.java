@@ -1,10 +1,7 @@
 package net.programmer.igoodie.tsl.runtime;
 
-import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.word.TSLCaptureId;
 import net.programmer.igoodie.tsl.runtime.word.TSLDoc;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
-import net.programmer.igoodie.tsl.util.structure.Either;
 
 import java.util.List;
 
@@ -14,9 +11,9 @@ public class TSLCapture {
 
     protected final TSLCaptureId id;
     protected final List<String> paramNames;
-    protected final List<Either<TSLWord, TSLAction>> template;
+    protected final List<TSLClause> template;
 
-    public TSLCapture(TSLCaptureId id, List<String> paramNames, List<Either<TSLWord, TSLAction>> template) {
+    public TSLCapture(TSLCaptureId id, List<String> paramNames, List<TSLClause> template) {
         this.id = id;
         this.paramNames = paramNames;
         this.template = template;
@@ -34,7 +31,7 @@ public class TSLCapture {
         return paramNames;
     }
 
-    public List<Either<TSLWord, TSLAction>> getTemplate() {
+    public List<TSLClause> getTemplate() {
         return template;
     }
 

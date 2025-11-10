@@ -3,6 +3,7 @@ package example.action;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
+import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
@@ -17,14 +18,14 @@ public class PrintAction extends TSLAction {
 
     protected List<TSLWord> wordsToPrint;
 
-    public PrintAction(List<Either<TSLWord, TSLAction>> sourceArguments) throws TSLSyntaxException {
+    public PrintAction(List<TSLClause> sourceArguments) throws TSLSyntaxException {
         super(sourceArguments);
     }
 
     @Override
     public void interpretArguments(TSLPlatform platform) throws TSLSyntaxException {
         this.wordsToPrint = this.sourceArguments.stream()
-                .map(Either::getLeft)
+                .map(TSLClause::getWord)
                 .map(Optional::orElseThrow)
                 .toList();
     }
