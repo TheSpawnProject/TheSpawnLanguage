@@ -8,7 +8,6 @@ import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLPlainWord;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
-import net.programmer.igoodie.tsl.util.structure.Either;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,15 +26,14 @@ public class SequentiallyAction extends TSLAction {
     }
 
     @Override
-    public void interpretArguments(TSLPlatform platform) throws TSLSyntaxException {
+    public void parseArguments(TSLPlatform platform) throws TSLSyntaxException {
         this.actions = new ArrayList<>();
 
         for (int i = 0; i < this.sourceArguments.size(); i++) {
             TSLClause arg = this.sourceArguments.get(i);
 
             if (i % 2 == 0) {
-                TSLAction action = arg.getAction().orElseThrow(() ->
-                        new TSLSyntaxException("Expected an action, instead found -> {}", arg.getWord().orElseThrow()));
+                TSLAction action = arg.expectAction();
                 this.actions.add(action);
                 continue;
             }
@@ -47,7 +45,7 @@ public class SequentiallyAction extends TSLAction {
             }
         }
 
-        this.actions.forEach(action -> interpretArguments(platform));
+        this.actions.forEach(action -> parseArguments(platform));
 
         if (this.sourceArguments.size() % 2 != 1) {
             throw new TSLSyntaxException("Expected an action, after AND");

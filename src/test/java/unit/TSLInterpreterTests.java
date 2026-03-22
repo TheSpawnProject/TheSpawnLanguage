@@ -14,7 +14,6 @@ import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
-import net.programmer.igoodie.tsl.util.structure.Either;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
@@ -32,7 +31,7 @@ public class TSLInterpreterTests {
         }
 
         @Override
-        public void interpretArguments(TSLPlatform platform) throws TSLSyntaxException {
+        public void parseArguments(TSLPlatform platform) throws TSLSyntaxException {
             this.droppedItemId = this.sourceArguments.get(0).getWord().orElseThrow();
         }
 
@@ -51,7 +50,7 @@ public class TSLInterpreterTests {
         }
 
         @Override
-        public void interpretArguments(TSLPlatform platform) throws TSLSyntaxException {
+        public void parseArguments(TSLPlatform platform) throws TSLSyntaxException {
             this.mobId = this.sourceArguments.get(0).getWord().orElseThrow();
         }
 

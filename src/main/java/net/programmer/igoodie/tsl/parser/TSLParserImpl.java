@@ -26,7 +26,7 @@ public class TSLParserImpl extends Parser {
 		SIGN_RPARAN=28, SIGN_COMMA=29, PUNCTUATION=30, BEGIN_GROUP_EXPRESSION=31, 
 		END_GROUP=32, GROUP_STRING=33, BEGIN_EXPRESSION=34, ESCAPED_BACKSLASH=35, 
 		ESCAPED_END_GROUP=36, ESCAPED_GROUP_EXPR=37, END_EXPRESSION=38, BEGIN_STRING_TEMPLATE=39, 
-		BEGIN_OBJECT=40;
+		BEGIN_REGEX=40, BEGIN_OBJECT=41, END_REGEX_ESC=42;
 	public static final int
 		RULE_tslWords = 0, RULE_tslRuleset = 1, RULE_tslRules = 2, RULE_tslRule = 3, 
 		RULE_tslRuleDoc = 4, RULE_tslDirective = 5, RULE_tslDirectiveArgs = 6, 
@@ -55,7 +55,8 @@ public class TSLParserImpl extends Parser {
 			null, null, null, null, null, null, null, null, "'ON'", "'FROM'", "'WITH'", 
 			"'DISPLAYING'", "'YIELDING'", "'='", "'>'", "'>='", "'<'", "'<='", "'#!'", 
 			null, null, null, null, null, null, "'@'", "'$'", "'('", "')'", "','", 
-			null, null, null, null, null, "'\\\\'", "'\\%'", "'\\|'"
+			null, null, null, null, null, "'\\\\'", "'\\%'", "'\\|'", null, null, 
+			null, null, "'\\/'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -70,7 +71,7 @@ public class TSLParserImpl extends Parser {
 			"SIGN_RPARAN", "SIGN_COMMA", "PUNCTUATION", "BEGIN_GROUP_EXPRESSION", 
 			"END_GROUP", "GROUP_STRING", "BEGIN_EXPRESSION", "ESCAPED_BACKSLASH", 
 			"ESCAPED_END_GROUP", "ESCAPED_GROUP_EXPR", "END_EXPRESSION", "BEGIN_STRING_TEMPLATE", 
-			"BEGIN_OBJECT"
+			"BEGIN_REGEX", "BEGIN_OBJECT", "END_REGEX_ESC"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -2328,7 +2329,7 @@ public class TSLParserImpl extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001(\u0117\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u0001*\u0117\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0002"+

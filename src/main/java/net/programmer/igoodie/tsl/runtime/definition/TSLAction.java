@@ -44,7 +44,7 @@ public abstract class TSLAction implements TSLClause {
         return displaying;
     }
 
-    public abstract void interpretArguments(TSLPlatform platform) throws TSLSyntaxException;
+    public abstract void parseArguments(TSLPlatform platform) throws TSLSyntaxException;
 
     public abstract List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException;
 

@@ -37,7 +37,7 @@ actionBody: actionId actionArgs;
 action: actionBody actionYielding? actionDisplaying?;
 actionId: IDENTIFIER;
 actionArgs: (word | actionNest)*;
-actionNest: SIGN_LPARAN action SIGN_RPARAN;
+actionNest: SIGN_LPARAN word+ SIGN_RPARAN;
 actionYielding: KEYWORD_YIELDING (consumer = CAPTURE_IDENTIFIER | EXPRESSION);
 actionDisplaying: KEYWORD_DISPLAYING word;
 

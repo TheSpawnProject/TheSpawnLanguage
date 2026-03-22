@@ -27,12 +27,12 @@ public class DoAction extends TSLAction {
     }
 
     @Override
-    public void interpretArguments(TSLPlatform platform) throws TSLSyntaxException {
+    public void parseArguments(TSLPlatform platform) throws TSLSyntaxException {
         if (this.sourceArguments.size() != 1) {
             throw new TSLSyntaxException("Expected 1 argument, found {}", this.sourceArguments.size());
         }
 
-        this.subject = this.sourceArguments.get(0).asEither().map(
+        this.subject = this.sourceArguments.get(0).asEither_OLD().map(
                 word -> {
                     if (!(word instanceof TSLExpression expression)) {
                         throw new TSLSyntaxException("Unexpected token {}", word);
@@ -40,7 +40,7 @@ public class DoAction extends TSLAction {
                     return expression;
                 },
                 action -> {
-                    action.interpretArguments(platform);
+                    action.parseArguments(platform);
                     return action;
                 }
         );

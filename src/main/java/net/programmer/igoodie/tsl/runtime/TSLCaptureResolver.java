@@ -6,7 +6,6 @@ import net.programmer.igoodie.tsl.runtime.word.TSLCaptureCall;
 import net.programmer.igoodie.tsl.runtime.word.TSLGroup;
 import net.programmer.igoodie.tsl.runtime.word.TSLPlaceholder;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
-import net.programmer.igoodie.tsl.util.structure.Either;
 
 import java.util.*;
 
@@ -46,7 +45,8 @@ public class TSLCaptureResolver {
                 this.resolution.addAll(this.resolveWord(clause.asWord()));
             if (clause.isAction())
                 this.resolution.add(this.resolveAction(clause.asAction()));
-
+            if (clause.isNest())
+                this.resolution.add(this.resolveNest(clause.asNest()));
         }
 
         return resolution;
@@ -85,9 +85,15 @@ public class TSLCaptureResolver {
         return Collections.singletonList(word);
     }
 
+    @Deprecated(forRemoval = true)
     protected TSLAction resolveAction(TSLAction action) {
-        // TODO: How do we resolve actions with this much coupling?
         return action;
+    }
+
+    protected TSLWordNest resolveNest(TSLWordNest nest) {
+        TSLWordNest.Builder builder = new TSLWordNest.Builder();
+        nest.words.forEach(builder::push);
+        return builder.build();
     }
 
 }

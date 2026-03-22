@@ -17,7 +17,7 @@ import java.util.List;
 public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>, TSLParserImpl.ActionContext> {
 
     protected String name;
-    protected List<Either<TSLWord, TSLDeferred<TSLAction>>> args;
+    protected List<TSLClause> args;
     protected Either<TSLCaptureId, TSLExpression> yieldConsumer;
     protected TSLWord displaying;
 
@@ -30,6 +30,8 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
                             deferredAction -> deferredAction.resolve(platform)
                     ))
                     .toList();
+
+            // TODO: Collapse Capture Calls (?)
 
             TSLAction.Supplier<?> supplier = platform.getActionDefinition(this.name)
                     .orElseThrow(() -> new TSLInternalException("Unresolvable action -> {}", this.name));

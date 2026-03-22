@@ -7,7 +7,6 @@ import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
-import net.programmer.igoodie.tsl.util.structure.Either;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +22,7 @@ public class PrintAction extends TSLAction {
     }
 
     @Override
-    public void interpretArguments(TSLPlatform platform) throws TSLSyntaxException {
+    public void parseArguments(TSLPlatform platform) throws TSLSyntaxException {
         this.wordsToPrint = this.sourceArguments.stream()
                 .map(TSLClause::getWord)
                 .map(Optional::orElseThrow)

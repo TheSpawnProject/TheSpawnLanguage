@@ -96,20 +96,19 @@ GROUP_STRING: ('\\\\' | '\\%' | '\\|' | ~[%|])+;
 
 fragment SINGLE_QUOTE_STRING: '\'' ('\\\'' | ~'\'')* '\'';
 fragment DOUBLE_QUOTE_STRING: '"' ('\\"' | ~'"')* '"';
-fragment ESC_TEMPLATE_STRING: '\\`';
-fragment ESC_TEMPLATE_EXPR: '\\${';
 
 // ${...}
 mode JS_SCOPE;
 JS_CONTENT_STRING: (SINGLE_QUOTE_STRING | DOUBLE_QUOTE_STRING) -> more;
 END_EXPRESSION: '}' -> popMode, type(EXPRESSION);
 BEGIN_STRING_TEMPLATE: '`' -> pushMode(JS_TEMPLATE_STRING), more;
+BEGIN_REGEX: '/' -> pushMode(JS_REGEX), more;
 BEGIN_OBJECT: '{' -> pushMode(JS_OBJECT), more;
 JS_CONTENT: . -> more;
 
 // `...`
 mode JS_TEMPLATE_STRING;
-JS_CONTENT_STRING2: (ESC_TEMPLATE_STRING | ESC_TEMPLATE_EXPR) -> more;
+END_TEMPLATE_STRING_ESC: ('\\`' | '\\${') -> more;
 END_TEMPLATE_STRING: '`' -> popMode, more;
 BEGIN_TEMPLATE_EXPR: '${' -> pushMode(JS_TEMPLATE_EXPR), more;
 JS_CONTENT2: . -> more;
@@ -119,6 +118,7 @@ mode JS_TEMPLATE_EXPR;
 JS_CONTENT_STRING3: (SINGLE_QUOTE_STRING | DOUBLE_QUOTE_STRING) -> more;
 END_TEMPLATE_EXPR: '}' -> popMode, more;
 BEGIN_STRING_TEMPLATE3: '`' -> pushMode(JS_TEMPLATE_STRING), more;
+BEGIN_REGEX3: '/' -> pushMode(JS_REGEX), more;
 BEGIN_OBJECT3: '{' -> pushMode(JS_OBJECT), more;
 JS_CONTENT3: . -> more;
 
@@ -127,9 +127,12 @@ mode JS_OBJECT;
 JS_CONTENT_STRING4: (SINGLE_QUOTE_STRING | DOUBLE_QUOTE_STRING) -> more;
 END_OBJECT: '}' -> popMode, more;
 BEGIN_STRING_TEMPLATE4: '`' -> pushMode(JS_TEMPLATE_STRING), more;
+BEGIN_REGEX4: '/' -> pushMode(JS_REGEX), more;
 BEGIN_OBJECT4: '{' -> pushMode(JS_OBJECT), more;
 JS_CONTENT4: . -> more;
 
-// TODO:
 // .. /.../ ..
-// mode JS_REGEX;
+mode JS_REGEX;
+END_REGEX_ESC: '\\/' -> more;
+END_REGEX: '/' -> popMode, more;
+JS_CONTENT5: . -> more;

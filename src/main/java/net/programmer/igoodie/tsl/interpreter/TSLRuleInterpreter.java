@@ -29,7 +29,7 @@ public class TSLRuleInterpreter extends TSLInterpreter<TSLDeferred<TSLRule>, TSL
                     new TSLSyntaxException("Unknown event -> {}", this.eventName));
 
             TSLAction action = this.action.resolve(platform);
-            action.interpretArguments(platform);
+            action.parseArguments(platform);
 
             return new TSLRule(event, this.predicates, action);
         };

@@ -6,12 +6,10 @@ import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
-import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLGroup;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
 import net.programmer.igoodie.tsl.std.action.WaitAction;
-import net.programmer.igoodie.tsl.util.structure.Either;
 import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.Test;
 
@@ -92,7 +90,7 @@ public class TSLParserTests {
         WaitAction waitAction = (WaitAction) platform.getActionDefinition("WAIT").orElseThrow()
                 .createAction(actionArgs.stream().map(word -> ((TSLClause) word)).toList());
 
-        waitAction.interpretArguments(platform);
+        waitAction.parseArguments(platform);
 
         TSLEventContext ctx = new TSLEventContext(platform, "Dummy Event");
         waitAction.perform(ctx);

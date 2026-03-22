@@ -24,8 +24,7 @@ public class TSLGroup extends TSLWord {
                 .collect(Collectors.joining());
     }
 
-    public static abstract class Word extends TSLWord {
-    }
+    public static abstract class Word extends TSLWord {}
 
     public static class Expression extends Word {
 

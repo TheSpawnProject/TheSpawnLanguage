@@ -7,10 +7,7 @@ import net.programmer.igoodie.tsl.runtime.TSLCapture;
 import net.programmer.igoodie.tsl.runtime.TSLCaptureResolver;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
-import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
-import net.programmer.igoodie.tsl.util.structure.Either;
 import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +24,7 @@ public class TSLCaptureTests {
                 
                 $b = $a 2
                 
-                $c(x) = $b {{x}} (PRINT %Hi There, | {{x}} |!%)
+                $c(x) = $b {{x}} (PRINT {{x}} %Hi There, | {{x}} |!%)
                 
                 $d = $c(${2+1}) 4
                 """;

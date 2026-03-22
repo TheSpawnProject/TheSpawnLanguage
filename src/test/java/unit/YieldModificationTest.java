@@ -12,29 +12,42 @@ import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.word.TSLPlainWord;
 import net.programmer.igoodie.tsl.runtime.word.TSLWord;
-import net.programmer.igoodie.tsl.util.structure.Either;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 public class YieldModificationTest {
 
     private static class TestSumAction extends TSLAction {
 
+        protected double sum = 0;
+
         public TestSumAction(List<TSLClause> sourceArguments) throws TSLSyntaxException {
             super(sourceArguments);
         }
 
         @Override
-        public void interpretArguments(TSLPlatform platform) throws TSLSyntaxException {
-
+        public void parseArguments(TSLPlatform platform) throws TSLSyntaxException {
+            for (TSLClause sourceArgument : this.sourceArguments) {
+                TSLWord word = sourceArgument.expectWord();
+                if (!(word instanceof TSLPlainWord plainWord)) {
+                    throw new TSLSyntaxException("Expected a plain word").atWord(word);
+                }
+                try {
+                    String value = plainWord.getValue();
+                    double doubleValue = Double.parseDouble(value);
+                    this.sum += doubleValue;
+                } catch (NumberFormatException e) {
+                    throw new TSLSyntaxException("Expected a number format").atWord(word);
+                }
+            }
         }
 
         @Override
         public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
-            // TODO: Sum given numbers
-            TSLPlainWord result = new TSLPlainWord("2");
-            return List.of(result);
+            TSLPlainWord result = new TSLPlainWord(String.valueOf(this.sum));
+            return Collections.singletonList(result);
         }
 
     }
