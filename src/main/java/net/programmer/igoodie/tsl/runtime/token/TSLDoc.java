@@ -5,7 +5,7 @@ import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class TSLDoc extends TSLWord {
+public class TSLDoc extends TSLToken {
 
     protected final String content;
 

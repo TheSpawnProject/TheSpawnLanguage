@@ -2,7 +2,7 @@ package net.programmer.igoodie.tsl.runtime.word;
 
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
-public class TSLPlaceholder extends TSLWord {
+public class TSLPlaceholder extends TSLToken {
 
     protected final String parameterName;
 

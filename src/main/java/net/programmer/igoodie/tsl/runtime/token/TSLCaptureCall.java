@@ -4,12 +4,12 @@ import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
 import java.util.List;
 
-public class TSLCaptureCall extends TSLWord {
+public class TSLCaptureCall extends TSLToken {
 
     protected final TSLCaptureId id;
-    protected final List<TSLWord> args;
+    protected final List<TSLToken> args;
 
-    public TSLCaptureCall(TSLCaptureId id, List<TSLWord> args) {
+    public TSLCaptureCall(TSLCaptureId id, List<TSLToken> args) {
         this.id = id;
         this.args = args;
     }
@@ -18,7 +18,7 @@ public class TSLCaptureCall extends TSLWord {
         return id;
     }
 
-    public List<TSLWord> getArgs() {
+    public List<TSLToken> getArgs() {
         return args;
     }
 

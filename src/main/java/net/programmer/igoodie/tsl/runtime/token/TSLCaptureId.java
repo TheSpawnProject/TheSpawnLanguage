@@ -2,7 +2,7 @@ package net.programmer.igoodie.tsl.runtime.word;
 
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
-public class TSLCaptureId extends TSLWord {
+public class TSLCaptureId extends TSLToken {
 
     protected final String captureName;
 

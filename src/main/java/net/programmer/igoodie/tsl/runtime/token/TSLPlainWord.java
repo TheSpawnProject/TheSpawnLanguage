@@ -2,7 +2,7 @@ package net.programmer.igoodie.tsl.runtime.word;
 
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
-public class TSLPlainWord extends TSLWord {
+public class TSLPlainWord extends TSLToken {
 
     protected final String value;
 
@@ -19,7 +19,7 @@ public class TSLPlainWord extends TSLWord {
         return this.value;
     }
 
-    public static boolean isKeyword(TSLWord word, String expectedKeyword) {
+    public static boolean isKeyword(TSLToken word, String expectedKeyword) {
         if (!(word instanceof TSLPlainWord)) return false;
         return ((TSLPlainWord) word).getValue().equalsIgnoreCase(expectedKeyword);
     }

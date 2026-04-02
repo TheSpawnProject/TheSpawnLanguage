@@ -10,26 +10,26 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.List;
 import java.util.stream.Stream;
 
-public abstract class TSLWord implements TSLClause {
+public abstract class TSLToken implements TSLClause {
 
     protected List<Token> source;
 
-    public TSLWord setSource(List<Token> source) {
+    public TSLToken setSource(List<Token> source) {
         this.source = source;
         return this;
     }
 
-    public TSLWord setSource(Stream<Token> source) {
+    public TSLToken setSource(Stream<Token> source) {
         return this.setSource(source.toList());
     }
 
-    public TSLWord setSource(ParseTree tree) {
+    public TSLToken setSource(ParseTree tree) {
         return this.setSource(AstUtils.getTerminalNodes(tree)
                 .stream().map(TerminalNode::getSymbol)
                 .toList());
     }
 
-    public TSLWord setSource(Token... source) {
+    public TSLToken setSource(Token... source) {
         return this.setSource(List.of(source));
     }
 

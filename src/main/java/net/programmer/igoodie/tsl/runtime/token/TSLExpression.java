@@ -3,7 +3,7 @@ package net.programmer.igoodie.tsl.runtime.word;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
-public class TSLExpression extends TSLWord {
+public class TSLExpression extends TSLToken {
 
     protected final String expression;
 

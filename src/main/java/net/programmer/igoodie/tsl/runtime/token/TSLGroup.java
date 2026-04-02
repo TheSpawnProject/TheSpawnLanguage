@@ -5,15 +5,15 @@ import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TSLGroup extends TSLWord {
+public class TSLGroup extends TSLToken {
 
-    protected final List<TSLGroup.Word> args;
+    protected final List<Token> args;
 
-    public TSLGroup(List<TSLGroup.Word> args) {
+    public TSLGroup(List<Token> args) {
         this.args = args;
     }
 
-    public List<Word> getArgs() {
+    public List<Token> getArgs() {
         return args;
     }
 
@@ -24,17 +24,17 @@ public class TSLGroup extends TSLWord {
                 .collect(Collectors.joining());
     }
 
-    public static abstract class Word extends TSLWord {}
+    public static abstract class Token extends TSLToken {}
 
-    public static class Expression extends Word {
+    public static class Expression extends Token {
 
-        protected final TSLWord word;
+        protected final TSLToken word;
 
-        public Expression(TSLWord word) {
+        public Expression(TSLToken word) {
             this.word = word;
         }
 
-        public TSLWord getExpressionWord() {
+        public TSLToken getExpressionWord() {
             return word;
         }
 
@@ -45,7 +45,7 @@ public class TSLGroup extends TSLWord {
 
     }
 
-    public static class StringContent extends Word {
+    public static class StringContent extends Token {
 
         protected final String content;
 

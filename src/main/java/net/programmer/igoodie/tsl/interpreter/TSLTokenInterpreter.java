@@ -3,23 +3,23 @@ package net.programmer.igoodie.tsl.interpreter;
 import net.programmer.igoodie.tsl.exception.TSLInternalException;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
-import net.programmer.igoodie.tsl.runtime.word.*;
+import net.programmer.igoodie.tsl.runtime.token.*;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.Collections;
 import java.util.List;
 
-public class TSLWordInterpreter extends TSLInterpreter<TSLWord, TSLParserImpl.WordContext> {
+public class TSLWordInterpreter extends TSLInterpreter<TSLToken, TSLParserImpl.WordContext> {
 
-    protected TSLWord word;
+    protected TSLToken tslToken;
 
     @Override
-    public TSLWord yieldValue(TSLParserImpl.WordContext tree) {
-        return this.word;
+    protected TSLToken yieldValue(TSLParserImpl.WordContext tree) {
+        return this.tslToken;
     }
 
-    public TSLWord interpretWord(Token token) {
+    public TSLToken interpretToken(Token token) {
         String text = token.getText();
 
         if (token.getType() == TSLLexer.PLACEHOLDER) {
@@ -47,35 +47,35 @@ public class TSLWordInterpreter extends TSLInterpreter<TSLWord, TSLParserImpl.Wo
     }
 
     @Override
-    public TSLWord visitGroup(TSLParserImpl.GroupContext ctx) {
+    public TSLToken visitGroup(TSLParserImpl.GroupContext ctx) {
         TSLGroupInterpreter interpreter = new TSLGroupInterpreter();
-        return (this.word = interpreter.interpret(ctx));
+        return (this.tslToken = interpreter.interpret(ctx));
     }
 
     @Override
-    public TSLWord visitCaptureCall(TSLParserImpl.CaptureCallContext ctx) {
-        TSLCaptureId captureId = (TSLCaptureId) this.interpretWord(ctx.id);
+    public TSLToken visitCaptureCall(TSLParserImpl.CaptureCallContext ctx) {
+        TSLCaptureId captureId = (TSLCaptureId) this.interpretToken(ctx.id);
 
         TSLParserImpl.CaptureArgsContext captureArgsCtx = ctx.captureArgs();
         List<TSLParserImpl.WordContext> wordCtx = captureArgsCtx == null ? Collections.emptyList() : captureArgsCtx.word();
 
-        List<TSLWord> arguments = wordCtx.stream().map(this::interpret).toList();
+        List<TSLToken> arguments = wordCtx.stream().map(this::interpret).toList();
 
-        return (this.word = new TSLCaptureCall(captureId, arguments).setSource(ctx));
+        return (this.tslToken = new TSLCaptureCall(captureId, arguments).setSource(ctx));
     }
 
     @Override
-    public TSLWord visitTerminal(TerminalNode node) {
+    public TSLToken visitTerminal(TerminalNode node) {
         Token token = node.getSymbol();
 
-        TSLWord word = interpretWord(token);
+        TSLToken tslToken = interpretToken(token);
 
-        if (word == null) {
-            throw new TSLInternalException("Unknown word type {}",
+        if (tslToken == null) {
+            throw new TSLInternalException("Unknown tslToken type {}",
                     TSLLexer.VOCABULARY.getDisplayName(token.getType()));
         }
 
-        return (this.word = word);
+        return (this.tslToken = tslToken);
     }
 
 }
