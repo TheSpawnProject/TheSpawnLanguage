@@ -13,7 +13,7 @@ import net.programmer.igoodie.tsl.runtime.*;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
@@ -24,38 +24,38 @@ import java.util.List;
 public class TSLInterpreterTests {
 
     private static class DemoDropAction extends TSLAction {
-        protected TSLWord droppedItemId;
+        protected TSLToken droppedItemId;
 
         public DemoDropAction(List<TSLClause> sourceArguments) throws TSLSyntaxException {
             super(sourceArguments);
         }
 
         @Override
-        public void parseArguments(TSLPlatform platform) throws TSLSyntaxException {
-            this.droppedItemId = this.sourceArguments.get(0).getWord().orElseThrow();
+        public void parseArguments_OLD(TSLPlatform platform) throws TSLSyntaxException {
+            this.droppedItemId = this.sourceArguments.get(0).getToken().orElseThrow();
         }
 
         @Override
-        public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+        public List<TSLToken> perform(TSLEventContext ctx) throws TSLPerformingException {
             System.out.println("Dropping items " + droppedItemId.evaluate(ctx));
             return Collections.singletonList(droppedItemId);
         }
     }
 
     private static class DemoSummonAction extends TSLAction {
-        protected TSLWord mobId;
+        protected TSLToken mobId;
 
         public DemoSummonAction(List<TSLClause> sourceArguments) throws TSLSyntaxException {
             super(sourceArguments);
         }
 
         @Override
-        public void parseArguments(TSLPlatform platform) throws TSLSyntaxException {
-            this.mobId = this.sourceArguments.get(0).getWord().orElseThrow();
+        public void parseArguments_OLD(TSLPlatform platform) throws TSLSyntaxException {
+            this.mobId = this.sourceArguments.get(0).getToken().orElseThrow();
         }
 
         @Override
-        public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+        public List<TSLToken> perform(TSLEventContext ctx) throws TSLPerformingException {
             System.out.println("Summoning mob " + mobId.evaluate(ctx));
             return Collections.singletonList(mobId);
         }
@@ -170,7 +170,7 @@ public class TSLInterpreterTests {
 
         TSLEventContext ctx = new TSLEventContext(platform, "Donation");
         ctx.getEventArgs().put("amount", 1200);
-        List<TSLWord> yield = rule.perform(ctx);
+        List<TSLToken> yield = rule.perform(ctx);
 
         System.out.println(rule.getAction().getDisplaying());
 
@@ -218,7 +218,7 @@ public class TSLInterpreterTests {
 
         TSLEventContext ctx = new TSLEventContext(platform, "Donation");
         ctx.getEventArgs().put("amount", 2);
-        List<TSLWord> yield = ruleset.perform(ctx);
+        List<TSLToken> yield = ruleset.perform(ctx);
 
         System.out.println("Yield " + yield);
     }

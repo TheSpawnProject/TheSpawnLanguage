@@ -1,4 +1,4 @@
-package net.programmer.igoodie.tsl.runtime.word;
+package net.programmer.igoodie.tsl.runtime.token;
 
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 

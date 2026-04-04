@@ -4,10 +4,11 @@ import net.programmer.igoodie.tsl.exception.TSLInternalException;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.TSLDeferred;
+import net.programmer.igoodie.tsl.runtime.TSLTokenNest;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
-import net.programmer.igoodie.tsl.runtime.word.TSLCaptureId;
-import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLCaptureId;
+import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import net.programmer.igoodie.tsl.util.structure.Either;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -19,24 +20,15 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
     protected String name;
     protected List<TSLClause> args;
     protected Either<TSLCaptureId, TSLExpression> yieldConsumer;
-    protected TSLWord displaying;
+    protected TSLToken displaying;
 
     @Override
-    public TSLDeferred<TSLAction> yieldValue(TSLParserImpl.ActionContext tree) {
+    protected TSLDeferred<TSLAction> yieldValue(TSLParserImpl.ActionContext tree) {
         return platform -> {
-            List<TSLClause> resolvedArgs = this.args.stream()
-                    .map(arg -> arg.reduce(
-                            word -> word,
-                            deferredAction -> deferredAction.resolve(platform)
-                    ))
-                    .toList();
-
-            // TODO: Collapse Capture Calls (?)
-
             TSLAction.Supplier<?> supplier = platform.getActionDefinition(this.name)
                     .orElseThrow(() -> new TSLInternalException("Unresolvable action -> {}", this.name));
 
-            return supplier.createAction(resolvedArgs)
+            return supplier.createAction(this.args)
                     .setYieldConsumer(this.yieldConsumer)
                     .setDisplaying(this.displaying);
         };
@@ -55,13 +47,12 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
 
         for (ParseTree child : ctx.children) {
             if (child instanceof TSLParserImpl.WordContext wordChild) {
-                TSLWord word = new TSLWordInterpreter().interpret(wordChild);
-                this.args.add(Either.left(word));
+                TSLToken token = new TSLTokenInterpreter().interpret(wordChild);
+                this.args.add(token);
 
-            } else if (child instanceof TSLParserImpl.ActionNestContext nestChild) {
-                TSLParserImpl.ActionContext actionTree = nestChild.action();
-                TSLDeferred<TSLAction> actionRef = new TSLActionInterpreter().interpret(actionTree);
-                this.args.add(Either.right(actionRef));
+            } else if (child instanceof TSLParserImpl.WordNestContext nestChild) {
+                TSLTokenNest tokenNest = new TSLTokenNestInterpreter().interpret(nestChild);
+                this.args.add(tokenNest);
             }
         }
 
@@ -70,12 +61,12 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
 
     @Override
     public TSLDeferred<TSLAction> visitActionYielding(TSLParserImpl.ActionYieldingContext ctx) {
-        TSLWord yieldConsumer = new TSLWordInterpreter().interpretWord(ctx.consumer);
+        TSLToken yieldConsumer = new TSLTokenInterpreter().interpretToken(ctx.consumer);
 
-        if (yieldConsumer instanceof TSLCaptureId) {
-            this.yieldConsumer = Either.left(((TSLCaptureId) yieldConsumer));
-        } else if (yieldConsumer instanceof TSLExpression) {
-            this.yieldConsumer = Either.right(((TSLExpression) yieldConsumer));
+        if (yieldConsumer instanceof TSLCaptureId captureConsumer) {
+            this.yieldConsumer = Either.left(captureConsumer);
+        } else if (yieldConsumer instanceof TSLExpression expressionConsumer) {
+            this.yieldConsumer = Either.right(expressionConsumer);
         }
 
         return null;
@@ -83,7 +74,7 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
 
     @Override
     public TSLDeferred<TSLAction> visitActionDisplaying(TSLParserImpl.ActionDisplayingContext ctx) {
-        this.displaying = new TSLWordInterpreter().interpret(ctx.word());
+        this.displaying = new TSLTokenInterpreter().interpret(ctx.word());
 
         return null;
     }

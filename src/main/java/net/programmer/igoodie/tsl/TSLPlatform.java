@@ -4,7 +4,7 @@ import net.programmer.igoodie.goodies.util.StringUtilities;
 import net.programmer.igoodie.tsl.runtime.action.OLD_TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
-import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
+import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
 import net.programmer.igoodie.tsl.std.action.ConcurrentlyAction;
 import net.programmer.igoodie.tsl.std.action.DoAction;
 import net.programmer.igoodie.tsl.std.action.SequentiallyAction;

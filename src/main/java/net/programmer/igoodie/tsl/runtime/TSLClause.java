@@ -1,10 +1,11 @@
 package net.programmer.igoodie.tsl.runtime;
 
+import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLInternalException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
-import net.programmer.igoodie.tsl.runtime.word.TSLPlainWord;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLPlainWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import net.programmer.igoodie.tsl.util.structure.Either;
 
 import java.util.Optional;
@@ -12,8 +13,8 @@ import java.util.function.Consumer;
 
 public interface TSLClause {
 
-    default boolean isWord() {
-        return this instanceof TSLWord;
+    default boolean isToken() {
+        return this instanceof TSLToken;
     }
 
     @Deprecated(forRemoval = true)
@@ -22,24 +23,31 @@ public interface TSLClause {
     }
 
     default boolean isNest() {
-        return this instanceof TSLWordNest;
+        return this instanceof TSLTokenNest;
     }
 
-    default TSLWord asWord() {
-        return ((TSLWord) this);
+    default TSLToken asToken() {
+        return ((TSLToken) this);
     }
 
-    default TSLWord expectWord() {
-        if (isWord()) return asWord();
+    default TSLToken expectToken() {
+        if (isToken()) return asToken();
         throw new TSLSyntaxException("Expected a single word, found instead -> {}", this);
 
     }
 
+    default <T extends TSLToken> T expectToken(Class<T> tokenType) {
+        TSLToken token = expectToken();
+        try {return tokenType.cast(token);} catch (ClassCastException e) {
+            throw new TSLSyntaxException("Expected a {}, found instead -> {}", tokenType.getSimpleName(), this);
+        }
+    }
+
     default TSLPlainWord expectKeyword(String keyword) {
-        if (isWord()) {
-            TSLWord word = asWord();
-            if (word instanceof TSLPlainWord) {
-                TSLPlainWord plainWord = (TSLPlainWord) word;
+        if (isToken()) {
+            TSLToken token = asToken();
+            if (token instanceof TSLPlainWord) {
+                TSLPlainWord plainWord = (TSLPlainWord) token;
                 if (plainWord.getValue().equalsIgnoreCase(keyword)) {
                     return plainWord;
                 }
@@ -49,21 +57,29 @@ public interface TSLClause {
         throw new TSLSyntaxException("Expected keyword '{}', found instead -> {}", keyword, this);
     }
 
-    default Optional<TSLWord> getWord() {
-        return Optional.of(((TSLWord) this));
+    default Optional<TSLToken> getToken() {
+        return Optional.of(((TSLToken) this));
     }
 
-    default TSLWordNest asNest() {
-        return ((TSLWordNest) this);
+    default TSLTokenNest asNest() {
+        return ((TSLTokenNest) this);
     }
 
-    default TSLWordNest expectNest() {
+    default TSLTokenNest expectNest() {
         if (isNest()) return asNest();
         throw new TSLSyntaxException("Expected a word nest, found instead -> {}", this);
     }
 
-    default Optional<TSLWordNest> getNest() {
-        return Optional.of(((TSLWordNest) this));
+    default Optional<TSLTokenNest> getNest() {
+        return Optional.of(((TSLTokenNest) this));
+    }
+
+    default TSLAction expectAction(TSLPlatform platform) {
+        TSLTokenNest tokenNest = this.expectNest();
+//        new TSLActionInterpreter().
+//        tokenNest.get
+        // TODO:
+        return null;
     }
 
     @Deprecated(forRemoval = true)
@@ -82,21 +98,25 @@ public interface TSLClause {
         return Optional.of(((TSLAction) this));
     }
 
-    default Either<TSLWord, TSLWordNest> asEither() {
-        if (this.isWord()) return Either.left(this.asWord());
+    default Either<TSLToken, TSLTokenNest> asEither() {
+        if (this.isToken()) return Either.left(this.asToken());
         if (this.isNest()) return Either.right(this.asNest());
         throw new TSLInternalException("A clause somehow is neither a word or an action huh?");
     }
 
     @Deprecated(forRemoval = true)
-    default Either<TSLWord, TSLAction> asEither_OLD() {
-        if (this.isWord()) return Either.left(this.asWord());
+    default Either<TSLToken, TSLAction> asEither_OLD() {
+        if (this.isToken()) return Either.left(this.asToken());
         if (this.isAction()) return Either.right(this.asAction());
         throw new TSLInternalException("A clause somehow is neither a word or an action huh?");
     }
 
-    default void ifWord(Consumer<TSLWord> consumer) {
-        if (this.isWord()) consumer.accept(this.asWord());
+    default void ifToken(Consumer<TSLToken> consumer) {
+        if (this.isToken()) consumer.accept(this.asToken());
+    }
+
+    default void ifNest(Consumer<TSLTokenNest> consumer) {
+        if (this.isToken()) consumer.accept(this.asNest());
     }
 
     @Deprecated(forRemoval = true)

@@ -5,18 +5,18 @@ import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.word.TSLCaptureId;
-import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLCaptureId;
+import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import net.programmer.igoodie.tsl.util.structure.Either;
 
 import java.util.List;
 
-public abstract class TSLAction implements TSLClause {
+public abstract class TSLAction {
 
     protected final List<TSLClause> sourceArguments;
     protected Either<TSLCaptureId, TSLExpression> yieldConsumer;
-    protected TSLWord displaying;
+    protected TSLToken displaying;
 
     public TSLAction(List<TSLClause> sourceArguments) throws TSLSyntaxException {
         this.sourceArguments = sourceArguments;
@@ -31,7 +31,7 @@ public abstract class TSLAction implements TSLClause {
         return this;
     }
 
-    public TSLAction setDisplaying(TSLWord displaying) {
+    public TSLAction setDisplaying(TSLToken displaying) {
         this.displaying = displaying;
         return this;
     }
@@ -40,13 +40,15 @@ public abstract class TSLAction implements TSLClause {
         return yieldConsumer;
     }
 
-    public TSLWord getDisplaying() {
+    public TSLToken getDisplaying() {
         return displaying;
     }
 
-    public abstract void parseArguments(TSLPlatform platform) throws TSLSyntaxException;
+    /* ----------------------- */
 
-    public abstract List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException;
+    public abstract void parseArguments(TSLPlatform platform, List<TSLClause> arguments) throws TSLSyntaxException;
+
+    public abstract List<TSLToken> perform(TSLEventContext ctx) throws TSLPerformingException;
 
     /* ----------------------- */
 

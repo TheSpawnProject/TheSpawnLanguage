@@ -1,7 +1,7 @@
 package net.programmer.igoodie.tsl.runtime;
 
-import net.programmer.igoodie.tsl.runtime.word.TSLCaptureId;
-import net.programmer.igoodie.tsl.runtime.word.TSLDoc;
+import net.programmer.igoodie.tsl.runtime.token.TSLCaptureId;
+import net.programmer.igoodie.tsl.runtime.token.TSLDoc;
 
 import java.util.List;
 

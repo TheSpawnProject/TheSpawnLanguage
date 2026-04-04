@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.Collections;
 import java.util.List;
 
-public class TSLWordInterpreter extends TSLInterpreter<TSLToken, TSLParserImpl.WordContext> {
+public class TSLTokenInterpreter extends TSLInterpreter<TSLToken, TSLParserImpl.WordContext> {
 
     protected TSLToken tslToken;
 

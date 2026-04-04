@@ -10,8 +10,8 @@ import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.word.TSLPlainWord;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLPlainWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -28,9 +28,9 @@ public class YieldModificationTest {
         }
 
         @Override
-        public void parseArguments(TSLPlatform platform) throws TSLSyntaxException {
+        public void parseArguments_OLD(TSLPlatform platform) throws TSLSyntaxException {
             for (TSLClause sourceArgument : this.sourceArguments) {
-                TSLWord word = sourceArgument.expectWord();
+                TSLToken word = sourceArgument.expectToken();
                 if (!(word instanceof TSLPlainWord plainWord)) {
                     throw new TSLSyntaxException("Expected a plain word").atWord(word);
                 }
@@ -45,7 +45,7 @@ public class YieldModificationTest {
         }
 
         @Override
-        public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+        public List<TSLToken> perform(TSLEventContext ctx) throws TSLPerformingException {
             TSLPlainWord result = new TSLPlainWord(String.valueOf(this.sum));
             return Collections.singletonList(result);
         }
@@ -93,7 +93,7 @@ public class YieldModificationTest {
         ruleset.perform(ctx);
 
         TSLCapture capture = ruleset.getCapture("result").orElseThrow();
-        TSLWord firstWord = capture.getTemplate().get(0).getWord().orElseThrow();
+        TSLToken firstWord = capture.getTemplate().get(0).getToken().orElseThrow();
         System.out.println(firstWord.evaluate(ctx));
     }
 

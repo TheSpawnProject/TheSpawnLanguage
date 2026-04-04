@@ -1,33 +1,31 @@
 package net.programmer.igoodie.tsl.runtime;
 
-import net.programmer.igoodie.tsl.runtime.word.TSLToken;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class TSLWordNest implements TSLClause {
+public class TSLTokenNest implements TSLClause {
 
-    protected List<TSLToken> words;
+    protected List<TSLClause> clauses;
 
-    public TSLWordNest(List<TSLToken> words) {
-        this.words = words;
+    public TSLTokenNest(List<TSLClause> clauses) {
+        this.clauses = clauses;
     }
 
-    public List<TSLToken> getWords() {
-        return words;
+    public List<TSLClause> getClauses() {
+        return clauses;
     }
 
     public static class Builder {
 
-        protected List<TSLToken> words = new ArrayList<>();
+        protected List<TSLClause> clauses = new ArrayList<>();
 
-        public Builder push(TSLToken word) {
-            this.words.add(word);
+        public Builder push(TSLClause clause) {
+            this.clauses.add(clause);
             return this;
         }
 
-        public TSLWordNest build() {
-            return new TSLWordNest(this.words);
+        public TSLTokenNest build() {
+            return new TSLTokenNest(this.clauses);
         }
 
     }

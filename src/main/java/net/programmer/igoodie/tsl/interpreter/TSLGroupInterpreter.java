@@ -1,18 +1,18 @@
 package net.programmer.igoodie.tsl.interpreter;
 
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
-import net.programmer.igoodie.tsl.runtime.word.TSLGroup;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLGroup;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TSLGroupInterpreter extends TSLInterpreter<TSLGroup, TSLParserImpl.GroupContext> {
 
-    protected List<TSLGroup.Word> args = new ArrayList<>();
+    protected List<TSLGroup.Token> args = new ArrayList<>();
 
     @Override
-    public TSLGroup yieldValue(TSLParserImpl.GroupContext tree) {
+    protected TSLGroup yieldValue(TSLParserImpl.GroupContext tree) {
         TSLGroup group = new TSLGroup(args);
         group.setSource(tree);
         return group;
@@ -30,9 +30,9 @@ public class TSLGroupInterpreter extends TSLInterpreter<TSLGroup, TSLParserImpl.
 
     @Override
     public TSLGroup visitGroupExpression(TSLParserImpl.GroupExpressionContext ctx) {
-        TSLWordInterpreter interpreter = new TSLWordInterpreter();
-        TSLWord word = interpreter.interpret(ctx.word());
-        TSLGroup.Expression expr = new TSLGroup.Expression(word);
+        TSLTokenInterpreter interpreter = new TSLTokenInterpreter();
+        TSLToken tslToken = interpreter.interpret(ctx.word());
+        TSLGroup.Expression expr = new TSLGroup.Expression(tslToken);
         expr.setSource(ctx);
 
         this.args.add(expr);

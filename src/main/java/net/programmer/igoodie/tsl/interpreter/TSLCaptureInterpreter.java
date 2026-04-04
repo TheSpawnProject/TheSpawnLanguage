@@ -3,40 +3,29 @@ package net.programmer.igoodie.tsl.interpreter;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
 import net.programmer.igoodie.tsl.runtime.TSLCapture;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
-import net.programmer.igoodie.tsl.runtime.TSLDeferred;
-import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
-import net.programmer.igoodie.tsl.runtime.word.TSLCaptureId;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
-import net.programmer.igoodie.tsl.util.structure.Either;
+import net.programmer.igoodie.tsl.runtime.TSLTokenNest;
+import net.programmer.igoodie.tsl.runtime.token.TSLCaptureId;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TSLCaptureInterpreter extends TSLInterpreter<TSLDeferred<TSLCapture>, TSLParserImpl.CaptureRuleContext> {
+public class TSLCaptureInterpreter extends TSLInterpreter<TSLCapture, TSLParserImpl.CaptureRuleContext> {
 
     protected TSLCaptureId id;
     protected List<String> params;
-    protected List<Either<TSLWord, TSLDeferred<TSLAction>>> contents;
+    protected List<TSLClause> contents;
 
     @Override
-    public TSLDeferred<TSLCapture> yieldValue(TSLParserImpl.CaptureRuleContext tree) {
-        return platform -> {
-            List<TSLClause> resolvedTemplate = this.contents.stream()
-                    .map(deferredArg -> deferredArg.reduce(
-                            word -> word,
-                            deferredNest -> deferredNest.resolve(platform)
-                    ))
-                    .toList();
-
-            return new TSLCapture(this.id, this.params, resolvedTemplate);
-        };
+    protected TSLCapture yieldValue(TSLParserImpl.CaptureRuleContext tree) {
+        return new TSLCapture(this.id, this.params, this.contents);
     }
 
     @Override
-    public TSLDeferred<TSLCapture> visitCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx) {
-        this.id = (TSLCaptureId) new TSLWordInterpreter().interpretWord(ctx.id);
+    public TSLCapture visitCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx) {
+        this.id = (TSLCaptureId) new TSLTokenInterpreter().interpretToken(ctx.id);
 
         TSLParserImpl.CaptureParamsContext captureParamsTree = ctx.captureParams();
 
@@ -50,18 +39,17 @@ public class TSLCaptureInterpreter extends TSLInterpreter<TSLDeferred<TSLCapture
     }
 
     @Override
-    public TSLDeferred<TSLCapture> visitActionArgs(TSLParserImpl.ActionArgsContext ctx) {
+    public TSLCapture visitCaptureContent(TSLParserImpl.CaptureContentContext ctx) {
         this.contents = new ArrayList<>();
 
         for (ParseTree child : ctx.children) {
             if (child instanceof TSLParserImpl.WordContext wordChild) {
-                TSLWord word = new TSLWordInterpreter().interpret(wordChild);
-                this.contents.add(Either.left(word));
+                TSLToken token = new TSLTokenInterpreter().interpret(wordChild);
+                this.contents.add(token);
 
-            } else if (child instanceof TSLParserImpl.ActionNestContext nestChild) {
-                TSLParserImpl.ActionContext actionTree = nestChild.action();
-                TSLDeferred<TSLAction> actionRef = new TSLActionInterpreter().interpret(actionTree);
-                this.contents.add(Either.right(actionRef));
+            } else if (child instanceof TSLParserImpl.WordNestContext nestChild) {
+                TSLTokenNest tokenNest = new TSLTokenNestInterpreter().interpret(nestChild);
+                this.contents.add(tokenNest);
             }
         }
 

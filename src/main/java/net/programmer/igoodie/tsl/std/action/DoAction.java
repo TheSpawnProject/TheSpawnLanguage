@@ -6,9 +6,9 @@ import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
-import net.programmer.igoodie.tsl.runtime.word.TSLPlainWord;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
+import net.programmer.igoodie.tsl.runtime.token.TSLPlainWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import net.programmer.igoodie.tsl.util.structure.Either;
 
 import java.util.Collections;
@@ -27,27 +27,25 @@ public class DoAction extends TSLAction {
     }
 
     @Override
-    public void parseArguments(TSLPlatform platform) throws TSLSyntaxException {
-        if (this.sourceArguments.size() != 1) {
-            throw new TSLSyntaxException("Expected 1 argument, found {}", this.sourceArguments.size());
+    public void parseArguments(TSLPlatform platform, List<TSLClause> arguments) throws TSLSyntaxException {
+        if (arguments.size() != 1) {
+            throw new TSLSyntaxException("Expected 1 argument, found {}", arguments.size());
         }
 
-        this.subject = this.sourceArguments.get(0).asEither_OLD().map(
-                word -> {
-                    if (!(word instanceof TSLExpression expression)) {
-                        throw new TSLSyntaxException("Unexpected token {}", word);
-                    }
-                    return expression;
-                },
-                action -> {
-                    action.parseArguments(platform);
-                    return action;
-                }
-        );
+        TSLClause argument = arguments.get(0);
+
+        if(argument.isToken()) {
+            TSLExpression expression = argument.expectToken(TSLExpression.class);
+            this.subject = Either.left(expression);
+            return;
+        }
+
+        TSLAction action = argument.expectAction(platform);
+        this.subject = Either.right(action);
     }
 
     @Override
-    public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+    public List<TSLToken> perform(TSLEventContext ctx) throws TSLPerformingException {
         return this.subject.reduce(
                 expression -> {
                     String value = expression.evaluate(ctx);

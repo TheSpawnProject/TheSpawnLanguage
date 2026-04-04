@@ -1,11 +1,10 @@
 package net.programmer.igoodie.tsl.runtime;
 
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
-import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.word.TSLCaptureId;
-import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLCaptureId;
+import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import net.programmer.igoodie.tsl.util.structure.Either;
 
 import java.util.*;
@@ -50,11 +49,11 @@ public class TSLRuleset {
         return Optional.ofNullable(this.captures.get(name));
     }
 
-    public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+    public List<TSLToken> perform(TSLEventContext ctx) throws TSLPerformingException {
         ctx.setPerformingRuleset(this);
 
         for (TSLRule rule : rules) {
-            List<TSLWord> yield = rule.perform(ctx);
+            List<TSLToken> yield = rule.perform(ctx);
             ctx.setPerformingRule(null);
 
             if (yield != null) {

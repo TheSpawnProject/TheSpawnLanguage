@@ -74,14 +74,14 @@ public class TSLParserImplBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitActionBody(TSLParserImpl.ActionBodyContext ctx) { return visitChildren(ctx); }
+	@Override public T visitAction(TSLParserImpl.ActionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAction(TSLParserImpl.ActionContext ctx) { return visitChildren(ctx); }
+	@Override public T visitActionBody(TSLParserImpl.ActionBodyContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -96,13 +96,6 @@ public class TSLParserImplBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitActionArgs(TSLParserImpl.ActionArgsContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitActionNest(TSLParserImpl.ActionNestContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -186,6 +179,13 @@ public class TSLParserImplBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitCaptureContent(TSLParserImpl.CaptureContentContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitCaptureParams(TSLParserImpl.CaptureParamsContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -236,4 +236,11 @@ public class TSLParserImplBaseVisitor<T> extends AbstractParseTreeVisitor<T> imp
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitPredicateWord(TSLParserImpl.PredicateWordContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitWordNest(TSLParserImpl.WordNestContext ctx) { return visitChildren(ctx); }
 }

@@ -6,7 +6,7 @@ import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,22 +15,22 @@ import java.util.stream.Collectors;
 
 public class PrintAction extends TSLAction {
 
-    protected List<TSLWord> wordsToPrint;
+    protected List<TSLToken> wordsToPrint;
 
     public PrintAction(List<TSLClause> sourceArguments) throws TSLSyntaxException {
         super(sourceArguments);
     }
 
     @Override
-    public void parseArguments(TSLPlatform platform) throws TSLSyntaxException {
+    public void parseArguments_OLD(TSLPlatform platform) throws TSLSyntaxException {
         this.wordsToPrint = this.sourceArguments.stream()
-                .map(TSLClause::getWord)
+                .map(TSLClause::getToken)
                 .map(Optional::orElseThrow)
                 .toList();
     }
 
     @Override
-    public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+    public List<TSLToken> perform(TSLEventContext ctx) throws TSLPerformingException {
         System.out.println("Printing >> " + this.wordsToPrint.stream()
                 .map(word -> word.evaluate(ctx))
                 .collect(Collectors.joining(" ")));

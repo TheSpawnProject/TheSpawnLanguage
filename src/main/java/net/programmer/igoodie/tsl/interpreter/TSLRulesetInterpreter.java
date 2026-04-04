@@ -6,7 +6,7 @@ import net.programmer.igoodie.tsl.runtime.TSLCapture;
 import net.programmer.igoodie.tsl.runtime.TSLDeferred;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
-import net.programmer.igoodie.tsl.runtime.word.TSLDoc;
+import net.programmer.igoodie.tsl.runtime.token.TSLDoc;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
@@ -16,19 +16,18 @@ import java.util.Map;
 
 public class TSLRulesetInterpreter extends TSLInterpreter<TSLDeferred<TSLRuleset>, TSLParserImpl.TslRulesetContext> {
 
-    protected List<TSLDeferred<TSLCapture>> captures = new ArrayList<>();
+    protected List<TSLCapture> captures = new ArrayList<>();
     protected List<TSLDeferred<TSLRule>> rules = new ArrayList<>();
     protected Map<Object, TSLDoc> tslDocs = new HashMap<>();
 
     @Override
-    public TSLDeferred<TSLRuleset> yieldValue(TSLParserImpl.TslRulesetContext tree) {
+    protected TSLDeferred<TSLRuleset> yieldValue(TSLParserImpl.TslRulesetContext tree) {
         return platform -> {
             // TODO: Parse TSLDirectives, and check for target
 
             TSLRuleset ruleset = new TSLRuleset("TODO:Target");
 
             this.captures.stream()
-                    .map(deferredCapture -> deferredCapture.resolve(platform))
                     .peek(capture -> {
                         TSLDoc tslDoc = this.tslDocs.get(capture);
                         if (tslDoc != null) capture.attachDoc(tslDoc);
@@ -75,10 +74,10 @@ public class TSLRulesetInterpreter extends TSLInterpreter<TSLDeferred<TSLRuleset
         TSLParserImpl.CaptureRuleContext captureRuleTree = ctx.captureRule();
 
         if (captureRuleTree != null) {
-            TSLDeferred<TSLCapture> deferredCapture = new TSLCaptureInterpreter().interpret(captureRuleTree);
-            this.captures.add(deferredCapture);
+            TSLCapture capture = new TSLCaptureInterpreter().interpret(captureRuleTree);
+            this.captures.add(capture);
 
-            if (tslDoc != null) this.tslDocs.put(deferredCapture, tslDoc);
+            if (tslDoc != null) this.tslDocs.put(capture, tslDoc);
 
             return null;
         }

@@ -5,8 +5,7 @@ import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
-import net.programmer.igoodie.tsl.util.structure.Either;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +23,7 @@ public class ConcurrentlyAction extends SequentiallyAction {
     }
 
     @Override
-    public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+    public List<TSLToken> perform(TSLEventContext ctx) throws TSLPerformingException {
         CompletableFuture<?>[] futures = new CompletableFuture[actions.size()];
 
         for (int i = 0; i < actions.size(); i++) {
@@ -33,7 +32,7 @@ public class ConcurrentlyAction extends SequentiallyAction {
 
             futures[i] = CompletableFuture.supplyAsync(() -> {
                 try {
-                    List<TSLWord> yield = action.perform(ctx);
+                    List<TSLToken> yield = action.perform(ctx);
                     // TODO: Handle yield somehow
                     return yield;
 

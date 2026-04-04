@@ -59,17 +59,17 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitReactionRule(TSLParserImpl.ReactionRuleContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link TSLParserImpl#actionBody}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitActionBody(TSLParserImpl.ActionBodyContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link TSLParserImpl#action}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitAction(TSLParserImpl.ActionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TSLParserImpl#actionBody}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitActionBody(TSLParserImpl.ActionBodyContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TSLParserImpl#actionId}.
 	 * @param ctx the parse tree
@@ -82,12 +82,6 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitActionArgs(TSLParserImpl.ActionArgsContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link TSLParserImpl#actionNest}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitActionNest(TSLParserImpl.ActionNestContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link TSLParserImpl#actionYielding}.
 	 * @param ctx the parse tree
@@ -155,6 +149,12 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link TSLParserImpl#captureContent}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCaptureContent(TSLParserImpl.CaptureContentContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link TSLParserImpl#captureParams}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -202,4 +202,10 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPredicateWord(TSLParserImpl.PredicateWordContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TSLParserImpl#wordNest}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWordNest(TSLParserImpl.WordNestContext ctx);
 }

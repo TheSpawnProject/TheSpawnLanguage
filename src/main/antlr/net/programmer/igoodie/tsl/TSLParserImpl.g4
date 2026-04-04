@@ -33,15 +33,15 @@ tslDirectiveArgs: (word | KEYWORD_FROM)*;
 
 reactionRule: action event;
 
-actionBody: actionId actionArgs;
 action: actionBody actionYielding? actionDisplaying?;
+actionBody: actionId actionArgs;
 actionId: IDENTIFIER;
-actionArgs: (word | actionNest)*;
-actionNest: SIGN_LPARAN word+ SIGN_RPARAN;
+actionArgs: (word | wordNest)*;
 actionYielding: KEYWORD_YIELDING (consumer = CAPTURE_IDENTIFIER | EXPRESSION);
 actionDisplaying: KEYWORD_DISPLAYING word;
 
-event: KEYWORD_ON eventName (KEYWORD_FROM eventFrom)? (eventPredicate)*;
+event: KEYWORD_ON eventName (eventPredicate)*;
+//event: KEYWORD_ON eventName (KEYWORD_FROM eventFrom)? (eventPredicate)*; // <-- Namespaces aren't supported in TSL1.5, they'll be introduced in TSL2.0
 eventName: IDENTIFIER+;
 eventFrom: IDENTIFIER;
 eventPredicate: KEYWORD_WITH (predicateExpression | predicateOperation);
@@ -51,6 +51,7 @@ predicateOperator: IDENTIFIER+ | SYMBOL_EQUALS | SYMBOL_GT | SYMBOL_GTE | SYMBOL
 
 captureRule: captureHeader SYMBOL_EQUALS actionArgs;
 captureHeader: (id = CAPTURE_IDENTIFIER) captureParams?;
+captureContent: (word | wordNest)+;
 captureParams: SIGN_LPARAN (IDENTIFIER (SIGN_COMMA IDENTIFIER)*)? SIGN_RPARAN;
 
 // ---------------------
@@ -68,5 +69,7 @@ captureArgs: SIGN_LPARAN (word (SIGN_COMMA word)*)? SIGN_RPARAN;
 // Atoms
 // ---------------------
 
+// TODO: Rename to tslToken (?)
 word: EXPRESSION | PLAIN_WORD | IDENTIFIER | PLACEHOLDER | captureCall | group;
 predicateWord: EXPRESSION | PLAIN_WORD | IDENTIFIER | group; // ?
+wordNest: SIGN_LPARAN (word | wordNest)+ SIGN_RPARAN;

@@ -5,8 +5,8 @@ import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.definition.TSLEvent;
 import net.programmer.igoodie.tsl.runtime.definition.TSLPredicate;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.word.TSLDoc;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLDoc;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class TSLRule {
         this.tslDoc = tslDoc;
     }
 
-    public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+    public List<TSLToken> perform(TSLEventContext ctx) throws TSLPerformingException {
         ctx.setPerformingRule(this);
 
         if (!ctx.getEventName().equalsIgnoreCase(this.event.getName())) {
@@ -55,6 +55,8 @@ public class TSLRule {
             boolean test = predicate.test(ctx);
             if (!test) return null;
         }
+
+        // TODO: Fill captures and parse action before performing
 
         return this.action.perform(ctx);
     }

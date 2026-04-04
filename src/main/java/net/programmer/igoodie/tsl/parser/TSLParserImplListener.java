@@ -88,16 +88,6 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 */
 	void exitReactionRule(TSLParserImpl.ReactionRuleContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link TSLParserImpl#actionBody}.
-	 * @param ctx the parse tree
-	 */
-	void enterActionBody(TSLParserImpl.ActionBodyContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TSLParserImpl#actionBody}.
-	 * @param ctx the parse tree
-	 */
-	void exitActionBody(TSLParserImpl.ActionBodyContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link TSLParserImpl#action}.
 	 * @param ctx the parse tree
 	 */
@@ -107,6 +97,16 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAction(TSLParserImpl.ActionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TSLParserImpl#actionBody}.
+	 * @param ctx the parse tree
+	 */
+	void enterActionBody(TSLParserImpl.ActionBodyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TSLParserImpl#actionBody}.
+	 * @param ctx the parse tree
+	 */
+	void exitActionBody(TSLParserImpl.ActionBodyContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TSLParserImpl#actionId}.
 	 * @param ctx the parse tree
@@ -127,16 +127,6 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitActionArgs(TSLParserImpl.ActionArgsContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TSLParserImpl#actionNest}.
-	 * @param ctx the parse tree
-	 */
-	void enterActionNest(TSLParserImpl.ActionNestContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TSLParserImpl#actionNest}.
-	 * @param ctx the parse tree
-	 */
-	void exitActionNest(TSLParserImpl.ActionNestContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link TSLParserImpl#actionYielding}.
 	 * @param ctx the parse tree
@@ -248,6 +238,16 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 */
 	void exitCaptureHeader(TSLParserImpl.CaptureHeaderContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link TSLParserImpl#captureContent}.
+	 * @param ctx the parse tree
+	 */
+	void enterCaptureContent(TSLParserImpl.CaptureContentContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TSLParserImpl#captureContent}.
+	 * @param ctx the parse tree
+	 */
+	void exitCaptureContent(TSLParserImpl.CaptureContentContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link TSLParserImpl#captureParams}.
 	 * @param ctx the parse tree
 	 */
@@ -327,4 +327,14 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPredicateWord(TSLParserImpl.PredicateWordContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link TSLParserImpl#wordNest}.
+	 * @param ctx the parse tree
+	 */
+	void enterWordNest(TSLParserImpl.WordNestContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link TSLParserImpl#wordNest}.
+	 * @param ctx the parse tree
+	 */
+	void exitWordNest(TSLParserImpl.WordNestContext ctx);
 }

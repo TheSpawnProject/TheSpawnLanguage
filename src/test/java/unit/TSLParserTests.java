@@ -7,8 +7,8 @@ import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.word.TSLGroup;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLGroup;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import net.programmer.igoodie.tsl.std.action.WaitAction;
 import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ public class TSLParserTests {
         String script = "PRINT %namespace:\\\\||${\"item\"}|% ${10 * Math.random()} $smth (NEST)";
 
         TSLParser parser = TSLParser.fromScript(script);
-        parser.parseWords().forEach(System.out::println);
+        parser.parseTokens().forEach(System.out::println);
 
         System.out.println();
 
@@ -55,7 +55,7 @@ public class TSLParserTests {
 
         TSLParser parser = TSLParser.fromScript(script);
 
-        for (TSLWord word : parser.parseWords()) {
+        for (TSLToken word : parser.parseTokens()) {
             System.out.println(word.getSource());
         }
     }
@@ -65,7 +65,7 @@ public class TSLParserTests {
         String script = "%Testing my expressions, | ${Math.random()} |%";
 
         TSLParser parser = TSLParser.fromScript(script);
-        TSLWord word = parser.parseWords().get(0);
+        TSLToken word = parser.parseTokens().get(0);
 
         TSLPlatform platform = new TSLPlatform("Dummy Platform", 1.0f);
         TSLEventContext ctx = new TSLEventContext(platform, "Foo Bar");
@@ -82,7 +82,7 @@ public class TSLParserTests {
         String script = "#*WAIT*# 2 seconds";
 
         TSLParser parser = TSLParser.fromScript(script);
-        List<TSLWord> actionArgs = parser.parseWords();
+        List<TSLToken> actionArgs = parser.parseTokens();
 
         TSLPlatform platform = new TSLPlatform("Dummy Platform", 1.0f);
         platform.initializeStd();
@@ -90,7 +90,7 @@ public class TSLParserTests {
         WaitAction waitAction = (WaitAction) platform.getActionDefinition("WAIT").orElseThrow()
                 .createAction(actionArgs.stream().map(word -> ((TSLClause) word)).toList());
 
-        waitAction.parseArguments(platform);
+        waitAction.parseArguments_OLD(platform);
 
         TSLEventContext ctx = new TSLEventContext(platform, "Dummy Event");
         waitAction.perform(ctx);

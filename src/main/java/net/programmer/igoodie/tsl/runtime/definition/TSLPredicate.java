@@ -1,9 +1,10 @@
 package net.programmer.igoodie.tsl.runtime.definition;
 
+import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.word.TSLExpression;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.Optional;
 import java.util.Set;
@@ -11,14 +12,16 @@ import java.util.function.BiPredicate;
 
 public abstract class TSLPredicate {
 
+    public void checkEventCompatibility(TSLEvent event) {}
+
     public abstract boolean test(TSLEventContext ctx);
 
     // WITH ${event.field >= 999}
-    public static class ByExpression extends TSLPredicate {
+    public static class ExpressionPredicate extends TSLPredicate {
 
         protected final TSLExpression expression;
 
-        public ByExpression(TSLExpression expression) {
+        public ExpressionPredicate(TSLExpression expression) {
             this.expression = expression;
         }
 
@@ -30,11 +33,11 @@ public abstract class TSLPredicate {
     }
 
     // WITH field IS %Something something%
-    public static class OfBinaryOperation extends TSLPredicate {
+    public static class BinaryOperationPredicate extends TSLPredicate {
 
         protected final String fieldName;
         protected final Operator operator;
-        protected final TSLWord rightHand;
+        protected final TSLToken rightHand;
 
         public enum Operator {
             EQ("=", (a, b) -> {
@@ -112,10 +115,19 @@ public abstract class TSLPredicate {
             }
         }
 
-        public OfBinaryOperation(String fieldName, Operator operator, TSLWord rightHand) {
+        public BinaryOperationPredicate(String fieldName, Operator operator, TSLToken rightHand) {
             this.fieldName = fieldName;
             this.operator = operator;
             this.rightHand = rightHand;
+        }
+
+        @Override
+        public void checkEventCompatibility(TSLEvent event) {
+            TSLEvent.Property<?> propertyType = event.getPropertyType(this.fieldName);
+
+            if (propertyType == null) {
+                throw new TSLSyntaxException("{} field is not compatible with event -> {}", this.fieldName, event.name);
+            }
         }
 
         @Override

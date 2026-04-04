@@ -51,8 +51,8 @@ public class TSLCaptureTests {
     private String debugClause(List<TSLClause> clauses) {
         return clauses.stream()
                 .map(clause -> {
-                    if (clause.isWord())
-                        return clause.asWord().getSource().stream().map(Token::getText).collect(Collectors.joining());
+                    if (clause.isToken())
+                        return clause.asToken().getSource().stream().map(Token::getText).collect(Collectors.joining());
                     if (clause.isAction())
                         return debugClause(clause.asAction().getSourceArguments());
                     return null;

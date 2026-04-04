@@ -6,7 +6,7 @@ import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,30 +20,25 @@ import java.util.concurrent.TimeUnit;
  */
 public class WaitAction extends TSLAction {
 
-    protected TSLWord unitWord;
-    protected TSLWord sleepTimeWord;
+    protected TSLToken unitWord;
+    protected TSLToken sleepTimeWord;
 
     public WaitAction(List<TSLClause> sourceArguments) throws TSLSyntaxException {
         super(sourceArguments);
     }
 
     @Override
-    public void parseArguments(TSLPlatform platform) throws TSLSyntaxException {
-        if (this.sourceArguments.size() != 2) {
+    public void parseArguments(TSLPlatform platform, List<TSLClause> arguments) throws TSLSyntaxException {
+        if (arguments.size() != 2) {
             throw new TSLSyntaxException("Expected two words, found %d instead", this.sourceArguments.size());
         }
 
-        this.sleepTimeWord = this.sourceArguments.get(0).getWord().orElseThrow(
-                () -> new TSLSyntaxException("Expected a word")
-        );
-
-        this.unitWord = this.sourceArguments.get(1).getWord().orElseThrow(
-                () -> new TSLSyntaxException("Expected a word")
-        );
+        this.sleepTimeWord = arguments.get(0).expectToken();
+        this.unitWord = arguments.get(1).expectToken();
     }
 
     @Override
-    public List<TSLWord> perform(TSLEventContext ctx) throws TSLPerformingException {
+    public List<TSLToken> perform(TSLEventContext ctx) throws TSLPerformingException {
         try {
             TimeUnit timeUnit = TimeUnit.valueOf(this.unitWord.evaluate(ctx).toUpperCase());
             long sleepTime = timeUnit.toMillis(Integer.parseInt(this.sleepTimeWord.evaluate(ctx)));

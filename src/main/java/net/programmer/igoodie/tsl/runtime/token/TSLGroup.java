@@ -1,4 +1,4 @@
-package net.programmer.igoodie.tsl.runtime.word;
+package net.programmer.igoodie.tsl.runtime.token;
 
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
@@ -26,26 +26,26 @@ public class TSLGroup extends TSLToken {
 
     public static abstract class Token extends TSLToken {}
 
-    public static class Expression extends Token {
+    public static class Expression extends TSLGroup.Token {
 
-        protected final TSLToken word;
+        protected final TSLToken token;
 
-        public Expression(TSLToken word) {
-            this.word = word;
+        public Expression(TSLToken token) {
+            this.token = token;
         }
 
-        public TSLToken getExpressionWord() {
-            return word;
+        public TSLToken getExpressionToken() {
+            return token;
         }
 
         @Override
         public String evaluate(TSLEventContext ctx) {
-            return this.word.evaluate(ctx);
+            return this.token.evaluate(ctx);
         }
 
     }
 
-    public static class StringContent extends Token {
+    public static class StringContent extends TSLGroup.Token {
 
         protected final String content;
 

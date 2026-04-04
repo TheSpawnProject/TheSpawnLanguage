@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.exception;
 
-import net.programmer.igoodie.tsl.runtime.word.TSLWord;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import net.programmer.igoodie.tsl.util.LogFormatter;
 import org.antlr.v4.runtime.Token;
 
@@ -27,7 +27,7 @@ public class TSLSyntaxException extends TSLException {
         return this;
     }
 
-    public TSLSyntaxException atWord(TSLWord word) {
+    public TSLSyntaxException atWord(TSLToken word) {
         Token token = word.getSource().get(0);
         return this.atPos(token.getLine(), token.getCharPositionInLine());
     }
