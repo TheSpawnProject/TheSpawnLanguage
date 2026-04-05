@@ -1,6 +1,8 @@
 package net.programmer.igoodie.tsl.interpreter;
 
+import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.exception.TSLInternalException;
+import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.TSLDeferred;
@@ -8,6 +10,7 @@ import net.programmer.igoodie.tsl.runtime.TSLTokenNest;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.token.TSLCaptureId;
 import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
+import net.programmer.igoodie.tsl.runtime.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import net.programmer.igoodie.tsl.util.structure.Either;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -31,6 +34,20 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
             return supplier.createAction(this.args)
                     .setYieldConsumer(this.yieldConsumer)
                     .setDisplaying(this.displaying);
+        };
+    }
+
+    public TSLDeferred<TSLAction> interpretTokenNest(TSLTokenNest nest) throws TSLSyntaxException {
+        return platform -> {
+            ListAccessor<TSLClause> clauses = ListAccessor.of(nest.getClauses());
+
+            TSLPlainWord actionIdToken = clauses.get(0)
+                    .orElseThrow(() -> new TSLSyntaxException("Expected at least one token in the nest."))
+                    .expectToken(TSLPlainWord.class);
+
+
+
+            return null; // TODO
         };
     }
 

@@ -17,7 +17,7 @@ tslWords: word* EOF;
 tslRuleset: EMPTY_LINES* tslDirective* tslRules EOF;
 tslRules: () | tslRule (EMPTY_LINES tslRule)*;
 
-tslRule: tslRuleDoc? (reactionRule | captureRule);
+tslRule: EMPTY_LINES* tslRuleDoc? (reactionRule | captureRule);
 tslRuleDoc: (TSLDOC_COMMENT EMPTY_LINES?)+;
 
 // ---------------------
@@ -74,4 +74,5 @@ captureArg: (word | wordNest);
 word: EXPRESSION | PLAIN_WORD | IDENTIFIER | PLACEHOLDER | captureCall | group;
 predicateWord: EXPRESSION | PLAIN_WORD | IDENTIFIER | group; // ?
 wordNest: SIGN_LPARAN wordNestContent SIGN_RPARAN;
-wordNestContent: (word | wordNest)+;
+wordNestContent: (word | wordNest | danglingKeyword)+;
+danglingKeyword: KEYWORD_DISPLAYING | KEYWORD_YIELDING;

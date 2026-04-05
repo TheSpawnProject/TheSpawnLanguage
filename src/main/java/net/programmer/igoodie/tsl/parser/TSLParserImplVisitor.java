@@ -220,4 +220,10 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitWordNestContent(TSLParserImpl.WordNestContentContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TSLParserImpl#danglingKeyword}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDanglingKeyword(TSLParserImpl.DanglingKeywordContext ctx);
 }
