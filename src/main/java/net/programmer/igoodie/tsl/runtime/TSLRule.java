@@ -8,6 +8,7 @@ import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.token.TSLDoc;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class TSLRule {
@@ -52,12 +53,14 @@ public class TSLRule {
         }
 
         for (TSLPredicate predicate : this.predicates) {
-            boolean test = predicate.test(ctx);
-            if (!test) return null;
+            if (!predicate.test(ctx)) return null;
         }
 
-        // TODO: Fill captures and parse action before performing
+        List<TSLClause> collapsedArguments = new TSLTemplateTransformer(this.action.getSourceArguments())
+                .collapseCaptures(ctx.getPerformingRuleset().map(TSLRuleset::getCaptures).orElseGet(HashMap::new))
+                .getClauses();
 
+        this.action.parseArguments(ctx.getPlatform(), collapsedArguments);
         return this.action.perform(ctx);
     }
 

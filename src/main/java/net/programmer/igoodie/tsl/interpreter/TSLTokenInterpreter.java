@@ -3,8 +3,10 @@ package net.programmer.igoodie.tsl.interpreter;
 import net.programmer.igoodie.tsl.exception.TSLInternalException;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
+import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.token.*;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.Collections;
@@ -57,9 +59,22 @@ public class TSLTokenInterpreter extends TSLInterpreter<TSLToken, TSLParserImpl.
         TSLCaptureId captureId = (TSLCaptureId) this.interpretToken(ctx.id);
 
         TSLParserImpl.CaptureArgsContext captureArgsCtx = ctx.captureArgs();
-        List<TSLParserImpl.WordContext> wordCtx = captureArgsCtx == null ? Collections.emptyList() : captureArgsCtx.word();
 
-        List<TSLToken> arguments = wordCtx.stream().map(this::interpret).toList();
+        List<TSLParserImpl.CaptureArgContext> captureArgs = captureArgsCtx == null
+                ? Collections.emptyList() : captureArgsCtx.captureArg();
+
+        List<TSLClause> arguments = captureArgs.stream().map(captureArg -> {
+            ParseTree child = captureArg.children.get(0);
+
+            if (child instanceof TSLParserImpl.WordContext wordChild) {
+                return new TSLTokenInterpreter().interpret(wordChild);
+
+            } else if (child instanceof TSLParserImpl.WordNestContext nestChild) {
+                return new TSLTokenNestInterpreter().interpret(nestChild.wordNestContent());
+            }
+
+            throw new TSLInternalException("Interpreted a capture arg as something other than word or nest. How?");
+        }).toList();
 
         return (this.tslToken = new TSLCaptureCall(captureId, arguments).setSource(ctx));
     }

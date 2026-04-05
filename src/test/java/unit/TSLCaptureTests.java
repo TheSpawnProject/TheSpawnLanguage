@@ -53,8 +53,8 @@ public class TSLCaptureTests {
                 .map(clause -> {
                     if (clause.isToken())
                         return clause.asToken().getSource().stream().map(Token::getText).collect(Collectors.joining());
-                    if (clause.isAction())
-                        return debugClause(clause.asAction().getSourceArguments());
+                    if (clause.isNest())
+                        return debugClause(clause.asNest().getClauses());
                     return null;
                 })
                 .collect(Collectors.joining(" ", "(", ")"));

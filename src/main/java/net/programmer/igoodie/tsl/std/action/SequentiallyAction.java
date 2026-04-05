@@ -6,7 +6,6 @@ import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.ArrayList;
@@ -32,35 +31,30 @@ public class SequentiallyAction extends TSLAction {
         for (int i = 0; i < arguments.size(); i++) {
             TSLClause arg = arguments.get(i);
 
-            // TODO: Fix
-//            if (i % 2 == 0) {
-//                TSLAction action = arg.expectAction();
-//                this.actions.add(action);
-//                continue;
-//            }
-
-            TSLToken keywordAnd = arg.getToken().orElseThrow();
-
-            if (!TSLPlainWord.isKeyword(keywordAnd, "AND")) {
-                throw new TSLSyntaxException("Expected an AND delimiter between actions.");
+            if (i % 2 == 1) {
+                arg.expectKeyword("AND");
+                continue;
             }
+
+            TSLAction action = arg.expectAction(platform);
+            this.actions.add(action);
         }
 
-        // TODO: Fix
-//        this.actions.forEach(action -> parseArguments_OLD(platform));
-
-        if (this.sourceArguments.size() % 2 != 1) {
+        if (arguments.size() % 2 != 1) {
             throw new TSLSyntaxException("Expected an action, after AND");
         }
     }
 
     @Override
     public List<TSLToken> perform(TSLEventContext ctx) throws TSLPerformingException {
+        List<TSLToken> yields = Collections.emptyList();
+
         for (TSLAction action : this.actions) {
-            action.perform(ctx);
+            List<TSLToken> actionYields = action.perform(ctx);
+            if (!actionYields.isEmpty()) yields = actionYields;
         }
 
-        return Collections.emptyList();
+        return yields;
     }
 
 }

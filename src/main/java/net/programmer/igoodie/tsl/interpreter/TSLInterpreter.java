@@ -5,7 +5,10 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 public abstract class TSLInterpreter<T, C extends ParseTree> extends TSLParserImplBaseVisitor<T> {
 
+    protected C rootTree;
+
     public final T interpret(C tree) {
+        this.rootTree = tree;
         this.visit(tree);
         return this.yieldValue(tree);
     }

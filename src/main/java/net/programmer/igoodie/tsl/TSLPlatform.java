@@ -90,9 +90,8 @@ public class TSLPlatform {
     }
 
     public TSLExpression.Evaluator getExpressionEvaluator() {
-        TSLExpression.Evaluator evaluator = expressionEvaluator.peek();
-        if (evaluator == null) return (expr) -> expr;
-        return evaluator;
+        if (expressionEvaluator.isEmpty()) return (ctx, expr) -> expr;
+        return expressionEvaluator.peek();
     }
 
     @Deprecated

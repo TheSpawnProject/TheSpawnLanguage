@@ -1,10 +1,12 @@
 package net.programmer.igoodie.tsl.interpreter;
 
+import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
 import net.programmer.igoodie.tsl.runtime.TSLCapture;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.TSLTokenNest;
 import net.programmer.igoodie.tsl.runtime.token.TSLCaptureId;
+import net.programmer.igoodie.tsl.runtime.token.TSLPlaceholder;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -45,10 +47,16 @@ public class TSLCaptureInterpreter extends TSLInterpreter<TSLCapture, TSLParserI
         for (ParseTree child : ctx.children) {
             if (child instanceof TSLParserImpl.WordContext wordChild) {
                 TSLToken token = new TSLTokenInterpreter().interpret(wordChild);
+                if (token instanceof TSLPlaceholder placeholder) {
+                    if (!this.params.contains(placeholder.getParameterName())) {
+                        throw new TSLSyntaxException("Unknown placeholder '{}' in capture ${}", placeholder.getParameterName(), this.id.getCaptureName())
+                                .atToken(placeholder);
+                    }
+                }
                 this.contents.add(token);
 
             } else if (child instanceof TSLParserImpl.WordNestContext nestChild) {
-                TSLTokenNest tokenNest = new TSLTokenNestInterpreter().interpret(nestChild);
+                TSLTokenNest tokenNest = new TSLTokenNestInterpreter().interpret(nestChild.wordNestContent());
                 this.contents.add(tokenNest);
             }
         }

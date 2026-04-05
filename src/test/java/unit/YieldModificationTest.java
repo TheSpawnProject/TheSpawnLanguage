@@ -32,14 +32,14 @@ public class YieldModificationTest {
             for (TSLClause sourceArgument : this.sourceArguments) {
                 TSLToken word = sourceArgument.expectToken();
                 if (!(word instanceof TSLPlainWord plainWord)) {
-                    throw new TSLSyntaxException("Expected a plain word").atWord(word);
+                    throw new TSLSyntaxException("Expected a plain word").atToken(word);
                 }
                 try {
                     String value = plainWord.getValue();
                     double doubleValue = Double.parseDouble(value);
                     this.sum += doubleValue;
                 } catch (NumberFormatException e) {
-                    throw new TSLSyntaxException("Expected a number format").atWord(word);
+                    throw new TSLSyntaxException("Expected a number format").atToken(word);
                 }
             }
         }

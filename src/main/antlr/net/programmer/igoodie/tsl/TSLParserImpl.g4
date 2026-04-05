@@ -49,7 +49,7 @@ predicateExpression: EXPRESSION;
 predicateOperation: (field = IDENTIFIER) predicateOperator predicateWord;
 predicateOperator: IDENTIFIER+ | SYMBOL_EQUALS | SYMBOL_GT | SYMBOL_GTE | SYMBOL_LT | SYMBOL_LTE;
 
-captureRule: captureHeader SYMBOL_EQUALS actionArgs;
+captureRule: captureHeader SYMBOL_EQUALS captureContent;
 captureHeader: (id = CAPTURE_IDENTIFIER) captureParams?;
 captureContent: (word | wordNest)+;
 captureParams: SIGN_LPARAN (IDENTIFIER (SIGN_COMMA IDENTIFIER)*)? SIGN_RPARAN;
@@ -63,7 +63,8 @@ groupString: GROUP_STRING+;
 groupExpression: BEGIN_GROUP_EXPRESSION word END_GROUP_EXPRESSION;
 
 captureCall: (id = CAPTURE_IDENTIFIER) captureArgs?;
-captureArgs: SIGN_LPARAN (word (SIGN_COMMA word)*)? SIGN_RPARAN;
+captureArgs: SIGN_LPARAN (captureArg (SIGN_COMMA captureArg)*)? SIGN_RPARAN;
+captureArg: (word | wordNest);
 
 // ---------------------
 // Atoms
@@ -72,4 +73,5 @@ captureArgs: SIGN_LPARAN (word (SIGN_COMMA word)*)? SIGN_RPARAN;
 // TODO: Rename to tslToken (?)
 word: EXPRESSION | PLAIN_WORD | IDENTIFIER | PLACEHOLDER | captureCall | group;
 predicateWord: EXPRESSION | PLAIN_WORD | IDENTIFIER | group; // ?
-wordNest: SIGN_LPARAN (word | wordNest)+ SIGN_RPARAN;
+wordNest: SIGN_LPARAN wordNestContent SIGN_RPARAN;
+wordNestContent: (word | wordNest)+;

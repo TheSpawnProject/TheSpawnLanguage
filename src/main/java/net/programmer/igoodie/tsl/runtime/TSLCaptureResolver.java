@@ -8,30 +8,31 @@ import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.*;
 
+@Deprecated(forRemoval = true)
 public class TSLCaptureResolver {
 
     protected final Map<String, TSLCapture> captureCache;
     protected final TSLCapture capture;
-    protected final Map<String, TSLToken> arguments;
+    protected final Map<String, TSLClause> arguments;
 
     protected List<TSLClause> resolution = new ArrayList<>();
 
-    public TSLCaptureResolver(Map<String, TSLCapture> captureCache, TSLCapture capture, Map<String, TSLToken> arguments) {
+    public TSLCaptureResolver(Map<String, TSLCapture> captureCache, TSLCapture capture, Map<String, TSLClause> arguments) {
         this.captureCache = captureCache;
         this.capture = capture;
         this.arguments = arguments;
     }
 
-    public TSLCaptureResolver(Map<String, TSLCapture> captureCache, TSLCapture capture, List<TSLToken> arguments) {
+    public TSLCaptureResolver(Map<String, TSLCapture> captureCache, TSLCapture capture, List<TSLClause> arguments) {
         this(captureCache, capture, createArgumentMap(capture.paramNames, arguments));
     }
 
-    protected static Map<String, TSLToken> createArgumentMap(List<String> paramNames, List<TSLToken> arguments) {
-        Map<String, TSLToken> argumentMap = new HashMap<>();
+    protected static Map<String, TSLClause> createArgumentMap(List<String> paramNames, List<TSLClause> arguments) {
+        Map<String, TSLClause> argumentMap = new HashMap<>();
 
         for (int i = 0; i < arguments.size(); i++) {
             String paramName = paramNames.get(i);
-            TSLToken argument = arguments.get(i);
+            TSLClause argument = arguments.get(i);
             argumentMap.put(paramName, argument);
         }
 
@@ -60,7 +61,7 @@ public class TSLCaptureResolver {
 
         if (token instanceof TSLPlaceholder placeholder) {
             String parameterName = placeholder.getParameterName();
-            TSLToken argument = this.arguments.get(parameterName);
+            TSLClause argument = this.arguments.get(parameterName);
             return Collections.singletonList(argument);
         }
 
@@ -68,8 +69,8 @@ public class TSLCaptureResolver {
             List<TSLGroup.Token> resolvedGroupTokens = group.getArgs().stream().map(groupToken -> {
                 if (groupToken instanceof TSLGroup.Expression expr) {
                     if (expr.getExpressionToken() instanceof TSLPlaceholder placeholder) {
-                        TSLToken argument = arguments.get(placeholder.getParameterName());
-                        return new TSLGroup.Expression(argument);
+                        TSLClause argument = arguments.get(placeholder.getParameterName());
+                        return new TSLGroup.Expression(argument.expectToken());
                     }
                 }
 

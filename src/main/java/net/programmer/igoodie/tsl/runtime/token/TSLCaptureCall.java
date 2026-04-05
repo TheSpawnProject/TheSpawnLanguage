@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.token;
 
+import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
 import java.util.List;
@@ -7,9 +8,9 @@ import java.util.List;
 public class TSLCaptureCall extends TSLToken {
 
     protected final TSLCaptureId id;
-    protected final List<TSLToken> args;
+    protected final List<TSLClause> args;
 
-    public TSLCaptureCall(TSLCaptureId id, List<TSLToken> args) {
+    public TSLCaptureCall(TSLCaptureId id, List<TSLClause> args) {
         this.id = id;
         this.args = args;
     }
@@ -18,7 +19,7 @@ public class TSLCaptureCall extends TSLToken {
         return id;
     }
 
-    public List<TSLToken> getArgs() {
+    public List<TSLClause> getArgs() {
         return args;
     }
 

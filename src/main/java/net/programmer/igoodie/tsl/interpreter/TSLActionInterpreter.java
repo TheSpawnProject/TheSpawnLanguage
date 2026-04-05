@@ -51,7 +51,7 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
                 this.args.add(token);
 
             } else if (child instanceof TSLParserImpl.WordNestContext nestChild) {
-                TSLTokenNest tokenNest = new TSLTokenNestInterpreter().interpret(nestChild);
+                TSLTokenNest tokenNest = new TSLTokenNestInterpreter().interpret(nestChild.wordNestContent());
                 this.args.add(tokenNest);
             }
         }

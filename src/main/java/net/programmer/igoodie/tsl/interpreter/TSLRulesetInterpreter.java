@@ -50,6 +50,7 @@ public class TSLRulesetInterpreter extends TSLInterpreter<TSLDeferred<TSLRuleset
     public TSLDeferred<TSLRuleset> visitTslRule(TSLParserImpl.TslRuleContext ctx) {
         TSLParserImpl.TslRuleDocContext tsldocTree = ctx.tslRuleDoc();
 
+        // TODO: Extract to TSLDocInterpreter (?)
         TSLDoc tslDoc = null;
 
         if (tsldocTree != null) {

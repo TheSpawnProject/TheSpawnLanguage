@@ -377,6 +377,18 @@ public class TSLParserImplBaseListener implements TSLParserImplListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCaptureArg(TSLParserImpl.CaptureArgContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCaptureArg(TSLParserImpl.CaptureArgContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterWord(TSLParserImpl.WordContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -408,6 +420,18 @@ public class TSLParserImplBaseListener implements TSLParserImplListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitWordNest(TSLParserImpl.WordNestContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterWordNestContent(TSLParserImpl.WordNestContentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitWordNestContent(TSLParserImpl.WordNestContentContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

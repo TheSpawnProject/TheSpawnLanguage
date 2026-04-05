@@ -18,11 +18,11 @@ public class TSLExpression extends TSLToken {
     @Override
     public String evaluate(TSLEventContext ctx) {
         TSLPlatform platform = ctx.getPlatform();
-        return platform.getExpressionEvaluator().evaluate(expression);
+        return platform.getExpressionEvaluator().evaluate(ctx, expression);
     }
 
     public interface Evaluator {
-        String evaluate(String expression);
+        String evaluate(TSLEventContext ctx, String expression);
     }
 
 }

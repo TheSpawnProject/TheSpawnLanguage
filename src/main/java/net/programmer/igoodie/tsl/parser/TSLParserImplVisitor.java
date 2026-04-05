@@ -191,6 +191,12 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCaptureArgs(TSLParserImpl.CaptureArgsContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link TSLParserImpl#captureArg}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCaptureArg(TSLParserImpl.CaptureArgContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link TSLParserImpl#word}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -208,4 +214,10 @@ public interface TSLParserImplVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitWordNest(TSLParserImpl.WordNestContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link TSLParserImpl#wordNestContent}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWordNestContent(TSLParserImpl.WordNestContentContext ctx);
 }

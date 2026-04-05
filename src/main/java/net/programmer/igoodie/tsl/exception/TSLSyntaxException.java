@@ -27,7 +27,7 @@ public class TSLSyntaxException extends TSLException {
         return this;
     }
 
-    public TSLSyntaxException atWord(TSLToken word) {
+    public TSLSyntaxException atToken(TSLToken word) {
         Token token = word.getSource().get(0);
         return this.atPos(token.getLine(), token.getCharPositionInLine());
     }
