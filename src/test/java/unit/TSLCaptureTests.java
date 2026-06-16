@@ -3,10 +3,7 @@ package unit;
 import example.action.PrintAction;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.runtime.TSLCapture;
-import net.programmer.igoodie.tsl.runtime.TSLCaptureResolver;
-import net.programmer.igoodie.tsl.runtime.TSLClause;
-import net.programmer.igoodie.tsl.runtime.TSLRuleset;
+import net.programmer.igoodie.tsl.runtime.*;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.Test;
@@ -24,7 +21,7 @@ public class TSLCaptureTests {
                 
                 $b = $a 2
                 
-                $c(x) = $b {{x}} (PRINT {{x}} %Hi There, | {{x}} |!%)
+                $c(x) = $b {{x}} (PRINT {{x}} %Hi There, {{x}} = | {{x}} |!%)
                 
                 $d = $c(${2+1}) 4
                 """;
@@ -33,31 +30,39 @@ public class TSLCaptureTests {
 
         TSLPlatform platform = new TSLPlatform("Test Platform", 1.0f);
         platform.registerAction("PRINT", PrintAction::new);
-        platform.pushExpressionEvaluator(expression -> "3");
+        platform.pushExpressionEvaluator((ctx, expression) -> "3");
 
         TSLRuleset ruleset = parser.parseRuleset().resolve(platform);
-        TSLCapture capture = ruleset.getCapture("d").orElseThrow();
 
-        TSLCaptureResolver captureResolver = new TSLCaptureResolver(ruleset.getCaptures(), capture, Collections.emptyList());
-        List<TSLClause> resolvedClauses = captureResolver.resolve();
+        debugCapture(platform, ruleset, "a");
+        debugCapture(platform, ruleset, "b");
+        debugCapture(platform, ruleset, "c");
+        debugCapture(platform, ruleset, "d");
+    }
+
+    private String debugCapture(TSLPlatform platform, TSLRuleset ruleset, String captureName) {
+        TSLCapture capture = ruleset.getCapture(captureName).orElseThrow();
+
+        TSLTemplateTransformer templateTransformer = new TSLTemplateTransformer(capture.getTemplate());
+        templateTransformer.collapseCaptures(ruleset.getCaptures());
+        List<TSLClause> resolvedClauses = templateTransformer.getClauses();
 
         TSLEventContext ctx = new TSLEventContext(platform, "Dummy Event");
 
         String sourceRebuilt = debugClause(resolvedClauses);
 
         System.out.println(sourceRebuilt);
+
+        return sourceRebuilt;
     }
 
     private String debugClause(List<TSLClause> clauses) {
-        return clauses.stream()
-                .map(clause -> {
-                    if (clause.isToken())
-                        return clause.asToken().getSource().stream().map(Token::getText).collect(Collectors.joining());
-                    if (clause.isNest())
-                        return debugClause(clause.asNest().getClauses());
-                    return null;
-                })
-                .collect(Collectors.joining(" ", "(", ")"));
+        return clauses.stream().map(clause -> {
+            if (clause.isToken())
+                return clause.asToken().getSource().stream().map(Token::getText).collect(Collectors.joining());
+            if (clause.isNest()) return debugClause(clause.asNest().getClauses());
+            return null;
+        }).collect(Collectors.joining(" ", "(", ")"));
     }
 
 }

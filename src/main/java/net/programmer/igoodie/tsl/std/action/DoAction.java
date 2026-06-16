@@ -34,7 +34,7 @@ public class DoAction extends TSLAction {
 
         TSLClause argument = arguments.get(0);
 
-        if(argument.isToken()) {
+        if (argument.isToken()) {
             TSLExpression expression = argument.expectToken(TSLExpression.class);
             this.subject = Either.left(expression);
             return;

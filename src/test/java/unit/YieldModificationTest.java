@@ -28,9 +28,9 @@ public class YieldModificationTest {
         }
 
         @Override
-        public void parseArguments_OLD(TSLPlatform platform) throws TSLSyntaxException {
-            for (TSLClause sourceArgument : this.sourceArguments) {
-                TSLToken word = sourceArgument.expectToken();
+        public void parseArguments(TSLPlatform platform, List<TSLClause> arguments) throws TSLSyntaxException {
+            for (TSLClause argument : arguments) {
+                TSLToken word = argument.expectToken();
                 if (!(word instanceof TSLPlainWord plainWord)) {
                     throw new TSLSyntaxException("Expected a plain word").atToken(word);
                 }
@@ -65,7 +65,7 @@ public class YieldModificationTest {
                 .addPropertyType(TSLEvent.Property.Builder.INT.create("amount")));
 
         // Bind Expr Evaluator
-        platform.pushExpressionEvaluator(expression -> "true");
+        platform.pushExpressionEvaluator((ctx, expression) -> "true");
 
         return platform;
     }

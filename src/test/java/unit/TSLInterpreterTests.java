@@ -31,8 +31,8 @@ public class TSLInterpreterTests {
         }
 
         @Override
-        public void parseArguments_OLD(TSLPlatform platform) throws TSLSyntaxException {
-            this.droppedItemId = this.sourceArguments.get(0).getToken().orElseThrow();
+        public void parseArguments(TSLPlatform platform, List<TSLClause> arguments) throws TSLSyntaxException {
+            this.droppedItemId = arguments.get(0).getToken().orElseThrow();
         }
 
         @Override
@@ -50,8 +50,8 @@ public class TSLInterpreterTests {
         }
 
         @Override
-        public void parseArguments_OLD(TSLPlatform platform) throws TSLSyntaxException {
-            this.mobId = this.sourceArguments.get(0).getToken().orElseThrow();
+        public void parseArguments(TSLPlatform platform, List<TSLClause> arguments) throws TSLSyntaxException {
+            this.mobId = arguments.get(0).getToken().orElseThrow();
         }
 
         @Override
@@ -75,7 +75,7 @@ public class TSLInterpreterTests {
                 .addPropertyType(TSLEvent.Property.Builder.INT.create("amount")));
 
         // Bind Expr Evaluator
-        platform.pushExpressionEvaluator(expression -> "true");
+        platform.pushExpressionEvaluator((ctx, expression) -> "true");
 
         return platform;
     }
@@ -127,13 +127,13 @@ public class TSLInterpreterTests {
         TSLParserImpl.TslRulesContext ast = parserImpl.tslRules();
         List<TSLParserImpl.TslRuleContext> rulesAst = ast.tslRule();
 
-        TSLDeferred<TSLCapture> deferredCapture1 = interpreter.interpret(rulesAst.get(0).captureRule());
-        TSLDeferred<TSLCapture> deferredCapture2 = interpreter.interpret(rulesAst.get(1).captureRule());
+        TSLCapture deferredCapture1 = interpreter.interpret(rulesAst.get(0).captureRule());
+        TSLCapture deferredCapture2 = interpreter.interpret(rulesAst.get(1).captureRule());
 
         TSLPlatform demoPlatform = getTestPlatform();
 
-        List<TSLClause> template1 = deferredCapture1.resolve(demoPlatform).getTemplate();
-        List<TSLClause> template2 = deferredCapture2.resolve(demoPlatform).getTemplate();
+        List<TSLClause> template1 = deferredCapture1.getTemplate();
+        List<TSLClause> template2 = deferredCapture2.getTemplate();
 
         System.out.println(template1);
         System.out.println(template2);

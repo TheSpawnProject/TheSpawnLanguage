@@ -22,7 +22,7 @@ public class PrintAction extends TSLAction {
     }
 
     @Override
-    public void parseArguments_OLD(TSLPlatform platform) throws TSLSyntaxException {
+    public void parseArguments(TSLPlatform platform, List<TSLClause> arguments) throws TSLSyntaxException {
         this.wordsToPrint = this.sourceArguments.stream()
                 .map(TSLClause::getToken)
                 .map(Optional::orElseThrow)

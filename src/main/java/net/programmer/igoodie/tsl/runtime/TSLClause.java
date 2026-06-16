@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.runtime;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLInternalException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
+import net.programmer.igoodie.tsl.interpreter.TSLActionInterpreter;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
@@ -29,7 +30,9 @@ public interface TSLClause {
 
     default <T extends TSLToken> T expectToken(Class<T> tokenType) {
         TSLToken token = expectToken();
-        try {return tokenType.cast(token);} catch (ClassCastException e) {
+        try {
+            return tokenType.cast(token);
+        } catch (ClassCastException e) {
             throw new TSLSyntaxException("Expected a {}, found instead -> {}", tokenType.getSimpleName(), this);
         }
     }
@@ -73,11 +76,8 @@ public interface TSLClause {
         // TODO: Parse action from tokenNest.getClauses()
         // TODO: Ensure action.parseArguments is called too for the checks
 
-//        new TSLActionInterpreter().
-//        tokenNest.get
-
-        // TODO: Return parsed action
-        return null;
+        TSLActionInterpreter interpreter = new TSLActionInterpreter();
+        return interpreter.interpretTokenNest(tokenNest).resolve(platform);
     }
 
     default Optional<TSLTokenNest> getNest() {

@@ -70,7 +70,7 @@ public class TSLParserTests {
         TSLPlatform platform = new TSLPlatform("Dummy Platform", 1.0f);
         TSLEventContext ctx = new TSLEventContext(platform, "Foo Bar");
 
-        platform.pushExpressionEvaluator(expression -> expression);
+        platform.pushExpressionEvaluator((_ctx, expression) -> expression);
 
         if (word instanceof TSLGroup group) {
             System.out.println(group.evaluate(ctx));
@@ -90,7 +90,8 @@ public class TSLParserTests {
         WaitAction waitAction = (WaitAction) platform.getActionDefinition("WAIT").orElseThrow()
                 .createAction(actionArgs.stream().map(word -> ((TSLClause) word)).toList());
 
-        waitAction.parseArguments_OLD(platform);
+        waitAction.parseArguments(platform, actionArgs.stream()
+                .map(token -> ((TSLClause) token)).toList());
 
         TSLEventContext ctx = new TSLEventContext(platform, "Dummy Event");
         waitAction.perform(ctx);

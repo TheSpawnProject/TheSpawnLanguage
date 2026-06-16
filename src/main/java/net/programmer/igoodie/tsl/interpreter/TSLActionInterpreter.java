@@ -45,9 +45,15 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLDeferred<TSLAction>,
                     .orElseThrow(() -> new TSLSyntaxException("Expected at least one token in the nest."))
                     .expectToken(TSLPlainWord.class);
 
+            List<TSLClause> actionArgClauses = clauses.subList(1, clauses.size());
 
+            TSLAction.Supplier<?> actionSupplier = platform.getActionDefinition(actionIdToken.getValue())
+                    .orElseThrow(() -> new TSLSyntaxException("Unknown action -> {}", actionIdToken.getValue()));
 
-            return null; // TODO
+            TSLAction action = actionSupplier.createAction(actionArgClauses);
+            action.parseArguments(platform, actionArgClauses);
+
+            return action;
         };
     }
 
