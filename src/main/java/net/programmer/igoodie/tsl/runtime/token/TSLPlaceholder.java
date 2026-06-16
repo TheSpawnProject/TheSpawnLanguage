@@ -19,4 +19,9 @@ public class TSLPlaceholder extends TSLToken {
         throw new IllegalStateException("Placeholders aren't meant for evaluation.");
     }
 
+    @Override
+    public String toDebugString() {
+        return "{{" + this.parameterName + "}}";
+    }
+
 }

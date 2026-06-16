@@ -30,4 +30,9 @@ public class TSLDoc extends TSLToken {
         throw new IllegalStateException("TSLDocs aren't meant for evaluation.");
     }
 
+    @Override
+    public String toDebugString() {
+        return "#** " + this.content + " *#";
+    }
+
 }

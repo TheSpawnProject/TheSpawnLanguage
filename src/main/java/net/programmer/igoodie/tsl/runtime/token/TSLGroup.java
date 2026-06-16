@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.token;
 
+import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
 import java.util.List;
@@ -24,6 +25,12 @@ public class TSLGroup extends TSLToken {
                 .collect(Collectors.joining());
     }
 
+    @Override
+    public String toDebugString() {
+        return args.stream().map(TSLClause::toDebugString)
+                .collect(Collectors.joining("", "%", "%"));
+    }
+
     public static abstract class Token extends TSLToken {}
 
     public static class Expression extends TSLGroup.Token {
@@ -43,6 +50,11 @@ public class TSLGroup extends TSLToken {
             return this.token.evaluate(ctx);
         }
 
+        @Override
+        public String toDebugString() {
+            return "| " + this.token.toDebugString() + " |";
+        }
+
     }
 
     public static class StringContent extends TSLGroup.Token {
@@ -55,6 +67,11 @@ public class TSLGroup extends TSLToken {
 
         @Override
         public String evaluate(TSLEventContext ctx) {
+            return this.content;
+        }
+
+        @Override
+        public String toDebugString() {
             return this.content;
         }
 

@@ -19,4 +19,9 @@ public class TSLCaptureId extends TSLToken {
         throw new IllegalStateException("CaptureIds aren't meant for evaluation.");
     }
 
+    @Override
+    public String toDebugString() {
+        return "$" + this.captureName;
+    }
+
 }

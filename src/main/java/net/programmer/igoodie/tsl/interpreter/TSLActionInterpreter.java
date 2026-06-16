@@ -22,7 +22,9 @@ public class TSLActionInterpreter extends TSLInterpreter<TSLAction.Deferred, TSL
 
     @Override
     protected TSLAction.Deferred yieldValue(TSLParserImpl.ActionContext tree) {
-        return new TSLAction.Deferred(this.name, this.args);
+        return new TSLAction.Deferred(this.name, this.args)
+                .setDisplaying(this.displaying)
+                .setYieldConsumer(this.yieldConsumer);
     }
 
     @Override

@@ -25,4 +25,9 @@ public class TSLExpression extends TSLToken {
         String evaluate(TSLEventContext ctx, String expression);
     }
 
+    @Override
+    public String toDebugString() {
+        return "${" + this.expression + "}";
+    }
+
 }

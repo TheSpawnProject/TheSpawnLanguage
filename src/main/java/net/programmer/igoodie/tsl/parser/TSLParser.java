@@ -1,8 +1,10 @@
 package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.tsl.interpreter.TSLActionInterpreter;
+import net.programmer.igoodie.tsl.interpreter.TSLCaptureInterpreter;
 import net.programmer.igoodie.tsl.interpreter.TSLRulesetInterpreter;
 import net.programmer.igoodie.tsl.interpreter.TSLTokenInterpreter;
+import net.programmer.igoodie.tsl.runtime.TSLCapture;
 import net.programmer.igoodie.tsl.runtime.TSLDeferred;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
@@ -42,9 +44,14 @@ public class TSLParser {
         return wordsTree.word().stream().map(interpreter::interpret).toList();
     }
 
-    public TSLDeferred<TSLAction> parseAction() {
+    public TSLAction.Deferred parseAction() {
         TSLParserImpl.ActionContext actionTree = this.parserImpl.action();
         return new TSLActionInterpreter().interpret(actionTree);
+    }
+
+    public TSLCapture parseCapture() {
+        TSLParserImpl.CaptureRuleContext captureTree = this.parserImpl.captureRule();
+        return new TSLCaptureInterpreter().interpret(captureTree);
     }
 
     public TSLDeferred<TSLRuleset> parseRuleset() {

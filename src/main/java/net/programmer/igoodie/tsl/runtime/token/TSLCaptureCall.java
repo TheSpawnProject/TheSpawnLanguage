@@ -4,6 +4,7 @@ import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TSLCaptureCall extends TSLToken {
 
@@ -26,6 +27,20 @@ public class TSLCaptureCall extends TSLToken {
     @Override
     public String evaluate(TSLEventContext ctx) {
         throw new IllegalStateException("CaptureCalls aren't meant for evaluation.");
+    }
+
+    @Override
+    public String toDebugString() {
+        StringBuilder sb = new StringBuilder("$");
+        sb.append(this.id.captureName);
+
+        if (!this.args.isEmpty()) {
+            sb.append(this.args.stream()
+                    .map(TSLClause::toDebugString)
+                    .collect(Collectors.joining(",", "(", ")")));
+        }
+
+        return sb.toString();
     }
 
 }

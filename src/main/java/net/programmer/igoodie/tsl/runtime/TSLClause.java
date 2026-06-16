@@ -66,7 +66,7 @@ public interface TSLClause {
         if (isNest()) return asNest();
         throw new TSLSyntaxException("Expected a word nest, found instead -> {}", this);
     }
-    
+
     default Optional<TSLActionNest> getNest() {
         return Optional.of(((TSLActionNest) this));
     }
@@ -82,5 +82,9 @@ public interface TSLClause {
         if (this.isNest()) return Either.right(this.asNest());
         throw new TSLInternalException("A clause somehow is neither a word or an action huh?");
     }
+
+    /* ------------------------------------ */
+
+    String toDebugString();
 
 }

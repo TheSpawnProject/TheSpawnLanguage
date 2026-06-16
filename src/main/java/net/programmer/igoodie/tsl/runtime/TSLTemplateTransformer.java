@@ -4,10 +4,7 @@ import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import net.programmer.igoodie.tsl.runtime.token.TSLCaptureCall;
-import net.programmer.igoodie.tsl.runtime.token.TSLGroup;
-import net.programmer.igoodie.tsl.runtime.token.TSLPlaceholder;
-import net.programmer.igoodie.tsl.runtime.token.TSLToken;
+import net.programmer.igoodie.tsl.runtime.token.*;
 
 import java.util.*;
 
@@ -23,7 +20,7 @@ public class TSLTemplateTransformer {
         return clauses;
     }
 
-    protected Map<String, TSLClause> composeArgumentMap(List<String> paramNames, List<TSLClause> argList) {
+    public static Map<String, TSLClause> composeArgumentMap(List<String> paramNames, List<TSLClause> argList) {
         Map<String, TSLClause> argumentMap = new HashMap<>();
 
         ListAccessor<TSLClause> argListAccessor = ListAccessor.of(argList);
@@ -279,27 +276,16 @@ public class TSLTemplateTransformer {
 
         for (TSLClause clause : this.clauses) {
             if (clause.isNest()) {
+                TSLActionNest nest = clause.asNest();
+
+//                nest.getDeferredAction().
                 // TODO
                 continue;
             }
 
             if (clause.isToken()) {
-                if (clause instanceof TSLPlaceholder placeholder) {
-                    // TODO:
-                    continue;
-                }
-
-                if (clause instanceof TSLGroup group) {
-                    // TODO:
-                    continue;
-                }
-
-                if (clause instanceof TSLCaptureCall captureCall) {
-                    // TODO:
-                    continue;
-                }
-
-                transformedClauses.add(clause);
+                TSLClause collapsed = collapsePlaceholdersInToken(clause.asToken(), arguments);
+                transformedClauses.add(collapsed);
             }
         }
 
@@ -307,34 +293,53 @@ public class TSLTemplateTransformer {
         return this;
     }
 
-    protected static TSLGroup collapsePlaceholdersInGroup(TSLGroup group, Map<String, TSLClause> arguments) {
+    public static TSLClause collapsePlaceholdersInToken(TSLToken token, Map<String, TSLClause> arguments) {
+        if (token instanceof TSLPlaceholder placeholder) {
+            // TODO: Reality check
+            return arguments.get(placeholder.getParameterName());
+        }
+
+        if (token instanceof TSLGroup group) {
+            return collapsePlaceholdersInGroup(group, arguments);
+        }
+
+        if (token instanceof TSLCaptureCall captureCall) {
+            return collapsePlaceholdersInCaptureCall(captureCall, arguments);
+        }
+
+        if (token instanceof TSLExpression expression) {
+            return collapsePlaceholdersInExpression(expression, arguments);
+        }
+
+        return token;
+    }
+
+    public static TSLGroup collapsePlaceholdersInGroup(TSLGroup group, Map<String, TSLClause> arguments) {
         boolean transformed = false;
 
         List<TSLGroup.Token> newArgs = new ArrayList<>();
 
-        for (TSLGroup.Token arg : group.getArgs()) {
-            if (arg instanceof TSLGroup.Expression groupExpr) {
-                if (groupExpr.getExpressionToken() instanceof TSLPlaceholder placeholder) {
-                    TSLToken expressionToken = arguments.get(placeholder.getParameterName()).expectToken();
-                    TSLGroup.Expression newGroupExpr = new TSLGroup.Expression(expressionToken);
-                    newGroupExpr.setSource(expressionToken.getSource());
-                    newArgs.add(newGroupExpr);
+        for (TSLGroup.Token groupArg : group.getArgs()) {
+            if (groupArg instanceof TSLGroup.Expression groupExpr) {
+                TSLToken collapsedToken = collapsePlaceholdersInToken(groupExpr.getExpressionToken(), arguments).expectToken();
+
+                if (collapsedToken != groupExpr.getExpressionToken()) {
+                    newArgs.add(new TSLGroup.Expression(collapsedToken));
                     transformed = true;
                     continue;
                 }
             }
 
-            newArgs.add(arg);
+            newArgs.add(groupArg);
         }
 
         if (!transformed) return group;
 
-        TSLGroup newGroup = new TSLGroup(newArgs);
-        newGroup.setSource(group.getSource());
-        return newGroup;
+        return new TSLGroup(newArgs);
     }
 
-    protected static TSLCaptureCall collapsePlaceholdersInCaptureCall(TSLCaptureCall captureCall, Map<String, TSLClause> arguments) {
+    public static TSLCaptureCall collapsePlaceholdersInCaptureCall(TSLCaptureCall captureCall, Map<String, TSLClause> arguments) {
+        // TODO: Rewrite
         boolean transformed = false;
 
         List<TSLClause> newArgs = new ArrayList<>();
@@ -355,6 +360,11 @@ public class TSLTemplateTransformer {
         TSLCaptureCall newCaptureCall = new TSLCaptureCall(captureCall.getId(), newArgs);
         newCaptureCall.setSource(captureCall.getSource());
         return newCaptureCall;
+    }
+
+    public static TSLExpression collapsePlaceholdersInExpression(TSLExpression expression, Map<String, TSLClause> arguments) {
+        // TODO
+        return null;
     }
 
     /* --------------------------- */

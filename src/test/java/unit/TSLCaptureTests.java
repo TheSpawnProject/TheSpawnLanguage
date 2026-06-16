@@ -3,13 +3,16 @@ package unit;
 import example.action.PrintAction;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.parser.TSLParser;
-import net.programmer.igoodie.tsl.runtime.*;
+import net.programmer.igoodie.tsl.runtime.TSLCapture;
+import net.programmer.igoodie.tsl.runtime.TSLClause;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
+import net.programmer.igoodie.tsl.runtime.TSLTemplateTransformer;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
-import org.antlr.v4.runtime.Token;
+import net.programmer.igoodie.tsl.runtime.token.TSLGroup;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class TSLCaptureTests {
 
@@ -39,9 +42,52 @@ public class TSLCaptureTests {
         debugCapture(platform, ruleset, "d");
     }
 
+    @Test
+    public void shouldCollapsePlaceholders() {
+        String script = """
+                $func(x, y, z) =
+                    {{x}}
+                    %Group | {{x}} |%
+                    ${"Expression" + {{x}}}
+                    (NESTED
+                        {{x}}
+                        %Nested Group | {{x}} |%
+                        ${"Nested Expression" + {{x}}}
+                        YIELDING $result
+                        DISPLAYING %Resulting Message%)
+                """;
+
+        TSLCapture capture = TSLParser.fromScript(script).parseCapture();
+        List<TSLClause> argumentTokens = TSLParser.fromScript("ARG0 ARG1 ARG2").parseTokens()
+                .stream().map(tslToken -> ((TSLClause) tslToken)).toList();
+
+        Map<String, TSLClause> argumentMap = TSLTemplateTransformer.composeArgumentMap(capture.getParamNames(), argumentTokens);
+        System.out.println(argumentMap);
+
+        TSLTemplateTransformer transformer = new TSLTemplateTransformer(capture.getTemplate());
+        transformer.collapsePlaceholders2(argumentMap);
+        debugClause(transformer.getClauses());
+    }
+
+    @Test
+    public void shouldCollapsePlaceholdersInGroup() {
+        String script = "%Group | {{x}} | should | % | {{x}} | % | be replaced.%";
+
+        TSLGroup group = TSLParser.fromScript(script).parseTokens().get(0).expectToken(TSLGroup.class);
+        List<TSLClause> argumentTokens = TSLParser.fromScript("ARG0").parseTokens()
+                .stream().map(tslToken -> ((TSLClause) tslToken)).toList();
+
+        Map<String, TSLClause> argumentMap = TSLTemplateTransformer.composeArgumentMap(List.of("x"), argumentTokens);
+        System.out.println(argumentMap);
+
+        TSLTemplateTransformer transformer = new TSLTemplateTransformer(List.of(group));
+        transformer.collapsePlaceholders2(argumentMap);
+        debugClause(transformer.getClauses());
+    }
+
     /* -------------------------- */
 
-    private String debugCapture(TSLPlatform platform, TSLRuleset ruleset, String captureName) {
+    private void debugCapture(TSLPlatform platform, TSLRuleset ruleset, String captureName) {
         TSLCapture capture = ruleset.getCapture(captureName).orElseThrow();
 
         TSLTemplateTransformer templateTransformer = new TSLTemplateTransformer(capture.getTemplate());
@@ -50,25 +96,14 @@ public class TSLCaptureTests {
 
         TSLEventContext ctx = new TSLEventContext(platform, "Dummy Event");
 
-        String sourceRebuilt = debugClause(resolvedClauses);
-
-        System.out.println(sourceRebuilt);
-
-        return sourceRebuilt;
+        debugClause(resolvedClauses);
     }
 
-    private String debugClause(List<TSLClause> clauses) {
-        return clauses.stream().map(clause -> {
-            if (clause.isToken()) {
-                return clause.asToken().getSource().stream().map(Token::getText).collect(Collectors.joining());
-            }
-
-            if (clause.isNest()) {
-                TSLActionNest nest = clause.asNest();
-                return debugClause(nest.getDeferredAction().getSourceArguments());
-            }
-
-            return null;
-        }).collect(Collectors.joining(" ", "(", ")"));
+    private void debugClause(List<TSLClause> clauses) {
+        for (int i = 0; i < clauses.size(); i++) {
+            TSLClause clause = clauses.get(i);
+            System.out.println("#" + (i + 1) + " - " +
+                    clause.toDebugString());
+        }
     }
 }

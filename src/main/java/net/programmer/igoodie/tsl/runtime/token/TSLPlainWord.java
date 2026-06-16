@@ -19,6 +19,11 @@ public class TSLPlainWord extends TSLToken {
         return this.value;
     }
 
+    @Override
+    public String toDebugString() {
+        return this.value;
+    }
+
     public static boolean isKeyword(TSLToken word, String expectedKeyword) {
         if (!(word instanceof TSLPlainWord)) return false;
         return ((TSLPlainWord) word).getValue().equalsIgnoreCase(expectedKeyword);
