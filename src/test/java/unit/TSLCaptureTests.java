@@ -8,7 +8,6 @@ import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import org.antlr.v4.runtime.Token;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +39,8 @@ public class TSLCaptureTests {
         debugCapture(platform, ruleset, "d");
     }
 
+    /* -------------------------- */
+
     private String debugCapture(TSLPlatform platform, TSLRuleset ruleset, String captureName) {
         TSLCapture capture = ruleset.getCapture(captureName).orElseThrow();
 
@@ -58,11 +59,16 @@ public class TSLCaptureTests {
 
     private String debugClause(List<TSLClause> clauses) {
         return clauses.stream().map(clause -> {
-            if (clause.isToken())
+            if (clause.isToken()) {
                 return clause.asToken().getSource().stream().map(Token::getText).collect(Collectors.joining());
-            if (clause.isNest()) return debugClause(clause.asNest().getClauses());
+            }
+
+            if (clause.isNest()) {
+                TSLActionNest nest = clause.asNest();
+                return debugClause(nest.getDeferredAction().getSourceArguments());
+            }
+
             return null;
         }).collect(Collectors.joining(" ", "(", ")"));
     }
-
 }

@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.std.action;
 import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
+import net.programmer.igoodie.tsl.runtime.TSLActionNest;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
 import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
@@ -36,7 +37,8 @@ public class SequentiallyAction extends TSLAction {
                 continue;
             }
 
-            TSLAction action = arg.expectAction(platform);
+            TSLActionNest nest = arg.expectNest();
+            TSLAction action = nest.resolveAction(platform);
             this.actions.add(action);
         }
 

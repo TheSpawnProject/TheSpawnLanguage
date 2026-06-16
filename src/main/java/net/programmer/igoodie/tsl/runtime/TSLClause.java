@@ -1,10 +1,7 @@
 package net.programmer.igoodie.tsl.runtime;
 
-import net.programmer.igoodie.tsl.TSLPlatform;
 import net.programmer.igoodie.tsl.exception.TSLInternalException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
-import net.programmer.igoodie.tsl.interpreter.TSLActionInterpreter;
-import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.token.TSLPlainWord;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import net.programmer.igoodie.tsl.util.structure.Either;
@@ -58,39 +55,29 @@ public interface TSLClause {
     /* ------------------------------------ */
 
     default boolean isNest() {
-        return this instanceof TSLTokenNest;
+        return this instanceof TSLActionNest;
     }
 
-    default TSLTokenNest asNest() {
-        return ((TSLTokenNest) this);
+    default TSLActionNest asNest() {
+        return ((TSLActionNest) this);
     }
 
-    default TSLTokenNest expectNest() {
+    default TSLActionNest expectNest() {
         if (isNest()) return asNest();
         throw new TSLSyntaxException("Expected a word nest, found instead -> {}", this);
     }
-
-    default TSLAction expectAction(TSLPlatform platform) {
-        TSLTokenNest tokenNest = this.expectNest();
-
-        // TODO: Parse action from tokenNest.getClauses()
-        // TODO: Ensure action.parseArguments is called too for the checks
-
-        TSLActionInterpreter interpreter = new TSLActionInterpreter();
-        return interpreter.interpretTokenNest(tokenNest).resolve(platform);
+    
+    default Optional<TSLActionNest> getNest() {
+        return Optional.of(((TSLActionNest) this));
     }
 
-    default Optional<TSLTokenNest> getNest() {
-        return Optional.of(((TSLTokenNest) this));
-    }
-
-    default void ifNest(Consumer<TSLTokenNest> consumer) {
+    default void ifNest(Consumer<TSLActionNest> consumer) {
         if (this.isToken()) consumer.accept(this.asNest());
     }
 
     /* ------------------------------------ */
 
-    default Either<TSLToken, TSLTokenNest> asEither() {
+    default Either<TSLToken, TSLActionNest> asEither() {
         if (this.isToken()) return Either.left(this.asToken());
         if (this.isNest()) return Either.right(this.asNest());
         throw new TSLInternalException("A clause somehow is neither a word or an action huh?");

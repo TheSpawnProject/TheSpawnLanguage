@@ -432,18 +432,6 @@ public class TSLParserImplBaseListener implements TSLParserImplListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitWordNestContent(TSLParserImpl.WordNestContentContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterDanglingKeyword(TSLParserImpl.DanglingKeywordContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDanglingKeyword(TSLParserImpl.DanglingKeywordContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

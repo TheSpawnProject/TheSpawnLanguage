@@ -2,9 +2,9 @@ package net.programmer.igoodie.tsl.interpreter;
 
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.parser.TSLParserImpl;
+import net.programmer.igoodie.tsl.runtime.TSLActionNest;
 import net.programmer.igoodie.tsl.runtime.TSLCapture;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
-import net.programmer.igoodie.tsl.runtime.TSLTokenNest;
 import net.programmer.igoodie.tsl.runtime.token.TSLCaptureId;
 import net.programmer.igoodie.tsl.runtime.token.TSLPlaceholder;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
@@ -56,8 +56,8 @@ public class TSLCaptureInterpreter extends TSLInterpreter<TSLCapture, TSLParserI
                 this.contents.add(token);
 
             } else if (child instanceof TSLParserImpl.WordNestContext nestChild) {
-                TSLTokenNest tokenNest = new TSLTokenNestInterpreter().interpret(nestChild.wordNestContent());
-                this.contents.add(tokenNest);
+                TSLActionNest actionNest = new TSLActionNestInterpreter().interpret(nestChild.wordNestContent());
+                this.contents.add(actionNest);
             }
         }
 

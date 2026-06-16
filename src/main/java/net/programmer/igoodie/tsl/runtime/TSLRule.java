@@ -60,6 +60,8 @@ public class TSLRule {
                 .collapseCaptures(ctx.getPerformingRuleset().map(TSLRuleset::getCaptures).orElseGet(HashMap::new))
                 .getClauses();
 
+        // TODO: Collapse DISPLAYING too, if it's a capture call token (?)
+
         this.action.parseArguments(ctx.getPlatform(), collapsedArguments);
         return this.action.perform(ctx);
     }

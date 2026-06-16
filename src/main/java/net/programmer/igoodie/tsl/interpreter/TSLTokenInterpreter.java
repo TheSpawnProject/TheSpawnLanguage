@@ -70,7 +70,7 @@ public class TSLTokenInterpreter extends TSLInterpreter<TSLToken, TSLParserImpl.
                 return new TSLTokenInterpreter().interpret(wordChild);
 
             } else if (child instanceof TSLParserImpl.WordNestContext nestChild) {
-                return new TSLTokenNestInterpreter().interpret(nestChild.wordNestContent());
+                return new TSLActionNestInterpreter().interpret(nestChild.wordNestContent());
             }
 
             throw new TSLInternalException("Interpreted a capture arg as something other than word or nest. How?");

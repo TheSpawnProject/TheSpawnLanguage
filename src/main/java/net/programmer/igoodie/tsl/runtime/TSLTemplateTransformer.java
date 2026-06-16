@@ -2,16 +2,14 @@ package net.programmer.igoodie.tsl.runtime;
 
 import net.programmer.igoodie.goodies.util.accessor.ListAccessor;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
+import net.programmer.igoodie.tsl.runtime.definition.TSLAction;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.token.TSLCaptureCall;
 import net.programmer.igoodie.tsl.runtime.token.TSLGroup;
 import net.programmer.igoodie.tsl.runtime.token.TSLPlaceholder;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TSLTemplateTransformer {
 
@@ -58,11 +56,7 @@ public class TSLTemplateTransformer {
             }
 
             if (clause.isNest()) {
-                List<TSLClause> transformedClauses = new TSLTemplateTransformer(clause.asNest().getClauses())
-//                        .collapsePlace
-                        .collapseCaptures(captureCache)
-                        .getClauses();
-                TSLTokenNest transformedNest = new TSLTokenNest(transformedClauses);
+                TSLActionNest transformedNest = this.collapseCaptures(clause.asNest(), captureCache);
                 transformed.add(transformedNest);
                 continue;
             }
@@ -73,6 +67,60 @@ public class TSLTemplateTransformer {
         this.clauses = transformed;
 
         return this;
+    }
+
+    @Deprecated
+    protected TSLActionNest collapseCaptures(TSLActionNest nest, Map<String, TSLCapture> captureCache) {
+        return null;
+//        TSLAction.Deferred deferredAction = nest.getDeferredAction();
+//
+//        TSLToken displaying = deferredAction.getDisplaying();
+//        List<TSLClause> newArgs = new ArrayList<>();
+//
+//        if (displaying instanceof TSLCaptureCall) {
+//            List<TSLClause> transformedDisplaying = new TSLTemplateTransformer(Collections.singletonList(displaying))
+//                    .collapseCaptures(captureCache)
+//                    .getClauses();
+//            if (transformedDisplaying.size() != 1) {
+//                throw new TSLSyntaxException("Capture call on DISPLAYING statement evaluated to a list of tokens.").atToken(displaying);
+//            }
+//            displaying = transformedDisplaying.get(0).expectToken();
+//        }
+//
+//        boolean needsTransformation = displaying != deferredAction.getDisplaying();
+//
+//        // TODO: Continue from here
+//
+//        for (TSLClause sourceArgument : deferredAction.getSourceArguments()) {
+//            if (sourceArgument instanceof TSLPlaceholder placeholder) {
+//                TSLToken argument = arguments.get(placeholder.getParameterName()).expectToken();
+//                newArgs.add(argument);
+//                needsTransformation = true;
+//                continue;
+//            }
+//
+//            if (sourceArgument instanceof TSLGroup group) {
+//                TSLGroup transformedGroup = this.collapsePlaceholders(group, arguments);
+//                newArgs.add(transformedGroup);
+//                continue;
+//            }
+//
+//            if (sourceArgument instanceof TSLCaptureCall captureCall) {
+//                TSLCaptureCall transformedCall = this.collapsePlaceholders(captureCall, arguments);
+//                newArgs.add(transformedCall);
+//                continue;
+//            }
+//
+//            newArgs.add(sourceArgument);
+//        }
+//
+//        if (!needsTransformation) return nest;
+//
+//        deferredAction = new TSLAction.Deferred(deferredAction.getName(), newArgs)
+//                .setYieldConsumer(deferredAction.getYieldConsumer())
+//                .setDisplaying(displaying);
+//
+//        return new TSLActionNest(deferredAction);
     }
 
     /* --------------------------- */
@@ -106,10 +154,7 @@ public class TSLTemplateTransformer {
             }
 
             if (clause.isNest()) {
-                List<TSLClause> transformedClauses = new TSLTemplateTransformer(clause.asNest().getClauses())
-                        .collapsePlaceholders(arguments)
-                        .getClauses();
-                TSLTokenNest transformedNest = new TSLTokenNest(transformedClauses);
+                TSLActionNest transformedNest = this.collapsePlaceholders(clause.asNest(), arguments);
                 transformed.add(transformedNest);
                 continue;
             }
@@ -141,7 +186,6 @@ public class TSLTemplateTransformer {
             if (groupExpr.getExpressionToken() instanceof TSLPlaceholder placeholder) {
                 TSLToken expressionToken = arguments.get(placeholder.getParameterName()).expectToken();
                 TSLGroup.Expression newGroupExpr = new TSLGroup.Expression(expressionToken);
-                newGroupExpr.setSource(expressionToken.getSource());
                 newArgs.add(newGroupExpr);
                 continue;
             }
@@ -149,9 +193,7 @@ public class TSLTemplateTransformer {
             newArgs.add(arg);
         }
 
-        TSLGroup newGroup = new TSLGroup(newArgs);
-        newGroup.setSource(group.getSource());
-        return newGroup;
+        return new TSLGroup(newArgs);
     }
 
     @Deprecated
@@ -173,9 +215,52 @@ public class TSLTemplateTransformer {
             newArgs.add(arg);
         }
 
-        TSLCaptureCall newCaptureCall = new TSLCaptureCall(captureCall.getId(), newArgs);
-        newCaptureCall.setSource(captureCall.getSource());
-        return newCaptureCall;
+        return new TSLCaptureCall(captureCall.getId(), newArgs);
+    }
+
+    @Deprecated
+    protected TSLActionNest collapsePlaceholders(TSLActionNest nest, Map<String, TSLClause> arguments) {
+        TSLAction.Deferred deferredAction = nest.getDeferredAction();
+
+        TSLToken displaying = deferredAction.getDisplaying();
+        List<TSLClause> newArgs = new ArrayList<>();
+
+        if (displaying instanceof TSLPlaceholder placeholder) {
+            displaying = arguments.get(placeholder.getParameterName()).expectToken();
+        }
+
+        boolean needsTransformation = displaying != deferredAction.getDisplaying();
+
+        for (TSLClause sourceArgument : deferredAction.getSourceArguments()) {
+            if (sourceArgument instanceof TSLPlaceholder placeholder) {
+                TSLToken argument = arguments.get(placeholder.getParameterName()).expectToken();
+                newArgs.add(argument);
+                needsTransformation = true;
+                continue;
+            }
+
+            if (sourceArgument instanceof TSLGroup group) {
+                TSLGroup transformedGroup = this.collapsePlaceholders(group, arguments);
+                newArgs.add(transformedGroup);
+                continue;
+            }
+
+            if (sourceArgument instanceof TSLCaptureCall captureCall) {
+                TSLCaptureCall transformedCall = this.collapsePlaceholders(captureCall, arguments);
+                newArgs.add(transformedCall);
+                continue;
+            }
+
+            newArgs.add(sourceArgument);
+        }
+
+        if (!needsTransformation) return nest;
+
+        deferredAction = new TSLAction.Deferred(deferredAction.getName(), newArgs)
+                .setYieldConsumer(deferredAction.getYieldConsumer())
+                .setDisplaying(displaying);
+
+        return new TSLActionNest(deferredAction);
     }
 
     /* --------------------------- */
@@ -274,19 +359,47 @@ public class TSLTemplateTransformer {
 
     /* --------------------------- */
 
-    // TODO: Do we still need that?
-
     public List<Object> evaluateTokens(TSLEventContext ctx) {
         List<Object> transformed = new ArrayList<>();
 
         for (TSLClause clause : clauses) {
             if (clause.isNest()) {
-                transformed.add(new TSLTemplateTransformer(clause.asNest().getClauses())
-                        .evaluateTokens(ctx));
+                List<Object> transformedNest = this.evaluateTokens(clause.asNest(), ctx);
+                transformed.add(transformedNest);
                 continue;
             }
 
             transformed.add(clause.asToken().evaluate(ctx));
+        }
+
+        return transformed;
+    }
+
+    protected List<Object> evaluateTokens(TSLActionNest nest, TSLEventContext ctx) {
+        List<Object> transformed = new ArrayList<>();
+
+        TSLAction.Deferred deferredAction = nest.getDeferredAction();
+
+        transformed.add(deferredAction.getName());
+
+        List<Object> argsEvaluated = new TSLTemplateTransformer(deferredAction.getSourceArguments())
+                .evaluateTokens(ctx);
+
+        transformed.add(argsEvaluated);
+
+        // TODO: Add yielding and displaying in AST token order
+
+        if (deferredAction.getDisplaying() != null) {
+            Object displayingEvaluated = new TSLTemplateTransformer(Collections.singletonList(deferredAction.getDisplaying()))
+                    .evaluateTokens(ctx).get(0);
+            transformed.add(displayingEvaluated);
+        }
+
+        if (deferredAction.getYieldConsumer() != null) {
+            deferredAction.getYieldConsumer().consume(
+                    tslCaptureId -> transformed.add("$" + tslCaptureId.getCaptureName()),
+                    expression -> transformed.add(expression.evaluate(ctx))
+            );
         }
 
         return transformed;

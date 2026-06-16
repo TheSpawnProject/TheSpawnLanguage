@@ -40,7 +40,7 @@ public class DoAction extends TSLAction {
             return;
         }
 
-        TSLAction action = argument.expectAction(platform);
+        TSLAction action = argument.expectNest().resolveAction(platform);
         this.subject = Either.right(action);
     }
 

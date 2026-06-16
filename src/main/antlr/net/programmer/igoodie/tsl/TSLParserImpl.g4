@@ -33,7 +33,7 @@ tslDirectiveArgs: (word | KEYWORD_FROM)*;
 
 reactionRule: action event;
 
-action: actionBody actionYielding? actionDisplaying?;
+action: actionBody ((actionYielding? actionDisplaying?) | (actionDisplaying? actionYielding?));
 actionBody: actionId actionArgs;
 actionId: IDENTIFIER;
 actionArgs: (word | wordNest)*;
@@ -74,5 +74,4 @@ captureArg: (word | wordNest);
 word: EXPRESSION | PLAIN_WORD | IDENTIFIER | PLACEHOLDER | captureCall | group;
 predicateWord: EXPRESSION | PLAIN_WORD | IDENTIFIER | group; // ?
 wordNest: SIGN_LPARAN wordNestContent SIGN_RPARAN;
-wordNestContent: (word | wordNest | danglingKeyword)+;
-danglingKeyword: KEYWORD_DISPLAYING | KEYWORD_YIELDING;
+wordNestContent: action;

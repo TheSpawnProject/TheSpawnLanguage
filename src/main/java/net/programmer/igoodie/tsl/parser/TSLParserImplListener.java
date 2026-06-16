@@ -357,14 +357,4 @@ public interface TSLParserImplListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitWordNestContent(TSLParserImpl.WordNestContentContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link TSLParserImpl#danglingKeyword}.
-	 * @param ctx the parse tree
-	 */
-	void enterDanglingKeyword(TSLParserImpl.DanglingKeywordContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link TSLParserImpl#danglingKeyword}.
-	 * @param ctx the parse tree
-	 */
-	void exitDanglingKeyword(TSLParserImpl.DanglingKeywordContext ctx);
 }

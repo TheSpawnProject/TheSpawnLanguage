@@ -1,9 +1,12 @@
 package net.programmer.igoodie.tsl.runtime.definition;
 
 import net.programmer.igoodie.tsl.TSLPlatform;
+import net.programmer.igoodie.tsl.exception.TSLException;
+import net.programmer.igoodie.tsl.exception.TSLInternalException;
 import net.programmer.igoodie.tsl.exception.TSLPerformingException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxException;
 import net.programmer.igoodie.tsl.runtime.TSLClause;
+import net.programmer.igoodie.tsl.runtime.TSLDeferred;
 import net.programmer.igoodie.tsl.runtime.event.TSLEventContext;
 import net.programmer.igoodie.tsl.runtime.token.TSLCaptureId;
 import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
@@ -54,6 +57,53 @@ public abstract class TSLAction {
 
     public interface Supplier<T extends TSLAction> {
         T createAction(List<TSLClause> sourceArguments) throws TSLSyntaxException;
+    }
+
+    /* ----------------------- */
+
+    public static class Deferred extends TSLAction implements TSLDeferred<TSLAction> {
+
+        protected final String name;
+
+        public Deferred(String name, List<TSLClause> sourceArguments) throws TSLSyntaxException {
+            super(sourceArguments);
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public Deferred setYieldConsumer(Either<TSLCaptureId, TSLExpression> yieldConsumer) {
+            return (Deferred) super.setYieldConsumer(yieldConsumer);
+        }
+
+        @Override
+        public Deferred setDisplaying(TSLToken displaying) {
+            return (Deferred) super.setDisplaying(displaying);
+        }
+
+        @Override
+        public TSLAction resolve(TSLPlatform platform) throws TSLException {
+            TSLAction.Supplier<?> supplier = platform.getActionDefinition(this.name)
+                    .orElseThrow(() -> new TSLInternalException("Unresolvable action -> {}", this.name));
+
+            return supplier.createAction(this.sourceArguments)
+                    .setYieldConsumer(this.yieldConsumer)
+                    .setDisplaying(this.displaying);
+        }
+
+        @Override
+        public void parseArguments(TSLPlatform platform, List<TSLClause> arguments) throws TSLSyntaxException {
+            throw new IllegalStateException("Called parseArguments on a deferred action holder");
+        }
+
+        @Override
+        public List<TSLToken> perform(TSLEventContext ctx) throws TSLPerformingException {
+            throw new IllegalStateException("Called perform on a deferred action holder");
+        }
+
     }
 
 }
