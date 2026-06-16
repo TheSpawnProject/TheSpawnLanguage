@@ -194,12 +194,27 @@ public class TSLTemplateTransformer {
 
         for (TSLClause clause : this.clauses) {
             if (clause.isNest()) {
-                if (clause instanceof TSLPlaceholder placeholder) {
+                // TODO
+                continue;
+            }
 
+            if (clause.isToken()) {
+                if (clause instanceof TSLPlaceholder placeholder) {
+                    // TODO:
+                    continue;
                 }
 
-            } else if (clause.isToken()) {
+                if (clause instanceof TSLGroup group) {
+                    // TODO:
+                    continue;
+                }
 
+                if (clause instanceof TSLCaptureCall captureCall) {
+                    // TODO:
+                    continue;
+                }
+
+                transformedClauses.add(clause);
             }
         }
 
@@ -208,35 +223,58 @@ public class TSLTemplateTransformer {
     }
 
     protected static TSLGroup collapsePlaceholdersInGroup(TSLGroup group, Map<String, TSLClause> arguments) {
-        boolean needsTransform = group.getArgs().stream().anyMatch(groupArg ->
-                groupArg instanceof TSLGroup.Expression groupExpr
-                        && groupExpr.getExpressionToken() instanceof TSLPlaceholder);
-
-        if (!needsTransform) return group;
+        boolean transformed = false;
 
         List<TSLGroup.Token> newArgs = new ArrayList<>();
 
         for (TSLGroup.Token arg : group.getArgs()) {
-            if (!(arg instanceof TSLGroup.Expression groupExpr)) {
-                newArgs.add(arg);
-                continue;
+            if (arg instanceof TSLGroup.Expression groupExpr) {
+                if (groupExpr.getExpressionToken() instanceof TSLPlaceholder placeholder) {
+                    TSLToken expressionToken = arguments.get(placeholder.getParameterName()).expectToken();
+                    TSLGroup.Expression newGroupExpr = new TSLGroup.Expression(expressionToken);
+                    newGroupExpr.setSource(expressionToken.getSource());
+                    newArgs.add(newGroupExpr);
+                    transformed = true;
+                    continue;
+                }
             }
 
-            if (groupExpr.getExpressionToken() instanceof TSLPlaceholder placeholder) {
-                TSLToken expressionToken = arguments.get(placeholder.getParameterName()).expectToken();
-                TSLGroup.Expression newGroupExpr = new TSLGroup.Expression(expressionToken);
-                newGroupExpr.setSource(expressionToken.getSource());
-                newArgs.add(newGroupExpr);
+            newArgs.add(arg);
+        }
+
+        if (!transformed) return group;
+
+        TSLGroup newGroup = new TSLGroup(newArgs);
+        newGroup.setSource(group.getSource());
+        return newGroup;
+    }
+
+    protected static TSLCaptureCall collapsePlaceholdersInCaptureCall(TSLCaptureCall captureCall, Map<String, TSLClause> arguments) {
+        boolean transformed = false;
+
+        List<TSLClause> newArgs = new ArrayList<>();
+
+        for (TSLClause arg : captureCall.getArgs()) {
+            if (arg instanceof TSLPlaceholder placeholder) {
+                TSLToken argument = arguments.get(placeholder.getParameterName()).expectToken();
+                newArgs.add(argument);
+                transformed = true;
                 continue;
             }
 
             newArgs.add(arg);
         }
 
-        TSLGroup newGroup = new TSLGroup(newArgs);
-        newGroup.setSource(group.getSource());
-        return newGroup;
+        if (!transformed) return captureCall;
+
+        TSLCaptureCall newCaptureCall = new TSLCaptureCall(captureCall.getId(), newArgs);
+        newCaptureCall.setSource(captureCall.getSource());
+        return newCaptureCall;
     }
+
+    /* --------------------------- */
+
+    // TODO: Do we still need that?
 
     public List<Object> evaluateTokens(TSLEventContext ctx) {
         List<Object> transformed = new ArrayList<>();
