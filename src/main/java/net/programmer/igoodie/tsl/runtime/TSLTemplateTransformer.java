@@ -278,8 +278,19 @@ public class TSLTemplateTransformer {
             if (clause.isNest()) {
                 TSLActionNest nest = clause.asNest();
 
-//                nest.getDeferredAction().
-                // TODO
+                TSLTemplateTransformer nestTransformer = new TSLTemplateTransformer(nest.deferredAction.getSourceArguments());
+                nestTransformer.collapsePlaceholders2(arguments);
+
+                TSLAction.Deferred transformedAction = new TSLAction.Deferred(
+                        nest.deferredAction.getName(),
+                        nestTransformer.getClauses()
+                );
+
+                // TODO: Transform DISPLAYING and YIELDING too
+                transformedAction.setDisplaying(nest.deferredAction.getDisplaying());
+                transformedAction.setYieldConsumer(nest.deferredAction.getYieldConsumer());
+
+                transformedClauses.add(new TSLActionNest(transformedAction));
                 continue;
             }
 
@@ -363,8 +374,8 @@ public class TSLTemplateTransformer {
     }
 
     public static TSLExpression collapsePlaceholdersInExpression(TSLExpression expression, Map<String, TSLClause> arguments) {
-        // TODO
-        return null;
+        // TODO: Decide how to collapse placeholders in Expression. Need to evaluate the arg before replacement?
+        return expression;
     }
 
     /* --------------------------- */

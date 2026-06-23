@@ -36,7 +36,7 @@ public class TSLActionNest implements TSLClause {
 
         if (this.deferredAction.getYieldConsumer() != null) {
             sb.append(" ");
-            sb.append(this.deferredAction.getYieldConsumer().map(
+            sb.append(this.deferredAction.getYieldConsumer().reduce(
                     TSLCaptureId::toDebugString,
                     TSLExpression::toDebugString
             ));
